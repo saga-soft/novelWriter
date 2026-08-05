@@ -23,7 +23,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QVBoxLayout, QWidget
+
+from novelwriter.extensions.expandpanel import NExpandablePanelGroup
+from novelwriter.story.outline import GuiStoryOutline, GuiStoryOutlineControls
 
 if TYPE_CHECKING:
     from novelwriter.story.storyview import GuiStoryView
@@ -34,3 +37,34 @@ class GuiStoryPanel(QWidget):
 
     def __init__(self, parent: GuiStoryView) -> None:
         super().__init__(parent)
+
+        # Default View
+        self.outlineContent = GuiStoryOutline(parent)
+        self.outlineControls = GuiStoryOutlineControls(parent)
+        self.outlineControls.setContentWidget(self.outlineContent)
+
+        # Panel
+        self.fillerWidget = QWidget(self)
+
+        self.panels = NExpandablePanelGroup(self)
+        self.panels.addWidget(self.outlineControls)
+        self.panels.addWidget(self.fillerWidget)
+
+        self.panels.setStretchFactor(0, 0)
+        self.panels.setStretchFactor(1, 1)
+
+        # Assemble
+        self.outerBox = QVBoxLayout()
+        self.outerBox.addWidget(self.panels)
+        self.outerBox.setContentsMargins(0, 0, 0, 0)
+        self.outerBox.setSpacing(0)
+
+        self.setLayout(self.outerBox)
+
+    ##
+    #  Methods
+    ##
+
+    def updateTheme(self) -> None:
+        """Update theme elements."""
+        self.outlineControls.updateTheme()

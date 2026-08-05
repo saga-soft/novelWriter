@@ -58,18 +58,31 @@ class GuiStoryView(QWidget):
 
         self.setLayout(self.outerBox)
 
+        self.showContent(self.storyPanel.outlineContent)
+
     ##
     #  Methods
     ##
 
     def updateTheme(self) -> None:
         """Update theme elements."""
+        self.storyPanel.updateTheme()
 
     def openProjectTasks(self) -> None:
         """Run open project tasks."""
 
     def closeProjectTasks(self) -> None:
         """Run closing project tasks."""
+
+    def showContent(self, widget: QWidget) -> None:
+        """Add a widget to the content stack, if needed, and show it.
+
+        This is the switchboard a foldable panel's "generate" action
+        will call to lazily add and activate its content widget.
+        """
+        if self.contentStack.indexOf(widget) == -1:
+            self.contentStack.addWidget(widget)
+        self.contentStack.setCurrentWidget(widget)
 
     ##
     #  Private Slots

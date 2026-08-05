@@ -37,6 +37,7 @@ class GuiStoryOutlineControls(NExpandablePanel):
     def __init__(self, parent: GuiStoryView) -> None:
         super().__init__(parent)
         self._contentWidget: GuiStoryOutline | None = None
+        self.setTitle(self.tr("Story Outline"))
 
     def setContentWidget(self, widget: GuiStoryOutline) -> None:
         """Set the content widget for the outline controls."""
