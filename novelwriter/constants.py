@@ -25,7 +25,7 @@ from typing import Final
 
 from PyQt6.QtCore import QT_TRANSLATE_NOOP, QCoreApplication
 
-from novelwriter.enum import nwBuildFmt, nwComment, nwItemClass, nwItemLayout, nwOutline, nwStatusShape, nwTheme
+from novelwriter.enum import nwBuildFmt, nwComment, nwItemClass, nwItemLayout, nwStatusShape, nwTheme
 
 
 def trConst(text: str) -> str:
@@ -365,28 +365,6 @@ class nwLabels:
         nwKeyWords.CUSTOM_KEY: "Ctrl+K, X",
         nwKeyWords.STORY_KEY: "Ctrl+K, N",
         nwKeyWords.MENTION_KEY: "Ctrl+K, M",
-    }
-    OUTLINE_COLS: Final[dict[nwOutline, str]] = {
-        nwOutline.TITLE: QT_TRANSLATE_NOOP("Constant", "Title"),
-        nwOutline.LEVEL: QT_TRANSLATE_NOOP("Constant", "Level"),
-        nwOutline.LABEL: QT_TRANSLATE_NOOP("Constant", "Document"),
-        nwOutline.LINE: QT_TRANSLATE_NOOP("Constant", "Line"),
-        nwOutline.STATUS: QT_TRANSLATE_NOOP("Constant", "Status"),
-        nwOutline.CCOUNT: QT_TRANSLATE_NOOP("Constant", "Chars"),
-        nwOutline.WCOUNT: QT_TRANSLATE_NOOP("Constant", "Words"),
-        nwOutline.PCOUNT: QT_TRANSLATE_NOOP("Constant", "Pars"),
-        nwOutline.POV: QT_TRANSLATE_NOOP("Constant", "POV"),
-        nwOutline.FOCUS: QT_TRANSLATE_NOOP("Constant", "Focus"),
-        nwOutline.CHAR: KEY_NAME[nwKeyWords.CHAR_KEY],
-        nwOutline.PLOT: KEY_NAME[nwKeyWords.PLOT_KEY],
-        nwOutline.WORLD: KEY_NAME[nwKeyWords.WORLD_KEY],
-        nwOutline.TIME: KEY_NAME[nwKeyWords.TIME_KEY],
-        nwOutline.OBJECT: KEY_NAME[nwKeyWords.OBJECT_KEY],
-        nwOutline.ENTITY: KEY_NAME[nwKeyWords.ENTITY_KEY],
-        nwOutline.CUSTOM: KEY_NAME[nwKeyWords.CUSTOM_KEY],
-        nwOutline.STORY: KEY_NAME[nwKeyWords.STORY_KEY],
-        nwOutline.MENTION: KEY_NAME[nwKeyWords.MENTION_KEY],
-        nwOutline.SYNOP: QT_TRANSLATE_NOOP("Constant", "Synopsis"),
     }
     STATS_NAME: Final[dict[str, str]] = {
         nwStats.CHARS: QT_TRANSLATE_NOOP("Stats", "Characters"),

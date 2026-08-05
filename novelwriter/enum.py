@@ -156,7 +156,7 @@ class nwView(Enum):
     EDITOR = 0
     PROJECT = 1
     NOVEL = 2
-    OUTLINE = 3
+    STORY = 3
     SEARCH = 4
 
 
@@ -165,7 +165,7 @@ class nwFocus(Enum):
 
     TREE = 1
     DOCUMENT = 2
-    OUTLINE = 3
+    STORY = 3
 
 
 class nwTheme(Enum):
@@ -174,31 +174,6 @@ class nwTheme(Enum):
     AUTO = 0
     LIGHT = 1
     DARK = 2
-
-
-class nwOutline(Enum):
-    """Enum: Project Outline Columns."""
-
-    TITLE = 0
-    LEVEL = 1
-    LABEL = 2
-    LINE = 3
-    STATUS = 4
-    CCOUNT = 5
-    WCOUNT = 6
-    PCOUNT = 7
-    POV = 8
-    FOCUS = 9
-    CHAR = 10
-    PLOT = 11
-    TIME = 12
-    WORLD = 13
-    OBJECT = 14
-    ENTITY = 15
-    CUSTOM = 16
-    STORY = 17
-    MENTION = 18
-    SYNOP = 19
 
 
 class nwNovelExtra(Enum):

@@ -604,7 +604,7 @@ def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd
     assert SHARED.lastAlert[-1] == f"File Location: {path}"
 
     # Focus and View Change
-    # ======================
+    # =====================
 
     with qtbot.waitSignal(mainMenu.requestFocusChange, timeout=1000) as signal:
         mainMenu.aFocusTree.activate(QAction.ActionEvent.Trigger)
@@ -615,8 +615,8 @@ def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd
     assert signal.args == [nwFocus.DOCUMENT]
 
     with qtbot.waitSignal(mainMenu.requestFocusChange, timeout=1000) as signal:
-        mainMenu.aFocusOutline.activate(QAction.ActionEvent.Trigger)
-    assert signal.args == [nwFocus.OUTLINE]
+        mainMenu.aFocusStory.activate(QAction.ActionEvent.Trigger)
+    assert signal.args == [nwFocus.STORY]
 
     with qtbot.waitSignal(mainMenu.requestViewChange, timeout=1000) as signal:
         mainMenu.aFindProj.activate(QAction.ActionEvent.Trigger)

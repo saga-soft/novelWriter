@@ -98,7 +98,6 @@ class Index:
         "_novelExtra",
         "_novelModels",
         "_project",
-        "_rootChange",
         "_tagsIndex",
     )
 
@@ -118,7 +117,6 @@ class Index:
         # Track Changes
         self._indexChange = 0.0
         self._indexRevision = 0
-        self._rootChange = {}
 
     def __repr__(self) -> str:
         """Return a string representation of the index."""
@@ -171,7 +169,6 @@ class Index:
         self._itemIndex.clear()
         self._indexChange = 0.0
         self._indexRevision += 1  # We must not reset the revision number
-        self._rootChange = {}
         SHARED.emitIndexCleared(self._project)
 
     def rebuild(self) -> None:
@@ -218,14 +215,6 @@ class Index:
     def indexChangedSince(self, checkTime: int | float) -> bool:
         """Check if the index has changed since a given time."""
         return self._indexChange > float(checkTime)
-
-    def rootChangedSince(self, rootHandle: str | None, checkTime: int | float) -> bool:
-        """Check if the index has changed since a given time for a
-        given root item.
-        """
-        if isinstance(rootHandle, str):
-            return self._rootChange.get(rootHandle, self._indexChange) > float(checkTime)
-        return False
 
     def refreshNovelModel(self, tHandle: str | None) -> None:
         """Refresh a novel model."""
@@ -385,7 +374,6 @@ class Index:
         nowTime = time()
         self._indexChange = nowTime
         self._indexRevision += 1
-        self._rootChange[tItem.itemRoot] = nowTime
         if not blockSignal:
             if changedRefs := sorted(oldRefs | self._itemRefHandles(tHandle)):
                 SHARED.emitIndexChangedRefs(self._project, changedRefs)
@@ -653,18 +641,6 @@ class Index:
         """Return all note comment keys."""
         return self._itemIndex.allNoteKeys()
 
-    def novelStructure(
-        self, rootHandle: str | None = None, activeOnly: bool = True
-    ) -> Iterable[tuple[str, str, str, IndexHeading]]:
-        """Iterate over all titles in the novel, in the correct order as
-        they appear in the tree view and in the respective document
-        files, but skipping all note files.
-        """
-        structure = self._itemIndex.iterNovelStructure(rHandle=rootHandle, activeOnly=activeOnly)
-        for tHandle, sTitle, hItem in structure:
-            yield f"{tHandle}:{sTitle}", tHandle, sTitle, hItem
-        return
-
     def getNovelWordCount(self, rootHandle: str | None = None, activeOnly: bool = True) -> int:
         """Count the number of words in one or all novel roots."""
         return sum(
@@ -724,21 +700,6 @@ class Index:
             return cItem.charCount, cItem.wordCount, cItem.paraCount
 
         return 0, 0, 0
-
-    def getReferences(self, tHandle: str, sTitle: str | None = None) -> dict[str, list[str]]:
-        """Extract all tags and references made in a file, and
-        optionally title section.
-        """
-        refs = {x: [] for x in nwKeyWords.VALID_KEYS}
-        for rTitle, hItem in self._itemIndex.iterItemHeaders(tHandle):
-            if sTitle is None or sTitle == rTitle:
-                for aTag, refTypes in hItem.references.items():
-                    for refType in refTypes:
-                        if refType in refs:  # pragma: no branch
-                            refs[refType].append(self._tagsIndex.tagName(aTag))
-                if tag := hItem.tag:
-                    refs[nwKeyWords.TAG_KEY] = [self._tagsIndex.tagName(tag)]
-        return refs
 
     def getReferenceForHeader(self, tHandle: str, nHead: int, keyClass: str) -> list[str]:
         """Get the display names for a tags class for insertion into a

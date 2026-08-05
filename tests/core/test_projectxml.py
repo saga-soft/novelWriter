@@ -193,7 +193,7 @@ def testProjectXMLReader_ReadCurrent(monkeypatch, mockGUI, tstPaths, fncPath):
     assert data.getLastHandle("editor") == "636b6aa9b697b"
     assert data.getLastHandle("viewer") == "636b6aa9b697b"
     assert data.getLastHandle("novel") == "7031beac91f75"
-    assert data.getLastHandle("outline") == "7031beac91f75"
+    assert data.getLastHandle("story") == "7031beac91f75"
 
     assert data.targetCount == 100000
     assert data.targetCountChars is False
@@ -356,7 +356,7 @@ def testProjectXMLReader_ReadLegacy10(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.0
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.0
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.0
 
     assert data.targetCount == 0  # Doesn't exist in 1.0
     assert data.targetCountChars is False  # Doesn't exist in 1.0
@@ -522,7 +522,7 @@ def testProjectXMLReader_ReadLegacy11(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.1
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.1
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.1
 
     assert data.targetCount == 0  # Doesn't exist in 1.1
     assert data.targetCountChars is False  # Doesn't exist in 1.1
@@ -688,7 +688,7 @@ def testProjectXMLReader_ReadLegacy12(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.2
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.2
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.2
 
     assert data.targetCount == 0  # Doesn't exist in 1.2
     assert data.targetCountChars is False  # Doesn't exist in 1.2
@@ -857,7 +857,7 @@ def testProjectXMLReader_ReadLegacy13(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.3
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.3
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.3
 
     assert data.targetCount == 0  # Doesn't exist in 1.3
     assert data.targetCountChars is False  # Doesn't exist in 1.3
@@ -1026,7 +1026,7 @@ def testProjectXMLReader_ReadLegacy14(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.4
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.4
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.4
 
     assert data.targetCount == 0  # Doesn't exist in 1.4
     assert data.targetCountChars is False  # Doesn't exist in 1.4

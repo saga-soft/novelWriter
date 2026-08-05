@@ -24,7 +24,6 @@ preferences = [700, 615]
 fontSelect = [700, 550]
 mainPane = [300, 800]
 viewPane = [500, 150]
-outlinePane = [500, 150]
 searchPane = [150, 500]
 moveMainWin = true
 

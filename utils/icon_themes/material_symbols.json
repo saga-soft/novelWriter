@@ -53,10 +53,10 @@
     "sb_build": "export_notes",
     "sb_details": "format_list_bulleted",
     "sb_novel": "book_4_spark",
-    "sb_outline": "summarize",
     "sb_project": "bookmark_manager",
     "sb_search": "search",
     "sb_stats": "bar_chart",
+    "sb_story": "summarize",
 
     "theme_light": "light_mode",
     "theme_dark": "dark_mode",

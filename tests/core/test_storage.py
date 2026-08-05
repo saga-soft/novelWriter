@@ -636,10 +636,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
     buildTestProject(project, fncPath)
     legacy = _LegacyStorage(project)
 
-    # The build project functions saves the project, so we must delete
-    # the old gui options file
-    (fncPath / "meta" / nwFiles.OPTS_FILE).unlink()
-
     # Word List
     wordListOld: Path = fncPath / "meta" / "wordlist.txt"
     wordListNew: Path = fncPath / "meta" / nwFiles.DICT_FILE
@@ -666,31 +662,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
     assert sessLogOld.exists() is True
     assert sessLogNew.exists() is False
 
-    # Options File
-    optionsOld: Path = fncPath / "meta" / "guiOptions.json"
-    optionsNew: Path = fncPath / "meta" / nwFiles.OPTS_FILE
-
-    optionsOld.write_text(
-        json.dumps(
-            {
-                "GuiProjectSettings": {
-                    "winWidth": 570,
-                    "winHeight": 375,
-                },
-                "GuiOutline": {
-                    "headerOrder": ["TITLE", "LEVEL", "LABEL", "LINE"],
-                    "columnWidth": {"TITLE": 325, "LEVEL": 40, "LABEL": 267, "LINE": 40},
-                    "columnHidden": {"TITLE": False, "LEVEL": True, "LABEL": False, "LINE": True},
-                },
-            },
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
-
-    assert optionsOld.exists() is True
-    assert optionsNew.exists() is False
-
     # Check Failure
     with monkeypatch.context() as mp:
         mp.setattr("builtins.open", causeOSError)
@@ -699,8 +670,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
         assert wordListNew.exists() is False
         assert sessLogOld.exists() is True
         assert sessLogNew.exists() is False
-        assert optionsOld.exists() is True
-        assert optionsNew.exists() is False
 
     # Check Success
     legacy.deprecatedFiles(fncPath)
@@ -708,8 +677,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
     assert wordListNew.exists() is True
     assert sessLogOld.exists() is False
     assert sessLogNew.exists() is True
-    assert optionsOld.exists() is False
-    assert optionsNew.exists() is True
 
     # Check Word List
     data = json.loads(wordListNew.read_text(encoding="utf-8"))
@@ -740,24 +707,3 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
         "cnotes": 0,
         "idle": 20,
     }
-
-    # Check Options File
-    data = json.loads(optionsNew.read_text(encoding="utf-8"))
-    assert data["novelWriter.guiOptions"]["GuiProjectSettings"] == {
-        "winWidth": 570,
-        "winHeight": 375,
-    }
-    assert data["novelWriter.guiOptions"]["GuiOutline"]["columnState"] == {
-        "TITLE": [False, 325],
-        "LEVEL": [True, 40],
-        "LABEL": [False, 267],
-        "LINE": [True, 40],
-    }
-
-    # An old options file without a GuiOutline section is converted as-is
-    otherOld = fncPath / "meta" / "otherOptions.json"
-    otherNew = fncPath / "meta" / "otherOptions.new.json"
-    otherOld.write_text(json.dumps({"GuiProjectSettings": {"winWidth": 100}}), encoding="utf-8")
-    legacy._convertOldOptionsFile(otherOld, otherNew)
-    data = json.loads(otherNew.read_text(encoding="utf-8"))
-    assert data["novelWriter.guiOptions"] == {"GuiProjectSettings": {"winWidth": 100}}

@@ -63,9 +63,6 @@ VALID_MAP: dict[str, set[str]] = {
         "intoFolder",
         "docHierarchy",
     },
-    "GuiOutline": {
-        "columnState",
-    },
     "GuiProjectSettings": {
         "winWidth",
         "winHeight",
@@ -122,10 +119,6 @@ VALID_MAP: dict[str, set[str]] = {
         "countFrom",
         "clearDouble",
         "novelRoot",
-    },
-    "GuiOutlineDetails": {
-        "detailsWidth",
-        "tagsWidth",
     },
     "GuiProjectSearch": {
         "searchFilters",

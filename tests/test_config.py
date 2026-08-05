@@ -468,7 +468,7 @@ def testConfig_RecentPaths(monkeypatch, tstPaths):
     recent.setPath("default", tstPaths.cnfDir / "default")
     recent.setPath("project", tstPaths.cnfDir / "project")
     recent.setPath("import", tstPaths.cnfDir / "import")
-    recent.setPath("outline", tstPaths.cnfDir / "outline")
+    recent.setPath("story", tstPaths.cnfDir / "story")
     recent.setPath("stats", tstPaths.cnfDir / "stats")
 
     # Set invalid path
@@ -478,7 +478,7 @@ def testConfig_RecentPaths(monkeypatch, tstPaths):
     assert recent.getPath("default") == str(tstPaths.cnfDir / "default")
     assert recent.getPath("project") == str(tstPaths.cnfDir / "project")
     assert recent.getPath("import") == str(tstPaths.cnfDir / "import")
-    assert recent.getPath("outline") == str(tstPaths.cnfDir / "outline")
+    assert recent.getPath("story") == str(tstPaths.cnfDir / "story")
     assert recent.getPath("stats") == str(tstPaths.cnfDir / "stats")
 
     # Check invalid path
@@ -489,7 +489,7 @@ def testConfig_RecentPaths(monkeypatch, tstPaths):
         "default": str(tstPaths.cnfDir / "default"),
         "project": str(tstPaths.cnfDir / "project"),
         "import": str(tstPaths.cnfDir / "import"),
-        "outline": str(tstPaths.cnfDir / "outline"),
+        "story": str(tstPaths.cnfDir / "story"),
         "stats": str(tstPaths.cnfDir / "stats"),
     }
 
