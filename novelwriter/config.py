@@ -206,6 +206,7 @@ class Config:
         "singleStarBold",
         "spellLanguage",
         "stopWhenIdle",
+        "storyPanePos",
         "tabWidth",
         "textFont",
         "textMargin",
@@ -316,6 +317,7 @@ class Config:
         self.mainPanePos = [300, 800]  # Last position of the main window splitter
         self.viewPanePos = [500, 150]  # Last position of the document viewer splitter
         self.searchPanePos = [150, 500]  # Last position of the project search splitter
+        self.storyPanePos = [300, 800]  # Last position of the story panel splitter
         self.moveMainWin = True  # Move main window to the screen middle on startup
 
         # Project Settings
@@ -816,6 +818,7 @@ class Config:
         self.mainPanePos = parser.getIntList(sec, "mainPane", self.mainPanePos)
         self.viewPanePos = parser.getIntList(sec, "viewPane", self.viewPanePos)
         self.searchPanePos = parser.getIntList(sec, "searchPane", self.searchPanePos)
+        self.storyPanePos = parser.getIntList(sec, "storyPane", self.storyPanePos)
         self.moveMainWin = parser.getBool(sec, "moveMainWin", self.moveMainWin)
 
         # Project
@@ -959,6 +962,7 @@ class Config:
             "mainPane": self.mainPanePos,
             "viewPane": self.viewPanePos,
             "searchPane": self.searchPanePos,
+            "storyPane": self.storyPanePos,
             "moveMainWin": self.moveMainWin,
         }
 

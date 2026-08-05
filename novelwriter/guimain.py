@@ -179,7 +179,7 @@ class GuiMain(QMainWindow):
         self.splitMain.setSizes([max(s, 100) for s in CONFIG.mainPanePos])
         self.splitMain.setCollapsible(0, False)
         self.splitMain.setCollapsible(1, False)
-        self.splitMain.setStretchFactor(1, 0)
+        self.splitMain.setStretchFactor(0, 0)
         self.splitMain.setStretchFactor(1, 1)
 
         # Main Stack : Editor / Story View
