@@ -633,6 +633,14 @@ class Index:
             yield from tItem.items()
         return
 
+    def iterNovelStructure(
+        self, rHandle: str | None = None, activeOnly: bool = True
+    ) -> Iterable[tuple[str, str, IndexHeading]]:
+        """Iterate over all items and headers in the novel structure for
+        a given root handle, or for all if root handle is None.
+        """
+        yield from self._itemIndex.iterNovelStructure(rHandle=rHandle, activeOnly=activeOnly)
+
     def getStoryKeys(self) -> set[str]:
         """Return all story structure keys."""
         return self._itemIndex.allStoryKeys()

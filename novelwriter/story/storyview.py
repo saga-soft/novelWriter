@@ -24,7 +24,7 @@ from __future__ import annotations
 from PyQt6.QtCore import Qt, pyqtSlot
 from PyQt6.QtWidgets import QSplitter, QStackedWidget, QVBoxLayout, QWidget
 
-from novelwriter import CONFIG
+from novelwriter import CONFIG, SHARED
 from novelwriter.story.storypanel import GuiStoryPanel
 
 
@@ -70,9 +70,12 @@ class GuiStoryView(QWidget):
 
     def openProjectTasks(self) -> None:
         """Run open project tasks."""
+        rootHandle = SHARED.project.data.getLastHandle("story")
+        self.storyPanel.outlineContent.refresh(rootHandle)
 
     def closeProjectTasks(self) -> None:
         """Run closing project tasks."""
+        self.storyPanel.outlineContent.clear()
 
     def showContent(self, widget: QWidget) -> None:
         """Add a widget to the content stack, if needed, and show it.

@@ -68,3 +68,4 @@ class GuiStoryPanel(QWidget):
     def updateTheme(self) -> None:
         """Update theme elements."""
         self.outlineControls.updateTheme()
+        self.outlineContent.updateTheme()
