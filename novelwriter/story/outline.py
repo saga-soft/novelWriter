@@ -24,7 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from PyQt6.QtCore import QModelIndex, QRect, QSize, Qt
-from PyQt6.QtGui import QFontMetrics, QPainter
+from PyQt6.QtGui import QFontMetrics, QPainter, QPalette
 from PyQt6.QtWidgets import QAbstractItemView, QApplication, QFrame, QStyledItemDelegate, QStyleOptionViewItem, QWidget
 
 from novelwriter import CONFIG, SHARED
@@ -41,6 +41,7 @@ from novelwriter.types import (
     QtScrollAlwaysOff,
     QtScrollAsNeeded,
     QtSelected,
+    QtTransparent,
 )
 
 if TYPE_CHECKING:
@@ -49,6 +50,11 @@ if TYPE_CHECKING:
 LINE_FLAGS = int(Qt.TextFlag.TextSingleLine) | int(QtAlignLeftMiddle)
 TOP_FLAGS = int(Qt.TextFlag.TextSingleLine) | int(QtAlignLeftTop)
 WRAP_FLAGS = int(Qt.TextFlag.TextWordWrap) | int(QtAlignLeftTop)
+
+# Outer padding around each row block so the coloured rows don't stack
+# as touching blocks, and the corner radius of the box.
+ROW_PAD = 3
+ROW_RADIUS = 6
 
 
 class GuiStoryOutlineControls(NExpandablePanel):
@@ -94,6 +100,7 @@ class GuiStoryOutline(NTreeView):
         self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
 
         self.initViewport()
+        self._disableNativeHighlight()
 
         if header := self.header():  # pragma: no branch
             header.setStretchLastSection(True)
@@ -121,9 +128,20 @@ class GuiStoryOutline(NTreeView):
 
     def updateTheme(self) -> None:
         """Update theme elements."""
+        self._disableNativeHighlight()
         self._delegate.updateTheme()
         if viewport := self.viewport():  # pragma: no branch
             viewport.update()
+
+    def _disableNativeHighlight(self) -> None:
+        """Make the native row selection highlight transparent so it does
+        not clash with the delegate's level-coloured selection box, which
+        is drawn only around the text. Reapplied on theme changes as the
+        palette is otherwise refreshed from the application palette.
+        """
+        palette = self.palette()
+        palette.setColor(QPalette.ColorRole.Highlight, QtTransparent)
+        self.setPalette(palette)
 
     def refresh(self, rootHandle: str | None) -> None:
         """Rebuild the outline from the project index."""
@@ -146,6 +164,36 @@ class GuiStoryOutline(NTreeView):
         """Return the current column widths as a list."""
         columns = range(self._model.columnCount(QModelIndex()))
         return [self.columnWidth(c) for c in columns]
+
+    ##
+    #  Overrides
+    ##
+
+    def drawRow(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
+        """Paint the level-coloured box and border wrapping the row text
+        before the native cell and branch painting. The native selection
+        highlight is transparent (see _disableNativeHighlight), so the
+        cells, indent and fold arrow don't pick up a mismatched
+        highlight; the selection is shown by the box instead.
+        """
+        if node := self._model.node(index):
+            first = index.sibling(index.row(), self.C_TITLE)
+            selected = self._isRowSelected(first)
+            block = option.rect.adjusted(0, ROW_PAD, -ROW_PAD, -ROW_PAD)
+            block.setLeft(self.visualRect(first).left())
+            painter.save()
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+            painter.fillRect(option.rect, self.palette().base())
+            painter.setPen(node.style.border)
+            painter.setBrush(node.style.highlight if selected else node.style.background)
+            painter.drawRoundedRect(block.adjusted(0, 0, -1, -1), ROW_RADIUS, ROW_RADIUS)
+            painter.restore()
+
+        super().drawRow(painter, option, index)
+
+    def _isRowSelected(self, index: QModelIndex) -> bool:
+        """Return whether the given row index is selected."""
+        return bool(sm.isSelected(index)) if (sm := self.selectionModel()) else False
 
 
 class _OutlineDelegate(QStyledItemDelegate):
@@ -171,7 +219,7 @@ class _OutlineDelegate(QStyledItemDelegate):
         """Refresh the cached theme fonts and colours."""
         self._fm = QFontMetrics(SHARED.theme.guiFont)
         self._fmB = QFontMetrics(SHARED.theme.guiFontB)
-        self._rowHeight = self._fmB.height() + 2 * self._fm.height() + 2 * self._margin
+        self._rowHeight = self._fmB.height() + 2 * self._fm.height() + 2 * self._margin + 2 * ROW_PAD
         self._textCol = QApplication.palette().text().color()
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
@@ -192,15 +240,15 @@ class _OutlineDelegate(QStyledItemDelegate):
         painter.save()
         painter.setClipRect(rect)
         if selected:
-            painter.fillRect(rect, palette.highlight())
             painter.setPen(palette.highlightedText().color())
         else:
             painter.setPen(self._textCol)
 
-        x = rect.x() + self._margin
-        y = rect.y() + self._margin
-        w = max(0, rect.width() - 2 * self._margin)
-        h = max(0, rect.height() - 2 * self._margin)
+        pad = ROW_PAD + self._margin
+        x = rect.x() + pad
+        y = rect.y() + pad
+        w = max(0, rect.width() - 2 * pad)
+        h = max(0, rect.height() - 2 * pad)
 
         match index.column():
             case GuiStoryOutline.C_TITLE:

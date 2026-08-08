@@ -26,9 +26,11 @@ import logging
 from typing import TYPE_CHECKING, NamedTuple
 
 from PyQt6.QtCore import QAbstractItemModel, QModelIndex, Qt
+from PyQt6.QtGui import QColor
 
 from novelwriter import SHARED
 from novelwriter.constants import nwKeyWords, nwLabels, nwStats, nwStyles, nwUnicode, trConst, trStats
+from novelwriter.types import QtTransparent
 
 if TYPE_CHECKING:
     from novelwriter.core.index import Index
@@ -48,6 +50,17 @@ class _TrCache(NamedTuple):
     kChars: str
 
 
+class NodeStyle(NamedTuple):
+    """Core: Outline Node Style Class."""
+
+    border: QColor
+    background: QColor
+    highlight: QColor
+
+
+BLANK_STYLE = NodeStyle(QtTransparent, QtTransparent, QtTransparent)
+
+
 class OutlineNode:
     """Core: Outline Model Node Class.
 
@@ -65,11 +78,14 @@ class OutlineNode:
         "_focus",
         "_handle",
         "_heading",
+        "_highlight",
         "_item",
         "_key",
+        "_level",
         "_parent",
         "_pov",
         "_row",
+        "_style",
         "_title",
         "_tr",
     )
@@ -81,6 +97,7 @@ class OutlineNode:
         item: ProjectItem | None,
         heading: IndexHeading | None,
         tr: _TrCache,
+        style: NodeStyle,
     ) -> None:
         self._handle = handle
         self._key = key
@@ -89,6 +106,7 @@ class OutlineNode:
         self._tr: _TrCache = tr
 
         # Parsed Data
+        self._level = 0
         self._title = ""
         self._document = ""
         self._counts = ""
@@ -100,6 +118,7 @@ class OutlineNode:
         self._row = 0
         self._parent: OutlineNode | None = None
         self._children: list[OutlineNode] = []
+        self._style = style
 
         self.refresh()
 
@@ -121,6 +140,11 @@ class OutlineNode:
     def title(self) -> str:
         """The heading title."""
         return self._title
+
+    @property
+    def level(self) -> int:
+        """The heading level."""
+        return self._level
 
     @property
     def label(self) -> str:
@@ -153,6 +177,11 @@ class OutlineNode:
         if hItem := self._heading:
             return hItem.synopsis
         return ""
+
+    @property
+    def style(self) -> NodeStyle:
+        """The style for the heading's structural level."""
+        return self._style
 
     ##
     #  Data Access
@@ -198,16 +227,22 @@ class OutlineNode:
         """Refresh data values."""
         tr = self._tr
         if h := self._heading:
-            refs = h.getReferences()
+            self._level = nwStyles.H_LEVEL.get(h.level, 0)
             self._title = h.title
             self._counts = f"{h.wordCount:n} {tr.sWords}  {nwUnicode.U_BULL}  {h.charCount:n} {tr.sChars}"
 
+            refs = h.getReferences()
             self._pov = ", ".join(refs[nwKeyWords.POV_KEY])
             self._focus = ", ".join(refs[nwKeyWords.FOCUS_KEY])
             self._characters = ", ".join(refs[nwKeyWords.CHAR_KEY])
 
         if i := self._item:
             self._document = i.itemName
+
+
+ROOT_NODE = OutlineNode(
+    "", "", None, None, _TrCache("", "", "", "", ""), NodeStyle(QtTransparent, QtTransparent, QtTransparent)
+)
 
 
 class OutlineModel(QAbstractItemModel):
@@ -220,7 +255,7 @@ class OutlineModel(QAbstractItemModel):
     such ancestor exists.
     """
 
-    __slots__ = ("_headers", "_labels", "_root")
+    __slots__ = ("_headers", "_labels", "_root", "_styles")
 
     def __init__(self) -> None:
         super().__init__()
@@ -232,7 +267,20 @@ class OutlineModel(QAbstractItemModel):
             kFocus=trConst(nwLabels.KEY_NAME[nwKeyWords.FOCUS_KEY]),
             kChars=trConst(nwLabels.KEY_NAME[nwKeyWords.CHAR_KEY]),
         )
-        self._root = OutlineNode("", "", None, None, self._labels)
+
+        # Colours
+        theme = SHARED.theme
+        self._styles: dict[int, NodeStyle] = {}
+        self._background = {}
+        for key in nwStyles.H_LEVEL.values():
+            color = theme.getStructureColor(key)
+            background = QColor(color)
+            background.setAlphaF(0.1)
+            highlight = QColor(color)
+            highlight.setAlphaF(0.2)
+            self._styles[key] = NodeStyle(color, background, highlight)
+
+        self._root = self._newRootNode()
 
     def __del__(self) -> None:  # pragma: no cover
         """Class destructor."""
@@ -297,13 +345,13 @@ class OutlineModel(QAbstractItemModel):
     def clear(self) -> None:
         """Clear the outline tree."""
         self.beginResetModel()
-        self._root = OutlineNode("", "", None, None, self._labels)
+        self._root = self._newRootNode()
         self.endResetModel()
 
     def buildOutline(self, index: Index, rootHandle: str | None) -> None:
         """Rebuild the outline tree from the project index."""
         self.beginResetModel()
-        root = OutlineNode("", "", None, None, self._labels)
+        root = self._newRootNode()
         chapter: OutlineNode | None = None
         scene: OutlineNode | None = None
         for tHandle, sTitle, hItem in index.iterNovelStructure(rHandle=rootHandle):
@@ -314,7 +362,14 @@ class OutlineModel(QAbstractItemModel):
             if (nwItem := SHARED.project.tree[tHandle]) is None:
                 continue
 
-            node = OutlineNode(tHandle, sTitle, nwItem, hItem, self._labels)
+            node = OutlineNode(
+                tHandle,
+                sTitle,
+                nwItem,
+                hItem,
+                self._labels,
+                self._styles.get(level, BLANK_STYLE),
+            )
             if level == 2:
                 root.addChild(node)
                 chapter = node
@@ -327,3 +382,11 @@ class OutlineModel(QAbstractItemModel):
 
         self._root = root
         self.endResetModel()
+
+    ##
+    #  Internal Functions
+    ##
+
+    def _newRootNode(self) -> OutlineNode:
+        """Reset the root node to an empty state."""
+        return OutlineNode("", "", None, None, self._labels, BLANK_STYLE)
