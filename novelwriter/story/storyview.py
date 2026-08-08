@@ -70,12 +70,17 @@ class GuiStoryView(QWidget):
 
     def openProjectTasks(self) -> None:
         """Run open project tasks."""
-        rootHandle = SHARED.project.data.getLastHandle("story")
-        self.storyPanel.outlineContent.refresh(rootHandle)
+        options = SHARED.project.options
+        outline = self.storyPanel.outlineContent
+        outline.refresh(SHARED.project.data.getLastHandle("story"))
+        outline.restoreColumnWidths(options.getList("GuiStoryOutline", "colWidths", []))
 
     def closeProjectTasks(self) -> None:
         """Run closing project tasks."""
-        self.storyPanel.outlineContent.clear()
+        options = SHARED.project.options
+        outline = self.storyPanel.outlineContent
+        options.setValue("GuiStoryOutline", "colWidths", outline.saveColumnWidths())
+        outline.clear()
 
     def showContent(self, widget: QWidget) -> None:
         """Add a widget to the content stack, if needed, and show it.

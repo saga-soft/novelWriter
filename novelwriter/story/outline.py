@@ -21,13 +21,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from PyQt6.QtCore import QModelIndex, QRect, QSize, Qt
 from PyQt6.QtGui import QFontMetrics, QPainter
 from PyQt6.QtWidgets import QAbstractItemView, QApplication, QFrame, QStyledItemDelegate, QStyleOptionViewItem, QWidget
 
 from novelwriter import CONFIG, SHARED
+from novelwriter.common import checkInt
+from novelwriter.constants import nwUnicode
 from novelwriter.extensions.expandpanel import NExpandablePanel
 from novelwriter.extensions.modified import NTreeView
 from novelwriter.models.outlinemodel import OutlineModel
@@ -35,8 +37,7 @@ from novelwriter.types import (
     QtAlignLeftMiddle,
     QtAlignLeftTop,
     QtElideRight,
-    QtHeaderFixed,
-    QtHeaderStretch,
+    QtHeaderInteractive,
     QtScrollAlwaysOff,
     QtScrollAsNeeded,
     QtSelected,
@@ -46,6 +47,7 @@ if TYPE_CHECKING:
     from novelwriter.story.storyview import GuiStoryView
 
 LINE_FLAGS = int(Qt.TextFlag.TextSingleLine) | int(QtAlignLeftMiddle)
+TOP_FLAGS = int(Qt.TextFlag.TextSingleLine) | int(QtAlignLeftTop)
 WRAP_FLAGS = int(Qt.TextFlag.TextWordWrap) | int(QtAlignLeftTop)
 
 
@@ -86,7 +88,7 @@ class GuiStoryOutline(NTreeView):
         self.setFrameStyle(QFrame.Shape.NoFrame)
         self.setUniformRowHeights(True)
         self.setAllColumnsShowFocus(True)
-        self.setHeaderHidden(True)
+        self.setHeaderHidden(False)
         self.setDragEnabled(False)
         self.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
@@ -94,10 +96,11 @@ class GuiStoryOutline(NTreeView):
         self.initViewport()
 
         if header := self.header():  # pragma: no branch
-            header.setStretchLastSection(False)
-            header.setSectionResizeMode(self.C_TITLE, QtHeaderFixed)
-            header.setSectionResizeMode(self.C_CHARS, QtHeaderFixed)
-            header.setSectionResizeMode(self.C_SYNOPSIS, QtHeaderStretch)
+            header.setStretchLastSection(True)
+            header.setMinimumSectionSize(60)
+            header.setSectionResizeMode(self.C_TITLE, QtHeaderInteractive)
+            header.setSectionResizeMode(self.C_CHARS, QtHeaderInteractive)
+            header.setSectionResizeMode(self.C_SYNOPSIS, QtHeaderInteractive)
             header.resizeSection(self.C_TITLE, 260)
             header.resizeSection(self.C_CHARS, 160)
 
@@ -131,19 +134,32 @@ class GuiStoryOutline(NTreeView):
         """Clear the outline."""
         self._model.clear()
 
+    def restoreColumnWidths(self, widths: list[Any]) -> None:
+        """Apply saved column widths to the header. Malformed values are
+        silently ignored so the stored format can safely change.
+        """
+        for column, width in enumerate(widths):
+            if (width := checkInt(width, 0)) > 0:
+                self.setColumnWidth(column, width)
+
+    def saveColumnWidths(self) -> list[int]:
+        """Return the current column widths as a list."""
+        columns = range(self._model.columnCount(QModelIndex()))
+        return [self.columnWidth(c) for c in columns]
+
 
 class _OutlineDelegate(QStyledItemDelegate):
     """GUI: Story Outline Row Delegate.
 
-    Paints each row as three lines of text: in the title column, the
-    heading title, the document and line number, and the word and
-    character count; in the characters column, the associated
-    characters; and in the synopsis column, the synopsis text
-    stretched over the remaining width and clipped to the same three
-    lines of height.
+    Paints each row over three lines of height. The title column shows
+    the heading title, the document and line number, and the word and
+    character count. The characters column shows the point of view and
+    focus on one line, and the associated characters wrapped below. The
+    synopsis column shows the synopsis stretched over the remaining
+    width. Content taller than the row is clipped.
     """
 
-    __slots__ = ("_fmSmall", "_fmTitle", "_margin", "_rowHeight", "_textCol")
+    __slots__ = ("_fm", "_fmB", "_margin", "_rowHeight", "_textCol")
 
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent=parent)
@@ -153,9 +169,9 @@ class _OutlineDelegate(QStyledItemDelegate):
 
     def updateTheme(self) -> None:
         """Refresh the cached theme fonts and colours."""
-        self._fmTitle = QFontMetrics(SHARED.theme.guiFontB)
-        self._fmSmall = QFontMetrics(SHARED.theme.guiFontSmall)
-        self._rowHeight = self._fmTitle.height() + 2 * self._fmSmall.height() + 2 * self._margin
+        self._fm = QFontMetrics(SHARED.theme.guiFont)
+        self._fmB = QFontMetrics(SHARED.theme.guiFontB)
+        self._rowHeight = self._fmB.height() + 2 * self._fm.height() + 2 * self._margin
         self._textCol = QApplication.palette().text().color()
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
@@ -188,27 +204,63 @@ class _OutlineDelegate(QStyledItemDelegate):
 
         match index.column():
             case GuiStoryOutline.C_TITLE:
-                hTitle = self._fmTitle.height()
-                hSmall = self._fmSmall.height()
+                hTitle = self._fmB.height()
+                hLine = self._fm.height()
 
                 painter.setFont(SHARED.theme.guiFontB)
-                title = self._fmTitle.elidedText(node.title, QtElideRight, w)
+                title = self._fmB.elidedText(node.title, QtElideRight, w)
                 painter.drawText(QRect(x, y, w, hTitle), LINE_FLAGS, title)
 
-                painter.setFont(SHARED.theme.guiFontSmall)
-                label = self._fmSmall.elidedText(node.label, QtElideRight, w)
-                painter.drawText(QRect(x, y + hTitle, w, hSmall), LINE_FLAGS, label)
+                painter.setFont(SHARED.theme.guiFont)
+                label = self._fm.elidedText(node.label, QtElideRight, w)
+                painter.drawText(QRect(x, y + hTitle, w, hLine), LINE_FLAGS, label)
 
-                counts = self._fmSmall.elidedText(node.counts, QtElideRight, w)
-                painter.drawText(QRect(x, y + hTitle + hSmall, w, hSmall), LINE_FLAGS, counts)
+                counts = self._fm.elidedText(node.counts, QtElideRight, w)
+                painter.drawText(QRect(x, y + hTitle + hLine, w, hLine), LINE_FLAGS, counts)
 
             case GuiStoryOutline.C_CHARS:
-                painter.setFont(SHARED.theme.guiFontSmall)
-                text = self._fmSmall.elidedText(node.characters, QtElideRight, w)
-                painter.drawText(QRect(x, y, w, h), LINE_FLAGS, text)
+                hLine = self._fm.height()
+                maxX = x + w
+
+                # Line 1: Point of View and Focus
+                xPos = x
+                for label, value in (node.pov, node.focus):
+                    if not value:
+                        continue
+                    if xPos > x:
+                        painter.setFont(SHARED.theme.guiFont)
+                        sep = f"  {nwUnicode.U_BULL}  "
+                        painter.drawText(QRect(xPos, y, maxX - xPos, hLine), LINE_FLAGS, sep)
+                        xPos += self._fm.horizontalAdvance(sep)
+                    xPos = self._paintLabelled(painter, xPos, y, maxX, hLine, label, value)
+
+                # Line 2: Characters
+                label, value = node.characters
+                if value:
+                    yChar = y + hLine
+                    text = f"{label}: "
+                    painter.setFont(SHARED.theme.guiFontB)
+                    painter.drawText(QRect(x, yChar, w, hLine), TOP_FLAGS, text)
+                    labelW = self._fmB.horizontalAdvance(text)
+                    painter.setFont(SHARED.theme.guiFont)
+                    painter.drawText(QRect(x + labelW, yChar, w - labelW, h - hLine), WRAP_FLAGS, value)
 
             case GuiStoryOutline.C_SYNOPSIS:
-                painter.setFont(SHARED.theme.guiFontSmall)
+                painter.setFont(SHARED.theme.guiFont)
                 painter.drawText(QRect(x, y, w, h), WRAP_FLAGS, node.synopsis)
 
         painter.restore()
+
+    def _paintLabelled(self, painter: QPainter, x: int, y: int, maxX: int, h: int, label: str, value: str) -> int:
+        """Paint a bold label followed by a regular value on one line,
+        and return the x position after the value.
+        """
+        text = f"{label}: "
+        painter.setFont(SHARED.theme.guiFontB)
+        painter.drawText(QRect(x, y, maxX - x, h), LINE_FLAGS, text)
+        x += self._fmB.horizontalAdvance(text)
+
+        painter.setFont(SHARED.theme.guiFont)
+        value = self._fm.elidedText(value, QtElideRight, maxX - x)
+        painter.drawText(QRect(x, y, maxX - x, h), LINE_FLAGS, value)
+        return x + self._fm.horizontalAdvance(value)

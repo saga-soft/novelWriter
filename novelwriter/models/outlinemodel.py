@@ -62,11 +62,13 @@ class OutlineNode:
         "_children",
         "_counts",
         "_document",
+        "_focus",
         "_handle",
         "_heading",
         "_item",
         "_key",
         "_parent",
+        "_pov",
         "_row",
         "_title",
         "_tr",
@@ -90,6 +92,8 @@ class OutlineNode:
         self._title = ""
         self._document = ""
         self._counts = ""
+        self._pov = ""
+        self._focus = ""
         self._characters = ""
 
         # Tree Structure
@@ -129,9 +133,19 @@ class OutlineNode:
         return self._counts
 
     @property
-    def characters(self) -> str:
+    def pov(self) -> tuple[str, str]:
+        """The point of view references of the heading."""
+        return self._tr.kPov, self._pov
+
+    @property
+    def focus(self) -> tuple[str, str]:
+        """The focus references of the heading."""
+        return self._tr.kFocus, self._focus
+
+    @property
+    def characters(self) -> tuple[str, str]:
         """The character references of the heading."""
-        return self._characters
+        return self._tr.kChars, self._characters
 
     @property
     def synopsis(self) -> str:
@@ -188,22 +202,9 @@ class OutlineNode:
             self._title = h.title
             self._counts = f"{h.wordCount:n} {tr.sWords}  {nwUnicode.U_BULL}  {h.charCount:n} {tr.sChars}"
 
-            pov = refs[nwKeyWords.POV_KEY]
-            focus = refs[nwKeyWords.FOCUS_KEY]
-            chars = refs[nwKeyWords.CHAR_KEY]
-
-            characters = []
-            if pov:
-                characters.append(f"{tr.kPov}: {', '.join(pov)}")
-            if focus:
-                if characters:
-                    characters.append(f"  {nwUnicode.U_BULL}  ")
-                characters.append(f"{tr.kFocus}: {', '.join(focus)}")
-            if chars:
-                if characters:
-                    characters.append(f"  {nwUnicode.U_BULL}  ")
-                characters.append(f"{tr.kChars}: {', '.join(chars)}")
-            self._characters = "".join(characters)
+            self._pov = ", ".join(refs[nwKeyWords.POV_KEY])
+            self._focus = ", ".join(refs[nwKeyWords.FOCUS_KEY])
+            self._characters = ", ".join(refs[nwKeyWords.CHAR_KEY])
 
         if i := self._item:
             self._document = i.itemName
@@ -219,10 +220,11 @@ class OutlineModel(QAbstractItemModel):
     such ancestor exists.
     """
 
-    __slots__ = ("_labels", "_root")
+    __slots__ = ("_headers", "_labels", "_root")
 
     def __init__(self) -> None:
         super().__init__()
+        self._headers = [self.tr("Story"), self.tr("Characters"), self.tr("Synopsis")]
         self._labels = _TrCache(
             sWords=trStats(nwLabels.STATS_NAME[nwStats.WORDS]),
             sChars=trStats(nwLabels.STATS_NAME[nwStats.CHARS]),
@@ -267,6 +269,12 @@ class OutlineModel(QAbstractItemModel):
     def data(self, index: QModelIndex, role: Qt.ItemDataRole) -> None:
         """Return display data for a node."""
         return
+
+    def headerData(self, section: int, orientation: Qt.Orientation, role: Qt.ItemDataRole) -> str | None:
+        """Return the header labels for the outline columns."""
+        if orientation == Qt.Orientation.Horizontal and role == Qt.ItemDataRole.DisplayRole:
+            return self._headers[section] if 0 <= section < len(self._headers) else None
+        return None
 
     def flags(self, index: QModelIndex) -> Qt.ItemFlag:
         """Return flags for a node."""
