@@ -24,6 +24,9 @@ from __future__ import annotations
 import csv
 import logging
 
+from enum import Enum
+from typing import TYPE_CHECKING
+
 from PyQt6.QtCore import Qt, pyqtSlot
 from PyQt6.QtWidgets import QFileDialog, QHBoxLayout, QSplitter, QStackedWidget, QVBoxLayout, QWidget
 
@@ -34,6 +37,9 @@ from novelwriter.extensions.configlayout import NColorLabel
 from novelwriter.extensions.modified import NIconButton
 from novelwriter.extensions.novelselector import NovelSelector
 from novelwriter.story.storypanel import GuiStoryPanel
+
+if TYPE_CHECKING:
+    from novelwriter.enum import nwChange
 
 logger = logging.getLogger(__name__)
 
@@ -148,6 +154,15 @@ class GuiStoryView(QWidget):
         if self.contentStack.indexOf(widget) == -1:
             self.contentStack.addWidget(widget)
         self.contentStack.setCurrentWidget(widget)
+
+    ##
+    #  Public Slots
+    ##
+
+    @pyqtSlot(str, Enum)
+    def updateRootItem(self, tHandle: str, change: nwChange) -> None:
+        """Refresh the novel selector when a root folder changes."""
+        self.novelValue.refreshNovelList()
 
     ##
     #  Private Slots

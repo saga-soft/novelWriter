@@ -39,6 +39,7 @@ from novelwriter.types import (
     QtAlignLeftTop,
     QtElideRight,
     QtHeaderInteractive,
+    QtHeaderStretch,
     QtScrollAlwaysOff,
     QtScrollAsNeeded,
     QtSelected,
@@ -107,11 +108,11 @@ class GuiStoryOutline(NTreeView):
         self._disableNativeHighlight()
 
         if header := self.header():  # pragma: no branch
-            header.setStretchLastSection(True)
+            header.setStretchLastSection(False)
             header.setMinimumSectionSize(60)
             header.setSectionResizeMode(self.C_TITLE, QtHeaderInteractive)
             header.setSectionResizeMode(self.C_CHARS, QtHeaderInteractive)
-            header.setSectionResizeMode(self.C_SYNOPSIS, QtHeaderInteractive)
+            header.setSectionResizeMode(self.C_SYNOPSIS, QtHeaderStretch)
             header.resizeSection(self.C_TITLE, 260)
             header.resizeSection(self.C_CHARS, 160)
 
