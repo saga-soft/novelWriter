@@ -1188,6 +1188,7 @@ class GuiMain(QMainWindow):
             self.projSearch.beginSearch(self.docEditor.getSelectedText() if self.docEditor.anyFocus() else "")
         elif view == nwView.STORY:
             self.mainStack.setCurrentWidget(self.storyView)
+            self.storyView.viewStory()
         else:  # pragma: no cover
             pass
 

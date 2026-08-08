@@ -21,6 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from time import time
 from typing import TYPE_CHECKING, Any
 
 from PyQt6.QtCore import QModelIndex, QRect, QSize, Qt
@@ -87,6 +88,11 @@ class GuiStoryOutline(NTreeView):
         self._model = OutlineModel()
         self._delegate = _OutlineDelegate(self)
 
+        # Build State
+        self._built = False
+        self._lastHandle: str | None = None
+        self._lastBuild = 0.0
+
         self.setModel(self._model)
         self.setItemDelegate(self._delegate)
         self.setFrameStyle(QFrame.Shape.NoFrame)
@@ -141,13 +147,23 @@ class GuiStoryOutline(NTreeView):
         palette.setColor(QPalette.ColorRole.Highlight, QtTransparent)
         self.setPalette(palette)
 
-    def refresh(self, rootHandle: str | None) -> None:
-        """Rebuild the outline from the project index."""
-        self._model.buildOutline(SHARED.project.index, rootHandle)
+    def refresh(self, rootHandle: str | None, force: bool = False) -> None:
+        """Rebuild the outline from the project index, but only if there
+        is a genuine change since the last build, or if forced.
+        """
+        index = SHARED.project.index
+        if force or not self._built or rootHandle != self._lastHandle or index.indexChangedSince(self._lastBuild):
+            self._model.buildOutline(index, rootHandle)
+            self._built = True
+            self._lastHandle = rootHandle
+            self._lastBuild = time()
 
     def clear(self) -> None:
         """Clear the outline."""
         self._model.clear()
+        self._built = False
+        self._lastHandle = None
+        self._lastBuild = 0.0
 
     def restoreColumnWidths(self, widths: list[Any]) -> None:
         """Apply saved column widths to the header. Malformed values are
