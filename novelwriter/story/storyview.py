@@ -240,7 +240,7 @@ class GuiStoryView(QWidget):
             ]
         ]
 
-        for tHandle, _sTitle, hItem in index.iterNovelStructure(rHandle=rootHandle, activeOnly=True):
+        for tHandle, _, hItem in index.iterNovelStructure(rHandle=rootHandle, activeOnly=True):
             if hItem.level != "H0" and (nwItem := project.tree[tHandle]):
                 refs = hItem.getReferences()
                 comments = dict(hItem.comments.items())
