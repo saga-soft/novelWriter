@@ -21,11 +21,21 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
-from PyQt6.QtCore import Qt, pyqtSlot
-from PyQt6.QtWidgets import QSplitter, QStackedWidget, QVBoxLayout, QWidget
+import csv
+import logging
+
+from PyQt6.QtCore import QSize, Qt, pyqtSlot
+from PyQt6.QtWidgets import QFileDialog, QHBoxLayout, QSplitter, QStackedWidget, QVBoxLayout, QWidget
 
 from novelwriter import CONFIG, SHARED
+from novelwriter.common import formatFileFilter
+from novelwriter.constants import nwKeyWords, nwLabels, nwStats, trConst, trStats
+from novelwriter.extensions.configlayout import NColorLabel
+from novelwriter.extensions.modified import NIconButton
+from novelwriter.extensions.novelselector import NovelSelector
 from novelwriter.story.storypanel import GuiStoryPanel
+
+logger = logging.getLogger(__name__)
 
 
 class GuiStoryView(QWidget):
@@ -37,6 +47,28 @@ class GuiStoryView(QWidget):
         self.storyPanel = GuiStoryPanel(self)
         self.contentStack = QStackedWidget(self)
 
+        # Top Bar
+        self.titleLabel = NColorLabel(
+            self.tr("Story View"),
+            self,
+            color=SHARED.theme.helpText,
+            scale=NColorLabel.HEADER_SCALE,
+            bold=True,
+        )
+
+        self.novelValue = NovelSelector(self)
+        self.novelValue.setIncludeAll(True)
+        self.novelValue.setMinimumWidth(200)
+        self.novelValue.novelSelectionChanged.connect(self._novelValueChanged)
+
+        self.refreshView = NIconButton(self, QSize(24, 24), "refresh:change")
+        self.refreshView.setToolTip(self.tr("Refresh the story view"))
+
+        self.exportData = NIconButton(self, QSize(24, 24), "export:action")
+        self.exportData.setToolTip(self.tr("Export the story view data"))
+        self.exportData.clicked.connect(self._exportData)
+
+        # Main Splitter
         self.splitMain = QSplitter(Qt.Orientation.Horizontal)
         self.splitMain.setContentsMargins(0, 0, 0, 0)
         self.splitMain.addWidget(self.storyPanel)
@@ -51,10 +83,22 @@ class GuiStoryView(QWidget):
         self.splitMain.splitterMoved.connect(self._saveSplitterSizes)
 
         # Assemble
+        self.topBox = QHBoxLayout()
+        self.topBox.addWidget(self.titleLabel)
+        self.topBox.addSpacing(8)
+        self.topBox.addWidget(self.novelValue)
+        self.topBox.addSpacing(8)
+        self.topBox.addWidget(self.refreshView)
+        self.topBox.addWidget(self.exportData)
+        self.topBox.addStretch(1)
+        self.topBox.setContentsMargins(4, 4, 0, 0)
+        self.topBox.setSpacing(4)
+
         self.outerBox = QVBoxLayout()
+        self.outerBox.addLayout(self.topBox)
         self.outerBox.addWidget(self.splitMain)
         self.outerBox.setContentsMargins(0, 0, 0, 0)
-        self.outerBox.setSpacing(0)
+        self.outerBox.setSpacing(8)
 
         self.setLayout(self.outerBox)
 
@@ -100,3 +144,97 @@ class GuiStoryView(QWidget):
     def _saveSplitterSizes(self, pos: int, index: int) -> None:
         """Save the splitter sizes when moved by the user."""
         CONFIG.storyPanePos = self.splitMain.sizes()
+
+    @pyqtSlot(str)
+    def _novelValueChanged(self, tHandle: str) -> None:
+        """Handle novel selection changes."""
+
+    @pyqtSlot()
+    def _exportData(self) -> None:
+        """Export the story outline data as a CSV file."""
+        name = CONFIG.lastPath("outline") / f"{SHARED.project.data.fileSafeName}.csv"
+        if path := QFileDialog.getSaveFileName(
+            self, self.tr("Save Outline As"), str(name), formatFileFilter(["*.csv", "*"])
+        )[0]:
+            CONFIG.setLastPath("outline", path)
+            logger.info("Writing CSV file: %s", path)
+            with open(path, mode="w", newline="", encoding="utf-8") as csvFile:
+                writer = csv.writer(csvFile, dialect="excel", quoting=csv.QUOTE_ALL)
+                writer.writerows(self._dumpNovelData(self.novelValue.handle))
+
+    ##
+    #  Internal Functions
+    ##
+
+    def _dumpNovelData(self, rootHandle: str | None) -> list[list[str | int]]:
+        """Dump all novel data into a table."""
+        project = SHARED.project
+        index = project.index
+        sLabel = project.localLookup("Story Structure")
+        nLabel = project.localLookup("Note")
+        sKeys = sorted(index.getStoryKeys())
+        nKeys = sorted(index.getNoteKeys())
+        sMatch = [f"story.{k}" for k in sKeys]
+        nMatch = [f"note.{k}" for k in nKeys]
+        sHeaders = [f"{sLabel} ({k})" for k in sKeys]
+        nHeaders = [f"{nLabel} ({k})" for k in nKeys]
+
+        data: list[list[str | int]] = [
+            [
+                "H",
+                self.tr("Title"),
+                self.tr("Document"),
+                self.tr("Line"),
+                self.tr("Status"),
+                trStats(nwLabels.STATS_NAME[nwStats.CHARS]),
+                trStats(nwLabels.STATS_NAME[nwStats.WORDS]),
+                trStats(nwLabels.STATS_NAME[nwStats.PARAGRAPHS]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.POV_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.FOCUS_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.CHAR_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.PLOT_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.TIME_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.WORLD_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.OBJECT_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.ENTITY_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.CUSTOM_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.STORY_KEY]),
+                trConst(nwLabels.KEY_NAME[nwKeyWords.MENTION_KEY]),
+                self.tr("Synopsis"),
+                *sHeaders,
+                *nHeaders,
+            ]
+        ]
+
+        for tHandle, _sTitle, hItem in index.iterNovelStructure(rHandle=rootHandle, activeOnly=True):
+            if hItem.level != "H0" and (nwItem := project.tree[tHandle]):
+                refs = hItem.getReferences()
+                comments = dict(hItem.comments.items())
+                story = [comments.get(k, "") for k in sMatch]
+                notes = [comments.get(k, "") for k in nMatch]
+                data.append([
+                    hItem.level,
+                    hItem.title,
+                    nwItem.itemName,
+                    hItem.line,
+                    nwItem.getImportStatus()[0],
+                    hItem.charCount,
+                    hItem.wordCount,
+                    hItem.paraCount,
+                    ", ".join(refs[nwKeyWords.POV_KEY]),
+                    ", ".join(refs[nwKeyWords.FOCUS_KEY]),
+                    ", ".join(refs[nwKeyWords.CHAR_KEY]),
+                    ", ".join(refs[nwKeyWords.PLOT_KEY]),
+                    ", ".join(refs[nwKeyWords.TIME_KEY]),
+                    ", ".join(refs[nwKeyWords.WORLD_KEY]),
+                    ", ".join(refs[nwKeyWords.OBJECT_KEY]),
+                    ", ".join(refs[nwKeyWords.ENTITY_KEY]),
+                    ", ".join(refs[nwKeyWords.CUSTOM_KEY]),
+                    ", ".join(refs[nwKeyWords.STORY_KEY]),
+                    ", ".join(refs[nwKeyWords.MENTION_KEY]),
+                    hItem.synopsis,
+                    *story,
+                    *notes,
+                ])
+
+        return data
