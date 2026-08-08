@@ -51,8 +51,6 @@ LINE_FLAGS = int(Qt.TextFlag.TextSingleLine) | int(QtAlignLeftMiddle)
 TOP_FLAGS = int(Qt.TextFlag.TextSingleLine) | int(QtAlignLeftTop)
 WRAP_FLAGS = int(Qt.TextFlag.TextWordWrap) | int(QtAlignLeftTop)
 
-# Outer padding around each row block so the coloured rows don't stack
-# as touching blocks, and the corner radius of the box.
 ROW_PAD = 3
 ROW_RADIUS = 6
 
@@ -92,7 +90,7 @@ class GuiStoryOutline(NTreeView):
         self.setModel(self._model)
         self.setItemDelegate(self._delegate)
         self.setFrameStyle(QFrame.Shape.NoFrame)
-        self.setUniformRowHeights(True)
+        self.setUniformRowHeights(False)
         self.setAllColumnsShowFocus(True)
         self.setHeaderHidden(False)
         self.setDragEnabled(False)
@@ -146,7 +144,6 @@ class GuiStoryOutline(NTreeView):
     def refresh(self, rootHandle: str | None) -> None:
         """Rebuild the outline from the project index."""
         self._model.buildOutline(SHARED.project.index, rootHandle)
-        self.expandAll()
 
     def clear(self) -> None:
         """Clear the outline."""
@@ -207,23 +204,30 @@ class _OutlineDelegate(QStyledItemDelegate):
     width. Content taller than the row is clipped.
     """
 
-    __slots__ = ("_fm", "_fmB", "_margin", "_rowHeight", "_textCol")
+    __slots__ = ("_fm", "_fmB", "_lineHeight", "_margin", "_rowHeight", "_textCol")
 
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent=parent)
-        self._margin = 4
+        self._margin = 8
         self._rowHeight = 0
+        self._lineHeight = 0
         self.updateTheme()
 
     def updateTheme(self) -> None:
         """Refresh the cached theme fonts and colours."""
         self._fm = QFontMetrics(SHARED.theme.guiFont)
         self._fmB = QFontMetrics(SHARED.theme.guiFontB)
-        self._rowHeight = self._fmB.height() + 2 * self._fm.height() + 2 * self._margin + 2 * ROW_PAD
+        self._lineHeight = self._fmB.height() + 2 * self._margin + 2 * ROW_PAD
+        self._rowHeight = self._lineHeight + 2 * self._fm.height()
         self._textCol = QApplication.palette().text().color()
 
     def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
-        """Return a fixed row height for three lines of text."""
+        """Return the row height: one line for partitions, three lines for
+        all other rows.
+        """
+        model = index.model()
+        if isinstance(model, OutlineModel) and (node := model.node(index)) and node.level == 1:
+            return QSize(option.rect.width(), self._lineHeight)
         return QSize(option.rect.width(), self._rowHeight)
 
     def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
@@ -249,6 +253,14 @@ class _OutlineDelegate(QStyledItemDelegate):
         y = rect.y() + pad
         w = max(0, rect.width() - 2 * pad)
         h = max(0, rect.height() - 2 * pad)
+
+        if node.level == 1:
+            if index.column() == GuiStoryOutline.C_TITLE:
+                painter.setFont(SHARED.theme.guiFontB)
+                title = self._fmB.elidedText(node.title, QtElideRight, w)
+                painter.drawText(QRect(x, y, w, h), LINE_FLAGS, title)
+            painter.restore()
+            return
 
         match index.column():
             case GuiStoryOutline.C_TITLE:

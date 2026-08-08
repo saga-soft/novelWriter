@@ -240,19 +240,15 @@ class OutlineNode:
             self._document = i.itemName
 
 
-ROOT_NODE = OutlineNode(
-    "", "", None, None, _TrCache("", "", "", "", ""), NodeStyle(QtTransparent, QtTransparent, QtTransparent)
-)
-
-
 class OutlineModel(QAbstractItemModel):
     """Core: Outline Model Class.
 
-    A tree of chapter, scene and section headings for a single novel
-    root, built fresh from the project index whenever buildOutline is
-    called. Scenes nest under the last seen chapter, and sections nest
-    under the last seen scene, falling back to the tree root when no
-    such ancestor exists.
+    A tree of partition, chapter, scene and section headings for a single
+    novel root, built fresh from the project index whenever buildOutline
+    is called. Partitions are flat, non-foldable dividers at the top
+    level. Scenes nest under the last seen chapter, and sections nest
+    under the last seen scene, falling back to the tree root when no such
+    ancestor exists.
     """
 
     __slots__ = ("_headers", "_labels", "_root", "_styles")
@@ -274,11 +270,13 @@ class OutlineModel(QAbstractItemModel):
         self._background = {}
         for key in nwStyles.H_LEVEL.values():
             color = theme.getStructureColor(key)
+            border = QColor(color)
+            border.setAlphaF(0.7)
             background = QColor(color)
             background.setAlphaF(0.1)
             highlight = QColor(color)
             highlight.setAlphaF(0.2)
-            self._styles[key] = NodeStyle(color, background, highlight)
+            self._styles[key] = NodeStyle(border, background, highlight)
 
         self._root = self._newRootNode()
 
@@ -356,7 +354,7 @@ class OutlineModel(QAbstractItemModel):
         scene: OutlineNode | None = None
         for tHandle, sTitle, hItem in index.iterNovelStructure(rHandle=rootHandle):
             level = nwStyles.H_LEVEL.get(hItem.level, 0)
-            if level < 2:
+            if level < 1:
                 continue
 
             if (nwItem := SHARED.project.tree[tHandle]) is None:
@@ -370,7 +368,11 @@ class OutlineModel(QAbstractItemModel):
                 self._labels,
                 self._styles.get(level, BLANK_STYLE),
             )
-            if level == 2:
+            if level == 1:
+                root.addChild(node)
+                chapter = None
+                scene = None
+            elif level == 2:
                 root.addChild(node)
                 chapter = node
                 scene = None
