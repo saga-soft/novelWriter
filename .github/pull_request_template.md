@@ -10,11 +10,11 @@ Please check the following before you make a pull request:
 * Fill in the Summary section below, and if relevant, mention the issue numbers related to the PR.
 -->
 
-**Summary:**
+### Summary
 
-**Related Issue(s):**
+### Related Issue(s)
 
-**Reviewer's Checklist:**
+### Reviewer's Checklist
 
 * [ ] The header of all files contain a reference to the repository license
 * [ ] The overall test coverage is increased or remains the same as before
