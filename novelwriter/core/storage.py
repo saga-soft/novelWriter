@@ -21,7 +21,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
-import json
 import logging
 
 from enum import Enum
@@ -474,9 +473,6 @@ class _LegacyStorage:
         self._convertOldLogFile(  # Changed in 2.1 Beta 1
             path / "meta" / "sessionStats.log", path / "meta" / nwFiles.SESS_FILE
         )
-        self._convertOldOptionsFile(  # Changed in 2.1 Beta 1
-            path / "meta" / "guiOptions.json", path / "meta" / nwFiles.OPTS_FILE
-        )
 
         # Delete removed files
         remove = [
@@ -572,42 +568,6 @@ class _LegacyStorage:
 
         except Exception:
             logger.error("Failed to convert old stats file")
-            logException()
-
-        return
-
-    def _convertOldOptionsFile(self, optsOld: Path, optsNew: Path) -> None:
-        """Convert the old options state file format to new format."""
-        if optsNew.exists() or not optsOld.exists():
-            # If the new file already exists, we won't overwrite it
-            return
-
-        try:
-            data = {}
-            logger.info("Converting: %s", optsOld)
-            with open(optsOld, mode="r", encoding="utf-8") as fObj:
-                data = json.load(fObj)
-                if "GuiOutline" in data:
-                    # Convert Outline Values
-                    state = {}
-                    outline = data.get("GuiOutline", {})
-                    hidden = outline.get("columnHidden", {})
-                    width = outline.get("columnWidth", {})
-                    for key in outline.get("headerOrder", []):
-                        state[key] = [hidden.get(key, False), width.get(key, 100)]
-                    data["GuiOutline"]["columnState"] = state
-
-            with open(optsNew, mode="w", encoding="utf-8") as fObj:
-                json.dump({"novelWriter.guiOptions": data}, fObj, indent=2)
-
-            # If we're here, we remove the old file, and then we reload
-            # the converted file and save it again
-            optsOld.unlink()
-            self._project.options.loadSettings()
-            self._project.options.saveSettings()
-
-        except Exception:
-            logger.error("Failed to convert old options file")
             logException()
 
         return

@@ -359,11 +359,11 @@ class GuiMainMenu(QMenuBar):
         self.aFocusDocument.setShortcut("Ctrl+E")
         self.aFocusDocument.triggered.connect(qtWeakLambda(self._emitFocusChange, nwFocus.DOCUMENT))
 
-        # View > Outline
-        self.aFocusOutline = qtAddAction(self.viewMenu, self.tr("Go to Outline"))
-        self.aFocusOutline.setShortcut("Ctrl+Shift+T")
-        self.aFocusOutline.triggered.connect(qtWeakLambda(self._emitFocusChange, nwFocus.OUTLINE))
-        self.mainGui.addAction(self.aFocusOutline)
+        # View > Story View
+        self.aFocusStory = qtAddAction(self.viewMenu, self.tr("Go to Story View"))
+        self.aFocusStory.setShortcut("Ctrl+Shift+T")
+        self.aFocusStory.triggered.connect(qtWeakLambda(self._emitFocusChange, nwFocus.STORY))
+        self.mainGui.addAction(self.aFocusStory)
 
         # View > Separator
         self.viewMenu.addSeparator()

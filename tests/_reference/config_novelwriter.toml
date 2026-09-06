@@ -1,8 +1,8 @@
 [Meta]
-timeStamp = "2026-07-22 17:22:05"
+timeStamp = "2026-08-08 17:58:45"
 
 [Main]
-font = ""
+font = "Sans Serif,9,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0"
 lightTheme = "default_light"
 darkTheme = "default_dark"
 themeMode = "AUTO"
@@ -24,8 +24,8 @@ preferences = [700, 615]
 fontSelect = [700, 550]
 mainPane = [300, 800]
 viewPane = [500, 150]
-outlinePane = [500, 150]
 searchPane = [150, 500]
+storyPane = [300, 800]
 moveMainWin = true
 
 [Project]

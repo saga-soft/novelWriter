@@ -185,7 +185,6 @@ class Config:
         "osType",
         "osUnknown",
         "osWindows",
-        "outlinePanePos",
         "prefsWinSize",
         "scaleHeadings",
         "scrollPastEnd",
@@ -212,6 +211,7 @@ class Config:
         "singleStarBold",
         "spellLanguage",
         "stopWhenIdle",
+        "storyPanePos",
         "tabWidth",
         "textFont",
         "textMargin",
@@ -321,8 +321,8 @@ class Config:
         self.fontWinSize = [700, 550]  # Last size of the Font dialog
         self.mainPanePos = [300, 800]  # Last position of the main window splitter
         self.viewPanePos = [500, 150]  # Last position of the document viewer splitter
-        self.outlinePanePos = [500, 150]  # Last position of the outline panel splitter
         self.searchPanePos = [150, 500]  # Last position of the project search splitter
+        self.storyPanePos = [300, 800]  # Last position of the story panel splitter
         self.moveMainWin = True  # Move main window to the screen middle on startup
 
         # Project Settings
@@ -829,8 +829,8 @@ class Config:
         self.fontWinSize = parser.getIntList(sec, "fontSelect", self.fontWinSize)
         self.mainPanePos = parser.getIntList(sec, "mainPane", self.mainPanePos)
         self.viewPanePos = parser.getIntList(sec, "viewPane", self.viewPanePos)
-        self.outlinePanePos = parser.getIntList(sec, "outlinePane", self.outlinePanePos)
         self.searchPanePos = parser.getIntList(sec, "searchPane", self.searchPanePos)
+        self.storyPanePos = parser.getIntList(sec, "storyPane", self.storyPanePos)
         self.moveMainWin = parser.getBool(sec, "moveMainWin", self.moveMainWin)
 
         # Project
@@ -973,8 +973,8 @@ class Config:
             "fontSelect": self.fontWinSize,
             "mainPane": self.mainPanePos,
             "viewPane": self.viewPanePos,
-            "outlinePane": self.outlinePanePos,
             "searchPane": self.searchPanePos,
+            "storyPane": self.storyPanePos,
             "moveMainWin": self.moveMainWin,
         }
 
@@ -1212,7 +1212,7 @@ class RecentProjects:
 class RecentPaths:
     """A record of recently used file paths."""
 
-    KEYS: Final[list[str]] = ["default", "project", "import", "outline", "stats"]
+    KEYS: Final[list[str]] = ["default", "project", "import", "story", "stats"]
 
     def __init__(self, config: Config) -> None:
         self._conf = config
