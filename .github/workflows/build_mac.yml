@@ -1,6 +1,18 @@
 name: Build MacOS
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - feat/package-main-macos
+  workflow_dispatch:
+    inputs:
+      configuration:
+        description: "Sign and notarise the app"
+        type: choice
+        options:
+          - Debug
+          - Release
+        default: Debug
 
 jobs:
   buildAssets:
@@ -11,16 +23,11 @@ jobs:
     permissions:
       contents: read
 
-  buildMac-AMD64:
+  buildMac:
     needs: buildAssets
-    uses: ./.github/workflows/part_macos_amd64.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
-  buildMac-M1:
-    needs: buildAssets
-    uses: ./.github/workflows/part_macos_m1.yml
+    uses: ./.github/workflows/part_macos.yml
+    with:
+      configuration: ${{ inputs.configuration || 'Debug' }}
     secrets: inherit
     permissions:
       contents: read

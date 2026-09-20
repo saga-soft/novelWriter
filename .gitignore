@@ -6,11 +6,11 @@
 /dist/
 /dist_*/
 *.spec
+!/setup/macos/novelWriter.spec
 *.egg-info
 setup.iss
 /novelwriter.desktop
 /novelWriter.pyw
-/setup/macos/Info.plist
 /setup/windows/build
 .flatpak-builder
 .venv
