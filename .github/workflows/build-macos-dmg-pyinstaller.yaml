@@ -1,0 +1,313 @@
+name: Build macOS DMG (PyInstaller)
+
+# Publishing a release builds the macOS DMG and attaches it to that release
+# tag. workflow_dispatch is kept for manual/test runs (artifact only).
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+# Avoid overlapping runs on the same ref (e.g. a re-published release).
+concurrency:
+  group: build-macos-dmg-pyinstaller-${{ github.ref }}
+  cancel-in-progress: true
+
+# Developer ID signing + notarization activate automatically when these
+# repository secrets are set. Without them the workflow still produces an
+# ad-hoc signed (unnotarized) build, so forks and PRs keep working.
+#   MACOS_CERTIFICATE        base64 of the Developer ID Application .p12
+#   MACOS_CERTIFICATE_PWD    password for that .p12
+#   MACOS_SIGN_IDENTITY      e.g. "Developer ID Application: Name (TEAMID)"
+#   MACOS_NOTARY_APPLE_ID    Apple ID email with team access
+#   MACOS_NOTARY_PASSWORD    app-specific password for that Apple ID
+#   MACOS_NOTARY_TEAM_ID     Apple Developer Team ID
+
+jobs:
+  # Compile .qm translations, sample.zip, PDF manual and optional icon themes
+  # once on Linux, then share the populated novelwriter/assets/ tree with
+  # the per-architecture macOS jobs via an artifact.
+  buildAssets:
+    uses: ./.github/workflows/part_assets.yml
+    permissions:
+      contents: read
+
+  build-dmg:
+    needs: buildAssets
+    name: Build DMG (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Intel (x86_64) is disabled for now — no way to test the AMD build,
+        # and macos-13 Intel runners are scarce/slow to allocate. To bring it
+        # back, add this entry under `include:`
+        #   - arch: x86_64
+        #     runner: macos-13   # Intel
+        #     label: AMD64
+        include:
+          - arch: arm64
+            runner: macos-14   # Apple Silicon
+            label: M1
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      # enchant is required at build time: PyInstaller's enchant hook loads
+      # libenchant during analysis to discover what to bundle, and then
+      # PyInstaller's Mach-O dependency analysis pulls in libenchant's
+      # transitive deps (glib, gio, aspell, ...) with their install names
+      # rewritten to @rpath — so spell-check works in the shipped app.
+      - name: Install system dependencies
+        run: brew install create-dmg enchant
+
+      - name: Install Python build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller PyQt6 pyenchant
+
+      # Decide signing mode from secret presence. Secrets can't be used in
+      # step-level `if:` directly, so expose the result as an output.
+      - name: Determine signing mode
+        id: signing
+        env:
+          CERT: ${{ secrets.MACOS_CERTIFICATE }}
+        run: |
+          if [ -n "${CERT:-}" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "Developer ID signing + notarization: ENABLED"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Developer ID signing + notarization: DISABLED (ad-hoc fallback)"
+          fi
+
+      # Import the Developer ID Application certificate into a throwaway
+      # keychain so codesign can use it non-interactively. The keychain
+      # password is random and never leaves this step; the keychain is
+      # deleted in the always() cleanup at the end.
+      - name: Import signing certificate
+        if: steps.signing.outputs.enabled == 'true'
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+        run: |
+          CERT_PATH="$RUNNER_TEMP/certificate.p12"
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+          KEYCHAIN_PWD=$(openssl rand -base64 24)
+
+          printf '%s' "$MACOS_CERTIFICATE" | base64 --decode > "$CERT_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PWD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PWD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$MACOS_CERTIFICATE_PWD" \
+            -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PWD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH" login.keychain
+
+          rm -f "$CERT_PATH"
+
+      - name: Download pre-built assets
+        uses: actions/download-artifact@v8
+        with:
+          name: nw-assets
+          path: novelwriter/assets
+
+      - name: Verify required assets are present
+        run: |
+          test -f novelwriter/assets/sample.zip \
+            || { echo "ERROR: novelwriter/assets/sample.zip missing"; exit 1; }
+          ls novelwriter/assets/i18n/*.qm >/dev/null 2>&1 \
+            || { echo "ERROR: no compiled .qm translation files in novelwriter/assets/i18n/"; exit 1; }
+
+      - name: Determine version
+        id: ver
+        run: |
+          VERSION=$(python pkgutils.py version)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "dmg=novelWriter-$VERSION-${{ matrix.arch }}.dmg" >> "$GITHUB_OUTPUT"
+
+      - name: Generate Info.plist
+        run: python pkgutils.py gen-plist
+
+      - name: Build .icns icon
+        run: iconutil -c icns setup/macos/novelwriter.iconset -o setup/macos/novelwriter.icns
+
+      # PyInstaller 6.x places package data and --add-data files inside
+      # Contents/Frameworks/. novelwriter/config.py sets
+      #   _appPath = Path(__file__).parent.parent
+      # in frozen mode, which resolves to Contents/Frameworks/ — so
+      # mapping novelwriter/assets -> assets puts the tree at exactly the
+      # path config.py looks up via CONFIG.assetPath().
+      #
+      # When signing is enabled, --codesign-identity makes PyInstaller sign
+      # every nested binary inside-out with Hardened Runtime + entitlements.
+      # This is the reliable alternative to the deprecated `codesign --deep`.
+      - name: Build .app with PyInstaller
+        env:
+          SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+          SIGNING_ENABLED: ${{ steps.signing.outputs.enabled }}
+        run: |
+          EXTRA=()
+          if [ "$SIGNING_ENABLED" = "true" ]; then
+            EXTRA=(--codesign-identity "$SIGN_IDENTITY"
+                   --osx-entitlements-file setup/macos/App.entitlements)
+          fi
+
+          # Bundle enchant explicitly. PyInstaller's stock enchant hook does
+          # NOT ship a working spell checker here: pyenchant is pip-installed
+          # (so the hook's brew/macports collection branch is skipped), and
+          # the enchant backend plugins are dlopen-ed at runtime, so Mach-O
+          # dependency analysis never sees them. Without this the shipped app
+          # has an empty dictionary list (see issue #2705). We add libenchant
+          # and its backends from Homebrew, keeping the lib/ + lib/enchant-2/
+          # sibling layout that relocatable enchant-2 uses to find backends.
+          # The macOS applespell backend is what exposes the OS dictionaries.
+          # brew --prefix is arch-agnostic (/opt/homebrew or /usr/local).
+          ENCHANT_PREFIX="$(brew --prefix enchant)"
+          LIBENCHANT="$(ls "$ENCHANT_PREFIX"/lib/libenchant-2.*.dylib | head -n1)"
+          EXTRA+=(--add-binary "$LIBENCHANT:lib")
+          for so in "$ENCHANT_PREFIX"/lib/enchant-2/*.so; do
+            EXTRA+=(--add-binary "$so:lib/enchant-2")
+          done
+          # Runtime hook points pyenchant at the bundled libenchant (via
+          # PYENCHANT_LIBRARY_PATH) before novelWriter lazily imports enchant.
+          EXTRA+=(--runtime-hook setup/macos/pyinstaller_rthook_enchant.py)
+
+          # novelwriter itself is bundled by module-graph analysis of the
+          # entry script (no dynamic imports), so --collect-all novelwriter
+          # is unnecessary — and on case-insensitive macOS it resolves the
+          # name to the novelWriter.py entry script instead of the package,
+          # emitting "not a package" warnings. Data is added explicitly.
+          pyinstaller \
+            --windowed \
+            --noconfirm \
+            --name novelWriter \
+            --icon setup/macos/novelwriter.icns \
+            --osx-bundle-identifier io.novelwriter.novelWriter \
+            --collect-all PyQt6 \
+            --add-data novelwriter/assets:assets \
+            "${EXTRA[@]}" \
+            novelWriter.py
+
+      # PyInstaller's bootloader needs no special plist keys (unlike py2app),
+      # so overwriting with our gen-plist version is safe and gives us the
+      # canonical version, identifier and .nwx document-type registration.
+      - name: Apply generated Info.plist
+        run: cp setup/macos/Info.plist dist/novelWriter.app/Contents/Info.plist
+
+      # Editing Info.plist invalidates the bundle's outer seal but not the
+      # nested signatures. Re-seal the top level: this re-signs the main
+      # executable with Hardened Runtime + entitlements and re-hashes the
+      # new Info.plist, while the inside-out nested signatures stay valid.
+      - name: Sign app bundle
+        env:
+          SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+          SIGNING_ENABLED: ${{ steps.signing.outputs.enabled }}
+        run: |
+          if [ "$SIGNING_ENABLED" = "true" ]; then
+            codesign --force --options runtime --timestamp \
+              --entitlements setup/macos/App.entitlements \
+              --sign "$SIGN_IDENTITY" \
+              dist/novelWriter.app
+            codesign --verify --deep --strict --verbose=2 dist/novelWriter.app
+          else
+            codesign --force --deep --sign - dist/novelWriter.app
+          fi
+
+      - name: Verify bundle contents
+        run: |
+          APP_FW="dist/novelWriter.app/Contents/Frameworks"
+          test -f "$APP_FW/assets/sample.zip" \
+            || { echo "ERROR: sample.zip not bundled"; exit 1; }
+          test -n "$(find "$APP_FW/assets/i18n" -name '*.qm' 2>/dev/null)" \
+            || { echo "ERROR: compiled .qm files not bundled"; exit 1; }
+          test -n "$(find "$APP_FW/assets/icons" -name '*.icons' 2>/dev/null)" \
+            || { echo "ERROR: icon themes not bundled"; exit 1; }
+          # Guard against silently shipping a spell checker with no backend
+          # (the empty-dropdown regression from #2705). libenchant and at
+          # least one enchant-2 backend plugin must be present.
+          test -n "$(ls "$APP_FW"/lib/libenchant-2.*.dylib 2>/dev/null)" \
+            || { echo "ERROR: libenchant not bundled"; exit 1; }
+          test -n "$(find "$APP_FW/lib/enchant-2" -name '*.so' 2>/dev/null)" \
+            || { echo "ERROR: enchant backend plugins not bundled"; exit 1; }
+          plutil -extract CFBundleIdentifier raw dist/novelWriter.app/Contents/Info.plist
+          plutil -extract CFBundleShortVersionString raw dist/novelWriter.app/Contents/Info.plist
+
+      - name: Notarize and staple app
+        if: steps.signing.outputs.enabled == 'true'
+        env:
+          NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
+          NOTARY_PASSWORD: ${{ secrets.MACOS_NOTARY_PASSWORD }}
+          NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
+        run: bash setup/macos/notarize.sh dist/novelWriter.app
+
+      - name: Verify Gatekeeper assessment
+        if: steps.signing.outputs.enabled == 'true'
+        run: spctl --assess --type exec --verbose=4 dist/novelWriter.app
+
+      - name: Build DMG
+        run: |
+          create-dmg \
+            --volname "novelWriter ${{ steps.ver.outputs.version }}" \
+            --volicon setup/macos/novelwriter.icns \
+            --window-pos 200 120 \
+            --window-size 800 400 \
+            --icon-size 100 \
+            --icon "novelWriter.app" 200 190 \
+            --hide-extension "novelWriter.app" \
+            --app-drop-link 600 185 \
+            "${{ steps.ver.outputs.dmg }}" \
+            "dist/novelWriter.app"
+
+      # Sign + notarize + staple the DMG itself so it passes Gatekeeper as a
+      # download, in addition to the stapled .app it carries.
+      - name: Sign, notarize and staple DMG
+        if: steps.signing.outputs.enabled == 'true'
+        env:
+          SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+          NOTARY_APPLE_ID: ${{ secrets.MACOS_NOTARY_APPLE_ID }}
+          NOTARY_PASSWORD: ${{ secrets.MACOS_NOTARY_PASSWORD }}
+          NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
+        run: |
+          codesign --force --timestamp --sign "$SIGN_IDENTITY" "${{ steps.ver.outputs.dmg }}"
+          bash setup/macos/notarize.sh "${{ steps.ver.outputs.dmg }}"
+
+      # Checksum last, after every modification to the DMG (signing + staple).
+      - name: Checksum DMG
+        run: shasum -a 256 "${{ steps.ver.outputs.dmg }}" | tee "${{ steps.ver.outputs.dmg }}.sha256"
+
+      - name: Upload as workflow artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: novelWriter-${{ steps.ver.outputs.version }}-MacOS-${{ matrix.label }}-DMG
+          path: ${{ steps.ver.outputs.dmg }}*
+          if-no-files-found: error
+          retention-days: 14
+
+      # On a published release, attach the DMG + checksum to that release's
+      # tag. Manual (workflow_dispatch) runs only produce the artifact above.
+      - name: Attach DMG to release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" \
+            "${{ steps.ver.outputs.dmg }}" \
+            "${{ steps.ver.outputs.dmg }}.sha256" \
+            --repo "${{ github.repository }}" \
+            --clobber
+
+      - name: Remove temporary keychain
+        if: always() && steps.signing.outputs.enabled == 'true'
+        run: security delete-keychain "$RUNNER_TEMP/app-signing.keychain-db" || true
