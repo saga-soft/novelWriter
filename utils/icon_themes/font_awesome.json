@@ -53,10 +53,10 @@
     "sb_build": "up-right-from-square",
     "sb_details": "list",
     "sb_novel": "book-open",
-    "sb_outline": "table-list",
     "sb_project": "pen-to-square",
     "sb_search": "magnifying-glass",
     "sb_stats": "chart-simple",
+    "sb_story": "table-list",
 
     "theme_light": "sun",
     "theme_dark": "moon",

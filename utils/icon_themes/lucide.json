@@ -53,10 +53,10 @@
     "sb_build": "blocks",
     "sb_details": "view",
     "sb_novel": "book",
-    "sb_outline": "layout-list",
     "sb_project": "folder-tree",
     "sb_search": "book-search",
     "sb_stats": "chart-bar-big",
+    "sb_story": "layout-list",
 
     "theme_light": "sun",
     "theme_dark": "moon",

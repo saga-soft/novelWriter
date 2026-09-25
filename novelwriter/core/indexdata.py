@@ -39,6 +39,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 T_NoteTypes = Literal["footnotes", "comments"]
+T_IndexHeadRefs = dict[str, list[str]]
 
 TT_NONE = "T0000"  # Default title key
 NOTE_TYPES: list[T_NoteTypes] = ["footnotes", "comments"]
@@ -320,7 +321,7 @@ class IndexHeading:
     #  Getters
     ##
 
-    def getReferences(self) -> dict[str, list[str]]:
+    def getReferences(self) -> T_IndexHeadRefs:
         """Extract all tags and references for this heading."""
         refs = {x: [] for x in nwKeyWords.VALID_KEYS}
         for tag, types in self._refs.items():

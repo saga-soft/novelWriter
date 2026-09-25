@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-T_LastHandle = Literal["editor", "viewer", "novel", "outline"]
+T_LastHandle = Literal["editor", "viewer", "novel", "story"]
 
 
 class ProjectData:
@@ -129,7 +129,7 @@ class ProjectData:
             "editor": None,
             "viewer": None,
             "novel": None,
-            "outline": None,
+            "story": None,
         }
         self._autoReplace: dict[str, str] = {}
         self._titleFormat: dict[str, str] = {

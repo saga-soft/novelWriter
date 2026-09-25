@@ -53,10 +53,10 @@
     "sb_build": "stack",
     "sb_details": "pages",
     "sb_novel": "booklet",
-    "sb_outline": "timeline-view",
     "sb_project": "file-edit",
     "sb_search": "file-search",
     "sb_stats": "bar-chart-fill",
+    "sb_story": "timeline-view",
 
     "theme_light": "sun",
     "theme_dark": "moon",

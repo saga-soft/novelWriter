@@ -43,7 +43,7 @@ from PyQt6.QtWidgets import (
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import minmax, qtAddAction, qtAddMenu, qtWeakLambda
 from novelwriter.constants import nwKeyWords, nwLabels, trConst
-from novelwriter.enum import nwChange, nwDocMode, nwNovelExtra, nwOutline
+from novelwriter.enum import nwChange, nwDocMode, nwNovelExtra
 from novelwriter.extensions.modified import NFlatIconButton, NTreeView
 from novelwriter.extensions.novelselector import NovelSelector
 from novelwriter.models.novelmodel import NovelModel
@@ -558,7 +558,7 @@ class GuiNovelTree(NTreeView):
         if head := SHARED.project.index.getItemHeading(tHandle, sTitle):
             logger.debug("Generating meta data tooltip for '%s:%s'", tHandle, sTitle)
             if synopsis := head.synopsis:
-                label = trConst(nwLabels.OUTLINE_COLS[nwOutline.SYNOP])
+                label = self.tr("Synopsis")
                 synopsis = f"<p><b>{label}:</b> {synopsis}</p>"
 
             lines: list[str] = []

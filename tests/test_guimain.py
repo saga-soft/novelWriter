@@ -53,7 +53,6 @@ from novelwriter.enum import (
     nwVimMode,
 )
 from novelwriter.gui.noveltree import GuiNovelView
-from novelwriter.gui.outline import GuiOutlineView
 from novelwriter.gui.projtree import GuiProjectTree, GuiProjectView
 from novelwriter.guimain import GuiMain
 from novelwriter.manuscript.manuscript import GuiManuscript
@@ -273,7 +272,6 @@ def testGuiMain_ProjectTreeItems(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     with monkeypatch.context() as mp:
         mp.setattr(GuiProjectTree, "hasFocus", lambda *a: True)
         mp.setattr(GuiNovelView, "treeHasFocus", lambda *a: False)
-        mp.setattr(GuiOutlineView, "treeHasFocus", lambda *a: False)
         assert nwGUI.docEditor.docHandle is None
         nwGUI.projView.projTree.setSelectedHandle(sHandle)
         nwGUI.projView.projTree.openSelectedItem()
@@ -316,31 +314,6 @@ def testGuiMain_ProjectTreeItems(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
             nwGUI.openSelectedItem()
         assert nwGUI.docViewer.docHandle == sHandle
         nwGUI.closeDocViewer()
-
-    # Project Outline has focus
-    nwGUI._changeView(nwView.OUTLINE)
-    nwGUI._switchFocus(nwFocus.OUTLINE)
-    with monkeypatch.context() as mp:
-        mp.setattr(GuiProjectView, "treeHasFocus", lambda *a: False)
-        mp.setattr(GuiNovelView, "treeHasFocus", lambda *a: False)
-        mp.setattr(GuiOutlineView, "treeHasFocus", lambda *a: True)
-        assert nwGUI.docEditor.docHandle is None
-
-        # No selection is ignored
-        nwGUI.outlineView.outlineTree.clearSelection()
-        nwGUI.outlineView.outlineTree.openSelectedItem()
-        assert nwGUI.docEditor.docHandle is None
-
-        selItem = nwGUI.outlineView.outlineTree.topLevelItem(2)
-        nwGUI.outlineView.outlineTree.setCurrentItem(selItem)
-        nwGUI.outlineView.outlineTree.openSelectedItem()
-        assert nwGUI.docEditor.docHandle == sHandle
-        nwGUI.closeDocument()
-
-        # The main GUI dispatcher also routes to the outline tree
-        nwGUI.openSelectedItem()
-        assert nwGUI.docEditor.docHandle == sHandle
-        nwGUI.closeDocument()
 
     # Internal open-document slots ignore a missing or invalid handle
     nwGUI._openDocument(None, nwDocMode.EDIT, "", True)
@@ -1501,11 +1474,6 @@ def testGuiMain_FocusView(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
         nwGUI._switchFocus(nwFocus.DOCUMENT)
         assert nwGUI.docEditor.docHeader.itemTitle._state == nwState.NORMAL
         assert nwGUI.docViewer.docHeader.itemTitle._state == nwState.INACTIVE
-
-    # Focus Outline
-    # =============
-    nwGUI._switchFocus(nwFocus.OUTLINE)
-    assert nwGUI.mainStack.currentWidget() == nwGUI.outlineView
 
     # Pass Actions
     # ============
