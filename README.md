@@ -57,6 +57,7 @@ You can make a feature request in the [issues tracker](https://github.com/saga-s
 or if the idea isn't fully formed, start a [discussion](https://github.com/saga-soft/novelWriter/discussions).
 Please also don't make pull requests to reformat or rewrite existing code unless there is a very
 good reason for doing so. Please do not submit AI generated content.
+See our [AI Policy](https://github.com/saga-soft/novelWriter/blob/main/AI_POLICY.md) for details.
 
 Fixes and patches are welcome. Contributions related to packaging and installing novelWriter will
 also be appreciated, but please make an issue or a discussion topic first. Before contributing any

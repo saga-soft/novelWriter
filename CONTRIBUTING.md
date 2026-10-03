@@ -1,7 +1,7 @@
 # Contributing Guide
 
 See also our [Code of Conduct](https://github.com/saga-soft/novelWriter?tab=coc-ov-file#code-of-conduct)
-and our [AI Policy](https://github.com/saga-soft/novelWriter/discussions/3040).
+and our [AI Policy](https://github.com/saga-soft/novelWriter/blob/main/AI_POLICY.md).
 
 When contributing to this repository, please first discuss the change you wish to make with the
 maintainers. For new and complex ideas, it is better to open a discussion before adding a new
