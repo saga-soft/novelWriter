@@ -70,9 +70,9 @@ helpText     = "default:192"
 fadedText    = "faded"
 errorText    = "red"
 accentText   = "#c57b85"
-activeButton = "#ad69787f"
-activeBase   = "#e4cccc"
-searchMatch  = "yellow:80"
+activeButton = "red:96"
+activeBase   = "base"
+searchMatch  = "blue:80"
 
 [Syntax]
 background     = "base"

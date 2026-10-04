@@ -155,6 +155,11 @@ def testProjectData_AutoReplace(mockGUI):
     data.setAutoReplace({"A": "B", "C": 123})  # type: ignore
     assert data.autoReplace == {"A": "B"}
 
+    # Keys are cleaned too, not just values, as both end up in the
+    # project XML, and a key that is only control characters is dropped
+    data.setAutoReplace({"foo\x1b": "bar\x1b", "\x00\x07": "baz"})
+    assert data.autoReplace == {"foo": "bar"}
+
 
 @pytest.mark.core
 def testProjectData_ProjectTarget(mockGUI):

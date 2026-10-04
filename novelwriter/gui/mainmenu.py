@@ -208,11 +208,6 @@ class GuiMainMenu(QMenuBar):
         self.aProjectSettings.setShortcut("Ctrl+Shift+,")
         self.aProjectSettings.triggered.connect(self.mainGui.showProjectSettingsDialog)
 
-        # Project > Novel Details
-        self.aNovelDetails = qtAddAction(self.projMenu, self.tr("Novel Details"))
-        self.aNovelDetails.setShortcut("Shift+F6")
-        self.aNovelDetails.triggered.connect(self.mainGui.showNovelDetailsDialog)
-
         # Project > Separator
         self.projMenu.addSeparator()
 
@@ -359,11 +354,11 @@ class GuiMainMenu(QMenuBar):
         self.aFocusDocument.setShortcut("Ctrl+E")
         self.aFocusDocument.triggered.connect(qtWeakLambda(self._emitFocusChange, nwFocus.DOCUMENT))
 
-        # View > Outline
-        self.aFocusOutline = qtAddAction(self.viewMenu, self.tr("Go to Outline"))
-        self.aFocusOutline.setShortcut("Ctrl+Shift+T")
-        self.aFocusOutline.triggered.connect(qtWeakLambda(self._emitFocusChange, nwFocus.OUTLINE))
-        self.mainGui.addAction(self.aFocusOutline)
+        # View > Story View
+        self.aFocusStory = qtAddAction(self.viewMenu, self.tr("Go to Story View"))
+        self.aFocusStory.setShortcut("Ctrl+Shift+T")
+        self.aFocusStory.triggered.connect(qtWeakLambda(self._emitFocusChange, nwFocus.STORY))
+        self.mainGui.addAction(self.aFocusStory)
 
         # View > Separator
         self.viewMenu.addSeparator()
@@ -661,6 +656,11 @@ class GuiMainMenu(QMenuBar):
         self.aFmtMark.setShortcut("Ctrl+M")
         self.aFmtMark.triggered.connect(qtWeakLambda(self._emitDocAction, nwDocAction.MD_MARK))
         self.mainGui.addAction(self.aFmtStrike)
+
+        # Format > Link
+        self.aFmtLink = qtAddAction(self.fmtMenu, self.tr("Link"))
+        self.aFmtLink.triggered.connect(qtWeakLambda(self._emitDocAction, nwDocAction.MD_LINK))
+        self.mainGui.addAction(self.aFmtLink)
 
         # Edit > Separator
         self.fmtMenu.addSeparator()

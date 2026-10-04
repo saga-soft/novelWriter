@@ -150,25 +150,12 @@ class NovelModel(QAbstractTableModel):
         """
         self._rows.clear()
 
-    def append(self, node: IndexNode, notify: bool = True) -> None:
-        """Append a node to the model."""
+    def append(self, node: IndexNode) -> None:
+        """Append a node to the model.
+        Begin/end reset model must be handled by the caller.
+        """
         handle = node.handle
-
-        # Build all rows first so we can emit one contiguous insert range.
-        entries = [self._generateEntry(handle, key, head) for key, head in node.items() if key != "T0000"]
-        if not entries:
-            return
-
-        if notify:
-            # Use model signals when appending to a live model in a view.
-            first = len(self._rows)
-            last = first + len(entries) - 1
-            self.beginInsertRows(QModelIndex(), first, last)
-            self._rows.extend(entries)
-            self.endInsertRows()
-        else:
-            # Skip per-insert signals when the caller already wraps a reset.
-            self._rows.extend(entries)
+        self._rows.extend(self._generateEntry(handle, key, head) for key, head in node.items() if key != "T0000")
 
     def refresh(self, node: IndexNode) -> bool:
         """Refresh an index node."""

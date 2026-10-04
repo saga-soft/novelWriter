@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/vkbo/novelWriter/main/setup/novelwriter_text.png">
+<img src="https://raw.githubusercontent.com/saga-soft/novelWriter/main/setup/novelwriter_text.png">
 
 novelWriter is a plain text editor designed for writing novels assembled from many smaller text
 documents. It uses a minimal formatting syntax inspired by Markdown, and adds a meta data syntax
@@ -18,4 +18,4 @@ novelWriter is developed and maintained by [Veronica Berglyd Olsen](https://gith
 
 **Website:** https://novelwriter.io  
 **Documentation:** https://docs.novelwriter.io/  
-**Source Code:** https://github.com/vkbo/novelWriter
+**Source Code:** https://github.com/saga-soft/novelWriter

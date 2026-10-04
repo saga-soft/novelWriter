@@ -53,7 +53,6 @@ from novelwriter.enum import (
     nwVimMode,
 )
 from novelwriter.gui.noveltree import GuiNovelView
-from novelwriter.gui.outline import GuiOutlineView
 from novelwriter.gui.projtree import GuiProjectTree, GuiProjectView
 from novelwriter.guimain import GuiMain
 from novelwriter.manuscript.manuscript import GuiManuscript
@@ -95,7 +94,6 @@ def testGuiMain_ProjectBlocker(nwGUI):
     nwGUI.openNextDocument(C.hSceneDoc, False, True)
     nwGUI._autoSaveProject()
     nwGUI.showProjectSettingsDialog()
-    nwGUI.showNovelDetailsDialog()
     nwGUI.showBuildManuscriptDialog()
     nwGUI.showProjectWordListDialog()
     nwGUI.showWritingStatsDialog()
@@ -173,7 +171,7 @@ def testGuiMain_Launch(qtbot, monkeypatch, nwGUI, projPath, fncPath):
     warnMock = Mock()
     rebuildMock = Mock()
     with monkeypatch.context() as mp:
-        mp.setattr(type(SHARED.project.index), "indexBroken", property(lambda self: True))
+        mp.setattr(type(SHARED.project.index), "indexRebuild", property(lambda self: True))
         mp.setattr(type(SHARED.project.index), "indexUpgrade", property(lambda self: True))
         mp.setattr(SHARED, "warn", warnMock)
         mp.setattr(nwGUI, "rebuildIndex", rebuildMock)
@@ -229,6 +227,32 @@ def testGuiMain_Launch(qtbot, monkeypatch, nwGUI, projPath, fncPath):
 
 
 @pytest.mark.gui
+def testGuiMain_IndexRebuild(qtbot, monkeypatch, nwGUI, projPath):
+    """Test that a genuinely invalid index cache, as opposed to one
+    from a version upgrade, triggers the "index is broken" warning as
+    well as a rebuild of the index.
+    """
+    buildTestProject(NWProject(), projPath)
+    indexFile = projPath / "meta" / nwFiles.INDEX_FILE
+    assert indexFile.is_file()
+
+    # Corrupt the cached index file on disk
+    indexFile.write_text("{not valid json", encoding="utf-8")
+
+    warnMock = Mock()
+    rebuildMock = Mock()
+    with monkeypatch.context() as mp:
+        mp.setattr(SHARED, "warn", warnMock)
+        mp.setattr(nwGUI, "rebuildIndex", rebuildMock)
+        assert nwGUI.openProject(projPath) is True
+
+    assert SHARED.project.index.indexUpgrade is False
+    assert any("index is broken" in str(call) for call in warnMock.call_args_list)
+    assert rebuildMock.called is True
+    nwGUI.closeProject()
+
+
+@pytest.mark.gui
 def testGuiMain_ProjectTreeItems(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     """Test handling of project tree items based on GUI focus states."""
     buildTestProject(NWProject(), projPath)
@@ -247,7 +271,6 @@ def testGuiMain_ProjectTreeItems(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     with monkeypatch.context() as mp:
         mp.setattr(GuiProjectTree, "hasFocus", lambda *a: True)
         mp.setattr(GuiNovelView, "treeHasFocus", lambda *a: False)
-        mp.setattr(GuiOutlineView, "treeHasFocus", lambda *a: False)
         assert nwGUI.docEditor.docHandle is None
         nwGUI.projView.projTree.setSelectedHandle(sHandle)
         nwGUI.projView.projTree.openSelectedItem()
@@ -290,31 +313,6 @@ def testGuiMain_ProjectTreeItems(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
             nwGUI.openSelectedItem()
         assert nwGUI.docViewer.docHandle == sHandle
         nwGUI.closeDocViewer()
-
-    # Project Outline has focus
-    nwGUI._changeView(nwView.OUTLINE)
-    nwGUI._switchFocus(nwFocus.OUTLINE)
-    with monkeypatch.context() as mp:
-        mp.setattr(GuiProjectView, "treeHasFocus", lambda *a: False)
-        mp.setattr(GuiNovelView, "treeHasFocus", lambda *a: False)
-        mp.setattr(GuiOutlineView, "treeHasFocus", lambda *a: True)
-        assert nwGUI.docEditor.docHandle is None
-
-        # No selection is ignored
-        nwGUI.outlineView.outlineTree.clearSelection()
-        nwGUI.outlineView.outlineTree.openSelectedItem()
-        assert nwGUI.docEditor.docHandle is None
-
-        selItem = nwGUI.outlineView.outlineTree.topLevelItem(2)
-        nwGUI.outlineView.outlineTree.setCurrentItem(selItem)
-        nwGUI.outlineView.outlineTree.openSelectedItem()
-        assert nwGUI.docEditor.docHandle == sHandle
-        nwGUI.closeDocument()
-
-        # The main GUI dispatcher also routes to the outline tree
-        nwGUI.openSelectedItem()
-        assert nwGUI.docEditor.docHandle == sHandle
-        nwGUI.closeDocument()
 
     # Internal open-document slots ignore a missing or invalid handle
     nwGUI._openDocument(None, nwDocMode.EDIT, "", True)
@@ -913,27 +911,27 @@ def testGuiMain_Editing(qtbot, monkeypatch, nwGUI, projPath, tstPaths, mockRnd):
     copyfile(projFile, testFile)
     assert cmpFiles(testFile, compFile, ignStart=(*XML_IGNORE, "<spellCheck"))
 
-    projFile = projPath / "content" / "000000000000f.nwd"
-    testFile = tstPaths.outDir / "guiEditor_Main_Final_000000000000f.nwd"
-    compFile = tstPaths.refDir / "guiEditor_Main_Final_000000000000f.nwd"
+    projFile = projPath / "content" / "000000000000f.md"
+    testFile = tstPaths.outDir / "guiEditor_Main_Final_000000000000f.md"
+    compFile = tstPaths.refDir / "guiEditor_Main_Final_000000000000f.md"
     copyfile(projFile, testFile)
     assert cmpFiles(testFile, compFile, ignStart=NWD_IGNORE)
 
-    projFile = projPath / "content" / "0000000000011.nwd"
-    testFile = tstPaths.outDir / "guiEditor_Main_Final_0000000000011.nwd"
-    compFile = tstPaths.refDir / "guiEditor_Main_Final_0000000000011.nwd"
+    projFile = projPath / "content" / "0000000000011.md"
+    testFile = tstPaths.outDir / "guiEditor_Main_Final_0000000000011.md"
+    compFile = tstPaths.refDir / "guiEditor_Main_Final_0000000000011.md"
     copyfile(projFile, testFile)
     assert cmpFiles(testFile, compFile, ignStart=NWD_IGNORE)
 
-    projFile = projPath / "content" / "0000000000012.nwd"
-    testFile = tstPaths.outDir / "guiEditor_Main_Final_0000000000012.nwd"
-    compFile = tstPaths.refDir / "guiEditor_Main_Final_0000000000012.nwd"
+    projFile = projPath / "content" / "0000000000012.md"
+    testFile = tstPaths.outDir / "guiEditor_Main_Final_0000000000012.md"
+    compFile = tstPaths.refDir / "guiEditor_Main_Final_0000000000012.md"
     copyfile(projFile, testFile)
     assert cmpFiles(testFile, compFile, ignStart=NWD_IGNORE)
 
-    projFile = projPath / "content" / "0000000000013.nwd"
-    testFile = tstPaths.outDir / "guiEditor_Main_Final_0000000000013.nwd"
-    compFile = tstPaths.refDir / "guiEditor_Main_Final_0000000000013.nwd"
+    projFile = projPath / "content" / "0000000000013.md"
+    testFile = tstPaths.outDir / "guiEditor_Main_Final_0000000000013.md"
+    compFile = tstPaths.refDir / "guiEditor_Main_Final_0000000000013.md"
     copyfile(projFile, testFile)
     assert cmpFiles(testFile, compFile, ignStart=NWD_IGNORE)
 
@@ -1475,11 +1473,6 @@ def testGuiMain_FocusView(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
         nwGUI._switchFocus(nwFocus.DOCUMENT)
         assert nwGUI.docEditor.docHeader.itemTitle._state == nwState.NORMAL
         assert nwGUI.docViewer.docHeader.itemTitle._state == nwState.INACTIVE
-
-    # Focus Outline
-    # =============
-    nwGUI._switchFocus(nwFocus.OUTLINE)
-    assert nwGUI.mainStack.currentWidget() == nwGUI.outlineView
 
     # Pass Actions
     # ============

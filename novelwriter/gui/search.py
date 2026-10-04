@@ -342,35 +342,36 @@ class GuiProjectSearch(QWidget):
 
     @pyqtSlot()
     def _processSearch(self) -> None:
-        """Perform a search."""
+        """Perform a search. This function is re-entrant. See #2924."""
         if not self._blocked:
-            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
-            start = time()
-            SHARED.saveEditor()
-            searchText = self.searchText.text()
-
             self._blocked = True
-            self._model.clear()
-            self._activeSearch = bool(searchText)
-            if searchText:
-                self._search.setUserRegEx(self.tbRegEx.isChecked())
-                self._search.setCaseSensitive(self.tbCase.isChecked())
-                self._search.setWholeWords(self.tbWord.isChecked())
-                handles = []
-                for item, results, capped in self._search.iterSearch(SHARED.project, searchText):
-                    if results:
-                        self._model.setResult(item, results, capped)
-                        handles.append(item.itemHandle)
-                # Expanding a row forces the tree view to lay out all
-                # currently loaded rows, so this is deferred until after
-                # all results are in the model to avoid doing it once
-                # per document as the tree grows
-                for handle in handles:
-                    self._expandResult(handle)
-            logger.debug("Search took %.3f ms", 1000 * (time() - start))
-            QApplication.restoreOverrideCursor()
+            try:
+                QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
+                start = time()
+                SHARED.saveEditor()
+                searchText = self.searchText.text()
 
-        self._blocked = False
+                self._model.clear()
+                self._activeSearch = bool(searchText)
+                if searchText:
+                    self._search.setUserRegEx(self.tbRegEx.isChecked())
+                    self._search.setCaseSensitive(self.tbCase.isChecked())
+                    self._search.setWholeWords(self.tbWord.isChecked())
+                    handles = []
+                    for item, results, capped in self._search.iterSearch(SHARED.project, searchText):
+                        if results:
+                            self._model.setResult(item, results, capped)
+                            handles.append(item.itemHandle)
+
+                    # Run separately to avoid re-layout
+                    for handle in handles:
+                        self._expandResult(handle)
+
+                logger.debug("Search took %.3f ms", 1000 * (time() - start))
+                QApplication.restoreOverrideCursor()
+
+            finally:
+                self._blocked = False
 
     @pyqtSlot(QModelIndex, QModelIndex)
     def _searchResultSelected(self, current: QModelIndex, previous: QModelIndex) -> None:

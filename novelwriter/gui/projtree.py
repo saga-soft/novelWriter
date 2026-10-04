@@ -1208,18 +1208,18 @@ class _TreeContextMenu(QMenu):
         """Add Active/Inactive actions."""
         if len(self._indices) > 1:
             mSub = qtAddMenu(self, self.tr("Set Active to ..."))
-            aOne = qtAddAction(mSub, self._tree.trActive, icon=SHARED.theme.getIcon("checked:accept"))
+            aOne = qtAddAction(mSub, self._tree.trActive, icon=SHARED.theme.getIcon("checked:active"))
             aOne.triggered.connect(qtWeakLambda(self._iterItemActive, True))
-            aTwo = qtAddAction(mSub, self._tree.trInactive, icon=SHARED.theme.getIcon("unchecked:reject"))
+            aTwo = qtAddAction(mSub, self._tree.trInactive, icon=SHARED.theme.getIcon("unchecked:inactive"))
             aTwo.triggered.connect(qtWeakLambda(self._iterItemActive, False))
         else:
             action = qtAddAction(self, self.tr("Toggle Active"))
             action.triggered.connect(self._toggleItemActive)
             if self._children > 0:
                 mSub = qtAddMenu(self, self.tr("Set Children to ..."))
-                aOne = qtAddAction(mSub, self._tree.trActive, icon=SHARED.theme.getIcon("checked:accept"))
+                aOne = qtAddAction(mSub, self._tree.trActive, icon=SHARED.theme.getIcon("checked:active"))
                 aOne.triggered.connect(qtWeakLambda(self._recurseItemActive, True))
-                aTwo = qtAddAction(mSub, self._tree.trInactive, icon=SHARED.theme.getIcon("unchecked:reject"))
+                aTwo = qtAddAction(mSub, self._tree.trInactive, icon=SHARED.theme.getIcon("unchecked:inactive"))
                 aTwo.triggered.connect(qtWeakLambda(self._recurseItemActive, False))
 
     def _itemStatusImport(self, multi: bool) -> None:

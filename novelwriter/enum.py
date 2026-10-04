@@ -97,39 +97,40 @@ class nwDocAction(Enum):
     MD_BOLD = 7
     MD_STRIKE = 8
     MD_MARK = 9
-    S_QUOTE = 10
-    D_QUOTE = 11
-    SEL_ALL = 12
-    SEL_PARA = 13
-    BLOCK_H1 = 14
-    BLOCK_H2 = 15
-    BLOCK_H3 = 16
-    BLOCK_H4 = 17
-    BLOCK_COM = 18
-    BLOCK_IGN = 19
-    BLOCK_TXT = 20
-    BLOCK_TTL = 21
-    BLOCK_UNN = 22
-    BLOCK_HSC = 23
-    REPL_SNG = 24
-    REPL_DBL = 25
-    RM_BREAKS = 26
-    ALIGN_L = 27
-    ALIGN_C = 28
-    ALIGN_R = 29
-    INDENT_L = 30
-    INDENT_R = 31
-    SC_ITALIC = 32
-    SC_BOLD = 33
-    SC_STRIKE = 34
-    SC_ULINE = 35
-    SC_MARK = 36
-    SC_SUP = 37
-    SC_SUB = 38
-    MOVE_TEXT = 39
-    ZOOM_IN = 40
-    ZOOM_OUT = 41
-    ZOOM_RESET = 42
+    MD_LINK = 10
+    S_QUOTE = 11
+    D_QUOTE = 12
+    SEL_ALL = 13
+    SEL_PARA = 14
+    BLOCK_H1 = 15
+    BLOCK_H2 = 16
+    BLOCK_H3 = 17
+    BLOCK_H4 = 18
+    BLOCK_COM = 19
+    BLOCK_IGN = 20
+    BLOCK_TXT = 21
+    BLOCK_TTL = 22
+    BLOCK_UNN = 23
+    BLOCK_HSC = 24
+    REPL_SNG = 25
+    REPL_DBL = 26
+    RM_BREAKS = 27
+    ALIGN_L = 28
+    ALIGN_C = 29
+    ALIGN_R = 30
+    INDENT_L = 31
+    INDENT_R = 32
+    SC_ITALIC = 33
+    SC_BOLD = 34
+    SC_STRIKE = 35
+    SC_ULINE = 36
+    SC_MARK = 37
+    SC_SUP = 38
+    SC_SUB = 39
+    MOVE_TEXT = 40
+    ZOOM_IN = 41
+    ZOOM_OUT = 42
+    ZOOM_RESET = 43
 
 
 class nwDocInsert(Enum):
@@ -156,7 +157,7 @@ class nwView(Enum):
     EDITOR = 0
     PROJECT = 1
     NOVEL = 2
-    OUTLINE = 3
+    STORY = 3
     SEARCH = 4
 
 
@@ -165,7 +166,7 @@ class nwFocus(Enum):
 
     TREE = 1
     DOCUMENT = 2
-    OUTLINE = 3
+    STORY = 3
 
 
 class nwTheme(Enum):
@@ -174,31 +175,6 @@ class nwTheme(Enum):
     AUTO = 0
     LIGHT = 1
     DARK = 2
-
-
-class nwOutline(Enum):
-    """Enum: Project Outline Columns."""
-
-    TITLE = 0
-    LEVEL = 1
-    LABEL = 2
-    LINE = 3
-    STATUS = 4
-    CCOUNT = 5
-    WCOUNT = 6
-    PCOUNT = 7
-    POV = 8
-    FOCUS = 9
-    CHAR = 10
-    PLOT = 11
-    TIME = 12
-    WORLD = 13
-    OBJECT = 14
-    ENTITY = 15
-    CUSTOM = 16
-    STORY = 17
-    MENTION = 18
-    SYNOP = 19
 
 
 class nwNovelExtra(Enum):

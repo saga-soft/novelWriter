@@ -400,9 +400,7 @@ class ProjectModel(QAbstractItemModel):
         if data.hasFormat(nwConst.MIME_HANDLE) is False or action != Qt.DropAction.MoveAction:
             return False
 
-        # Restrict drops to the label column and valid insert positions
-        if column != 0:
-            return False
+        # Restrict drops to valid insert positions
         targetNode: ProjectNode = parent.internalPointer()
         if row < -1 or row > targetNode.childCount():
             return False

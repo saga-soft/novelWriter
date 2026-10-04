@@ -1,6 +1,183 @@
 # novelWriter Changelog
 
-## Version 26.2 Beta 1 [2026-07-26]
+## Version 2026.2.1 [2026-09-26]
+
+### Release Notes
+
+This is a patch release that fixes the tag hover card icons in the editor and viewer not updating
+when the app theme changed. It also adds build metadata used in crash reports and to warn users
+who installed via the now deprecated Launchpad PPA. French and Russian translations have been
+updated.
+
+See the website for complete [Release Notes](https://novelwriter.io/releases/release_26_2.html).
+
+### Detailed Changelog
+
+**Bugfixes**
+
+* Fixed the tag hover card icons in the editor and viewer not updating when the app theme changed.
+  By @vkbo. Issue #3024. PR #3030.
+
+**Packaging**
+
+* Added build metadata to packages, included in crash reports to aid debugging, and used to warn
+  users who installed via the now deprecated Launchpad PPA. By @vkbo. PR #3009.
+
+**Code Maintenance**
+
+* Improved the pkgutils CLI tool with i18n file validation and coloured terminal output. By @vkbo.
+  PR #3031.
+
+**Internationalisation**
+
+* French translation updated by Amethystium69 and aaribaud. PR #3032.
+* Russian translation updated by Kuro Ryuu and konstruktiv. PR #3032.
+
+----
+
+## Version 2026.2 [2026-09-05]
+
+### Release Notes
+
+The 2026.2 release is based on the features added in 2026.2 Beta 1, Beta 2, RC 1.
+
+See the website for complete [Release Notes](https://novelwriter.io/releases/release_26_2.html).
+
+### Detailed Changelog
+
+**Bugfixes**
+
+* Fixed a bug on macOS where using the system's native font selection dialog did not apply the
+  selected font, since Qt's native panel does not confirm the choice with an OK button. By
+  @kkostov. PR #2970.
+* Fixed a bug from the Beta 1 release where tab widgets could show a border despite having flat
+  tabs enabled. By @vkbo. PR #2971.
+* Fixed a bug from the Beta 1 release where pasting rich text could repeat formatting
+  unnecessarily when the source contained overlapping hidden formats. Restored the ability to
+  paste as plain text, now bound to `Ctrl+Shift+V`, which was lost when rich text paste was
+  introduced. By @vkbo. Issues #2978 and #2979. PR #2980.
+* Fixed missing theme colours in the Dark Arts and Ruby Night themes added in the Beta 2 release.
+  By @HeyMyian. PR #3003.
+
+**User Interface**
+
+* Changed the default line height from 1.0 to 1.15, the default font on Windows to Segoe UI, and
+  reduced the default application font size from 10pt to 9pt. By @HeyMyian. Discussed in #2955.
+  PR #2998.
+
+**Other Changes**
+
+* Bumped the project file format version to 1.6 to block the project from being opened by older
+  versions of novelWriter that cannot read it correctly anyway. By @vkbo. PR #2984.
+
+**Packaging**
+
+* Rewrote the Debian package build to publish through a package registry, with build versions now
+  selectable and Linux Mint added as a supported target. By @vkbo. PRs #2986 and #2990.
+
+**Internationalisation**
+
+* The Norwegian, US English, German, Italian, Japanese, Polish and Portuguese translations are
+  now complete, and the Catalan translation has been updated. Translations are contributed via
+  [Crowdin](https://crowdin.com/project/novelwriter). PR #2968.
+
+----
+
+## Version 2026.2 RC 1 [2026-08-09]
+
+### Release Notes
+
+This is a release candidate of the next release version, and is intended for testing purposes.
+Please be careful when using this version on live writing projects, and make sure you take frequent
+backups.
+
+Note that 2026.2 Beta 2 and newer upgrades a project on first load, so it can no longer be opened
+in an older version of novelWriter. 2026.2 Beta 1 and newer also updates the main config file, but
+leaves the old one in place, so this is not blocking older versions but be aware that the config
+changes do not pass between the old and new config files once the new config file exists.
+
+### Detailed Changelog
+
+**Bugfixes**
+
+* Fixed a bug in the updated drag and drop implementation in the project tree from the Beta 1
+  release. The tree no longer allowed an item to be dropped on top of another to make it a child of
+  the item. Issue #2953. PR #2954.
+
+**Improvements**
+
+* Improved dialogue highlighting for single-quoted dialogue when the text included apostrophes.
+  Discussed in #2633. PR #2956.
+* Updated the new project builder so it doesn't claim the index is broken the first time it is
+  opened. It is only "broken" in the sense that it is missing the first time. The index is now
+  built when the project is created, so the warning no longer appears. Issue #2952. PR #2954.
+
+**Documentation**
+
+* Removed broken link and associated instructions on the dictionary install page. PR #2951.
+
+----
+
+## Version 2026.2 Beta 2 [2026-08-02]
+
+### Release Notes
+
+This is a beta release of the next release version, and is intended for testing purposes. Please be
+careful when using this version on live writing projects, and make sure you take frequent backups.
+
+### Detailed Changelog
+
+**Bugfixes**
+
+* Fixed an issue where the wrong theme colours were used for the active and inactive icons in the
+  project tree context menu. Issue #2941. PR #2946.
+* Removed the placeholder text in the Manuscript Tool preview since it used the wrong text colour
+  on dark themes and anyway is never visible for more than a few milliseconds. Issue #2942.
+  PR #2946.
+* Fixed a bug from the beta 1 release where selecting a piece of text and moving it would cause a
+  crash. Issue #2917. PR #2918.
+* Fixed a re-entrancy bug in the project search tool. Issue #2924. PR #2937.
+* Fixed a re-entrancy bug candidate in the status bar message display logic. Issue #2925. PR #2938.
+* Fixed a potential segfault candidate, and an incorrect thread pool runnable in the version
+  check widget. Issue #2926. PR #2938.
+* Fixed a bug in the loop that collects navigation headers in the editor, which was ignoring the
+  max count. Issue #2930. PR #2939.
+
+**Improvements**
+
+* Added more granular theme variables to improve contrast for GUI components. Issue #2910.
+  PRs #2911, #2915
+* Updated themes with new colours and other improvements. By @vkbo and @HeyMyian. Issue #2910.
+  PRs #2911, #2912, #2916 and #2943.
+* Added five new themes, by @HeyMyian. PR #2943.
+* Added a character count toggle for project writing goals. Issue #2913. PR #2919.
+* Removed all usages of the Qt find block methods inside loops in the editor. These are binary
+  searches, not lookups, so the cost is higher than I expected. Issue #2930. PR #2939.
+* The word counter ran twice on every document search. First once in the editor, then in the
+  indexer. The run in the editor was removed. Issue #2928. PR #2944.
+
+**Other Changes**
+
+* The way the check against overwriting documents that have been changed on disk is performed has
+  been improved so that it doesn't always have to read the existing document before writing.
+  Issue #2929. PR #2945.
+* Project documents are now saved as a text document with the `.md` extension and a standard TOML
+  header instead of the old custom format and extension. Issue #1964. PR #2945.
+* Pinned the Python garbage collector to the main gui thread to prevent it from accidentally
+  triggering in the Qt thread pool. Issue #2927. PR #2940.
+* The index cache and project-local gui state JSON files are no longer written on every autosave.
+  Instead they are only written on manual saves or project close. The index cache is verified
+  against a revision number on open to catch any stale caches. This was also a potential problem
+  before, so this change is a general improvement. A stale cache is rebuilt on project open.
+  Issue #2931. PR #2944.
+
+**Installation**
+
+* Added flatpak for Linux installation. Based on work by @Ryex. Issue #1651. PRs #2906 and #2908.
+
+----
+
+## Version 2026.2 Beta 1 [2026-07-26]
 
 ### Release Notes
 
@@ -16,7 +193,7 @@ careful when using this version on live writing projects, and make sure you take
 * Fixed tooltip and scrollbar colours not matching the selected theme, a compatibility issue with
   newer versions of Qt; custom stylesheets have been replaced with other styling methods, and the
   Fusion Qt style is now hard coded, to resolve this properly. Issue #2871. PRs #2877 and #2881.
-* Fixed a reentrancy issue when opening documents, and removed a stray call that could delay
+* Fixed a re-entrancy issue when opening documents, and removed a stray call that could delay
   cleanup of objects, improving overall application stability. PR #2840.
 * Fixed five memory leaks related to freeing Qt objects created from Python, and added regression
   tests to catch similar issues in the future. PRs #2829 and #2830.
@@ -126,7 +303,7 @@ careful when using this version on live writing projects, and make sure you take
 
 ----
 
-## Version 26.1.2 [2026-07-25]
+## Version 2026.1.2 [2026-07-25]
 
 ### Release Notes
 
@@ -151,7 +328,7 @@ on older versions of Qt. Japanese and Russian translations have also been update
 
 ----
 
-## Version 26.1.1 [2026-06-28]
+## Version 2026.1.1 [2026-06-28]
 
 ### Release Notes
 
@@ -189,7 +366,7 @@ app on Linux.
 
 ----
 
-## Version 26.1 [2026-04-26]
+## Version 2026.1 [2026-04-26]
 
 ### Release Notes
 
@@ -220,7 +397,7 @@ See the website for complete [Release Notes](https://novelwriter.io/releases/rel
 
 ----
 
-## Version 26.1 RC 1 [2026-04-13]
+## Version 2026.1 RC 1 [2026-04-13]
 
 ### Release Notes
 
@@ -262,7 +439,7 @@ Note: There are no longer any Mac releases produced for novelWriter. See #2618.
 
 ----
 
-## Version 26.1 Beta 2 [2026-04-04]
+## Version 2026.1 Beta 2 [2026-04-04]
 
 ### Release Notes
 
@@ -282,7 +459,7 @@ Note: There are no longer any Mac releases produced for novelWriter. See #2618.
 
 ----
 
-## Version 26.1 Beta 1 [2026-04-02]
+## Version 2026.1 Beta 1 [2026-04-02]
 
 ### Release Notes
 

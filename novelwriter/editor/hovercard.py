@@ -131,6 +131,8 @@ class GuiDocHoverCard(QFrame):
 
         self._viewBtn.setFont(SHARED.theme.guiFontSmall)
         self._editBtn.setFont(SHARED.theme.guiFontSmall)
+        self._viewBtn.refreshTheme()
+        self._editBtn.refreshTheme()
 
         self.clearCache()  # The HTML has hardcoded colours
         self.update()

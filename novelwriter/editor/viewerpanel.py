@@ -42,7 +42,8 @@ from novelwriter import SHARED
 from novelwriter.common import checkInt, qtAddAction
 from novelwriter.constants import nwLabels, nwLists, nwStyles, trConst
 from novelwriter.enum import nwChange, nwDocMode, nwItemClass
-from novelwriter.extensions.modified import NFlatIconButton, NTabWidget
+from novelwriter.extensions.modified import NFlatIconButton
+from novelwriter.extensions.tabwidget import NTabWidget
 from novelwriter.types import QtDecorationRole, QtHeaderFixed, QtHeaderToContents, QtUserRole
 
 if TYPE_CHECKING:

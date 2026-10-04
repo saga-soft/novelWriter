@@ -14,6 +14,7 @@ setup.iss
 /setup/windows/build
 .flatpak-builder
 .venv
+.env
 
 # Translations
 /novelwriter/assets/i18n/*.qm

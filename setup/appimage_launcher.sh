@@ -17,7 +17,7 @@ ICONPATH="$(dirname "$IMGPATH")/novelWriter.png"
 
 if [ ! -e "$ICONPATH" ]; then
   echo "Downloading icon"
-  wget https://raw.githubusercontent.com/vkbo/novelWriter/main/setup/data/hicolor/256x256/apps/novelwriter.png -O "$ICONPATH"
+  wget https://raw.githubusercontent.com/saga-soft/novelWriter/main/setup/data/hicolor/256x256/apps/novelwriter.png -O "$ICONPATH"
 fi
 
 cat > $HOME/.local/share/applications/novelWriter.desktop <<EOF

@@ -314,16 +314,24 @@ def formatLink(link: str, text: str = "") -> str:
 ##
 
 
+def _stripUnsafe(text: str) -> str:
+    """Drop non-whitespace control characters and lone surrogates from
+    a string.
+    """
+    return "".join(c for c in str(text) if c.isspace() or unicodedata.category(c) not in ("Cc", "Cs"))
+
+
 def simplified(text: str) -> str:
     """Take a string and strip leading and trailing whitespaces, and
-    replace all occurrences of (multiple) whitespaces with a 0x20 space.
+    replace all occurrences of (multiple) whitespaces with a 0x20
+    space.
     """
-    return " ".join(str(text).strip().split())
+    return " ".join(_stripUnsafe(text).split())
 
 
 def compact(text: str) -> str:
     """Compact a string by removing spaces."""
-    return "".join(str(text).split())
+    return "".join(_stripUnsafe(text).split())
 
 
 def uniqueCompact(text: str) -> str:

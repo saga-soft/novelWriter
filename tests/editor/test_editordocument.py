@@ -25,6 +25,7 @@ import pytest
 
 from novelwriter.constants import nwConst
 from novelwriter.core.project import NWProject
+from novelwriter.editor.highlighter import BLOCK_TITLE
 
 from tests.helpers import C, buildTestProject
 
@@ -99,3 +100,24 @@ def testGuiTextDocument_BigDocOperations(qtbot, monkeypatch, nwGUI, projPath, ip
     with qtbot.waitSignal(qDoc.layoutSettled, timeout=5000):
         pass
     assert qDoc.isLayoutBusy() is False
+
+
+@pytest.mark.gui
+def testGuiTextDocument_IterBlockByType(qtbot, nwGUI, projPath, mockRnd):
+    """Test that iterBlockByType stops at maxCount instead of
+    continuing to scan the rest of the document.
+    """
+    buildTestProject(NWProject(), projPath)
+    nwGUI.openProject(projPath)
+    assert nwGUI.openDocument(C.hSceneDoc) is True
+    qDoc = nwGUI.docEditor._qDocument
+
+    qDoc.setPlainText("\n\n".join(f"### Heading {i}" for i in range(5)))
+
+    # There are more matching blocks than the cap below
+    allTitles = list(qDoc.iterBlockByType(BLOCK_TITLE, maxCount=1000))
+    assert [b.text() for b in allTitles] == [f"### Heading {i}" for i in range(5)]
+
+    # A smaller maxCount stops early instead of yielding the rest
+    capped = list(qDoc.iterBlockByType(BLOCK_TITLE, maxCount=2))
+    assert [b.text() for b in capped] == ["### Heading 0", "### Heading 1"]

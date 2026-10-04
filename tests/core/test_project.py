@@ -172,18 +172,18 @@ def testNWProject_NewFileFolder(monkeypatch, fncPath, tstPaths, mockGUI, mockRnd
         assert bHandle in project.tree
 
     # Delete new files and folders
-    assert (fncPath / "content" / f"{dHandle}.nwd").exists()
-    assert (fncPath / "content" / f"{cHandle}.nwd").exists()
-    assert (fncPath / "content" / f"{bHandle}.nwd").exists()
+    assert (fncPath / "content" / f"{dHandle}.md").exists()
+    assert (fncPath / "content" / f"{cHandle}.md").exists()
+    assert (fncPath / "content" / f"{bHandle}.md").exists()
 
     assert project.removeItem(dHandle) is True
     assert project.removeItem(cHandle) is True
     assert project.removeItem(bHandle) is True
     assert project.removeItem(aHandle) is True
 
-    assert not (fncPath / "content" / f"{dHandle}.nwd").exists()
-    assert not (fncPath / "content" / f"{cHandle}.nwd").exists()
-    assert not (fncPath / "content" / f"{bHandle}.nwd").exists()
+    assert not (fncPath / "content" / f"{dHandle}.md").exists()
+    assert not (fncPath / "content" / f"{cHandle}.md").exists()
+    assert not (fncPath / "content" / f"{bHandle}.md").exists()
 
     assert aHandle not in project.tree
     assert bHandle not in project.tree
@@ -312,6 +312,13 @@ def testNWProject_Open(monkeypatch, caplog, mockGUI, fncPath, mockRnd):
         assert project.openProject(fncPath, clearLock=True) is False
         assert "The file format of your project is about to be" in SHARED.lastAlert[0]
 
+    # Also won't convert old document files, even if the xml itself isn't flagged as legacy
+    with monkeypatch.context() as mp:
+        mp.setattr("novelwriter.core.storage.ProjectStorage.hasBreakingChanges", lambda *a: True)
+        mp.setattr(_GuiAlert, "finalState", False)
+        assert project.openProject(fncPath, clearLock=True) is False
+        assert "The file format of your project is about to be" in SHARED.lastAlert[0]
+
     # Won't open project from newer version
     with monkeypatch.context() as mp:
         mp.setattr(ProjectXMLReader, "hexVersion", property(lambda *a: 0x99999999))
@@ -338,10 +345,44 @@ def testNWProject_Open(monkeypatch, caplog, mockGUI, fncPath, mockRnd):
     with monkeypatch.context() as mp:
         mp.setattr(ProjectXMLReader, "state", property(lambda *a: XMLReadState.WAS_LEGACY))
         mp.setattr("novelwriter.core.index.Index.loadIndex", lambda *a: True)
-        project.index._indexBroken = True
+        project.index._indexRevision = 0
         assert project.openProject(fncPath, clearLock=True) is True
         assert "The file format of your project is about to be" in SHARED.lastAlert[0]
-        assert project.index._indexBroken is False
+        assert project.index._indexRevision == 4
+
+    project.closeProject()
+
+
+@pytest.mark.core
+def testNWProject_OpenConvertsOldDocuments(monkeypatch, mockGUI, fncPath, mockRnd):
+    """Test that an old .nwd document file is only converted to .md
+    once the user accepts the upgrade prompt.
+    """
+    project = NWProject()
+    mockRnd.reset()
+    buildTestProject(project, fncPath)
+    project.closeProject()
+
+    contentPath = fncPath / "content"
+    nwdFile = contentPath / f"{C.hSceneDoc}.nwd"
+    mdFile = contentPath / f"{C.hSceneDoc}.md"
+    mdFile.unlink()
+    nwdFile.write_text("### New Scene\n\n", encoding="utf-8")
+
+    # Declining the prompt leaves the file untouched
+    project = NWProject()
+    with monkeypatch.context() as mp:
+        mp.setattr(_GuiAlert, "finalState", False)
+        assert project.openProject(fncPath) is False
+    assert nwdFile.exists()
+    assert not mdFile.exists()
+
+    # Accepting converts the file and the project opens normally
+    project = NWProject()
+    assert project.openProject(fncPath, clearLock=True) is True
+    assert not nwdFile.exists()
+    assert mdFile.exists()
+    assert C.hSceneDoc in project.tree
 
     project.closeProject()
 
@@ -380,6 +421,42 @@ def testNWProject_Save(monkeypatch, mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
+def testNWProject_AutoSaveIndexRevision(mockGUI, mockRnd, fncPath):
+    """Test that the index revision is kept current in the project file
+    on every save, including autosave.
+    """
+    project = NWProject()
+    mockRnd.reset()
+    buildTestProject(project, fncPath)  # Performs a full save
+
+    savedRevision = project.index.indexRevision
+    assert project.data.indexRevision == savedRevision
+
+    # Edit a document and only autosave, so the index cache on disk is left untouched
+    tHandle = next(i.itemHandle for i in project.tree if i.isFileType())
+    doc = project.storage.getDocument(tHandle)
+    doc.writeDocument("### More Content\n\n")
+    project.index.reIndexHandle(tHandle)
+    assert project.index.indexRevision > savedRevision
+
+    assert project.saveProject(autoSave=True) is True
+    autoSavedRevision = project.index.indexRevision
+    assert project.data.indexRevision == autoSavedRevision
+    assert autoSavedRevision > savedRevision
+    project.closeProject()
+
+    # Simulate recovering after a crash.
+    # The cached index.json on disk still reflects the state as of the
+    # last full save, so it must be flagged as needing a rebuild.
+    recovered = NWProject()
+    assert recovered.openProject(fncPath, clearLock=True) is True
+    assert recovered.index.indexRevision == savedRevision
+    assert recovered.data.indexRevision == autoSavedRevision
+    assert recovered.index.indexRebuild is True
+    recovered.closeProject()
+
+
+@pytest.mark.core
 def testNWProject_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
     """Test other project class methods and functions."""
     project = NWProject()
@@ -392,13 +469,6 @@ def testNWProject_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
     # Project Author
     project.data.setAuthor("  Jane\tDoe ")
     assert project.data.author == "Jane Doe"
-
-    # Edit Time
-    project.data.setEditTime(1234)
-    project._session._start = 1600000000
-    with monkeypatch.context() as mp:
-        mp.setattr("novelwriter.core.project.time", lambda: 1600005600)
-        assert project.currentEditTime == 6834
 
     # Spell check
     project.setProjectChanged(False)

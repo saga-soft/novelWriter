@@ -22,15 +22,25 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import argparse
+import json
+import re
 import subprocess
 import sys
+import time
+import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
+from datetime import UTC, datetime
 from pathlib import Path
 
-from utils.common import ROOT_DIR, writeFile
+from utils.common import ROOT_DIR, apiRequest, getEnvValue, log, writeFile
 from utils.docs import buildPdfDocAssets
+
+CROWDIN_API = "https://api.crowdin.com/api/v2"
+CROWDIN_PROJECT_ID = 476941
+
+_NAME_SUFFIX_RE = re.compile(r"\s*\([^)]*\)\s*$")
 
 
 def _normaliseTsLocations(tsFile: Path) -> tuple[int, int]:
@@ -58,19 +68,178 @@ def _normaliseTsLocations(tsFile: Path) -> tuple[int, int]:
         ET.indent(tree, space="  ")
         header = '<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE TS>\n'
         xmlBody = ET.tostring(root, encoding="unicode", short_empty_elements=True)
+        xmlBody = xmlBody.replace(" />", "/>")  # Remove space before self-closing tags
         tsFile.write_text(f"{header}{xmlBody}\n", encoding="utf-8")
 
     return nLines, nMerged
+
+
+def _validateProjectTranslation(path: Path, expected: int, threshold: float) -> None:
+    """Validate a project translation file."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if (translated := len(data) / expected) >= threshold:
+            log(f"[cg]Accepted:[e] [cw]{100 * translated:5.1f}%[e] {path.name}")
+        else:
+            log(f"[cr]Rejected:[e] [cw]{100 * translated:5.1f}%[e] {path.name}")
+            path.unlink()
+    except Exception:
+        log(f"[cr]ERROR:[e] Could not process file {path}")
+
+
+def _validateTsTranslation(path: Path, expected: int, threshold: float) -> None:
+    """Validate a Qt Linguist translation file."""
+    try:
+        root = ET.parse(path).getroot()
+        unfinished = len(root.findall('.//translation[@type="unfinished"]'))
+        if (translated := (expected - unfinished) / expected) >= threshold:
+            log(f"[cg]Accepted:[e] [cw]{100 * translated:5.1f}%[e] {path.name}")
+        else:
+            log(f"[cr]Rejected:[e] [cw]{100 * translated:5.1f}%[e] {path.name}")
+            path.unlink()
+    except Exception:
+        log(f"[cr]ERROR:[e] Could not process file {path}")
+
+
+def _crowdinLanguageIds(token: str) -> dict[str, str]:
+    """Map Qt locale codes, e.g. fr_FR, to Crowdin language ids."""
+    result = apiRequest(f"{CROWDIN_API}/languages?limit=500", token)
+    return {item["data"]["locale"].replace("-", "_"): item["data"]["id"] for item in result["data"]}
+
+
+def _changedLanguages() -> set[str]:
+    """Return locale codes for translation files with pending git changes."""
+    result = subprocess.run(
+        ["git", "status", "--porcelain", "--", "i18n", "novelwriter/assets/i18n"],
+        cwd=ROOT_DIR,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    locales = set()
+    for line in result.stdout.splitlines():
+        name = Path(line[3:].strip()).stem
+        if name.startswith("nw_") and name != "nw_base":
+            locales.add(name[len("nw_") :])
+        elif name.startswith("project_") and name != "project_en_GB":
+            locales.add(name[len("project_") :])
+    return locales
+
+
+def _languageLabel(locale: str) -> str:
+    """Resolve a Qt locale code to a human-readable name, e.g. French (fr-FR)."""
+    from PyQt6.QtCore import QLocale
+
+    qLocale = QLocale(locale)
+    name = QLocale.languageToString(qLocale.language())
+    return f"{name} ({qLocale.name().replace('_', '-')})"
+
+
+def _contributorLine(entry: dict) -> str | None:
+    """Format a report entry as a name with translated/approved counts, or
+    None if both are zero, as the activity was likely uncredited voting.
+    """
+    translated = entry.get("translated", 0)
+    approved = entry.get("approved", 0)
+    if not (translated or approved):
+        return None
+
+    fullName = entry.get("user", {}).get("fullName", "")
+    name = _NAME_SUFFIX_RE.sub("", fullName).strip()
+    if not name:
+        return None
+
+    counts = ", ".join(f"{n} {label}" for n, label in [(translated, "translated"), (approved, "approved")] if n)
+    return f"{name} ({counts})"
+
+
+def _generateTopMembersReport(token: str, languageId: str, dateFrom: str, dateTo: str) -> list[dict]:
+    """Generate and download a Top Members report for a single language."""
+    body = {
+        "name": "top-members",
+        "schema": {"languageId": languageId, "format": "json", "dateFrom": dateFrom, "dateTo": dateTo},
+    }
+    url = f"{CROWDIN_API}/projects/{CROWDIN_PROJECT_ID}/reports"
+    report = apiRequest(url, token, body)["data"]
+
+    deadline = time.monotonic() + 60
+    while report["status"] != "finished":
+        if time.monotonic() > deadline:
+            raise TimeoutError("Timed out waiting for Crowdin report generation")
+        time.sleep(2)
+        report = apiRequest(f"{url}/{report['identifier']}", token)["data"]
+
+    link = apiRequest(f"{url}/{report['identifier']}/download", token)["data"]["url"]
+    with urllib.request.urlopen(link) as response:
+        data = json.loads(response.read())
+
+    return data if isinstance(data, list) else data.get("data", [])
+
+
+def _printCreditsSummary(sinceDate: str) -> None:
+    """Print a PR-ready translator credits summary for languages changed since sinceDate."""
+    log("")
+    log("[b]Translator Credits[e]")
+    log("[b]==================[e]")
+    log("")
+
+    if not CROWDIN_PROJECT_ID:
+        log("[cr]CROWDIN_PROJECT_ID is not set in utils/assets.py[e]")
+        return
+
+    locales = sorted(_changedLanguages())
+    if not locales:
+        log("[cy]No changed translation files found[e]")
+        return
+
+    token = getEnvValue("CROWDIN_REPORT_READ_TOKEN", "Crowdin API token (project.report, read only)")
+    dateFrom = f"{sinceDate}T00:00:00+00:00"
+    dateTo = datetime.now(tz=UTC).isoformat(timespec="seconds")
+
+    try:
+        languageIds = _crowdinLanguageIds(token)
+    except Exception as exc:
+        log("[cr]Could not fetch Crowdin language list[e]")
+        log(exc)
+        return
+
+    lines = []
+    for locale in locales:
+        languageId = languageIds.get(locale)
+        if languageId is None:
+            log(f"[cr]Unknown Crowdin language for:[e] {locale}")
+            continue
+
+        try:
+            entries = _generateTopMembersReport(token, languageId, dateFrom, dateTo)
+        except Exception as exc:
+            log(f"[cr]Could not generate report for:[e] {locale}")
+            log(exc)
+            continue
+
+        contributors = sorted(c for e in entries if (c := _contributorLine(e)))
+        if contributors:
+            lines.append(f"- **{_languageLabel(locale)}**: {', '.join(contributors)}")
+            log(f"[cg]Report done:[e] {locale} ({len(contributors)} contributors)")
+        else:
+            log(f"[cy]No contributors found:[e] {locale}")
+
+    log("")
+    log("[b]PR Summary (copy/paste):[e]")
+    log("")
+    for line in lines:
+        log(line)
+    log("")
 
 
 def buildSampleZip(args: argparse.Namespace | None = None) -> None:
     """Bundle the sample project into a single zip file to be saved into
     the novelwriter/assets folder for further bundling into builds.
     """
-    print("")
-    print("Building Sample ZIP File")
-    print("========================")
-    print("")
+    log("")
+    log("[b]Building Sample ZIP File[e]")
+    log("[b]========================[e]")
+    log("")
 
     srcSample = ROOT_DIR / "sample"
     dstSample = ROOT_DIR / "novelwriter" / "assets" / "sample.zip"
@@ -78,85 +247,94 @@ def buildSampleZip(args: argparse.Namespace | None = None) -> None:
     if srcSample.is_dir():
         dstSample.unlink(missing_ok=True)
         with zipfile.ZipFile(dstSample, mode="w", compression=zipfile.ZIP_DEFLATED, compresslevel=3) as zipObj:
-            print("Compressing: nwProject.nwx")
+            log("[cg]Compressing:[e] nwProject.nwx")
             zipObj.write(srcSample / "nwProject.nwx", "nwProject.nwx")
             for doc in (srcSample / "content").iterdir():
-                print(f"Compressing: content/{doc.name}")
+                log(f"[cg]Compressing:[e] content/{doc.name}")
                 zipObj.write(doc, f"content/{doc.name}")
 
     else:
-        print("Error: Could not find sample project source directory.")
+        log("[cr]Error:[e] Could not find sample project source directory.")
         sys.exit(1)
 
-    print("")
-    print(f"Built file: {dstSample}")
-    print("")
+    log("")
+    log(f"[cg]Built file:[e] {dstSample}")
+    log("")
 
 
 def importI18nUpdates(args: argparse.Namespace) -> None:
     """Import new translation files from a zip file."""
-    print("")
-    print("Import Updated Translations")
-    print("===========================")
-    print("")
+    log("")
+    log("[b]Import Updated Translations[e]")
+    log("[b]===========================[e]")
 
     fileName = Path(args.file).absolute()
+    log(f"[b]Archive:[e] {fileName}")
     if not fileName.is_file():
-        print("File not found ...")
+        log("[cr]File not found ...[e]")
         sys.exit(1)
+    log("")
 
     dstPath = ROOT_DIR / "novelwriter" / "assets" / "i18n"
     srcPath = ROOT_DIR / "i18n"
 
-    print(f"Loading file: {fileName}")
+    threshold = args.threshold / 100
+    expected_json = len(json.loads((dstPath / "project_en_GB.json").read_text(encoding="utf-8")))
+    expected_ts = len(ET.parse(srcPath / "nw_base.ts").getroot().findall(".//message"))
+
     with zipfile.ZipFile(fileName) as zipObj:
         for item in zipObj.namelist():
-            if item.startswith("nw_") and item.endswith(".ts"):
+            if item == "nw_base.ts":
+                log(f"[cy]Skipped:[e] {item}")
+            elif item.startswith("nw_") and item.endswith(".ts"):
                 zipObj.extract(item, srcPath)
-                print(f"Extracted: {item} > {srcPath / item}")
+                _validateTsTranslation(srcPath / item, expected_ts, threshold)
             elif item.startswith("project_") and item.endswith(".json"):
                 zipObj.extract(item, dstPath)
-                print(f"Extracted: {item} > {dstPath / item}")
+                _validateProjectTranslation(dstPath / item, expected_json, threshold)
             else:
-                print(f"Skipped: {item}")
+                log(f"[cy]Skipped:[e] {item}")
 
-    print("")
+    log("")
+
+    if args.credits_since:
+        _printCreditsSummary(args.credits_since)
 
 
 def updateTranslationSources(args: argparse.Namespace) -> None:
     """Build the lang.ts files for Qt Linguist."""
-    print("")
-    print("Building Qt Translation Files")
-    print("=============================")
+    log("")
+    log("[b]Building Qt Translation Files[e]")
+    log("[b]=============================[e]")
 
     try:
         from PyQt6.lupdate.lupdate import lupdate
     except ImportError:
-        print("ERROR: This command requires lupdate from PyQt6")
-        print("On Debian/Ubuntu, install: pyqt6-dev-tools")
+        log("[cr]ERROR: This command requires lupdate from PyQt6[e]")
+        log("[cy]On Debian/Ubuntu, install: pyqt6-dev-tools[e]")
         sys.exit(1)
 
-    print("")
-    print("Scanning Source Tree:")
-    print("")
+    log("")
+    log("[b]Scanning Source Tree:[e]")
+    log("")
 
     sources = list((ROOT_DIR / "novelwriter").glob("**/*.py"))
     for source in sources:
-        print(source.relative_to(ROOT_DIR))
+        log(source.relative_to(ROOT_DIR))
 
-    print("")
-    print("TS Files to Update:")
-    print("")
+    log("")
+    log("[b]TS Files to Update:[e]")
+    log("")
 
     translations = []
     for item in [Path(str(f)).absolute() for f in args.files]:
         if not (item.name.startswith("nw_") and item.suffix == ".ts"):
-            print(f"Skipped: {item}")
+            log(f"[cy]Skipped:[e] {item}")
             continue
 
         if item.is_file():
             translations.append(item)
-            print(f"Added: {item}")
+            log(f"[cg]Added:[e] {item}")
         elif item.exists():
             continue
         else:  # Create an empty new language file
@@ -170,11 +348,11 @@ def updateTranslationSources(args: argparse.Namespace) -> None:
                 ),
             )
             translations.append(item)
-            print(f"Created: {item}")
+            log(f"[cg]Created:[e] {item}")
 
-    print("")
-    print("Updating Language Files:")
-    print("")
+    log("")
+    log("[b]Updating Language Files:[e]")
+    log("")
 
     lupdate(
         sources=[str(f) for f in sources],
@@ -183,18 +361,18 @@ def updateTranslationSources(args: argparse.Namespace) -> None:
         no_summary=False,
     )
 
-    print("")
-    print("Normalising TS Location Metadata:")
-    print("")
+    log("")
+    log("[b]Normalising TS Location Metadata:[e]")
+    log("")
 
     for item in translations:
         nLines, nMerged = _normaliseTsLocations(item)
         if nLines > 0 or nMerged > 0:
-            print(f"Updated: {item} ({nLines} line refs, {nMerged} merged)")
+            log(f"[cg]Updated:[e] {item} ({nLines} line refs, {nMerged} merged)")
         else:
-            print(f"No Change: {item}")
+            log(f"[cy]No Change:[e] {item}")
 
-    print("")
+    log("")
 
 
 def getLReleaseExec() -> str | None:
@@ -207,13 +385,13 @@ def getLReleaseExec() -> str | None:
 
 def buildTranslationAssets(args: argparse.Namespace | None = None) -> None:
     """Build the lang.qm files for Qt Linguist."""
-    print("")
-    print("Building Qt Localisation Files")
-    print("==============================")
+    log("")
+    log("[b]Building Qt Localisation Files[e]")
+    log("[b]==============================[e]")
 
-    print("")
-    print("TS Files to Build:")
-    print("")
+    log("")
+    log("[b]TS Files to Build:[e]")
+    log("")
 
     srcDir = ROOT_DIR / "i18n"
     dstDir = ROOT_DIR / "novelwriter" / "assets" / "i18n"
@@ -222,11 +400,11 @@ def buildTranslationAssets(args: argparse.Namespace | None = None) -> None:
     for item in srcDir.iterdir():
         if item.is_file() and item.suffix == ".ts" and item.name != "nw_base.ts":
             srcList.append(item)
-            print(item)
+            log(item)
 
-    print("")
-    print("Building Translation Files:")
-    print("")
+    log("")
+    log("[b]Building Translation Files:[e]")
+    log("")
 
     try:
         if lrelease := getLReleaseExec():
@@ -234,30 +412,30 @@ def buildTranslationAssets(args: argparse.Namespace | None = None) -> None:
         else:
             raise FileNotFoundError("No lrelease executable found")
     except Exception as exc:
-        print("Qt Linguist tools seem to be missing")
-        print("On Debian/Ubuntu, install: qttools5-dev-tools")
-        print(str(exc))
+        log("[cy]Qt Linguist tools seem to be missing[e]")
+        log("[cy]On Debian/Ubuntu, install: qttools5-dev-tools[e]")
+        log(exc)
         sys.exit(1)
 
-    print("")
-    print("Moving QM Files to Assets")
-    print("")
+    log("")
+    log("[b]Moving QM Files to Assets[e]")
+    log("")
 
     dstRel = dstDir.relative_to(ROOT_DIR)
     for item in srcDir.iterdir():
         if item.is_file() and item.suffix == ".qm":
             item.rename(dstDir / item.name)
-            print(f"Moved: {item.relative_to(ROOT_DIR)} -> {dstRel / item.name}")
+            log(f"[cg]Moved:[e] {item.relative_to(ROOT_DIR)} -> {dstRel / item.name}")
 
-    print("")
+    log("")
 
 
 def cleanBuiltAssets(args: argparse.Namespace | None = None) -> None:
     """Remove assets built by this script."""
-    print("")
-    print("Removing Built Assets")
-    print("=====================")
-    print("")
+    log("")
+    log("[b]Removing Built Assets[e]")
+    log("[b]=====================[e]")
+    log("")
 
     assets = [ROOT_DIR / "novelwriter" / "assets" / "sample.zip"]
     assets.extend((ROOT_DIR / "novelwriter" / "assets").glob("manual*.pdf"))
@@ -265,9 +443,9 @@ def cleanBuiltAssets(args: argparse.Namespace | None = None) -> None:
     for asset in assets:
         if asset.is_file():
             asset.unlink()
-            print(f"Deleted: {asset.relative_to(ROOT_DIR)}")
+            log(f"[cy]Deleted:[e] {asset.relative_to(ROOT_DIR)}")
 
-    print("")
+    log("")
 
 
 def buildAllAssets(args: argparse.Namespace) -> None:

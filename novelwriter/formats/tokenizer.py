@@ -1240,10 +1240,20 @@ class Tokenizer(ABC):
             for res in regEx.finditer(text):
                 temp.extend((res.start(n), res.end(n), fmt, "") for n, fmt in enumerate(fmts) if fmt > 0)
 
-        # Match URLs
+        # Match Markdown Links
+        links: list[tuple[int, int]] = []
+        for res in REGEX_PATTERNS.markdownLink.finditer(text):
+            links.append((res.start(0), res.end(0)))
+            temp.append((res.start(1), res.end(1), TextFmt.STRIP, ""))
+            temp.append((res.start(2), 0, TextFmt.HRF_B, res.group(4)))
+            temp.append((res.end(2), 0, TextFmt.HRF_E, ""))
+            temp.append((res.start(3), res.end(5), TextFmt.STRIP, ""))
+
+        # Match Bare URLs
         for res in REGEX_PATTERNS.url.finditer(text):
-            temp.append((res.start(0), 0, TextFmt.HRF_B, res.group(0)))
-            temp.append((res.end(0), 0, TextFmt.HRF_E, ""))
+            if not any(a <= res.start(0) and res.end(0) <= b for a, b in links):
+                temp.append((res.start(0), 0, TextFmt.HRF_B, res.group(0)))
+                temp.append((res.end(0), 0, TextFmt.HRF_E, ""))
 
         # Match Shortcodes
         temp.extend(
@@ -1273,7 +1283,7 @@ class Tokenizer(ABC):
                     temp.append((res.start(0), 0, TextFmt.COL_B, "altdialog"))
                     temp.append((res.end(0), 0, TextFmt.COL_E, "endaltdialog"))
 
-        # Post-process text and format
+        # Post-Process Text and Format
         result = text
         formats = []
         for pos, end, fmt, meta in sorted(temp, key=lambda x: x[0], reverse=True):

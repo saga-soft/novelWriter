@@ -322,6 +322,11 @@ class GuiTheme:
         """Return a dictionary of all themes."""
         return self._allThemes
 
+    @property
+    def themeInfo(self) -> ThemeMeta:
+        """Return the metadata for the current theme."""
+        return self._meta
+
     ##
     #  Getters
     ##
@@ -346,6 +351,19 @@ class GuiTheme:
             return color
         logger.warning("No colour named '%s'", name)
         return self._svgColors.get("default", b"#000000")
+
+    def getStructureColor(self, hLevel: int) -> QColor:
+        """Return a structure color."""
+        match hLevel:
+            case 1:
+                name = "title"
+            case 2:
+                name = "chapter"
+            case 3:
+                name = "scene"
+            case _:
+                name = "file"
+        return QColor(self._qColors.get(name) or QtTransparent)
 
     ##
     #  Theme Methods

@@ -34,7 +34,7 @@ url    = "https://github.com/liviuschera/noctis"
 # FUNCTION           : #16a3b6 -> Base.cyan
 # SUPPORT            : #49d6e9 -> Syntax.replacetag
 # MISC               : #49ace9 -> Base.blue
-# INVALID            : #e3541c -> GUI.errortext
+# INVALID            : #e3541c -> GUI.errorText 
 ##
 
 [Base]

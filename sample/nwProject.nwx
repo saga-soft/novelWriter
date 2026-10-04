@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<novelWriterXML appVersion="26.2b1" hexVersion="0x260200b1" fileVersion="1.5" fileRevision="7" timeStamp="2026-07-30 21:34:49">
-  <project id="e2be99af-f9bf-4403-857a-c3d1ac25abea" saveCount="2383" autoCount="430" editTime="110655">
+<novelWriterXML appVersion="26.3a0" hexVersion="0x260300a0" fileVersion="1.6" fileRevision="0" timeStamp="2026-09-30 19:54:49">
+  <project id="e2be99af-f9bf-4403-857a-c3d1ac25abea" saveCount="2402" autoCount="432" editTime="111747" indexRevision="727">
     <name>Sample Project</name>
     <author>Jane Smith</author>
   </project>
@@ -9,7 +9,7 @@
     <language>en_GB</language>
     <spellChecking auto="yes">None</spellChecking>
     <projectTarget date="None" last="1137" mode="words">15000</projectTarget>
-    <dailyTarget auto="no" last="0" date="2026-07-30">1000</dailyTarget>
+    <dailyTarget auto="no" last="0" date="2026-09-30">1000</dailyTarget>
     <targetSkipRoots>
       <entry>d2d81f4831814</entry>
     </targetSkipRoots>
@@ -17,7 +17,7 @@
       <entry key="editor">636b6aa9b697b</entry>
       <entry key="viewer">636b6aa9b697b</entry>
       <entry key="novel">7031beac91f75</entry>
-      <entry key="outline">7031beac91f75</entry>
+      <entry key="story">7031beac91f75</entry>
     </lastHandle>
     <autoReplace>
       <entry key="A">B</entry>
@@ -42,7 +42,7 @@
       <entry key="i56be10" count="1" color="purple" shape="BLOCK_4">Main</entry>
     </importance>
   </settings>
-  <content items="38" novelWords="5561" notesWords="601" novelChars="29419" notesChars="3295">
+  <content items="38" novelWords="5561" notesWords="601" novelChars="29430" notesChars="3295">
     <item handle="7031beac91f75" parent="None" root="7031beac91f75" order="0" type="ROOT" class="NOVEL">
       <meta expanded="yes" />
       <name status="sc24b8f" import="ia857f0">Novel</name>
@@ -64,7 +64,7 @@
       <name status="sf24ce6" import="ia857f0" active="yes">Basic Formatting</name>
     </item>
     <item handle="636b6aa9b697b" parent="6a2d6d5f4f401" root="7031beac91f75" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
-      <meta expanded="no" heading="H3" charCount="3003" wordCount="530" paraCount="16" cursorPos="944" />
+      <meta expanded="no" heading="H3" charCount="3014" wordCount="530" paraCount="16" cursorPos="19" />
       <name status="s90e6c9" import="ia857f0" active="yes">Making a Scene</name>
     </item>
     <item handle="bc0cbd2a407f3" parent="6a2d6d5f4f401" root="7031beac91f75" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">

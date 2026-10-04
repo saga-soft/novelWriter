@@ -21,7 +21,7 @@ In order to make your own versions, first copy one of the existing files to your
 modify it as you like.
 
 The existing colour themes are stored in
-`novelwriter/assets/themes <https://github.com/vkbo/novelWriter/tree/main/novelwriter/assets/themes>`_.
+`novelwriter/assets/themes <https://github.com/saga-soft/novelWriter/tree/main/novelwriter/assets/themes>`_.
 
 Remember to also change the name of your theme by modifying the ``name`` setting at the top of the
 file, otherwise you may not be able to distinguish them in **Preferences**.
@@ -53,7 +53,7 @@ A colour theme ``.toml`` file consists of the following settings:
    mode   = "light"
    author = "Veronica Berglyd Olsen"
    credit = "Veronica Berglyd Olsen"
-   url    = "https://github.com/vkbo/novelWriter"
+   url    = "https://github.com/saga-soft/novelWriter"
 
    [Base]
    base    = "#fcfcfc"
@@ -239,7 +239,7 @@ Icon themes are *not* straightforward to add, but if you want to make the effort
 describes how to do it.
 
 The existing icon themes are stored in
-`novelwriter/assets/icons <https://github.com/vkbo/novelWriter/tree/main/novelwriter/assets/icons>`_.
+`novelwriter/assets/icons <https://github.com/saga-soft/novelWriter/tree/main/novelwriter/assets/icons>`_.
 
 As with colour themes, remember to change the name of your theme by modifying the ``name`` setting
 at the top of the file, otherwise you may not be able to distinguish them in **Preferences**.
@@ -285,7 +285,7 @@ The icon keys are associated with icon placement locations inside novelWriter, a
 them is defined in the script that generates the default icon themes.
 
 The script can be found under
-`utils/icon_themes.py <https://github.com/vkbo/novelWriter/blob/main/utils/icon_themes.py>`__
+`utils/icon_themes.py <https://github.com/saga-soft/novelWriter/blob/main/utils/icon_themes.py>`__
 in the source code.
 
 This file includes all the code needed to generate the themes that are included in novelWriter. The

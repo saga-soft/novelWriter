@@ -22,10 +22,10 @@ storage for robustness.
 * Documentation: https://docs.novelwriter.io
 * Public Releases: https://releases.novelwriter.io
 * Internationalisation: https://crowdin.com/project/novelwriter
-* Source Code: https://github.com/vkbo/novelWriter
-* Source Releases: https://github.com/vkbo/novelWriter/releases
-* Issue Tracker: https://github.com/vkbo/novelWriter/issues
-* Feature Discussions: https://github.com/vkbo/novelWriter/discussions
+* Source Code: https://github.com/saga-soft/novelWriter
+* Source Releases: https://github.com/saga-soft/novelWriter/releases
+* Issue Tracker: https://github.com/saga-soft/novelWriter/issues
+* Feature Discussions: https://github.com/saga-soft/novelWriter/discussions
 * PyPi Project: https://pypi.org/project/novelWriter
 * Social Media: https://fosstodon.org/@novelwriter
 

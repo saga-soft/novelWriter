@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<novelWriterXML appVersion="2.8a1" hexVersion="0x020800a1" fileVersion="1.5" fileRevision="6" timeStamp="2025-06-19 21:05:02">
-  <project id="5ac0df12-8b8b-476b-9905-21d33685687c" saveCount="55" autoCount="33" editTime="2746">
+<novelWriterXML appVersion="26.2b1" hexVersion="0x260200b1" fileVersion="1.5" fileRevision="7" timeStamp="2026-08-01 21:51:30">
+  <project id="5ac0df12-8b8b-476b-9905-21d33685687c" saveCount="56" autoCount="34" editTime="2780" indexRevision="46">
     <name>Lorem Ipsum</name>
     <author>lipsum.com</author>
   </project>
@@ -8,11 +8,14 @@
     <doBackup>no</doBackup>
     <language>en_GB</language>
     <spellChecking auto="no">None</spellChecking>
+    <projectTarget date="None" last="3006" mode="words">0</projectTarget>
+    <dailyTarget auto="no" last="0" date="2026-08-01">0</dailyTarget>
+    <targetSkipRoots />
     <lastHandle>
-      <entry key="editor">04468803b92e1</entry>
+      <entry key="editor">7a992350f3eb6</entry>
       <entry key="viewer">None</entry>
       <entry key="novel">b3643d0f92e32</entry>
-      <entry key="outline">None</entry>
+      <entry key="story">None</entry>
     </lastHandle>
     <autoReplace>
       <entry key="Rep1">Replace Text 1</entry>

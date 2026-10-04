@@ -3,7 +3,7 @@ name   = "LCARS"
 mode   = "dark"
 author = "Veronica Berglyd Olsen"
 credit = "Star Trek TNG"
-url    = "https://github.com/vkbo/novelWriter"
+url    = "https://github.com/saga-soft/novelWriter"
 
 [Base]
 base    = "#101010"

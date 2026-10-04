@@ -153,21 +153,49 @@ class FromQTextDocument:
 
     def _formatBlock(self, block: QTextBlock) -> str:
         """Format the text of a block, applying inline formatting to
-        each of its fragments.
+        each of its fragments. Adjacent Qt fragments that carry the
+        same effective formatting are merged first, as Qt's HTML
+        round trip can split a single formatted run into several
+        fragments that differ only in formatting-irrelevant
+        properties like anchors (see #2978).
         """
         blockText = block.text()
-        parts = []
-        offset = 0
+        merged: list[tuple[str, dict[str, bool]]] = []
         it = block.begin()
         while not it.atEnd():
             if (frag := it.fragment()).isValid():  # pragma: no branch
                 text = frag.text()
-                parts.append(self._formatFragment(text, offset, blockText, frag.charFormat()))
-                offset += len(text)
+                active = self._activeFormats(frag.charFormat())
+                if merged and merged[-1][1] == active:
+                    prevText, _ = merged[-1]
+                    merged[-1] = (prevText + text, active)
+                else:
+                    merged.append((text, active))
             it += 1
+
+        parts = []
+        offset = 0
+        for text, active in merged:
+            parts.append(self._formatFragment(text, offset, blockText, active))
+            offset += len(text)
+
         return self._resolveSoftBreaks("".join(parts))
 
-    def _formatFragment(self, text: str, start: int, blockText: str, cFormat: QTextCharFormat) -> str:
+    def _activeFormats(self, cFormat: QTextCharFormat) -> dict[str, bool]:
+        """Extract the set of Markdown-relevant formats that are
+        active for a given character format.
+        """
+        align = cFormat.verticalAlignment()
+        return {
+            "underline": cFormat.fontUnderline(),
+            "sub": align == QtVAlignSub,
+            "sup": align == QtVAlignSuper,
+            "strike": cFormat.fontStrikeOut(),
+            "italic": cFormat.fontItalic(),
+            "bold": cFormat.fontWeight() >= QFont.Weight.Bold,
+        }
+
+    def _formatFragment(self, text: str, start: int, blockText: str, active: dict[str, bool]) -> str:
         """Wrap a single formatted text fragment in the appropriate
         Markdown syntax or novelWriter shortcode.
         """
@@ -183,16 +211,6 @@ class FromQTextDocument:
         cleanEdges = (coreStart == 0 or not _isWordChar(blockText[coreStart - 1])) and (
             coreEnd >= len(blockText) or not _isWordChar(blockText[coreEnd])
         )
-
-        align = cFormat.verticalAlignment()
-        active = {
-            "underline": cFormat.fontUnderline(),
-            "sub": align == QtVAlignSub,
-            "sup": align == QtVAlignSuper,
-            "strike": cFormat.fontStrikeOut(),
-            "italic": cFormat.fontItalic(),
-            "bold": cFormat.fontWeight() >= QFont.Weight.Bold,
-        }
 
         for name in MARKDOWN_FMTS:
             if not active[name]:

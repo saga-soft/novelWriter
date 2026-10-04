@@ -21,6 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+import gc
 import getopt
 import logging
 import os
@@ -191,6 +192,9 @@ def main(sysArgs: list | None = None) -> GuiMain | None:
 
     logger.info("Starting novelWriter %s (%s) %s", __version__, __hexversion__, __date__)
 
+    # Disable GC, running in GuiMain instead (#2927)
+    gc.disable()
+
     # Check Packages and Versions
     errorData = []
     errorCode = 0
@@ -274,7 +278,9 @@ def main(sysArgs: list | None = None) -> GuiMain | None:
 
     nwGUI.postLaunchTasks(cmdOpen)
 
-    sys.exit(app.exec())
+    code = app.exec()
+    logger.info("novelWriter exited with code %d", code)
+    sys.exit(code)
 
 
 def _createApp() -> QApplication:

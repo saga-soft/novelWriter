@@ -23,20 +23,40 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import os
 
+from dataclasses import dataclass
 from pathlib import Path
 from time import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TextIO
 
 from novelwriter.common import formatTimeStamp, isHandle, safeExists, safeIsFile
 from novelwriter.enum import nwItemClass, nwItemLayout
 from novelwriter.error import formatException, logException
+from novelwriter.formats.tomlparser import NTomlParser
 
 if TYPE_CHECKING:
     from novelwriter.core.item import ProjectItem
     from novelwriter.core.project import NWProject
+    from novelwriter.formats.tomlparser import T_TomlObject
 
 logger = logging.getLogger(__name__)
+
+MAX_META_LINES = 20
+
+
+@dataclass
+class DocumentMeta:
+    """A dataclass representing the meta data of a document."""
+
+    name: str = ""
+    parent: str | None = None
+    handle: str | None = None
+    itemClass: nwItemClass = nwItemClass.NOVEL
+    itemLayout: nwItemLayout = nwItemLayout.NOTE
+    textHash: str = ""
+    createdDate: str = "Unknown"
+    updatedDate: str = "Unknown"
 
 
 class ProjectDocument:
@@ -55,9 +75,11 @@ class ProjectDocument:
         self._item = None  # The currently open item
         self._handle = None  # The handle of the currently open item
         self._fileLoc = None  # The file location of the currently open item
-        self._docMeta = {}  # The meta data of the currently open item
-        self._docError = ""  # The latest encountered IO error
+        self._meta = DocumentMeta()  # The meta data of the currently open item
+        self._error = ""  # The latest encountered IO error
+
         self._lastHash = ""  # The last known SHA hash
+        self._lastStat = None  # The (mtime_ns, size) of the file at last read/write
         self._hashError = False  # Hash mismatch on last write attempt
 
         if isHandle(tHandle):
@@ -89,14 +111,24 @@ class ProjectDocument:
         return str(self._fileLoc)
 
     @property
+    def meta(self) -> DocumentMeta:
+        """Return the meta data of the current document."""
+        return self._meta
+
+    @property
+    def error(self) -> str:
+        """Return the last recorded error."""
+        return self._error
+
+    @property
     def createdDate(self) -> str:
         """Return the document creation date."""
-        return self._docMeta.get("created", "Unknown")
+        return self._meta.createdDate
 
     @property
     def updatedDate(self) -> str:
         """Return the document creation date."""
-        return self._docMeta.get("updated", "Unknown")
+        return self._meta.updatedDate
 
     @property
     def nwItem(self) -> ProjectItem | None:
@@ -111,13 +143,10 @@ class ProjectDocument:
     def quickReadText(content: Path, tHandle: str) -> str:
         """Return the text of a document in a fast and efficient way."""
         try:
-            if (path := content / f"{tHandle}.nwd").is_file():
+            if (path := content / f"{tHandle}.md").is_file():
                 with open(path, mode="r", encoding="utf-8") as inFile:
-                    line = ""
-                    for _ in range(10):
-                        if not (line := inFile.readline()).startswith(r"%%~"):
-                            break
-                    return line + inFile.read()
+                    _, text = ProjectDocument._splitHeader(inFile)
+                    return text
         except Exception:
             logger.error("Cannot read document with handle '%s'", tHandle)
             logException()
@@ -137,7 +166,7 @@ class ProjectDocument:
             logger.error("No content path set")
             return False
 
-        return safeIsFile(contentPath / f"{self._handle}.nwd")
+        return safeIsFile(contentPath / f"{self._handle}.md")
 
     def readDocument(self, isOrphan: bool = False) -> str | None:
         """Read the document specified by the handle set in the
@@ -145,7 +174,7 @@ class ProjectDocument:
         meta data. If the document doesn't exist on disk, return an
         empty string. If something went wrong, return None.
         """
-        self._docError = ""
+        self._error = ""
         if not isinstance(self._handle, str):
             logger.error("No document handle set")
             return None
@@ -159,33 +188,33 @@ class ProjectDocument:
             logger.error("No content path set")
             return None
 
-        docFile = f"{self._handle}.nwd"
+        docFile = f"{self._handle}.md"
         logger.debug("Opening document: %s", docFile)
 
         docPath = contentPath / docFile
         self._fileLoc = docPath
 
         text = ""
-        self._docMeta = {}
+        self._meta = DocumentMeta()
         self._lastHash = ""
+        self._lastStat = None
 
         if safeExists(docPath):
             try:
                 with open(docPath, mode="r", encoding="utf-8") as inFile:
-                    # Check the first <= 10 lines for metadata
-                    for _ in range(10):
-                        line = inFile.readline()
-                        if line.startswith(r"%%~"):
-                            self._parseMeta(line)
-                        else:
-                            text = line
-                            break
+                    metaLines, text = self._splitHeader(inFile)
+                    if metaLines:
+                        parser = NTomlParser(flat=True)
+                        parser.readString("".join(metaLines))
+                        self._applyMeta(parser)
 
-                    # Load the rest of the file
-                    text += inFile.read()
+                    # Record the file's stat so future saves can check for
+                    # external changes without a full re-read and hash
+                    stat = os.fstat(inFile.fileno())
+                    self._lastStat = (stat.st_mtime_ns, stat.st_size)
 
             except Exception as exc:
-                self._docError = formatException(exc)
+                self._error = formatException(exc)
                 return None
 
         else:
@@ -202,7 +231,7 @@ class ProjectDocument:
         any IO errors in the process  Returns True if successful, False
         if not.
         """
-        self._docError = ""
+        self._error = ""
         if not isinstance(self._handle, str):
             logger.error("No document handle set")
             return False
@@ -212,50 +241,64 @@ class ProjectDocument:
             logger.error("No content path set")
             return False
 
-        docFile = f"{self._handle}.nwd"
+        docFile = f"{self._handle}.md"
         logger.debug("Saving document: %s", docFile)
 
         docPath = contentPath / docFile
         docTemp = docPath.with_suffix(".tmp")
 
-        # Re-read the document on disk to check if it has changed
+        # Check if the document has changed on disk
         prevHash = self._lastHash
-        self.readDocument()
-        if prevHash and self._lastHash != prevHash and not forceWrite:
-            logger.error("File has been altered on disk since opened")
-            self._hashError = True
-            return False
+        if prevHash:
+            try:
+                stat = docPath.stat()
+                statSig = (stat.st_mtime_ns, stat.st_size)
+            except OSError:
+                statSig = None
+
+            if statSig != self._lastStat:
+                # Verify by checking the hash
+                self.readDocument()
+                if self._lastHash != prevHash and not forceWrite:
+                    logger.error("File has been altered on disk since opened")
+                    self._hashError = True
+                    return False
 
         if text and not text.endswith("\n"):
             text += "\n"
 
         currTime = formatTimeStamp(time())
         writeHash = hashlib.sha1(text.encode(encoding="utf-8")).hexdigest()
-        createdDate = self._docMeta.get("created", "Unknown")
-        updatedDate = self._docMeta.get("updated", "Unknown")
+        createdDate = self._meta.createdDate
+        updatedDate = self._meta.updatedDate
         if writeHash != self._lastHash:
             updatedDate = currTime
         if not safeIsFile(docPath):
             createdDate = currTime
             updatedDate = currTime
 
-        # DocMeta Line
+        # DocMeta Header
         docMeta = ""
         if self._item:
-            docMeta = (
-                f"%%~name: {self._item.itemName}\n"
-                f"%%~path: {self._item.itemParent}/{self._item.itemHandle}\n"
-                f"%%~kind: {self._item.itemClass.name}/{self._item.itemLayout.name}\n"
-                f"%%~hash: {writeHash}\n"
-                f"%%~date: {createdDate}/{updatedDate}\n"
-            )
+            meta: T_TomlObject = {
+                "name": self._item.itemName,
+                "parent": self._item.itemParent or "",
+                "handle": self._item.itemHandle or "",
+                "class": self._item.itemClass.name,
+                "layout": self._item.itemLayout.name,
+                "textHash": writeHash,
+                "createdDate": createdDate,
+                "updatedDate": updatedDate,
+            }
+            toml = NTomlParser(flat=True).writeString(meta).strip()
+            docMeta = f"+++\n{toml}\n+++\n"
 
         try:
             with open(docTemp, mode="w", encoding="utf-8") as outFile:
                 outFile.write(docMeta)
                 outFile.write(text)
         except Exception as exc:
-            self._docError = formatException(exc)
+            self._error = formatException(exc)
             return False
 
         # If we're here, the file was successfully saved, so we can
@@ -263,10 +306,18 @@ class ProjectDocument:
         try:
             docTemp.replace(docPath)
         except OSError as exc:
-            self._docError = formatException(exc)
+            self._error = formatException(exc)
             return False
 
         self._lastHash = writeHash
+        self._meta.textHash = writeHash
+        self._meta.createdDate = createdDate
+        self._meta.updatedDate = updatedDate
+        try:
+            stat = docPath.stat()
+            self._lastStat = (stat.st_mtime_ns, stat.st_size)
+        except OSError:
+            self._lastStat = None
         self._hashError = False
 
         return True
@@ -275,7 +326,7 @@ class ProjectDocument:
         """Permanently delete a document source file and related files
         from the project data folder.
         """
-        self._docError = ""
+        self._error = ""
         if not isinstance(self._handle, str):
             logger.error("No document handle set")
             return False
@@ -285,75 +336,51 @@ class ProjectDocument:
             logger.error("No content path set")
             return False
 
-        docPath = contentPath / f"{self._handle}.nwd"
+        docPath = contentPath / f"{self._handle}.md"
         docTemp = docPath.with_suffix(".tmp")
 
         try:
             docPath.unlink(missing_ok=True)
             docTemp.unlink(missing_ok=True)
         except Exception as exc:
-            self._docError = formatException(exc)
+            self._error = formatException(exc)
             return False
 
         return True
 
     ##
-    #  Getters
-    ##
-
-    def getMeta(self) -> tuple[str, str | None, nwItemClass | None, nwItemLayout | None]:
-        """Parse the document meta tag and return the name, parent,
-        class and layout meta values.
-        """
-        name = self._docMeta.get("name", "")
-        parent = self._docMeta.get("parent", None)
-        itemClass = self._docMeta.get("class", None)
-        itemLayout = self._docMeta.get("layout", None)
-
-        return name, parent, itemClass, itemLayout
-
-    def getError(self) -> str:
-        """Return the last recorded exception."""
-        return self._docError
-
-    ##
     #  Internal Functions
     ##
 
-    def _parseMeta(self, metaLine: str) -> None:
-        """Parse a line from the document starting with the characters
-        %%~ that may contain meta data.
-        """
-        if metaLine.startswith("%%~name:"):
-            self._docMeta["name"] = metaLine[8:].strip()
+    def _applyMeta(self, parser: NTomlParser) -> None:
+        """Populate the document meta data from a parsed TOML header."""
+        parent = parser.getStr(None, "parent", "")
+        handle = parser.getStr(None, "handle", "")
 
-        elif metaLine.startswith("%%~path:"):
-            metaVal = metaLine[8:].strip()
-            metaBits = metaVal.split("/")
-            if len(metaBits) == 2:
-                if isHandle(metaBits[0]):
-                    self._docMeta["parent"] = metaBits[0]
-                if isHandle(metaBits[1]):
-                    self._docMeta["handle"] = metaBits[1]
+        self._meta = DocumentMeta(
+            name=parser.getStr(None, "name", ""),
+            parent=parent if isHandle(parent) else None,
+            handle=handle if isHandle(handle) else None,
+            itemClass=parser.getEnum(None, "class", nwItemClass.NOVEL),
+            itemLayout=parser.getEnum(None, "layout", nwItemLayout.NOTE),
+            textHash=parser.getStr(None, "textHash", ""),
+            createdDate=parser.getStr(None, "createdDate", "Unknown"),
+            updatedDate=parser.getStr(None, "updatedDate", "Unknown"),
+        )
 
-        elif metaLine.startswith("%%~kind:"):
-            metaVal = metaLine[8:].strip()
-            metaBits = metaVal.split("/")
-            if len(metaBits) == 2:
-                if metaBits[0] in nwItemClass.__members__:
-                    self._docMeta["class"] = nwItemClass[metaBits[0]]
-                if metaBits[1] in nwItemLayout.__members__:
-                    self._docMeta["layout"] = nwItemLayout[metaBits[1]]
-
-        elif metaLine.startswith("%%~hash:"):
-            self._docMeta["hash"] = metaLine[8:].strip()
-
-        elif metaLine.startswith("%%~date:"):
-            metaVal = metaLine[8:].strip()
-            metaBits = metaVal.split("/")
-            if len(metaBits) == 2:
-                self._docMeta["created"] = metaBits[0].strip()
-                self._docMeta["updated"] = metaBits[1].strip()
-
-        else:
-            logger.debug("Unknown meta data: '%s'", metaLine.strip())
+    @staticmethod
+    def _splitHeader(stream: TextIO) -> tuple[list[str], str]:
+        """Split an open document file into TOML header and text."""
+        first = stream.readline()
+        if first.strip() == "+++":
+            meta = []
+            for _ in range(MAX_META_LINES):
+                line = stream.readline()
+                if not line:
+                    break
+                if line.strip() == "+++":
+                    return meta, stream.read()
+                meta.append(line)
+            stream.seek(0)
+            return [], stream.read()
+        return [], first + stream.read()

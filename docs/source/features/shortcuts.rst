@@ -34,7 +34,6 @@ Main Window Shortcuts
    ":kbd:`Ctrl+Shift+T`", "Switch focus to the outline view"
    ":kbd:`Ctrl+Shift+W`", "Close the current project"
    ":kbd:`Shift+F1`",     "Open the local user manual (PDF) if it is available"
-   ":kbd:`Shift+F6`",     "Open the **Project Details** dialog"
 
 
 Project Tree Shortcuts
@@ -134,6 +133,7 @@ Other Editor Shortcuts
    ":kbd:`Ctrl+Return`",       "Open the tag or reference under the cursor in the viewer"
    ":kbd:`Ctrl+Shift+Return`", "Open the tag or reference under the cursor in the editor"
    ":kbd:`Ctrl+Shift+A`",      "Select all text in the current paragraph"
+   ":kbd:`Ctrl+Shift+V`",      "Paste text as plain text from clipboard to cursor position"
    ":kbd:`Ctrl+Left`",         "Move to previous word."
    ":kbd:`Ctrl+Right`",        "Move to next word."
    ":kbd:`Ctrl+Up`",           "Move to previous paragraph."

@@ -1,4 +1,4 @@
-name: Part-Windows-X64
+name: Part Windows X64
 
 on: workflow_call
 
@@ -14,6 +14,9 @@ jobs:
         with:
           python-version: "3.14"
           architecture: x64
+
+      - name: Install Packages (pip)
+        run: pip install tzdata
 
       - name: Checkout Source
         uses: actions/checkout@v7

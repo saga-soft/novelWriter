@@ -76,6 +76,10 @@ class GuiDocToolBar(QWidget):
         self.tbMarkMD.setToolTip(self.tr("Markdown Highlight"))
         self.tbMarkMD.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.MD_MARK))
 
+        self.tbLinkMD = NFlatIconButton(self, iSz, "fmt_link:markdown")
+        self.tbLinkMD.setToolTip(self.tr("Markdown Link"))
+        self.tbLinkMD.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.MD_LINK))
+
         self.tbBold = NFlatIconButton(self, iSz, "fmt_bold:shortcode")
         self.tbBold.setToolTip(self.tr("Shortcode Bold"))
         self.tbBold.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.SC_BOLD))
@@ -112,6 +116,7 @@ class GuiDocToolBar(QWidget):
         self.outerBox.addWidget(self.tbItalicMD)
         self.outerBox.addWidget(self.tbStrikeMD)
         self.outerBox.addWidget(self.tbMarkMD)
+        self.outerBox.addWidget(self.tbLinkMD)
         self.outerBox.addSpacing(4)
         self.outerBox.addWidget(self.tbBold)
         self.outerBox.addWidget(self.tbItalic)

@@ -25,17 +25,22 @@ from urllib.error import HTTPError
 
 import pytest
 
-from PyQt6.QtCore import QUrl
+from PyQt6.QtCore import QObject, QUrl, pyqtSignal
 
 from novelwriter import SHARED
 from novelwriter.constants import nwConst
-from novelwriter.extensions.versioninfo import VersionInfoWidget, _Retriever, _RetrieverSignal
+from novelwriter.extensions.versioninfo import VersionInfoWidget, _Retriever
 
 from tests.helpers import SimpleDialog
 
 
+class MockSignalHolder(QObject):
+    dataReady = pyqtSignal(str, str)
+
+
 class MockRetriever:
-    signals = _RetrieverSignal()
+    def __init__(self, signal):
+        self.signal = signal
 
 
 class MockDesktopServices:
@@ -95,7 +100,7 @@ class MockException:
 
 
 @pytest.mark.gui
-def testVersionInfoWidget_Main(qtbot, monkeypatch):
+def testVersionInfoWidget_Main(qtbot, monkeypatch, mockGUI):
     """Test the VersionInfoWidget class."""
     version = VersionInfoWidget(None)  # type: ignore
     dialog = SimpleDialog(version)
@@ -135,12 +140,13 @@ def testVersionInfoWidget_Main(qtbot, monkeypatch):
 @pytest.mark.gui
 def testVersionInfoWidget_Retriever(qtbot, monkeypatch):
     """Test the _Retriever class."""
-    task = _Retriever()
+    holder = MockSignalHolder()
+    task = _Retriever(holder.dataReady)
 
     # Valid Data
     with monkeypatch.context() as mp:
         mp.setattr("novelwriter.extensions.versioninfo.urlopen", lambda *a, **k: MockPayload())
-        with qtbot.waitSignal(task.signals.dataReady) as signal:
+        with qtbot.waitSignal(holder.dataReady) as signal:
             task.run()
             assert signal.args == ["v1.0", ""]
 
@@ -151,20 +157,20 @@ def testVersionInfoWidget_Retriever(qtbot, monkeypatch):
     with monkeypatch.context() as mp:
         mp.setattr("novelwriter.extensions.versioninfo.urlopen", lambda *a, **k: MockListPayload())
         received = []
-        task.signals.dataReady.connect(lambda tag, reason: received.append((tag, reason)))
+        holder.dataReady.connect(lambda tag, reason: received.append((tag, reason)))
         task.run()
         assert received == []
 
     # HTTP Error
     with monkeypatch.context() as mp:
         mp.setattr("novelwriter.extensions.versioninfo.urlopen", lambda *a, **k: MockHTTPError())
-        with qtbot.waitSignal(task.signals.dataReady) as signal:
+        with qtbot.waitSignal(holder.dataReady) as signal:
             task.run()
             assert signal.args == ["", "Rate limit (HTTP 403)"]
 
     # Other Error
     with monkeypatch.context() as mp:
         mp.setattr("novelwriter.extensions.versioninfo.urlopen", lambda *a, **k: MockException())
-        with qtbot.waitSignal(task.signals.dataReady) as signal:
+        with qtbot.waitSignal(holder.dataReady) as signal:
             task.run()
             assert signal.args == ["", "Oh noes!"]

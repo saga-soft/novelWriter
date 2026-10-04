@@ -1,4 +1,4 @@
-name: Part-MacOS-AMD64
+name: Part MacOS AMD64
 
 on: workflow_call
 

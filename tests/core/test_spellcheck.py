@@ -123,7 +123,7 @@ def testFakeEnchant_Main(monkeypatch, mockGUI, fncPath):
     assert isinstance(spChk._enchant, FakeEnchant)
 
     # Request an empty language string
-    # See issue https://github.com/vkbo/novelWriter/issues/1096
+    # See #1096
     spChk = SpellEnchant(project)
     spChk.setLanguage("")
     assert isinstance(spChk._enchant, FakeEnchant)

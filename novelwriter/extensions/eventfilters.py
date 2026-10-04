@@ -37,7 +37,7 @@ class WheelEventFilter(QObject):
     forward them to the root widget. This solves the lack of mouse wheel
     scrolling response in margins of widgets like the editor and viewer.
 
-    Solves: https://github.com/vkbo/novelWriter/issues/1425
+    Solves: #1425
     Reference: https://stackoverflow.com/a/17739995/5825851
     """
 

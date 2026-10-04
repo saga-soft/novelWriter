@@ -29,7 +29,7 @@ from time import sleep
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from PyQt6.QtCore import QObject, QRunnable, QUrl, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import QRunnable, QUrl, pyqtBoundSignal, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
@@ -39,7 +39,7 @@ from novelwriter.constants import nwConst
 
 logger = logging.getLogger(__name__)
 
-API_URL = "https://api.github.com/repos/vkbo/novelwriter/releases/latest"
+API_URL = "https://api.github.com/repos/saga-soft/novelwriter/releases/latest"
 
 
 class VersionInfoWidget(QWidget):
@@ -49,8 +49,11 @@ class VersionInfoWidget(QWidget):
     GitHub and pulling the latest release version info.
     """
 
+    _dataReady = pyqtSignal(str, str)
+
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent=parent)
+        self._dataReady.connect(self._updateReleaseInfo)
 
         # Label Strings
         self._trLatest = self.tr("Latest Version: {0}")
@@ -111,9 +114,7 @@ class VersionInfoWidget(QWidget):
             QDesktopServices.openUrl(QUrl(nwConst.URL_WEB))
         elif link == "#update":
             self._lblRelease.setText(self._trLatest.format(self._trChecking))
-            lookup = _Retriever()
-            lookup.signals.dataReady.connect(self._updateReleaseInfo)
-            SHARED.runInThreadPool(lookup)
+            SHARED.runInThreadPool(_Retriever(self._dataReady))
 
     ##
     #  Private Slots
@@ -131,9 +132,9 @@ class VersionInfoWidget(QWidget):
 
 
 class _Retriever(QRunnable):
-    def __init__(self) -> None:
+    def __init__(self, signal: pyqtBoundSignal) -> None:
         super().__init__()
-        self.signals = _RetrieverSignal()
+        self._signal = signal
 
     @pyqtSlot()
     def run(self) -> None:
@@ -148,15 +149,11 @@ class _Retriever(QRunnable):
         try:
             with urlopen(req, timeout=15) as ret:
                 if isinstance(raw := json.loads(ret.read().decode()), dict):
-                    self.signals.dataReady.emit(raw.get("tag_name", ""), "")
+                    self._signal.emit(raw.get("tag_name", ""), "")
         except HTTPError as e:
             reason = f"{e.reason.capitalize()} (HTTP {e.code})"
             logger.error(reason)
-            self.signals.dataReady.emit("", reason)
+            self._signal.emit("", reason)
         except Exception as e:
             logger.error("Failed to retrieve release info")
-            self.signals.dataReady.emit("", str(e))
-
-
-class _RetrieverSignal(QObject):
-    dataReady = pyqtSignal(str, str)
+            self._signal.emit("", str(e))

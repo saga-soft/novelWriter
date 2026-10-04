@@ -21,11 +21,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+import os
+
 import pytest
 
-from novelwriter.core.document import ProjectDocument
+from novelwriter.core.document import MAX_META_LINES, DocumentMeta, ProjectDocument
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwItemClass, nwItemLayout
+from novelwriter.formats.tomlparser import NTomlParser
 
 from tests.helpers import MOCK_TIME, C, buildTestProject, readFile, writeFile
 from tests.mocked import causeOSError
@@ -71,7 +74,7 @@ def testProjectDocument_LoadSave(monkeypatch, mockGUI, fncPath, mockRnd):
         doc = ProjectDocument(project, C.hSceneDoc)
         assert doc.fileExists() is True
         assert doc.readDocument() is None
-        assert doc.getError() == "OSError: Mock OSError"
+        assert doc.error == "OSError: Mock OSError"
 
     # Load the text
     doc = ProjectDocument(project, C.hSceneDoc)
@@ -104,22 +107,40 @@ def testProjectDocument_LoadSave(monkeypatch, mockGUI, fncPath, mockRnd):
     assert doc.writeDocument(text) is True
 
     # Check file content
-    docPath = fncPath / "content" / f"{xHandle}.nwd"
+    docPath = fncPath / "content" / f"{xHandle}.md"
     assert readFile(docPath) == (
-        "%%~name: New File\n"
-        f"%%~path: {C.hNovelRoot}/{xHandle}\n"
-        "%%~kind: NOVEL/DOCUMENT\n"
-        "%%~hash: b288c3ab03181027d9a16d7fd2291262f5de9ac8\n"
-        "%%~date: 2019-05-10 18:52:00/2019-05-10 18:52:00\n"
+        "+++\n"
+        'name = "New File"\n'
+        f'parent = "{C.hNovelRoot}"\n'
+        f'handle = "{xHandle}"\n'
+        'class = "NOVEL"\n'
+        'layout = "DOCUMENT"\n'
+        'textHash = "b288c3ab03181027d9a16d7fd2291262f5de9ac8"\n'
+        'createdDate = "2019-05-10 18:52:00"\n'
+        'updatedDate = "2019-05-10 18:52:00"\n'
+        "+++\n"
         "### Test File\n\n"
         "Text ...\n\n"
     )
+
+    # Touch the document on disk without changing its content
+    stat = docPath.stat()
+    touched = stat.st_mtime_ns + 10_000_000_000
+    os.utime(docPath, ns=(touched, touched))
+    assert doc.writeDocument(text) is True
 
     # Alter the document on disk and save again
     writeFile(docPath, "blablabla")
     assert doc.writeDocument(text) is False
 
     # Force the overwrite
+    assert doc.writeDocument(text, forceWrite=True) is True
+
+    # Delete the document on disk and save again
+    docPath.unlink()
+    assert doc.writeDocument(text) is False
+
+    # Force the overwrite to restore the file
     assert doc.writeDocument(text, forceWrite=True) is True
 
     # Force no meta data
@@ -131,23 +152,37 @@ def testProjectDocument_LoadSave(monkeypatch, mockGUI, fncPath, mockRnd):
     with monkeypatch.context() as mp:
         mp.setattr("builtins.open", causeOSError)
         assert doc.writeDocument(text) is False
-        assert doc.getError() == "OSError: Mock OSError"
+        assert doc.error == "OSError: Mock OSError"
 
-    doc._docError = ""
-    assert doc.getError() == ""
+    doc._error = ""
+    assert doc.error == ""
 
     # Cause os.replace() to fail while saving
     with monkeypatch.context() as mp:
         mp.setattr("pathlib.Path.replace", causeOSError)
         assert doc.writeDocument(text) is False
-        assert doc.getError() == "OSError: Mock OSError"
+        assert doc.error == "OSError: Mock OSError"
 
-    doc._docError = ""
-    assert doc.getError() == ""
+    doc._error = ""
+    assert doc.error == ""
 
     # Saving with no handle
     doc._handle = None
     assert doc.writeDocument(text) is False
+
+    # Cause stat() to fail right after a successful write
+    origStat = type(docPath).stat
+
+    def failDocStat(path, *a, **kw):
+        if path == docPath:
+            raise OSError("Mock OSError")
+        return origStat(path, *a, **kw)
+
+    doc = ProjectDocument(project, xHandle)
+    with monkeypatch.context() as mp:
+        mp.setattr("pathlib.Path.stat", failDocStat)
+        assert doc.writeDocument("Stat Failure") is True
+        assert doc._lastStat is None
 
     # Trailing line break
     doc = ProjectDocument(project, xHandle)
@@ -175,22 +210,25 @@ def testProjectDocument_LoadSave(monkeypatch, mockGUI, fncPath, mockRnd):
         mp.setattr("builtins.open", causeOSError)
         assert ProjectDocument.quickReadText(contPath, xHandle) == ""
 
-    # A document with more than 10 consecutive meta lines returns the 10th line onwards
-    (contPath / f"{xHandle}.nwd").write_text("".join(f"%%~meta{i}\n" for i in range(15)), encoding="utf-8")
-    assert ProjectDocument.quickReadText(contPath, xHandle) == "".join(f"%%~meta{i}\n" for i in range(9, 15))
+    # A missing closing +++ is treated as having no header at all
+    noClose = '+++\nname = "Test"\n### Chapter 1\n\nSome real body text.\n'
+    (contPath / f"{xHandle}.md").write_text(noClose, encoding="utf-8")
+    assert ProjectDocument.quickReadText(contPath, xHandle) == noClose
 
-    # A document that is all meta data lines returns just the trailing content
     doc = ProjectDocument(project, xHandle)
-    metaOnly = "".join(f"%%~meta{i}\n" for i in range(9)) + "%%~kind: NOVEL/DOCUMENT\nTrailing Text\n"
-    (contPath / f"{xHandle}.nwd").write_text(metaOnly, encoding="utf-8")
-    assert doc.readDocument() == "Trailing Text\n"
+    assert doc.readDocument() == noClose
 
-    # Malformed meta lines are parsed defensively and otherwise ignored
-    doc._parseMeta("%%~path: onlyonepart\n")
-    doc._parseMeta("%%~path: notahandle/alsonotahandle\n")
-    doc._parseMeta("%%~kind: onlyonepart\n")
-    doc._parseMeta("%%~kind: BADCLASS/BADLAYOUT\n")
-    doc._parseMeta("%%~date: onlyonepart\n")
+    # Same, but exceeding the max meta lines first
+    noCloseLong = "+++\n" + "".join(f"meta{i} = 1\n" for i in range(MAX_META_LINES + 5))
+    (contPath / f"{xHandle}.md").write_text(noCloseLong, encoding="utf-8")
+    assert ProjectDocument.quickReadText(contPath, xHandle) == noCloseLong
+
+    # Malformed meta values are parsed defensively and otherwise ignored
+    doc._meta = DocumentMeta()
+    parser = NTomlParser(flat=True)
+    parser.readString('parent = "notahandle"\nhandle = "alsonotahandle"\nclass = "BADCLASS"\nlayout = "BADLAYOUT"\n')
+    doc._applyMeta(parser)
+    assert doc._meta == DocumentMeta()
 
     # Delete Document
     # ===============
@@ -211,7 +249,7 @@ def testProjectDocument_LoadSave(monkeypatch, mockGUI, fncPath, mockRnd):
         mp.setattr("pathlib.Path.unlink", causeOSError)
         doc = ProjectDocument(project, xHandle)
         assert doc.deleteDocument() is False
-        assert doc.getError() == "OSError: Mock OSError"
+        assert doc.error == "OSError: Mock OSError"
 
     # Make the delete pass
     doc = ProjectDocument(project, xHandle)
@@ -229,7 +267,7 @@ def testProjectDocument_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
     buildTestProject(project, fncPath)
 
     doc = ProjectDocument(project, C.hSceneDoc)
-    docPath = fncPath / "content" / f"{C.hSceneDoc}.nwd"
+    docPath = fncPath / "content" / f"{C.hSceneDoc}.md"
 
     assert doc.readDocument() == "### New Scene\n\n"
 
@@ -241,23 +279,27 @@ def testProjectDocument_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
     assert doc.nwItem.itemHandle == C.hSceneDoc  # type: ignore
 
     # Check the meta
-    name, parent, itemClass, itemLayout = doc.getMeta()
-    assert name == "New Scene"
-    assert parent == C.hChapterDir
-    assert itemClass == nwItemClass.NOVEL
-    assert itemLayout == nwItemLayout.DOCUMENT
+    assert doc.meta.name == "New Scene"
+    assert doc.meta.parent == C.hChapterDir
+    assert doc.meta.itemClass == nwItemClass.NOVEL
+    assert doc.meta.itemLayout == nwItemLayout.DOCUMENT
 
-    # Add meta data garbage
+    # Old-style meta lines in the body are preserved verbatim
     assert doc.writeDocument("%%~ stuff\n### Test File\n\nText ...\n\n")
     assert readFile(docPath) == (
-        "%%~name: New Scene\n"
-        f"%%~path: {C.hChapterDir}/{C.hSceneDoc}\n"
-        "%%~kind: NOVEL/DOCUMENT\n"
-        "%%~hash: dd350c602de803554b2a7c17f191ae25dea1df63\n"
-        "%%~date: 2019-05-10 18:52:00/2019-05-10 18:52:00\n"
+        "+++\n"
+        'name = "New Scene"\n'
+        f'parent = "{C.hChapterDir}"\n'
+        f'handle = "{C.hSceneDoc}"\n'
+        'class = "NOVEL"\n'
+        'layout = "DOCUMENT"\n'
+        'textHash = "dd350c602de803554b2a7c17f191ae25dea1df63"\n'
+        'createdDate = "2019-05-10 18:52:00"\n'
+        'updatedDate = "2019-05-10 18:52:00"\n'
+        "+++\n"
         "%%~ stuff\n"
         "### Test File\n\n"
         "Text ...\n\n"
     )
 
-    assert doc.readDocument() == "### Test File\n\nText ...\n\n"
+    assert doc.readDocument() == "%%~ stuff\n### Test File\n\nText ...\n\n"

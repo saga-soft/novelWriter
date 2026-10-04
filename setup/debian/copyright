@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: novelWriter
 Upstream-Contact: Veronica Berglyd Olsen <code@vkbo.net>
-Source: https://github.com/vkbo/novelWriter
+Source: https://github.com/saga-soft/novelWriter
 
 Files: *
 Copyright: 2018-2025, Veronica Berglyd Olsen

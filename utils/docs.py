@@ -27,23 +27,23 @@ import shutil
 import subprocess
 import tomllib
 
-from utils.common import ROOT_DIR, extractVersion, formatVersion, splitVersion, systemCall
+from utils.common import ROOT_DIR, extractVersion, formatVersion, log, splitVersion, systemCall
 
 
 def updateDocsTranslationSources(args: argparse.Namespace) -> None:
     """Build the documentation .po files."""
-    print("")
-    print("Building Docs Translation Files")
-    print("===============================")
-    print("")
+    log("")
+    log("[b]Building Docs Translation Files[e]")
+    log("[b]===============================[e]")
+    log("")
 
     docsDir = ROOT_DIR / "docs"
     locsDir = ROOT_DIR / "docs" / "source" / "locales"
     locsDir.mkdir(exist_ok=True)
 
-    print("Generating POT Files")
+    log("[b]Generating POT Files[e]")
     systemCall(["make", "gettext"], cwd=docsDir)
-    print("")
+    log("")
 
     lang = args.lang
     update = []
@@ -52,24 +52,24 @@ def updateDocsTranslationSources(args: argparse.Namespace) -> None:
     else:
         update = lang
 
-    print("Generating PO Files")
-    print("Languages: ", update)
-    print("")
+    log("[b]Generating PO Files[e]")
+    log(f"Languages: {update}")
+    log("")
 
     for code in update:
         systemCall(["sphinx-intl", "update", "-p", "build/gettext", "-l", code], cwd=docsDir)
-        print("")
+        log("")
 
-    print("Done")
-    print("")
+    log("[cg]Done[e]")
+    log("")
 
 
 def buildDocs(args: argparse.Namespace | None = None, *, pdf: bool = False) -> None:
     """Build the documentation files, either as HTML or PDF."""
-    print("")
-    print("Building Docs Manuals" if pdf else "Building HTML Docs")
-    print("=====================" if pdf else "==================")
-    print("")
+    log("")
+    log("[b]" + ("Building Docs Manuals" if pdf else "Building HTML Docs") + "[e]")
+    log("[b]" + ("=====================" if pdf else "==================") + "[e]")
+    log("")
 
     bldRoot = ROOT_DIR / "dist_doc" / "html"
     docsDir = ROOT_DIR / "docs"
@@ -99,14 +99,14 @@ def buildDocs(args: argparse.Namespace | None = None, *, pdf: bool = False) -> N
         pdfName = "manual.pdf"
         if code != "en":
             if code not in locConf:
-                print(f"ERROR: No config for language code '{code}' in config.toml")
+                log(f"[cr]ERROR:[e] No config for language code '{code}' in config.toml")
                 continue
 
             locVersion = locConf[code].get("version", "")
             locMajor, locMinor, _ = splitVersion(locVersion)
             locIntVersion = locMajor * 100 + locMinor
             if locIntVersion < cutoffVersion:
-                print(f"WARNING: Skipping build for '{code}' because version is too old ({locVersion})")
+                log(f"[cy]WARNING:[e] Skipping build for '{code}' because version is too old ({locVersion})")
                 continue
 
             env["SPHINX_I18N_VERSION"] = formatVersion(locVersion)
@@ -115,20 +115,20 @@ def buildDocs(args: argparse.Namespace | None = None, *, pdf: bool = False) -> N
             pdfName = f"manual_{code}.pdf"
 
         try:
-            log = subprocess.check_output(cmd, cwd=docsDir, env=env, shell=True)
-            print("\n".join(log.decode("utf-8", errors="replace").rstrip().splitlines()[-11:]))
-            print("")
+            output = subprocess.check_output(cmd, cwd=docsDir, env=env, shell=True)
+            log("\n".join(output.decode("utf-8", errors="replace").rstrip().splitlines()[-11:]))
+            log("")
             if pdf:
-                print("")
+                log("")
                 pdfFile.rename(ROOT_DIR / "novelwriter" / "assets" / pdfName)
             else:
                 if outDir.exists():
                     shutil.rmtree(outDir)
                 (docsDir / "build" / "html").rename(outDir)
         except subprocess.CalledProcessError as ex:
-            print(f"ERROR: Build returned error code {ex.returncode}")
+            log(f"[cr]ERROR:[e] Build returned error code {ex.returncode}")
 
-    print("")
+    log("")
 
 
 def buildHtmlDocs(args: argparse.Namespace | None = None) -> None:

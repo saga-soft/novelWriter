@@ -174,11 +174,6 @@ class NWProject:
         return self._storage.lockStatus
 
     @property
-    def currentEditTime(self) -> int:
-        """Return total edit time, including the current session."""
-        return self._data.editTime + round(time() - self._session.start)
-
-    @property
     def currentTotalCount(self) -> int:
         """Return the current total word count from the tree."""
         return self._tree.model.root.count
@@ -215,7 +210,7 @@ class NWProject:
             SHARED.closeDocument(tHandle)
             doc = self._storage.getDocument(tHandle)
             if not doc.deleteDocument():
-                SHARED.error(self.tr("Could not delete document file."), info=doc.getError())
+                SHARED.error(self.tr("Could not delete document file."), info=doc.error)
                 return False
         self._index.deleteHandle(tHandle)
         self._tree.remove(tHandle)
@@ -360,7 +355,7 @@ class NWProject:
         # Check Legacy Upgrade
         # ====================
 
-        if xmlReader.state == XMLReadState.WAS_LEGACY and not SHARED.question(
+        if (xmlReader.state == XMLReadState.WAS_LEGACY or self._storage.hasBreakingChanges()) and not SHARED.question(
             self.tr(
                 "The file format of your project is about to be updated. "
                 "If you proceed, older versions of novelWriter will no "
@@ -383,6 +378,9 @@ class NWProject:
             warn=True,
         ):
             return False
+
+        # Post XML Loading
+        self._storage.runPostXMLTasks()
 
         # Extract Data
         # ============
@@ -449,6 +447,7 @@ class NWProject:
 
         saveTime = time()
         SHARED.clearErrorCache()
+        self._data.setIndexRevision(self._index.indexRevision)
         editTime = self._data.editTime + max(round(saveTime - self._session.start), 0)
         content = self._tree.pack()
         if not xmlWriter.write(self._data, content, saveTime, editTime):
@@ -456,8 +455,10 @@ class NWProject:
             return False
 
         # Save other project data
-        self._options.saveSettings()
-        self._index.saveIndex()
+        if not autoSave:
+            self._options.saveSettings()
+            self._index.saveIndex()
+
         self._storage.runPostSaveTasks(autoSave=autoSave)
 
         # Update recent projects

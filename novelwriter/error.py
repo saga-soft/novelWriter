@@ -124,7 +124,7 @@ class ErrorMessage(QDialog):
 
         from PyQt6.QtCore import PYQT_VERSION_STR, QT_VERSION_STR, QSysInfo
 
-        from novelwriter import __version__
+        from novelwriter import CONFIG, __version__
         from novelwriter.constants import nwConst
 
         self.msgHead.setText(
@@ -152,10 +152,11 @@ class ErrorMessage(QDialog):
             self.msgBody.setPlainText(
                 "Environment:\n"
                 f"novelWriter Version: {__version__}\n"
+                f"Install Info: {CONFIG.buildFormat} ({CONFIG.installSource})\n"
                 f"Host OS: {sys.platform} ({kernelVersion})\n"
                 f"Python: {sys.version.split()[0]} ({sys.hexversion:#x})\n"
                 f"Qt: {QT_VERSION_STR}, PyQt: {PYQT_VERSION_STR}\n"
-                f"enchant: {enchantVersion}\n\n"
+                f"Enchant: {enchantVersion}\n\n"
                 f"{exType.__name__}:\n{exValue!s}\n\n"
                 f"Traceback:\n{trace}\n"
             )

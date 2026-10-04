@@ -96,21 +96,20 @@ msgid "Internationalisation: https://crowdin.com/project/novelwriter"
 msgstr "Internationalisation: https://crowdin.com/project/novelwriter"
 
 #: ../../source/index.rst:25
-msgid "Source Code: https://github.com/vkbo/novelWriter"
-msgstr "Code source : https://github.com/vkbo/novelWriter"
+msgid "Source Code: https://github.com/saga-soft/novelWriter"
+msgstr "Code source : https://github.com/saga-soft/novelWriter"
 
 #: ../../source/index.rst:26
-msgid "Source Releases: https://github.com/vkbo/novelWriter/releases"
-msgstr "Source Releases: https://github.com/vkbo/novelWriter/releases"
+msgid "Source Releases: https://github.com/saga-soft/novelWriter/releases"
+msgstr "Source Releases: https://github.com/saga-soft/novelWriter/releases"
 
 #: ../../source/index.rst:27
-msgid "Issue Tracker: https://github.com/vkbo/novelWriter/issues"
-msgstr "Issue Tracker: https://github.com/vkbo/novelWriter/issues"
+msgid "Issue Tracker: https://github.com/saga-soft/novelWriter/issues"
+msgstr "Issue Tracker: https://github.com/saga-soft/novelWriter/issues"
 
 #: ../../source/index.rst:28
-msgid "Feature Discussions: https://github.com/vkbo/novelWriter/discussions"
-msgstr ""
-"Feature Discussions: https://github.com/vkbo/novelWriter/discussions"
+msgid "Feature Discussions: https://github.com/saga-soft/novelWriter/discussions"
+msgstr "Feature Discussions: https://github.com/saga-soft/novelWriter/discussions"
 
 #: ../../source/index.rst:29
 msgid "PyPi Project: https://pypi.org/project/novelWriter"

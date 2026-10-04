@@ -30,29 +30,44 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
-from utils.common import ROOT_DIR
+from utils.common import ROOT_DIR, log, readEnvFile
 
 UTILS = Path(__file__).parent
 ET.register_namespace("", "http://www.w3.org/2000/svg")
+
+# FontAwesome
+# Repo: https://github.com/FortAwesome/Font-Awesome/
+# Website: https://fontawesome.com/
+
+# Remix
+# Repo: https://github.com/Remix-Design/RemixIcon
+# Website: https://remixicon.com/
+
+# Lucide
+# Repo: https://github.com/lucide-icons/lucide
+# Website: https://lucide.dev/
 
 ICON_SOURCES = {
     "material": "https://github.com/google/material-design-icons.git",
     "font_awesome": "https://github.com/FortAwesome/Font-Awesome/archive/refs/tags/7.3.1.zip",
     "remix": "https://github.com/Remix-Design/RemixIcon/archive/refs/tags/v4.9.1.zip",
-    "lucide": "https://github.com/lucide-icons/lucide/archive/refs/tags/1.24.0.zip",
+    "lucide": "https://github.com/lucide-icons/lucide/archive/refs/tags/1.49.0.zip",
 }
 ICON_EXTRACT = {
     "material": "material-design-icons",
     "font_awesome": "Font-Awesome-7.3.1",
     "remix": "RemixIcon-4.9.1",
-    "lucide": "lucide-1.24.0",
+    "lucide": "lucide-1.49.0",
 }
+
+# fmt: off
 ICONS = [
     # Remember to also update tests/files/all_icons.json for test coverage
     "alert_error",
     "alert_info",
     "alert_question",
     "alert_warn",
+
     "cls_archive",
     "cls_character",
     "cls_custom",
@@ -65,21 +80,31 @@ ICONS = [
     "cls_timeline",
     "cls_trash",
     "cls_world",
+
+    "key_mention",
+
+    "cmn_general",
+    "cmn_note",
+    "cmn_story",
+
     "prj_folder",
     "prj_document",
     "prj_title",
     "prj_chapter",
     "prj_scene",
     "prj_note",
+
     "fmt_bold",
     "fmt_italic",
     "fmt_mark",
+    "fmt_link",
     "fmt_size",
     "fmt_strike",
     "fmt_subscript",
     "fmt_superscript",
     "fmt_underline",
     "fmt_toolbar",
+
     "search",
     "search_auto",
     "search_cancel",
@@ -90,20 +115,23 @@ ICONS = [
     "search_regex",
     "search_replace",
     "search_word",
+
     "bullet-off",
     "bullet-on",
     "unfold-hide",
     "unfold-show",
+
     "sb_build",
-    "sb_details",
     "sb_novel",
-    "sb_outline",
     "sb_project",
     "sb_search",
     "sb_stats",
+    "sb_story",
+
     "theme_light",
     "theme_dark",
     "theme_auto",
+
     "btn_ok",
     "btn_cancel",
     "btn_yes",
@@ -121,6 +149,7 @@ ICONS = [
     "btn_build",
     "btn_print",
     "btn_preview",
+
     "add",
     "bookmarks",
     "browse",
@@ -173,6 +202,7 @@ ICONS = [
     "unchecked",
     "view",
 ]
+# fmt: on
 
 
 def _loadMap(name: str) -> dict[str, str]:
@@ -183,7 +213,7 @@ def _loadMap(name: str) -> dict[str, str]:
         if icon := data.get(key, ""):
             icons[key] = icon
         else:
-            print(f"- Missing: {key}")
+            log(f"- [cy]Missing:[e] {key}")
     return icons
 
 
@@ -200,29 +230,29 @@ def _writeThemeFile(path: Path, name: str, author: str, license_: str, icons: di
         for key, svg in icons.items():
             icon = ET.tostring(svg).decode().replace("\n", "")
             out.write(f"icon:{key:<15s} = {icon}\n")
-        print(f"- Wrote: {len(icons)} icons")
-        print(f"- Target: {path.relative_to(UTILS.parent)}")
+        log(f"- [cg]Wrote:[e] {len(icons)} icons")
+        log(f"- Target: {path.relative_to(UTILS.parent)}")
 
 
 def _updateRepo(path: Path, name: str) -> None:
     """Clone or update a local repo of icons."""
-    print(f"Updating: {ICON_SOURCES[name]}")
+    log(f"[b]Updating:[e] {ICON_SOURCES[name]}")
     if not path.is_dir():
         subprocess.call(["git", "clone", ICON_SOURCES[name], "--depth", "1"], cwd=path.parent)
     else:
         subprocess.call(["git", "pull"], cwd=path)
-    print("")
+    log("")
 
 
 def _downloadIconPack(path: Path, name: str) -> None:
     """Download and extract icon pack releases."""
-    print(f"Downloading: {ICON_SOURCES[name]}")
+    log(f"[b]Downloading:[e] {ICON_SOURCES[name]}")
     zipFile = path / f"{name}.zip"
     urllib.request.urlretrieve(ICON_SOURCES[name], zipFile)
-    print(f"Extracting: {zipFile.name}")
+    log(f"[b]Extracting:[e] {zipFile.name}")
     with zipfile.ZipFile(zipFile, "r") as inFile:
         inFile.extractall(path)
-    print("")
+    log("")
 
 
 def processMaterialIcons(workDir: Path, iconsDir: Path, jobs: dict) -> None:
@@ -239,7 +269,7 @@ def processMaterialIcons(workDir: Path, iconsDir: Path, jobs: dict) -> None:
         kind = f"wght{weight}" if weight != 400 else ""
         kind += "fill1" if filled else ""
 
-        print(f"Processing: {name}")
+        log(f"[b]Processing:[e] {name}")
 
         icons: dict[str, ET.Element] = {}
         iconSrc = srcRepo / "symbols" / "web"
@@ -256,12 +286,11 @@ def processMaterialIcons(workDir: Path, iconsDir: Path, jobs: dict) -> None:
                 svg.set("width", "128")
                 icons[key] = svg
             else:
-                print(f"Not Found: {iconFile}")
+                log(f"[cr]Not Found:[e] {iconFile}")
 
         target = iconsDir / f"{file}.icons"
         _writeThemeFile(target, name, "Google Inc", "Apache 2.0", icons)
-
-    print("")
+        log("")
 
 
 def processFontAwesome(workDir: Path, iconsDir: Path, jobs: dict) -> None:
@@ -272,7 +301,7 @@ def processFontAwesome(workDir: Path, iconsDir: Path, jobs: dict) -> None:
 
     for file, job in jobs.items():
         name: str = job["name"]
-        print(f"Processing: {name}")
+        log(f"[b]Processing:[e] {name}")
 
         icons: dict[str, ET.Element] = {}
         iconSrc = srcRepo / "svgs"
@@ -287,7 +316,7 @@ def processFontAwesome(workDir: Path, iconsDir: Path, jobs: dict) -> None:
             elif iconRegular.is_file():
                 iconFile = iconRegular
             else:
-                print(f"Not Found: {icon}.svg")
+                log(f"[cr]Not Found:[e] {icon}.svg")
                 continue
 
             if iconFile.is_file():
@@ -302,13 +331,11 @@ def processFontAwesome(workDir: Path, iconsDir: Path, jobs: dict) -> None:
                 svg.set("width", "128")
                 icons[key] = svg
             else:
-                print(f"Not Found: {icon}.svg")
-                continue
+                log(f"[cr]Not Found:[e] {icon}.svg")
 
         target = iconsDir / f"{file}.icons"
         _writeThemeFile(target, name, "Fonticons Inc", "CC BY 4.0", icons)
-
-    print("")
+        log("")
 
 
 def processLucide(workDir: Path, iconsDir: Path, jobs: dict) -> None:
@@ -319,7 +346,7 @@ def processLucide(workDir: Path, iconsDir: Path, jobs: dict) -> None:
 
     for file, job in jobs.items():
         name: str = job["name"]
-        print(f"Processing: {name}")
+        log(f"[b]Processing:[e] {name}")
 
         icons: dict[str, ET.Element] = {}
         iconSrc = srcRepo / "icons"
@@ -334,12 +361,11 @@ def processLucide(workDir: Path, iconsDir: Path, jobs: dict) -> None:
                 svg.set("width", "128")
                 icons[key] = svg
             else:
-                print(f"Not Found: {iconFile}")
+                log(f"[cr]Not Found:[e] {iconFile}")
 
         target = iconsDir / f"{file}.icons"
         _writeThemeFile(target, name, "Cole Bemis, Lucide Contributors", "ISC/MIT License", icons)
-
-    print("")
+        log("")
 
 
 def processRemix(workDir: Path, iconsDir: Path, jobs: dict) -> None:
@@ -352,7 +378,7 @@ def processRemix(workDir: Path, iconsDir: Path, jobs: dict) -> None:
         name: str = job["name"]
         style = "fill" if job["filled"] else "line"
 
-        print(f"Processing: {name}")
+        log(f"[b]Processing:[e] {name}")
 
         icons: dict[str, ET.Element] = {}
         iconSrc = srcRepo / "icons"
@@ -373,7 +399,7 @@ def processRemix(workDir: Path, iconsDir: Path, jobs: dict) -> None:
                     if iconFile.is_file():
                         break
                 else:
-                    print(f"Not Found: {fileName}")
+                    log(f"[cr]Not Found:[e] {fileName}")
                     continue
 
             svg = ET.fromstring(iconFile.read_text(encoding="utf-8"))
@@ -384,19 +410,27 @@ def processRemix(workDir: Path, iconsDir: Path, jobs: dict) -> None:
 
         target = iconsDir / f"{file}.icons"
         _writeThemeFile(target, name, "Remix Icon", "Apache 2.0", icons)
-
-    print("")
+        log("")
 
 
 def main(args: argparse.Namespace) -> None:
     """Build icon themes entry point."""
-    print("")
-    print("Build Icon Themes")
-    print("=================")
-    print("")
+    log("")
+    log("[b]Build Icon Themes[e]")
+    log("[b]=================[e]")
 
-    workDir = Path(args.work_dir).absolute()
-    workDir.mkdir(exist_ok=True)
+    if args.work_dir:
+        workDir = Path(args.work_dir).absolute()
+    elif cacheDir := readEnvFile().get("CACHE_DIR"):
+        workDir = Path(cacheDir).expanduser().absolute() / "icons"
+    else:
+        workDir = ROOT_DIR / "build_icons"
+
+    workDir.mkdir(parents=True, exist_ok=True)
+
+    log(f"Work Dir: {workDir}")
+    log("")
+
     iconsDir = ROOT_DIR / "novelwriter" / "assets" / "icons"
 
     style = args.style
@@ -482,5 +516,5 @@ def main(args: argparse.Namespace) -> None:
             },
         )
 
-    print("Done")
-    print("")
+    log("[cg]Done[e]")
+    log("")

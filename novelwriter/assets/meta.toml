@@ -1,0 +1,5 @@
+[Build]
+timestamp = ""
+type = "testing"
+format = "source"
+install_source = "repository"

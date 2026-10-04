@@ -364,12 +364,12 @@ class ProjectTree:
         for cHandle in remains:
             aDoc = storage.getDocument(cHandle)
             aDoc.readDocument(isOrphan=True)
-            oName, oParent, oClass, oLayout = aDoc.getMeta()
+            docMeta = aDoc.meta
 
-            oName = oName or cHandle
-            oParent = oParent if oParent in self._nodes else None
-            oClass = oClass or nwItemClass.NOVEL
-            oLayout = oLayout or nwItemLayout.NOTE
+            oName = docMeta.name or cHandle
+            oParent = docMeta.parent if docMeta.parent in self._nodes else None
+            oClass = docMeta.itemClass
+            oLayout = docMeta.itemLayout
 
             # If the parent doesn't exists, find a new home
             if oParent is None:  # Add it to the first available class root
@@ -406,9 +406,9 @@ class ProjectTree:
         maxLen = 0
         for node in self._model.root.allChildren():
             item = node.item
-            file = f"{item.itemHandle}.nwd"
+            file = f"{item.itemHandle}.md"
             if safeIsFile(contentPath / file):
-                tocLine = "{0:<25s}  {1:<9s}  {2:<8s}  {3:s}".format(
+                tocLine = "{0:<24s}  {1:<9s}  {2:<8s}  {3:s}".format(
                     f"content/{file}",
                     item.itemClass.name,
                     item.itemLayout.name,
@@ -424,9 +424,9 @@ class ProjectTree:
                 toc.write("=================\n")
                 toc.write("\n")
                 toc.write(
-                    "{0:<25s}  {1:<9s}  {2:<8s}  {3:s}\n".format("File Name", "Class", "Layout", "Document Label")
+                    "{0:<24s}  {1:<9s}  {2:<8s}  {3:s}\n".format("File Name", "Class", "Layout", "Document Label")
                 )
-                toc.write("-" * max(maxLen, 62) + "\n")
+                toc.write("-" * max(maxLen, 61) + "\n")
                 toc.write("\n".join(entries))
                 toc.write("\n")
 

@@ -183,29 +183,29 @@ msgstr ""
 #: ../../source/more/customise.rst:78
 msgid ""
 "The existing syntax themes are stored in `novelwriter/assets/syntax "
-"<https://github.com/vkbo/novelWriter/tree/main/novelwriter/assets/"
+"<https://github.com/saga-soft/novelWriter/tree/main/novelwriter/assets/"
 "syntax>`_."
 msgstr ""
 "Les thèmes syntaxiques existants sont stockés dans `novelwriter/assets/"
-"syntax <https://github.com/vkbo/novelWriter/tree/main/novelwriter/assets/"
+"syntax <https://github.com/saga-soft/novelWriter/tree/main/novelwriter/assets/"
 "syntax>`_."
 
 #: ../../source/more/customise.rst:80
 msgid ""
 "The existing GUI themes are stored in `novelwriter/assets/themes <https://"
-"github.com/vkbo/novelWriter/tree/main/novelwriter/assets/themes>`_."
+"github.com/saga-soft/novelWriter/tree/main/novelwriter/assets/themes>`_."
 msgstr ""
 "Les thèmes GUI existants sont stockés dans `novelwriter/assets/themes "
-"<https://github.com/vkbo/novelWriter/tree/main/novelwriter/assets/"
+"<https://github.com/saga-soft/novelWriter/tree/main/novelwriter/assets/"
 "themes>`_."
 
 #: ../../source/more/customise.rst:82
 msgid ""
 "The existing icon themes are stored in `novelwriter/assets/icons <https://"
-"github.com/vkbo/novelWriter/tree/main/novelwriter/assets/icons>`_."
+"github.com/saga-soft/novelWriter/tree/main/novelwriter/assets/icons>`_."
 msgstr ""
 "Les thèmes d'icônes existants sont stockés dans `novelwriter/assets/icons "
-"<https://github.com/vkbo/novelWriter/tree/main/novelwriter/assets/icons>`_."
+"<https://github.com/saga-soft/novelWriter/tree/main/novelwriter/assets/icons>`_."
 
 #: ../../source/more/customise.rst:85
 msgid ""

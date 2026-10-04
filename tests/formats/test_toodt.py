@@ -777,7 +777,7 @@ def testToOdt_ConvertParagraphs(mockGUI):
 
     # Test for issue #1412
     # ====================
-    # See: https://github.com/vkbo/novelWriter/issues/1412
+    # See #1412
 
     odt._text = "Test text \\**_bold_** and more."
     odt.tokenizeText()

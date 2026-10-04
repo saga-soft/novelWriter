@@ -36,19 +36,22 @@ from utils.common import (
     copySourceCode,
     extractReqs,
     extractVersion,
+    log,
     readFile,
     removeRedundantQt,
     systemCall,
+    updateMetaFile,
     writeFile,
 )
 
 
 def prepareCode(outDir: Path) -> None:
     """Set up folders and copy code."""
-    print("Copying and compiling novelWriter source ...")
-    print("")
+    log("[b]Copying and compiling novelWriter source ...[e]")
+    log("")
 
     copySourceCode(outDir)
+    updateMetaFile(outDir / "novelwriter" / "assets" / "meta.toml", buildFormat="windows-setup", installSource="github")
 
     files = [
         ROOT_DIR / "CREDITS.md",
@@ -59,53 +62,53 @@ def prepareCode(outDir: Path) -> None:
     ]
     for item in files:
         shutil.copyfile(item, outDir / item.name)
-        print(f"Copied: {item} > {outDir / item.name}")
+        log(f"[cg]Copied:[e] {item} > {outDir / item.name}")
 
     compileall.compile_dir(outDir / "novelwriter")
 
-    print("Done")
-    print("")
+    log("[cg]Done[e]")
+    log("")
 
 
 def embedPython(bldDir: Path, outDir: Path) -> None:
     """Embed Python library."""
-    print("Adding Python embeddable ...")
+    log("[b]Adding Python embeddable ...[e]")
 
     pyVers = ".".join(str(v) for v in sys.version_info[:3])
     zipFile = f"python-{pyVers}-embed-amd64.zip"
     pyZip = bldDir / zipFile
     if not pyZip.is_file():
         pyUrl = f"https://www.python.org/ftp/python/{pyVers}/{zipFile}"
-        print(f"Downloading: {pyUrl}")
+        log(f"Downloading: {pyUrl}")
         urllib.request.urlretrieve(pyUrl, pyZip)
 
-    print("Extracting ...")
+    log("[b]Extracting ...[e]")
     with zipfile.ZipFile(pyZip, "r") as inFile:
         inFile.extractall(outDir)
 
-    print("Done")
-    print("")
+    log("[cg]Done[e]")
+    log("")
 
 
 def installRequirements(libDir: Path) -> None:
     """Install dependencies."""
-    print("Install dependencies ...")
+    log("[b]Install dependencies ...[e]")
     systemCall([sys.executable, "-m", "pip", "install", *extractReqs(["app"]), "--target", libDir])
-    print("Done")
-    print("")
+    log("[cg]Done[e]")
+    log("")
 
 
 def main(args: argparse.Namespace) -> None:
     """Set up a package with embedded Python and dependencies for
     Windows installation.
     """
-    print("")
-    print("Build Standalone Windows Package")
-    print("================================")
-    print("")
+    log("")
+    log("[b]Build Standalone Windows Package[e]")
+    log("[b]================================[e]")
+    log("")
 
     numVers, _, _ = extractVersion()
-    print(f"Version: {numVers}")
+    log(f"Version: {numVers}")
 
     bldDir = ROOT_DIR / "dist"
     outDir = bldDir / "novelWriter"
@@ -122,10 +125,10 @@ def main(args: argparse.Namespace) -> None:
     installRequirements(libDir)
     removeRedundantQt(libDir)
 
-    print("Copy redistributable to root ...")
+    log("[b]Copy redistributable to root ...[e]")
     shutil.copyfile(libDir / "PyQt6" / "Qt6" / "bin" / "msvcp140.dll", outDir / "msvcp140.dll")
 
-    print("Updating starting script ...")
+    log("[b]Updating starting script ...[e]")
     writeFile(
         outDir / "novelWriter.pyw",
         (
@@ -140,22 +143,22 @@ def main(args: argparse.Namespace) -> None:
             "    novelwriter.main(sys.argv[1:])\n"
         ),
     )
-    print("Done")
-    print("")
+    log("[cg]Done[e]")
+    log("")
 
-    print("Running Inno Setup")
-    print("##################")
-    print("")
+    log("[b]Running Inno Setup[e]")
+    log("[b]##################[e]")
+    log("")
 
     # Read the iss template
     issData = readFile(SETUP_DIR / "win_setup_embed.iss")
     issData = issData.replace(r"%%version%%", numVers)
     issData = issData.replace(r"%%dist%%", str(bldDir))
     writeFile(ROOT_DIR / "setup.iss", issData)
-    print("")
+    log("")
 
     systemCall(["iscc", "setup.iss"])
 
-    print("")
-    print("Done")
-    print("")
+    log("")
+    log("[cg]Done[e]")
+    log("")

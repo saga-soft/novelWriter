@@ -1,4 +1,4 @@
-name: BuildWindowsLauncher
+name: Build Windows Launcher
 
 on: workflow_dispatch
 

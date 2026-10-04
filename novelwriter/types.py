@@ -194,6 +194,7 @@ QtSizeMinimumExpanding = QSizePolicy.Policy.MinimumExpanding
 QtHeaderStretch = QHeaderView.ResizeMode.Stretch
 QtHeaderToContents = QHeaderView.ResizeMode.ResizeToContents
 QtHeaderFixed = QHeaderView.ResizeMode.Fixed
+QtHeaderInteractive = QHeaderView.ResizeMode.Interactive
 
 # Scroll Bar Policy
 

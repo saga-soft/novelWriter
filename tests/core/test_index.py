@@ -100,6 +100,10 @@ def testIndex_LoadSave(qtbot, monkeypatch, prjLipsum, nwGUI, tstPaths):
     # Make the save pass
     assert index.saveIndex() is True
 
+    # A full save also records the index revision on the project, which
+    # is normally done by NWProject.saveProject before it calls saveIndex
+    project.data.setIndexRevision(index.indexRevision)
+
     # Take a copy of the index
     tagIndex = str(index._tagsIndex.packData())
     itemsIndex = str(index._itemIndex.packData())
@@ -133,9 +137,11 @@ def testIndex_LoadSave(qtbot, monkeypatch, prjLipsum, nwGUI, tstPaths):
     # Delete a handle
     assert index._tagsIndex["Bod"] is not None
     assert index._itemIndex[bHandle] is not None
+    revision = index.indexRevision
     index.deleteHandle(bHandle)
     assert index._tagsIndex["Bod"] is None
     assert index._itemIndex[bHandle] is None
+    assert index.indexRevision == revision + 1
 
     # Clear the index
     index.clear()
@@ -151,11 +157,11 @@ def testIndex_LoadSave(qtbot, monkeypatch, prjLipsum, nwGUI, tstPaths):
     with monkeypatch.context() as mp:
         mp.setattr(json, "load", causeException)
         assert index.loadIndex() is False
-        assert index.indexBroken is True
+        assert index.indexRebuild is True
 
     # Make the load pass
     assert index.loadIndex() is True
-    assert index.indexBroken is False
+    assert index.indexRebuild is False
     assert index.indexUpgrade is False
 
     assert str(index._tagsIndex.packData()) == tagIndex
@@ -170,17 +176,17 @@ def testIndex_LoadSave(qtbot, monkeypatch, prjLipsum, nwGUI, tstPaths):
 
     # Check File
     copyfile(projFile, testFile)
-    assert cmpFiles(testFile, compFile, ignLines=[3, 4])
+    assert cmpFiles(testFile, compFile, ignLines=[3, 4, 5])
 
     # Write an empty index file and load it
     projFile.write_text("{}", encoding="utf-8")
     assert index.loadIndex() is False
-    assert index.indexBroken is True
+    assert index.indexRebuild is True
 
     # Write an index file that passes loading, but is still empty
     projFile.write_text('{"novelWriter.tagsIndex": {}, "novelWriter.itemIndex": {}}', encoding="utf-8")
     assert index.loadIndex() is True
-    assert index.indexBroken is False
+    assert index.indexRebuild is False
 
     # Check that the index is re-populated
     assert "04468803b92e1" in index._itemIndex
@@ -285,9 +291,7 @@ def testIndex_CheckThese(nwGUI, fncPath, mockRnd):
     assert isinstance(cItem, ProjectItem)
     assert isinstance(wItem, ProjectItem)
 
-    assert index.rootChangedSince(C.hNovelRoot, 0) is False
-    assert index.rootChangedSince(None, 0) is False
-    assert index.indexChangedSince(0) is False
+    revision = index.indexRevision
 
     assert index.scanText(cHandle, ("# Jane Smith\n@tag: Jane\n@tag:\n@:\n"))
     assert index.scanText(wHandle, ("# Earth\n@tag: Earth\n"))
@@ -306,23 +310,8 @@ def testIndex_CheckThese(nwGUI, fncPath, mockRnd):
     assert index._tagsIndex.tagClass("Jane") == "CHARACTER"
 
     assert index.getItemHeading(nHandle, "T0001").title == "Hello World!"  # type: ignore
-    assert index.getReferences(nHandle, "T0001") == {
-        "@char": [],
-        "@custom": [],
-        "@entity": [],
-        "@focus": [],
-        "@location": ["Earth"],
-        "@mention": [],
-        "@object": [],
-        "@plot": [],
-        "@pov": ["Jane"],
-        "@story": [],
-        "@tag": [],
-        "@time": [],
-    }
 
-    assert index.rootChangedSince(C.hNovelRoot, 0) is True
-    assert index.indexChangedSince(0) is True
+    assert index.indexRevision == revision + 3
 
     assert cItem.mainHeading == "H1"
     assert nItem.mainHeading == "H1"
@@ -735,68 +724,14 @@ def testIndex_ExtractData(nwGUI, fncPath, mockRnd):
         ),
     )
 
-    # The novel structure should contain the pointer to the novel file header
-    keys = []
-    for aKey, _, _, _ in index.novelStructure():
-        keys.append(aKey)
-
-    assert keys == [
-        f"{C.hTitlePage}:T0001",
-        f"{C.hChapterDoc}:T0001",
-        f"{C.hSceneDoc}:T0001",
-        f"{nHandle}:T0001",
-    ]
-
-    # Check that excluded files can be skipped
-    project.tree[nHandle].setActive(False)  # type: ignore
-
-    keys = []
-    for aKey, _, _, _ in index.novelStructure(activeOnly=False):
-        keys.append(aKey)
-
-    assert keys == [
-        f"{C.hTitlePage}:T0001",
-        f"{C.hChapterDoc}:T0001",
-        f"{C.hSceneDoc}:T0001",
-        f"{nHandle}:T0001",
-    ]
-
-    keys = []
-    for aKey, _, _, _ in index.novelStructure(activeOnly=True):
-        keys.append(aKey)
-
-    assert keys == [
-        f"{C.hTitlePage}:T0001",
-        f"{C.hChapterDoc}:T0001",
-        f"{C.hSceneDoc}:T0001",
-    ]
-
     # The novel file should have the correct counts
     cC, wC, pC = index.getCounts(nHandle)
     assert cC == 62  # Characters in text and title only
     assert wC == 12  # Words in text and title only
     assert pC == 2  # Paragraphs in text only
 
-    # getReferences
-    # =============
-
-    # Look up an invalid handle
-    refs = index.getReferences("Not a handle")
-    assert refs["@tag"] == []
-    assert refs["@pov"] == []
-    assert refs["@char"] == []
-
-    # The novel file should now refer to Jane as @pov and @char
-    refs = index.getReferences(nHandle)
-    assert refs["@tag"] == ["Scene"]
-    assert refs["@pov"] == ["Jane"]
-    assert refs["@char"] == ["Jane", "John"]
-
-    # A title that doesn't match any heading in the file yields no references
-    refs = index.getReferences(nHandle, "T9999")
-    assert refs["@tag"] == []
-    assert refs["@pov"] == []
-    assert refs["@char"] == []
+    # Check that excluded files can be skipped
+    project.tree[nHandle].setActive(False)  # type: ignore
 
     # getReferenceForHeader
     # =====================
@@ -1004,42 +939,6 @@ def testIndex_ExtractData(nwGUI, fncPath, mockRnd):
     del project.tree._items["0000000000000"]
     del project.tree._nodes["0000000000000"]
 
-    # Extract stats
-    assert index.getNovelWordCount(activeOnly=False) == 43
-    assert index.getNovelWordCount(activeOnly=True) == 15
-    assert index.getNovelWordCount(rootHandle=C.hNovelRoot, activeOnly=False) == 43
-    assert index.getNovelWordCount(rootHandle=C.hNovelRoot, activeOnly=True) == 15
-    assert index.getNovelWordCount(rootHandle=C.hWorldRoot, activeOnly=False) == 0
-    assert index.getNovelWordCount(rootHandle=C.hWorldRoot, activeOnly=True) == 0
-    assert index.getNovelTitleCounts(activeOnly=False) == [0, 3, 2, 3, 0]
-    assert index.getNovelTitleCounts(activeOnly=True) == [0, 1, 2, 3, 0]
-
-    # Table of Contents
-    assert index.getTableOfContents(C.hNovelRoot, 0, activeOnly=True) == []
-    assert index.getTableOfContents(C.hNovelRoot, 1, activeOnly=True) == [
-        (f"{C.hTitlePage}:T0001", 1, "New Novel", 15),
-    ]
-    assert index.getTableOfContents(C.hNovelRoot, 2, activeOnly=True) == [
-        (f"{C.hTitlePage}:T0001", 1, "New Novel", 5),
-        (f"{C.hChapterDoc}:T0001", 2, "New Chapter", 4),
-        (f"{hHandle}:T0001", 2, "Chapter One", 6),
-    ]
-    assert index.getTableOfContents(C.hNovelRoot, 3, activeOnly=True) == [
-        (f"{C.hTitlePage}:T0001", 1, "New Novel", 5),
-        (f"{C.hChapterDoc}:T0001", 2, "New Chapter", 2),
-        (f"{C.hSceneDoc}:T0001", 3, "New Scene", 2),
-        (f"{hHandle}:T0001", 2, "Chapter One", 2),
-        (f"{sHandle}:T0001", 3, "Scene One", 2),
-        (f"{tHandle}:T0001", 3, "Scene Two", 2),
-    ]
-
-    assert index.getTableOfContents(C.hNovelRoot, 0, activeOnly=False) == []
-    assert index.getTableOfContents(C.hNovelRoot, 1, activeOnly=False) == [
-        (f"{C.hTitlePage}:T0001", 1, "New Novel", 9),
-        (f"{nHandle}:T0001", 1, "Hello World!", 12),
-        (f"{nHandle}:T0002", 1, "Hello World!", 22),
-    ]
-
     assert index.saveIndex() is True
     assert project.saveProject() is True
     project.closeProject()
@@ -1169,7 +1068,7 @@ def testTagsIndex_Main():
     # Pack Data
     assert tagsIndex.packData() == content
 
-    # Delete the second key and a non-existant key. Deleting must also
+    # Delete the second key and a non-existent key. Deleting must also
     # drop the tag from the all-tags bucket, unlike a reclassification
     del tagsIndex["Tag2"]
     del tagsIndex["Tag4"]
@@ -1310,11 +1209,11 @@ def testItemIndex_Main(nwGUI, fncPath, mockRnd):
     assert cHandle in itemIndex
     assert itemIndex[cHandle].item == project.tree[cHandle]  # type: ignore
     assert itemIndex.allItemTags(cHandle) == []
-    assert list(itemIndex.iterItemHeaders(cHandle))[0][0] == "T0000"
+    assert list(itemIndex[cHandle].items())[0][0] == "T0000"  # type: ignore
 
     # Add a heading to the item, which should replace the T000000 heading
     assert itemIndex.addItemHeading(cHandle, 1, "H2", "Chapter One") == "T0001"
-    assert list(itemIndex.iterItemHeaders(cHandle))[0][0] == "T0001"
+    assert list(itemIndex[cHandle].items())[0][0] == "T0001"  # type: ignore
 
     # Add a heading to an invalid item
     assert itemIndex.addItemHeading(C.hInvalid, 1, "H1", "Stuff") == "T0000"

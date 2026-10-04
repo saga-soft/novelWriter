@@ -1,0 +1,39 @@
+name: Suggest Improvement
+description: Suggest something that can be improved.
+title: "[Improve] "
+labels: ["enhancement", "triage"]
+type: feature
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Thank you for taking the time to fill out this feature request.
+        Note that feature requests without a description will not be considered.
+        Please also check if a request already exists for this feature.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The Problem
+      description: Explain the problem you're facing.
+      placeholder: Tell us about the issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Your Suggestion
+      description: Provide a clear and concise description of what you'd like to see.
+      placeholder: Tell us what you need.
+    validations:
+      required: true
+
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Upload Screenshots
+      description: If applicable, add screenshots to help explain your suggestion.
+    validations:
+      required: false
+      accept: ".png,.jpg,.gif"

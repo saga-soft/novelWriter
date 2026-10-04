@@ -1,4 +1,4 @@
-name: Part-AppImage
+name: Part AppImage
 
 on: workflow_call
 

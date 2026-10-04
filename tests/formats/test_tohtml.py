@@ -642,7 +642,7 @@ def testToHtml_SpecialCases(mockGUI):
 
     # Test for issue #950
     # ===================
-    # See: https://github.com/vkbo/novelWriter/issues/950
+    # See #950
 
     html.setCommentType(nwComment.PLAIN, True)
     html._text = "% Test > text _<**bold**>_ and more.\n"
@@ -664,7 +664,7 @@ def testToHtml_SpecialCases(mockGUI):
 
     # Test for issue #1412
     # ====================
-    # See: https://github.com/vkbo/novelWriter/issues/1412
+    # See #1412
 
     html._text = "Test text \\**_bold_** and more.\n"
     html.tokenizeText()

@@ -13,7 +13,7 @@ Larger contributions were made by:
 * Setup and Packaging: Rachel Powers
 * Vim Mode: Alexis Dumelie
 
-For other contributions, see the project's [Contributors](https://github.com/vkbo/novelWriter/graphs/contributors) page.
+For other contributions, see the project's [Contributors](https://github.com/saga-soft/novelWriter/graphs/contributors) page.
 
 ## Artwork
 
@@ -104,7 +104,9 @@ Other themes were created for novelWriter:
 * **Chalky Soil** theme by Myian
 * **Chernozem** theme by Myian
 * **Cyberpunk Night** theme by Anders Lemvigh
+* **Dark Arts** theme by Myian
 * **Floral** themes by Myian
+* **Friendly** themes by Myian
 * **Full Moon** theme by Myian
 * **Jewel Case** themes by Myian
 * **LCARS** theme by Veronica Berglyd Olsen

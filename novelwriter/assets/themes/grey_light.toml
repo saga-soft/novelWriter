@@ -3,7 +3,7 @@ name   = "Grey Light"
 mode   = "light"
 author = "Veronica Berglyd Olsen"
 credit = "Veronica Berglyd Olsen"
-url    = "https://github.com/vkbo/novelWriter"
+url    = "https://github.com/saga-soft/novelWriter"
 
 [Base]
 base    = "#ffffff"

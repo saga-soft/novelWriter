@@ -3,7 +3,7 @@ name   = "Default Dark Theme"
 mode   = "dark"
 author = "Veronica Berglyd Olsen"
 credit = "Veronica Berglyd Olsen"
-url    = "https://github.com/vkbo/novelWriter"
+url    = "https://github.com/saga-soft/novelWriter"
 
 [Base]
 base    = "#373737"

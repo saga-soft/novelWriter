@@ -436,7 +436,7 @@ class GuiDocViewer(QTextBrowser):
                 self.loadDocumentTagRequest.emit(bits[2], nwDocMode.VIEW)
             elif link.startswith("#"):
                 self.navigateTo(link)
-            elif link.startswith("http"):
+            elif link.startswith(("http", "file")):
                 QDesktopServices.openUrl(QUrl(url))
 
     @pyqtSlot()

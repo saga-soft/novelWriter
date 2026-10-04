@@ -1550,13 +1550,13 @@ def testGuiProjectTree_SplitDocument(qtbot, monkeypatch, nwGUI, projPath, mockRn
         assert projTree.splitDocument(hSplitDoc) is True
         for tHandle in fstSet:
             assert tHandle in project.tree
-            assert not (projPath / "content" / f"{tHandle}.nwd").is_file()
+            assert not (projPath / "content" / f"{tHandle}.md").is_file()
 
     # Writing succeeds
     assert projTree.splitDocument(hSplitDoc) is True
     for tHandle in sndSet:
         assert tHandle in project.tree
-        assert (projPath / "content" / f"{tHandle}.nwd").is_file()
+        assert (projPath / "content" / f"{tHandle}.md").is_file()
 
     # Add to a folder and move source to trash
     splitData["intoFolder"] = True
@@ -1565,7 +1565,7 @@ def testGuiProjectTree_SplitDocument(qtbot, monkeypatch, nwGUI, projPath, mockRn
     assert "0000000000029" in project.tree  # The folder
     for tHandle in trdSet:
         assert tHandle in project.tree
-        assert (projPath / "content" / f"{tHandle}.nwd").is_file()
+        assert (projPath / "content" / f"{tHandle}.md").is_file()
 
     assert trash.allChildren() == [tree.nodes[hSplitDoc]]
 
@@ -2306,8 +2306,8 @@ def testGuiProjectTree_Templates(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     assert projBar.mTemplates.actions()[1].text() == "Note"
 
     # Add new content to template files
-    (projPath / "content" / f"{hSceneTemplate}.nwd").write_text("### Scene\n\n@pov: Jane\n\n")
-    (projPath / "content" / f"{hNoteTemplate}.nwd").write_text("# Jane\n\n@tag: Jane\n\n")
+    (projPath / "content" / f"{hSceneTemplate}.md").write_text("### Scene\n\n@pov: Jane\n\n")
+    (projPath / "content" / f"{hNoteTemplate}.md").write_text("# Jane\n\n@tag: Jane\n\n")
 
     # Add a new scene using the template
     projTree.setSelectedHandle(C.hSceneDoc, doScroll=True)

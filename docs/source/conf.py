@@ -62,7 +62,7 @@ html_theme_options = {
     },
     "show_toc_level": 2,
     "show_navbar_depth": 1,
-    "repository_url": "https://github.com/vkbo/novelwriter",
+    "repository_url": "https://github.com/saga-soft/novelwriter",
     "navigation_with_keys": True,
     "use_repository_button": True,
     "use_issues_button": True,

@@ -269,6 +269,15 @@ def testGuiDocViewer_Links(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
         assert openUrl.called is True
         assert openUrl.call_args[0][0] == QUrl("http://www.example.com")
 
+    # File links should also trigger the browser, see issue with clicking
+    # a "file://" link only working in the editor, not the viewer
+    with monkeypatch.context() as mp:
+        openUrl = MagicMock()
+        mp.setattr(QDesktopServices, "openUrl", openUrl)
+        docViewer._linkClicked(QUrl("file:///tmp/note.txt"))
+        assert openUrl.called is True
+        assert openUrl.call_args[0][0] == QUrl("file:///tmp/note.txt")
+
     # An empty link does nothing
     with monkeypatch.context() as mp:
         openUrl = MagicMock()

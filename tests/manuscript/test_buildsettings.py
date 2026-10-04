@@ -488,6 +488,10 @@ def testBuildSettings_Collection(monkeypatch, mockGUI, fncPath: Path, mockRnd):
     # Check errors: Valid json file, but list instead of object
     buildsFile.write_text("[]")
     assert builds._loadCollection() is False
+
+    # Check errors: Valid json object, but no builds entry
+    buildsFile.write_text("{}")
+    assert builds._loadCollection() is False
     buildsFile.unlink()
     shutil.copy(buildsFile.with_suffix(".bak"), buildsFile)
 

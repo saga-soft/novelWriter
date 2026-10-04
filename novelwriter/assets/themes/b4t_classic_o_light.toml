@@ -71,10 +71,10 @@ accent          = "#0c9c89"
 helpText     = "default:192"
 fadedText    = "faded"
 errorText    = "red"
-accentText   = "#0c9c89"
+accentText   = "cyan"
 activeButton = "#0c9c897f"
-activeBase   = "#d0d5dd"
-searchMatch  = "#e6c8f9"
+activeBase   = "base"
+searchMatch  = "#c17eed7f"
 
 [Syntax]
 background     = "base"

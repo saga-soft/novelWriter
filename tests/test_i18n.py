@@ -35,7 +35,6 @@ from novelwriter.dialogs.projectsettings import GuiProjectSettings
 from novelwriter.dialogs.wordlist import GuiWordList
 from novelwriter.manuscript.manuscript import GuiManuscript
 from novelwriter.tools.dictionaries import GuiDictionaries
-from novelwriter.tools.noveldetails import GuiNovelDetails
 from novelwriter.tools.welcome import GuiWelcome
 from novelwriter.tools.writingstats import GuiWritingStats
 
@@ -71,7 +70,6 @@ def testGuiI18n_Localisation(qtbot, monkeypatch, language, nwGUI, projPath):
     showDialog(nwGUI.showWelcomeDialog, GuiWelcome)
     showDialog(nwGUI.showPreferencesDialog, GuiPreferences)
     showDialog(nwGUI.showProjectSettingsDialog, GuiProjectSettings)
-    showDialog(nwGUI.showNovelDetailsDialog, GuiNovelDetails)
     showDialog(nwGUI.showBuildManuscriptDialog, GuiManuscript)
     showDialog(nwGUI.showProjectWordListDialog, GuiWordList)
     showDialog(nwGUI.showWritingStatsDialog, GuiWritingStats)

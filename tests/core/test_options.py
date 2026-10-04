@@ -125,27 +125,27 @@ def testOptionState_SetGet(mockGUI):
     assert options.setValue("GuiProjectSettings", "winWidth", 100) is True
 
     # Set some values of different types
-    assert options.setValue("GuiNovelDetails", "winWidth", 100) is True
-    assert options.setValue("GuiNovelDetails", "winHeight", 12.34) is True
-    assert options.setValue("GuiNovelDetails", "clearDouble", True) is True
+    assert options.setValue("GuiManuscript", "winWidth", 100) is True
+    assert options.setValue("GuiManuscript", "winHeight", 12.34) is True
+    assert options.setValue("GuiManuscript", "detailsExpanded", True) is True
     assert options.setValue("GuiNovelView", "lastCol", nwColHidden) is True
 
     # Generic get, doesn't check type
-    assert options.getValue("GuiNovelDetails", "winWidth", None) == 100
-    assert options.getValue("GuiNovelDetails", "winHeight", None) == 12.34
-    assert options.getValue("GuiNovelDetails", "clearDouble", None) is True
-    assert options.getValue("GuiNovelDetails", "mockItem", None) is None
+    assert options.getValue("GuiManuscript", "winWidth", None) == 100
+    assert options.getValue("GuiManuscript", "winHeight", None) == 12.34
+    assert options.getValue("GuiManuscript", "detailsExpanded", None) is True
+    assert options.getValue("GuiManuscript", "mockItem", None) is None
 
     # Get type-specific
-    assert options.getString("GuiNovelDetails", "winWidth", None) is None  # type: ignore
-    assert options.getString("GuiNovelDetails", "mockItem", None) is None  # type: ignore
-    assert options.getInt("GuiNovelDetails", "winWidth", None) == 100  # type: ignore
-    assert options.getInt("GuiNovelDetails", "textFont", None) is None  # type: ignore
-    assert options.getInt("GuiNovelDetails", "mockItem", None) is None  # type: ignore
-    assert options.getFloat("GuiNovelDetails", "winWidth", None) == 100.0  # type: ignore
-    assert options.getFloat("GuiNovelDetails", "mockItem", None) is None  # type: ignore
-    assert options.getBool("GuiNovelDetails", "clearDouble", None) is True  # type: ignore
-    assert options.getBool("GuiNovelDetails", "mockItem", None) is None  # type: ignore
+    assert options.getString("GuiManuscript", "winWidth", None) is None  # type: ignore
+    assert options.getString("GuiManuscript", "mockItem", None) is None  # type: ignore
+    assert options.getInt("GuiManuscript", "winWidth", None) == 100  # type: ignore
+    assert options.getInt("GuiManuscript", "textFont", None) is None  # type: ignore
+    assert options.getInt("GuiManuscript", "mockItem", None) is None  # type: ignore
+    assert options.getFloat("GuiManuscript", "winWidth", None) == 100.0  # type: ignore
+    assert options.getFloat("GuiManuscript", "mockItem", None) is None  # type: ignore
+    assert options.getBool("GuiManuscript", "detailsExpanded", None) is True  # type: ignore
+    assert options.getBool("GuiManuscript", "mockItem", None) is None  # type: ignore
     assert options.getEnum("GuiNovelView", "lastCol", nwNovelExtra, nwColHidden) == nwColHidden
 
     # Get list

@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 
 
 class DocumentBuilder:
-    """Core: Manuscript Document Build Class.
+    """Manuscript: Manuscript Document Build Class.
 
     This is the core tool that assembles a project and outputs a
     manuscript, based on a build definition object (BuildSettings).

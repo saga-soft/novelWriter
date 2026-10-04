@@ -4,7 +4,7 @@
 Running from Source
 *******************
 
-.. _GitHub: https://github.com/vkbo/novelWriter/releases
+.. _GitHub: https://github.com/saga-soft/novelWriter/releases
 .. _PyPi: https://pypi.org/project/novelWriter/
 .. _Sphinx Docs: https://www.sphinx-doc.org/
 .. _uv: https://docs.astral.sh/uv/

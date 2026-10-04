@@ -51,9 +51,10 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-FILE_VERSION = "1.5"  # The current project file format version
-FILE_REVISION = "7"  # The current project file format revision
-HEX_VERSION = 0x0105
+FILE_VERSION = "1.6"  # The current project file format version
+FILE_REVISION = "0"  # The current project file format revision
+HEX_VERSION = 0x0106  # The current project file format version as hex
+LAST_BREAKING = 0x260200B2  # Last project format breaking change (not XML)
 
 NUM_VERSION = {
     "1.0": 0x0100,  # Up to 0.7
@@ -61,7 +62,8 @@ NUM_VERSION = {
     "1.2": 0x0102,  # Up to 1.5
     "1.3": 0x0103,  # Up to 2.0 Beta 1
     "1.4": 0x0104,  # Up to 2.0 RC 2
-    "1.5": 0x0105,  # Current
+    "1.5": 0x0105,  # Up to 26.2 RC 1
+    "1.6": 0x0106,  # Current
 }
 
 
@@ -109,18 +111,22 @@ class ProjectXMLReader:
         the project or the content into their respective section nodes
         as attributes. The id attribute was also added to the project.
 
-        Rev 1: Drops the titleFormat node from settings. 2.1 Beta 1.
+        Rev 1: Drops the titleFormat node from settings (2.1).
         Rev 2: Drops the title node from project and adds the TEMPLATE
-               class for items. 2.3 Beta 1.
-        Rev 3: Added TEMPLATE class. 2.3.
+               class for items (2.3).
+        Rev 3: Added TEMPLATE class (2.3).
         Rev 4: Added shape attribute to status and importance entry
-               nodes. 2.5.
+               nodes (2.5).
         Rev 5: Added novelChars and notesChars attributes to content
-               node. 2.7 RC 1.
+               node (2.7).
         Rev 6: Replaced red, green and blue attributes with a single
-               color attribute. 2.8 Beta 1.
-        Rev 7: Added projectTarget and dailyTarget nodes to settings.
-               26.2 Beta 1.
+               color attribute (2.8).
+        Rev 7: Added projectTarget and dailyTarget nodes to settings,
+               and indexRevision attribute to project (26.2).
+
+    1.6 The actual format released for 26.2. All documents are now
+        stored with the .md file extension and a toml header. The
+        project XML was not changed.
     """
 
     def __init__(self, path: str | Path) -> None:
@@ -195,18 +201,18 @@ class ProjectXMLReader:
             return False
 
         fileVersion = str(xRoot.attrib.get("fileVersion", ""))
-        if fileVersion in NUM_VERSION:
-            self._version = NUM_VERSION[fileVersion]
-        else:
-            self._state = XMLReadState.UNKNOWN_VERSION
-            return False
-
         logger.debug("XML is '%s' version '%s'", self._root, fileVersion)
 
         self._revision = checkInt(xRoot.attrib.get("fileRevision"), 0)
         self._appVersion = str(xRoot.attrib.get("appVersion", ""))
         self._hexVersion = hexToInt(xRoot.attrib.get("hexVersion", ""))
         self._timeStamp = str(xRoot.attrib.get("timeStamp", ""))
+
+        if fileVersion in NUM_VERSION:
+            self._version = NUM_VERSION[fileVersion]
+        else:
+            self._state = XMLReadState.UNKNOWN_VERSION
+            return False
 
         for xSection in xRoot:
             if xSection.tag == "project":
@@ -223,7 +229,9 @@ class ProjectXMLReader:
 
         if self._version == HEX_VERSION:
             self._state = XMLReadState.PARSED_OK
-        else:
+        elif self._hexVersion < LAST_BREAKING:
+            self._state = XMLReadState.WAS_LEGACY
+        else:  # Not reachable with 1.5 format, but kept for future proofing
             self._state = XMLReadState.WAS_LEGACY
 
         logger.debug("Project XML loaded in %.3f ms", (time() - tStart) * 1000)
@@ -242,6 +250,7 @@ class ProjectXMLReader:
         data.setSaveCount(xSection.attrib.get("saveCount", 0))  # Moved in 1.5
         data.setAutoCount(xSection.attrib.get("autoCount", 0))  # Moved in 1.5
         data.setEditTime(xSection.attrib.get("editTime", 0))  # Moved in 1.5
+        data.setIndexRevision(xSection.attrib.get("indexRevision", 0))  # Added in 1.5 Rev 7
 
         for xItem in xSection:
             if xItem.tag == "name":
@@ -510,6 +519,7 @@ class ProjectXMLWriter:
             "saveCount": str(data.saveCount),
             "autoCount": str(data.autoCount),
             "editTime": str(editTime),
+            "indexRevision": str(data.indexRevision),
         }
 
         xProject = ET.SubElement(xRoot, "project", attrib=projAttr)

@@ -1,4 +1,4 @@
-name: Part-MacOS-M1
+name: Part MacOS M1
 
 on: workflow_call
 

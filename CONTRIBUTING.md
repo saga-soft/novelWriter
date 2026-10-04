@@ -1,21 +1,23 @@
 # Contributing Guide
 
-See also [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md).
+See also our [Code of Conduct](https://github.com/saga-soft/novelWriter?tab=coc-ov-file#code-of-conduct)
+and our [AI Policy](https://github.com/saga-soft/novelWriter/blob/main/AI_POLICY.md).
 
 When contributing to this repository, please first discuss the change you wish to make with the
-owner. Either via the issue tracker or on the discussions page. Especially if it is regarding new
-features. If you just want to make a minor correction, like fix a typo or similar, feel free to
-just make a pull request directly.
+maintainers. For new and complex ideas, it is better to open a discussion before adding a new
+feature request. If you just want to make a minor correction, like fix a typo or similar, feel free
+to just make a pull request directly.
 
 **The following contributions are welcome:**
 
 * Bugfixes for new or existing bugs. Please also report new bugs in the issue tracker even if you
-  also provide a fix. It makes it easier to keep track of what has been fixed and when.
+  also provide a fix. It makes it easier to keep track of what has been fixed and when and to
+  populate our changelog.
 * Translations made via the [Crowdin project page](https://crowdin.com/project/novelwriter).
 * Translations of the documentation. These need to use Sphinx i18n tooling. Please start a
   discussion before beginning such work as it requires some coordination.
 * Improvements to the documentation. Particularly if the documentation is unclear. Please don't
-  make any larger changes to the documentation without discussing them with the maintainer first.
+  make any larger changes to the documentation without discussing them with a maintainer first.
 * Adaptations, installation or packaging features targeting specific operating systems.
 * Using AI as a coding assistant is fine as long as the code is of good quality and the scope of
   change is small, but do not generate large chunks of code. Generated code is not only hard to
@@ -46,7 +48,8 @@ uv sync
 ```
 
 Many tasks, like building assets from source, are handled by the `pkgutils.py` helper tool.
-This tool requires no dependencies, so you can either run it directly with Python, or `uv run`.
+This tool requires no dependencies for most commands, so you can either run it directly with
+Python, or using `uv run`.
 
 ```bash
 python pkgutils.py --help
@@ -72,7 +75,7 @@ python pkgutils.py icons optional
   code has branches that only runs on some OSes, they only need to be covered when test are run on
   that OS. The test suite runs on Linux, Windows and MacOS.
 * It is ok to use `pragma` comments with `no cover` and `no branch` if the code is not expected to
-  touch those areas or branches.
+  touch those areas or branches at runtime.
 
 A helper script is provided for running tests. It simplifies coverage reporting and a few other
 things. Run the following to see all details:
@@ -81,13 +84,21 @@ things. Run the following to see all details:
 uv run run_tests.py --help
 ```
 
+For instance, this command will run all tests off screen (`-o`), generate a coverage XML report for
+your code editor (`-r`), and produce a terminal report with all missing lines and branches (`-l`).
+
+```bash
+uv run run_tests.py -orl
+```
+
 
 ## Picking the Correct Branch for a Pull Request
 
-Pre-releases are made from the `main` branch, and full releases are made from the `release` branch.
-If you are submitting a fix to a current release you must do so from the `release` branch. If you
-make such a fix on the `main` branch, **it cannot be included in a patch release**. This also
-applies to the documentation for the latest release published on the main website.
+Pre-releases are generally made from the `main` branch, and full releases are always made from the
+`release` branch. If you are submitting a fix to a current release you must do so from the
+`release` branch. If you make such a fix on the `main` branch, **it cannot be included in a patch
+release**. This also applies to the documentation for the latest release published on the main
+website.
 
 New features are only added in full releases, so a feature pull request must be made to the `main`
 branch. However, if the `main` branch is very close to a new full release, pull requests may not be
@@ -95,7 +106,7 @@ merged until the release is completed.
 
 This project uses GitHub milestones to plan releases, and only pull requests included in the
 current release cycle will be merged to `main`. Milestone tickets are not set in stone and are
-often moved to other milestones.
+often moved to the next milestones.
 
 
 ### Pull Request Check List
@@ -107,9 +118,10 @@ Make sure the pull request follows these rules:
   branch. The same applies to the `release` branch.
 * Please provide a description of the changes in the pull request under the summary section of the
   pull request template, and reference any related issues by providing the issue number. Do not
-  post links to issue numbers as that breaks the integration. Stating the issue number is enough.
-* Do not change the version number.
-* Make sure the formatting and linting tools have been run before the pull request is made.
+  post links to issue numbers as that breaks the integration. Stating the issue number on the form
+  `Closes #1234` is enough.
+* Do not change the version number. This is done during the release process.
+* Make sure the formatting and linting tools have been run locally before the pull request is made.
 
 
 ## Code Style
@@ -141,6 +153,6 @@ uv run pyright
 
 * All comments and docstrings in the code must be in English.
 * All text presented to the user must be wrapped in calls to Qt's translation framework, and the
-  spelling of this text *must* be British English. US English spelling *is not allowed* for these
-  strings.
+  spelling of this text **must** be British English. US English spelling **is not allowed** for
+  these strings. A US English translation is provided via the translation framework.
 * Commit descriptions and pull requests must also be in English.

@@ -17,6 +17,12 @@
     "cls_trash": "delete",
     "cls_world": "globe",
 
+    "key_mention": "person_heart",
+
+    "cmn_general": "notes",
+    "cmn_note": "chat",
+    "cmn_story": "label_important",
+
     "prj_folder": "folder",
     "prj_document": "news",
     "prj_title": "news",
@@ -27,6 +33,7 @@
     "fmt_bold": "format_bold",
     "fmt_italic": "format_italic",
     "fmt_mark": "format_ink_highlighter",
+    "fmt_link": "link",
     "fmt_size": "format_size",
     "fmt_strike": "strikethrough_s",
     "fmt_subscript": "subscript",
@@ -51,12 +58,11 @@
     "unfold-show": "arrow_drop_down",
 
     "sb_build": "export_notes",
-    "sb_details": "format_list_bulleted",
     "sb_novel": "book_4_spark",
-    "sb_outline": "summarize",
     "sb_project": "bookmark_manager",
     "sb_search": "search",
     "sb_stats": "bar_chart",
+    "sb_story": "summarize",
 
     "theme_light": "light_mode",
     "theme_dark": "dark_mode",

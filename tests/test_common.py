@@ -439,6 +439,17 @@ def testCommon_simplified():
     assert simplified("  Hello    World   ") == "Hello World"
     assert simplified("\tHello\n\r\tWorld") == "Hello World"
 
+    # Whitespace-like control characters are still treated as separators
+    assert simplified("Hello\x1cWorld") == "Hello World"
+
+    # Other control characters are dropped entirely, not just left as-is
+    assert simplified("Hello\x00\x07\x1bWorld") == "HelloWorld"
+    assert simplified("Hello \x7f World") == "Hello World"
+
+    # Lone surrogates are dropped too, as they can't be written to UTF-8 files
+    lone = b"abc\xff".decode("utf-8", "surrogateescape")
+    assert simplified(f"Hello {lone} World") == "Hello abc World"
+
 
 @pytest.mark.base
 def testCommon_compact():
@@ -448,6 +459,11 @@ def testCommon_compact():
     assert compact("1\n2\n3") == "123"
     assert compact("1\r2\r3") == "123"
     assert compact("1\u00a02\u00a03") == "123"
+
+    # Non-whitespace control characters and lone surrogates are dropped too
+    assert compact("1\x00\x07\x1b2") == "12"
+    lone = b"1\xff2".decode("utf-8", "surrogateescape")
+    assert compact(lone) == "12"
 
 
 @pytest.mark.base

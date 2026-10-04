@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <novelWriterXML appVersion="26.2a1" hexVersion="0x260200a1" fileVersion="1.5" fileRevision="7" timeStamp="2026-07-20 17:28:47">
-  <project id="e2be99af-f9bf-4403-857a-c3d1ac25abea" saveCount="2369" autoCount="429" editTime="1000">
+  <project id="e2be99af-f9bf-4403-857a-c3d1ac25abea" saveCount="2369" autoCount="429" editTime="1000" indexRevision="0">
     <name>Sample Project</name>
     <author>Jane Smith</author>
   </project>
@@ -17,7 +17,7 @@
       <entry key="editor">636b6aa9b697b</entry>
       <entry key="viewer">636b6aa9b697b</entry>
       <entry key="novel">7031beac91f75</entry>
-      <entry key="outline">7031beac91f75</entry>
+      <entry key="story">7031beac91f75</entry>
     </lastHandle>
     <autoReplace>
       <entry key="A">B</entry>

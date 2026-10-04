@@ -259,6 +259,7 @@ class NColorLabel(QLabel):
     """
 
     HELP_SCALE = DEFAULT_SCALE
+    NORMAL_SCALE = 1.0
     HEADER_SCALE = 1.25
 
     _state = None

@@ -14,11 +14,11 @@
   <launchable type="desktop-id">novelwriter.desktop</launchable>
   <url type="homepage">https://novelwriter.io</url>
   <url type="help">https://docs.novelwriter.io</url>
-  <url type="vcs-browser">https://github.com/vkbo/novelWriter</url>
-  <url type="bugtracker">https://github.com/vkbo/novelWriter/issues</url>
+  <url type="vcs-browser">https://github.com/saga-soft/novelWriter</url>
+  <url type="bugtracker">https://github.com/saga-soft/novelWriter/issues</url>
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/vkbo/novelWriter/refs/heads/main/setup/screenshot.png</image>
+      <image>https://raw.githubusercontent.com/saga-soft/novelWriter/refs/heads/main/setup/screenshot.png</image>
     </screenshot>
   </screenshots>
   <provides>

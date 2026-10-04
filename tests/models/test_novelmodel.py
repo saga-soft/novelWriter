@@ -65,7 +65,9 @@ def testNovelModel_Interface(nwGUI, fncPath, mockRnd):
     assert model.key(model.createIndex(0, 0)) == "T0001"
 
     # Clear the model and check error handling
+    model.beginResetModel()
     model.clear()
+    model.endResetModel()
 
     assert model.data(root, QtDisplayRole) is None
     assert model.handle(root) is None
@@ -156,16 +158,20 @@ def testNovelModel_Data(nwGUI, fncPath, mockRnd):
     assert scene is not None
 
     # Clear the model and try to refresh
+    model.beginResetModel()
     model.clear()
+    model.endResetModel()
     assert model.rowCount(root) == 0
 
     # Cannot refresh an empty model
     assert model.refresh(title) is False
 
     # Add all back
+    model.beginResetModel()
     model.append(title)
     model.append(chapter)
     model.append(scene)
+    model.endResetModel()
 
     # Add headings to scene
     scene.addHeading(IndexHeading(scene._cache, "T0002", 10, "H4", "A Section"))

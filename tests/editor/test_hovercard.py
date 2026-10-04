@@ -37,7 +37,7 @@ from tests.helpers import C, buildTestProject
 
 
 @pytest.mark.gui
-def testGuiDocHoverCard_Widget(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocHoverCard_Widget(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
     """Test the hover card's widget mechanics: theming, caching, and
     the show/hide/mouse-enter grace period. A real project is needed
     since setTag() looks up SHARED.project.index even for tags that
@@ -57,9 +57,19 @@ def testGuiDocHoverCard_Widget(qtbot, nwGUI, projPath, mockRnd):
     # must be cleared whenever the theme is refreshed
     card._cache["stale"] = "<p>Stale</p>"
     card._tag = "stale"
+
+    # The view/edit button icons must also be refreshed, or they stay
+    # stuck on the colours of the theme active when the card was built
+    viewCalls = []
+    editCalls = []
+    monkeypatch.setattr(card._viewBtn, "refreshTheme", lambda: viewCalls.append(1))
+    monkeypatch.setattr(card._editBtn, "refreshTheme", lambda: editCalls.append(1))
+
     card.updateTheme()
     assert card._cache == {}
     assert card._tag == ""
+    assert viewCalls == [1]
+    assert editCalls == [1]
 
     # An empty tag never resolves to any content
     assert card.setTag("") is False

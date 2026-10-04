@@ -743,7 +743,7 @@ def testProjectTree_CheckConsistency(monkeypatch, caplog, mockGUI, fncPath, mock
     contentPath = project.storage.contentPath
     assert isinstance(contentPath, Path)
     assert contentPath == fncPath / "content"
-    (contentPath / f"{xHandle}.nwd").write_text("### Stuff", encoding="utf-8")
+    (contentPath / f"{xHandle}.md").write_text("### Stuff", encoding="utf-8")
 
     assert project.tree.checkConsistency("Recovered") == (1, 1)
     assert xHandle in project.tree
@@ -778,13 +778,18 @@ def testProjectTree_CheckConsistency(monkeypatch, caplog, mockGUI, fncPath, mock
     # An orphan with valid metadata pointing to an existing parent
     # is added to that parent directly
     yHandle = "0123456789abd"
-    (contentPath / f"{yHandle}.nwd").write_text(
+    (contentPath / f"{yHandle}.md").write_text(
         (
-            "%%~name: Stuff\n"
-            f"%%~path: {C.hNovelRoot}/{yHandle}\n"
-            "%%~kind: NOVEL/DOCUMENT\n"
-            "%%~hash: 0000000000000000000000000000000000000000\n"
-            "%%~date: Unknown/Unknown\n"
+            "+++\n"
+            'name = "Stuff"\n'
+            f'parent = "{C.hNovelRoot}"\n'
+            f'handle = "{yHandle}"\n'
+            'class = "NOVEL"\n'
+            'layout = "DOCUMENT"\n'
+            'textHash = "0000000000000000000000000000000000000000"\n'
+            'createdDate = "Unknown"\n'
+            'updatedDate = "Unknown"\n'
+            "+++\n"
             "### Stuff\n"
         ),
         encoding="utf-8",
@@ -803,7 +808,7 @@ def testProjectTree_CheckConsistency(monkeypatch, caplog, mockGUI, fncPath, mock
 
     # If the recovered item cannot be added, it is not counted
     project.tree.remove(yHandle)
-    (contentPath / f"{yHandle}.nwd").write_text("### Stuff", encoding="utf-8")
+    (contentPath / f"{yHandle}.md").write_text("### Stuff", encoding="utf-8")
     with monkeypatch.context() as mp:
         mp.setattr("novelwriter.core.tree.ProjectTree.add", lambda *a: False)
         assert project.tree.checkConsistency("Recovered") == (1, 0)
@@ -955,9 +960,9 @@ def testProjectTree_ToCFile(monkeypatch, fncPath, mockGUI, mockItems):
         "Table of Contents\n"
         "=================\n"
         "\n"
-        "File Name                  Class      Layout    Document Label\n"
-        "--------------------------------------------------------------\n"
-        "content/000000000000c.nwd  NOVEL      DOCUMENT  Title Page\n"
-        "content/000000000000e.nwd  NOVEL      DOCUMENT  New Chapter\n"
-        "content/000000000000f.nwd  NOVEL      DOCUMENT  New Scene\n"
+        "File Name                 Class      Layout    Document Label\n"
+        "-------------------------------------------------------------\n"
+        "content/000000000000c.md  NOVEL      DOCUMENT  Title Page\n"
+        "content/000000000000e.md  NOVEL      DOCUMENT  New Chapter\n"
+        "content/000000000000f.md  NOVEL      DOCUMENT  New Scene\n"
     )

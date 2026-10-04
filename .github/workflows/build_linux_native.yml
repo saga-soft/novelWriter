@@ -1,0 +1,150 @@
+name: Build Linux Native
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        required: false
+        description: "Publish to Cloudsmith?"
+        type: boolean
+        default: false
+      build_number:
+        required: false
+        description: "Build Number"
+        type: string
+        default: "0"
+      debian12:
+        required: false
+        description: "Debian 12 (Bookworm)"
+        type: boolean
+        default: true
+      debian13:
+        required: false
+        description: "Debian 13 (Trixie)"
+        type: boolean
+        default: true
+      ubuntu2404:
+        required: false
+        description: "Ubuntu 24.04 (Noble)"
+        type: boolean
+        default: true
+      ubuntu2604:
+        required: false
+        description: "Ubuntu 26.04 (Resolute)"
+        type: boolean
+        default: true
+      ubuntu2610:
+        required: false
+        description: "Ubuntu 26.10 (Stonking)"
+        type: boolean
+        default: true
+      mint22:
+        required: false
+        description: "Linux Mint 22 (Wilma)"
+        type: boolean
+        default: true
+
+jobs:
+  buildAssets:
+    uses: ./.github/workflows/part_assets.yml
+    with:
+      icons-free: true
+      icons-non-free: true
+    permissions:
+      contents: read
+
+  buildAndPublish-Debian12:
+    name: Debian 12 (Bookworm)
+    needs: buildAssets
+    uses: ./.github/workflows/part_debian.yml
+    with:
+      publish: ${{ inputs.publish }}
+      build_number: ${{ inputs.build_number }}
+      codename: bookworm
+      family: debian
+      image: debian:12
+    secrets: inherit
+    if: ${{ inputs.debian12 }}
+    permissions:
+      id-token: write
+      contents: read
+
+  buildAndPublish-Debian13:
+    name: Debian 13 (Trixie)
+    needs: buildAssets
+    uses: ./.github/workflows/part_debian.yml
+    with:
+      publish: ${{ inputs.publish }}
+      build_number: ${{ inputs.build_number }}
+      codename: trixie
+      family: debian
+      image: debian:13
+    secrets: inherit
+    if: ${{ inputs.debian13 }}
+    permissions:
+      id-token: write
+      contents: read
+
+  buildAndPublish-Ubuntu2404:
+    name: Ubuntu 24.04 (Noble)
+    needs: buildAssets
+    uses: ./.github/workflows/part_debian.yml
+    with:
+      publish: ${{ inputs.publish }}
+      build_number: ${{ inputs.build_number }}
+      codename: noble
+      family: ubuntu
+      image: ubuntu:24.04
+    secrets: inherit
+    if: ${{ inputs.ubuntu2404 }}
+    permissions:
+      id-token: write
+      contents: read
+
+  buildAndPublish-Ubuntu2604:
+    name: Ubuntu 26.04 (Resolute)
+    needs: buildAssets
+    uses: ./.github/workflows/part_debian.yml
+    with:
+      publish: ${{ inputs.publish }}
+      build_number: ${{ inputs.build_number }}
+      codename: resolute
+      family: ubuntu
+      image: ubuntu:26.04
+    secrets: inherit
+    if: ${{ inputs.ubuntu2604 }}
+    permissions:
+      id-token: write
+      contents: read
+
+  buildAndPublish-Ubuntu2610:
+    name: Ubuntu 26.10 (Stonking)
+    needs: buildAssets
+    uses: ./.github/workflows/part_debian.yml
+    with:
+      publish: ${{ inputs.publish }}
+      build_number: ${{ inputs.build_number }}
+      codename: stonking
+      family: ubuntu
+      image: ubuntu:26.10
+    secrets: inherit
+    if: ${{ inputs.ubuntu2610 }}
+    permissions:
+      id-token: write
+      contents: read
+
+  buildAndPublish-Mint22:
+    name: Linux Mint 22 (Wilma)
+    needs: buildAssets
+    uses: ./.github/workflows/part_debian.yml
+    with:
+      publish: ${{ inputs.publish }}
+      build_number: ${{ inputs.build_number }}
+      codename: wilma
+      family: linuxmint
+      image: linuxmintd/mint22-amd64
+    secrets: inherit
+    if: ${{ inputs.mint22 }}
+    permissions:
+      id-token: write
+      contents: read

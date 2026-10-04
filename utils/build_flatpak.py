@@ -36,10 +36,11 @@ from utils.common import (
     appdataXml,
     extractBuildInfo,
     extractVersion,
+    log,
     makeCheckSum,
     readFile,
-    stripVersion,
     toUpload,
+    updateMetaFile,
     writeFile,
 )
 
@@ -47,16 +48,17 @@ PIP_GEN_COMMIT = "737c0085912f9f7dabf9341d4608e2a77a51a73a"
 PIP_GEN_FILE = "pip/flatpak-pip-generator.py"
 PIP_GEN_URL = f"https://raw.githubusercontent.com/flatpak/flatpak-builder-tools/{PIP_GEN_COMMIT}/{PIP_GEN_FILE}"
 ENCHANT_RELEASE_API = "https://api.github.com/repos/rrthomas/enchant/releases/tags/v{version}"
-NW_REPO_URL = "https://github.com/vkbo/novelWriter.git"
-NW_COMMIT_API = "https://api.github.com/repos/vkbo/novelWriter/commits/v{version}"
+NW_REPO_URL = "https://github.com/saga-soft/novelWriter.git"
+NW_COMMIT_API = "https://api.github.com/repos/saga-soft/novelWriter/commits/v{version}"
 FLATHUB_FILES = ("io.novelwriter.novelwriter.yml", "pypi-deps.json", "enchant.json", "novelwriter.appdata.xml")
 
 
 def processEnchant(bldDir: Path, enchantVersion: str) -> None:
     """Generate the enchant.json flatpak module for the pinned enchant version."""
-    print("Generate Enchant Module")
-    print("=======================")
-    print("")
+    log("")
+    log("[b]Generate Enchant Module[e]")
+    log("[b]=======================[e]")
+    log("")
 
     outFile = bldDir / "enchant.json"
 
@@ -65,7 +67,7 @@ def processEnchant(bldDir: Path, enchantVersion: str) -> None:
         url = f"https://github.com/rrthomas/enchant/releases/download/v{enchantVersion}/{fileName}"
 
         apiUrl = ENCHANT_RELEASE_API.format(version=enchantVersion)
-        print(f"Checking: {apiUrl}")
+        log(f"Checking: {apiUrl}")
         with urllib.request.urlopen(apiUrl) as response:
             release = json.loads(response.read())
 
@@ -74,8 +76,8 @@ def processEnchant(bldDir: Path, enchantVersion: str) -> None:
             raise ValueError(f"Asset '{fileName}' not found in release 'v{enchantVersion}'")
         checksum = assets[fileName]["digest"].removeprefix("sha256:")
 
-        print(f"Version: {enchantVersion}")
-        print(f"SHA256: {checksum}")
+        log(f"Version: {enchantVersion}")
+        log(f"SHA256: {checksum}")
 
         module = {
             "name": "enchant",
@@ -93,29 +95,30 @@ def processEnchant(bldDir: Path, enchantVersion: str) -> None:
         }
         writeFile(outFile, json.dumps(module, indent=4) + "\n")
     except Exception as exc:
-        print("Generate Enchant Module: FAILED")
-        print("")
-        print(str(exc))
+        log("[cr]Generate Enchant Module: FAILED[e]")
+        log("")
+        log(exc)
         sys.exit(1)
 
-    print("")
+    log("")
 
 
 def processDependencies(bldDir: Path) -> None:
     """Generate the pypi-deps.json file."""
-    print("Generate PyPI Dependencies")
-    print("==========================")
-    print("")
+    log("")
+    log("[b]Generate PyPI Dependencies[e]")
+    log("[b]==========================[e]")
+    log("")
 
     genScript = bldDir / "flatpak-pip-generator.py"
     outFile = bldDir / "pypi-deps"
 
     try:
         if not genScript.exists():
-            print(f"Downloading: {PIP_GEN_URL}")
+            log(f"Downloading: {PIP_GEN_URL}")
             urllib.request.urlretrieve(PIP_GEN_URL, genScript)
 
-        print("")
+        log("")
         subprocess.run(
             [
                 "uv",
@@ -131,29 +134,28 @@ def processDependencies(bldDir: Path) -> None:
             check=True,
         )
     except Exception as exc:
-        print("Generate PyPI Dependencies: FAILED")
-        print("")
-        print(str(exc))
+        log("[cr]Generate PyPI Dependencies: FAILED[e]")
+        log("")
+        log(exc)
         sys.exit(1)
     finally:
         genScript.unlink(missing_ok=True)
 
-    print("")
+    log("")
 
 
 def flatpak(args: argparse.Namespace) -> None:
     """Build a flatpak bundle locally, for direct download."""
-    print("")
-    print("Build Flatpak")
-    print("=============")
-    print("")
+    log("")
+    log("[b]Build Flatpak[e]")
+    log("[b]=============[e]")
+    log("")
 
     buildInfo = extractBuildInfo("flatpak")
     qtVersion = buildInfo["qt_version"]
     enchantVersion = buildInfo["enchant_version"]
 
-    numVers, _, relDate = extractVersion()
-    pkgVers = stripVersion(numVers)
+    pkgVers, _, relDate = extractVersion()
     relDate = datetime.datetime.strptime(relDate, "%Y-%m-%d")
 
     bldDir = ROOT_DIR / "dist_flatpak"
@@ -164,8 +166,8 @@ def flatpak(args: argparse.Namespace) -> None:
     # ==============
 
     if outDir.exists():
-        print("Removing old build files ...")
-        print("")
+        log("[b]Removing old build files ...[e]")
+        log("")
         shutil.rmtree(outDir)
 
     bldDir.mkdir(exist_ok=True)
@@ -174,6 +176,7 @@ def flatpak(args: argparse.Namespace) -> None:
     processDependencies(bldDir)
     processEnchant(bldDir, enchantVersion)
     writeFile(bldDir / "novelwriter.appdata.xml", appdataXml())
+    updateMetaFile(bldDir / "meta.toml", buildFormat="flatpak", installSource="github")
 
     template = readFile(ROOT_DIR / "setup" / "flatpak" / "io.novelwriter.novelwriter.yml")
     template = template.replace("@QT_VERSION@", qtVersion)
@@ -211,13 +214,13 @@ def flatpak(args: argparse.Namespace) -> None:
             check=True,
         )
     except Exception as exc:
-        print("Flatpak build: FAILED")
-        print("")
-        print(str(exc))
-        print("")
-        print("Dependencies:")
-        print(" * flatpak flatpak-builder")
-        print("")
+        log("[cr]Flatpak build: FAILED[e]")
+        log("")
+        log(exc)
+        log("")
+        log("[b]Dependencies:[e]")
+        log(" * flatpak flatpak-builder")
+        log("")
         sys.exit(1)
 
     shaFile = makeCheckSum(bundleFile.name, cwd=bldDir)
@@ -231,17 +234,17 @@ def flathub(args: argparse.Namespace) -> None:
     # Import here so we can still run pkgutils with plain python
     import yaml
 
-    print("")
-    print("Build Flathub Submission")
-    print("========================")
-    print("")
+    log("")
+    log("[b]Build Flathub Submission[e]")
+    log("[b]========================[e]")
+    log("")
 
     buildInfo = extractBuildInfo("flatpak")
     qtVersion = buildInfo["qt_version"]
     enchantVersion = buildInfo["enchant_version"]
 
-    numVers, _, _ = extractVersion()
-    tag = f"v{numVers}"
+    pkgVers, _, _ = extractVersion()
+    tag = f"v{pkgVers}"
 
     bldDir = ROOT_DIR / "dist_flathub"
     bldDir.mkdir(exist_ok=True)
@@ -250,27 +253,27 @@ def flathub(args: argparse.Namespace) -> None:
     processEnchant(bldDir, enchantVersion)
     writeFile(bldDir / "novelwriter.appdata.xml", appdataXml())
 
-    print("Resolve Release Commit")
-    print("======================")
-    print("")
+    log("[b]Resolve Release Commit[e]")
+    log("[b]======================[e]")
+    log("")
 
-    commitApiUrl = NW_COMMIT_API.format(version=numVers)
+    commitApiUrl = NW_COMMIT_API.format(version=pkgVers)
     try:
-        print(f"Checking: {commitApiUrl}")
+        log(f"Checking: {commitApiUrl}")
         with urllib.request.urlopen(commitApiUrl) as response:
             commit = json.loads(response.read())["sha"]
-        print(f"Tag: {tag}")
-        print(f"Commit: {commit}")
+        log(f"Tag: {tag}")
+        log(f"Commit: {commit}")
     except Exception as exc:
-        print("Resolve Release Commit: FAILED")
-        print("")
-        print(str(exc))
-        print("")
-        print(f"Has version {numVers} been tagged and pushed to GitHub yet?")
-        print("")
+        log("[cr]Resolve Release Commit: FAILED[e]")
+        log("")
+        log(exc)
+        log("")
+        log(f"[cy]Has version {pkgVers} been tagged and pushed to GitHub yet?[e]")
+        log("")
         sys.exit(1)
 
-    print("")
+    log("")
 
     manifest = yaml.safe_load(readFile(ROOT_DIR / "setup" / "flatpak" / "io.novelwriter.novelwriter.yml"))
     manifest["runtime-version"] = qtVersion
@@ -289,22 +292,22 @@ def flathub(args: argparse.Namespace) -> None:
     manifestFile = bldDir / "io.novelwriter.novelwriter.yml"
     with open(manifestFile, mode="w", encoding="utf-8") as outFile:
         yaml.safe_dump(manifest, outFile, sort_keys=False)
-    print("Wrote:", manifestFile.relative_to(ROOT_DIR))
-    print("")
+    log(f"[cg]Wrote:[e] {manifestFile.relative_to(ROOT_DIR)}")
+    log("")
 
     if path := args.path:
         dstDir = Path(path)
         if not dstDir.is_dir():
-            print(f"Error: not a directory: {dstDir}")
+            log(f"[cr]Error:[e] not a directory: {dstDir}")
             sys.exit(1)
 
-        print(f"Copy Files to {dstDir}")
-        print("=" * (len(str(dstDir)) + 14))
-        print("")
+        log(f"[b]Copy Files to {dstDir}[e]")
+        log("[b]" + "=" * (len(str(dstDir)) + 14) + "[e]")
+        log("")
         for name in FLATHUB_FILES:
             shutil.copyfile(bldDir / name, dstDir / name)
-            print(f"Copied: {name}")
-        print("")
+            log(f"[cg]Copied:[e] {name}")
+        log("")
     else:
-        print(f"Flathub submission files written to {bldDir.relative_to(ROOT_DIR)}/")
-        print("")
+        log(f"Flathub submission files written to {bldDir.relative_to(ROOT_DIR)}/")
+        log("")

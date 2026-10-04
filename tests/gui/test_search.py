@@ -34,6 +34,7 @@ from PyQt6.QtWidgets import QStyleOptionViewItem
 from novelwriter import CONFIG, SHARED
 from novelwriter.constants import nwItemClass, nwUnicode
 from novelwriter.core.project import NWProject
+from novelwriter.core.projectsearch import DocSearch
 from novelwriter.enum import nwChange, nwDocMode, nwView
 from novelwriter.types import QtDisplayRole, QtKeyDown, QtKeyReturn, QtKeyUp
 
@@ -379,6 +380,44 @@ def testGuiProjectSearch_EdgeCases(nwGUI, fncPath, mockRnd, ipsumText):
 
     search.closeProjectTasks()
     assert model.rowCount(root) == 0
+
+
+@pytest.mark.gui
+def testGuiProjectSearch_ReentrancyGuard(nwGUI, fncPath, mockRnd, ipsumText, monkeypatch):
+    """Regression test for the processSearch re-entrancy guard."""
+    mockRnd.reset()
+    buildTestProject(NWProject(), fncPath)
+    nwGUI.openProject(fncPath)
+    project = SHARED.project
+    project.storage.getDocument(C.hChapterDoc).writeDocument("## New Chapter\n\n" + ipsumText[0])
+    project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\n" + ipsumText[1])
+
+    nwGUI._changeView(nwView.SEARCH)
+    search = nwGUI.projSearch
+    model = search._model
+    root = QModelIndex()
+
+    search.beginSearch("Lorem")
+
+    realIterSearch = DocSearch.iterSearch
+
+    def nestedIterSearch(self, project, searchText):
+        for i, result in enumerate(realIterSearch(self, project, searchText)):
+            if i == 0:
+                # Simulate a nested invocation entering mid-iteration
+                search._processSearch()
+                # The nested call must see the guard held and skip its body
+                assert search._blocked is True
+            yield result
+
+    monkeypatch.setattr(DocSearch, "iterSearch", nestedIterSearch)
+
+    search._processSearch()
+
+    # The guard is released once the outer call actually finishes
+    assert search._blocked is False
+    # The model reflects the completed outer search, undisturbed by the nested no-op call
+    assert model.rowCount(root) == 2
 
 
 @pytest.mark.gui

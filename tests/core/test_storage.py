@@ -22,6 +22,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import json
+import logging
 
 from pathlib import Path
 from zipfile import ZipFile
@@ -33,7 +34,14 @@ from novelwriter.constants import nwFiles
 from novelwriter.core.document import ProjectDocument
 from novelwriter.core.project import NWProject
 from novelwriter.core.projectxml import ProjectXMLReader, ProjectXMLWriter
-from novelwriter.core.storage import ProjectStorage, ProjectStorageCreate, ProjectStorageOpen, _LegacyStorage
+from novelwriter.core.storage import (
+    ProjectStorage,
+    ProjectStorageCreate,
+    ProjectStorageOpen,
+    _LegacyDocuments,
+    _LegacyStorage,
+)
+from novelwriter.enum import nwItemClass, nwItemLayout
 
 from tests.helpers import C, buildTestProject
 from tests.mocked import causeOSError
@@ -308,9 +316,9 @@ def testProjectStorage_ZipIt(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd):
         assert nwFiles.PROJ_FILE in names
         assert f"meta/{nwFiles.OPTS_FILE}" in names
         assert f"meta/{nwFiles.INDEX_FILE}" in names
-        assert f"content/{C.hTitlePage}.nwd" in names
-        assert f"content/{C.hChapterDoc}.nwd" in names
-        assert f"content/{C.hSceneDoc}.nwd" in names
+        assert f"content/{C.hTitlePage}.md" in names
+        assert f"content/{C.hChapterDoc}.md" in names
+        assert f"content/{C.hSceneDoc}.md" in names
         assert "content/not-a-handle.txt" not in names
 
     project.closeProject()
@@ -376,10 +384,208 @@ def testProjectStorage_LegacyDataFolder(monkeypatch, fncPath):
         assert data[9].exists()
         assert not (fncPath / "content" / "9000000000009.nwd").exists()
 
-    # Run the remaining through the prepare storage call
+    # Run the remaining through the prepare storage call, which finds
+    # the moved .nwd files, but does not convert them yet
     assert storage.initProjectStorage(fncPath, clearLock=True) == ProjectStorageOpen.READY
+    assert storage.hasBreakingChanges() is True
     for c in "0123456789abcdef":
         assert (fncPath / "content" / f"{c}00000000000{c}.nwd").exists()
+
+
+@pytest.mark.core
+def testProjectStorage_FindOldDocuments(fncPath):
+    """Test scanning the content folder for old .nwd document files."""
+    project = MockProject()
+    storage = ProjectStorage(project)  # type: ignore
+    storage._runtimePath = fncPath
+    (fncPath / nwFiles.PROJ_FILE).touch()
+    storage.initProjectStorage(fncPath)
+    legacy = _LegacyStorage(project)  # type: ignore
+
+    content = fncPath / "content"
+    nwdFile = content / f"{C.hSceneDoc}.nwd"
+    nwdFile.write_text("### Text\n", encoding="utf-8")
+    (content / f"{C.hChapterDoc}.md").write_text("### Text\n", encoding="utf-8")
+    (content / "folder.nwd").mkdir()
+
+    assert legacy.findOldDocuments(content) == [nwdFile]
+
+
+@pytest.mark.core
+def testProjectStorage_RunPostXMLTasks(monkeypatch, fncPath):
+    """Test running the post-XML-load document conversion tasks."""
+    project = MockProject()
+    storage = ProjectStorage(project)  # type: ignore
+    storage._runtimePath = fncPath
+    (fncPath / nwFiles.PROJ_FILE).touch()
+    storage.initProjectStorage(fncPath)
+
+    # No old documents found, so there is nothing to do
+    assert storage.hasBreakingChanges() is False
+    assert storage.runPostXMLTasks() is True
+
+    # Add an old-format document and re-scan for it
+    content = fncPath / "content"
+    nwdFile = content / f"{C.hSceneDoc}.nwd"
+    nwdFile.write_text("### Text\n", encoding="utf-8")
+    storage._oldDocuments = _LegacyStorage(project).findOldDocuments(content)  # type: ignore
+    assert storage.hasBreakingChanges() is True
+
+    # A successful conversion
+    assert storage.runPostXMLTasks() is True
+    assert not nwdFile.exists()
+    assert (content / f"{C.hSceneDoc}.md").exists()
+
+    # A failed conversion records the exception
+    storage._oldDocuments = [nwdFile]
+    with monkeypatch.context() as mp:
+        mp.setattr("novelwriter.core.storage._LegacyDocuments.convertDocuments", causeOSError)
+        assert storage.runPostXMLTasks() is False
+        assert isinstance(storage.exc, OSError)
+
+
+@pytest.mark.core
+def testLegacyDocuments_ConvertDocuments(monkeypatch, fncPath):
+    """Test conversion of old .nwd document files to .md with a TOML header."""
+    project = MockProject()
+    storage = ProjectStorage(project)  # type: ignore
+    storage._runtimePath = fncPath
+    (fncPath / nwFiles.PROJ_FILE).touch()
+    storage.initProjectStorage(fncPath)
+    legacy = _LegacyDocuments(project)  # type: ignore
+
+    content = fncPath / "content"
+
+    # A regular old-format document with a full meta header
+    nwdFile = content / f"{C.hSceneDoc}.nwd"
+    nwdFile.write_text(
+        (
+            "%%~name: Scene One\n"
+            f"%%~path: {C.hChapterDir}/{C.hSceneDoc}\n"
+            "%%~kind: NOVEL/DOCUMENT\n"
+            "%%~hash: abc123\n"
+            "%%~date: 2020-01-01 00:00:00/2020-01-02 00:00:00\n"
+            "### Scene One\n\nSome text.\n"
+        ),
+        encoding="utf-8",
+    )
+
+    legacy.convertDocuments([nwdFile])
+
+    assert not nwdFile.exists()
+    mdFile = content / f"{C.hSceneDoc}.md"
+    assert mdFile.read_text(encoding="utf-8") == (
+        "+++\n"
+        'name = "Scene One"\n'
+        f'parent = "{C.hChapterDir}"\n'
+        f'handle = "{C.hSceneDoc}"\n'
+        'class = "NOVEL"\n'
+        'layout = "DOCUMENT"\n'
+        'textHash = "abc123"\n'
+        'createdDate = "2020-01-01 00:00:00"\n'
+        'updatedDate = "2020-01-02 00:00:00"\n'
+        "+++\n"
+        "### Scene One\n\nSome text.\n"
+    )
+
+    # A document with more than 10 meta lines never reaches the body
+    # text, but is still converted
+    longFile = content / f"{C.hTitlePage}.nwd"
+    longFile.write_text("".join(f"%%~junk{i}: value\n" for i in range(12)), encoding="utf-8")
+    legacy.convertDocuments([longFile])
+    assert not longFile.exists()
+    assert (content / f"{C.hTitlePage}.md").exists()
+
+    # A path that is not a .nwd file is ignored
+    txtFile = content / "not-a-doc.txt"
+    txtFile.write_text("stuff", encoding="utf-8")
+    legacy.convertDocuments([txtFile])
+    assert txtFile.exists()
+
+    # If conversion fails, the file is renamed to .md as a fallback so
+    # it can still be opened, even with its raw, unconverted content
+    badFile = content / f"{C.hChapterDoc}.nwd"
+    rawText = "%%~name: Bad\n### Text\n"
+    badFile.write_text(rawText, encoding="utf-8")
+    with monkeypatch.context() as mp:
+        mp.setattr("pathlib.Path.write_text", causeOSError)
+        legacy.convertDocuments([badFile])
+    assert not badFile.exists()
+    fallbackFile = content / f"{C.hChapterDoc}.md"
+    assert fallbackFile.read_text(encoding="utf-8") == rawText
+
+    # A partial output file left behind by the failed write does not
+    # block the fallback from overwriting it (replace, not rename, so
+    # this also works on platforms that don't allow renaming onto an
+    # existing file, e.g. Windows)
+    fallbackFile.unlink()
+    badFile.write_text(rawText, encoding="utf-8")
+    fallbackFile.write_text("partial junk", encoding="utf-8")
+    with monkeypatch.context() as mp:
+        mp.setattr("pathlib.Path.write_text", causeOSError)
+        legacy.convertDocuments([badFile])
+    assert not badFile.exists()
+    assert fallbackFile.read_text(encoding="utf-8") == rawText
+
+    # If the fallback rename also fails, there is nothing more that can
+    # be done, so the exception is left to propagate to the caller
+    fallbackFile.unlink()
+    badFile.write_text(rawText, encoding="utf-8")
+    with monkeypatch.context() as mp:
+        mp.setattr("pathlib.Path.write_text", causeOSError)
+        mp.setattr("pathlib.Path.replace", causeOSError)
+        with pytest.raises(OSError, match="Mock OSError"):
+            legacy.convertDocuments([badFile])
+    assert badFile.exists()
+    assert not fallbackFile.exists()
+
+
+@pytest.mark.core
+def testLegacyDocuments_ParseOldDocumentMeta(caplog):
+    """Test parsing of individual old-format meta data lines."""
+    caplog.set_level(logging.DEBUG, logger="novelwriter")
+    legacy = _LegacyDocuments(MockProject())  # type: ignore
+
+    # Name
+    assert legacy._parseOldDocumentMeta(["%%~name: Test File\n"]) == {"name": "Test File"}
+
+    # Name: control characters from an old, unvalidated file are cleaned,
+    # as they would otherwise end up unescaped in the new TOML header
+    assert legacy._parseOldDocumentMeta(["%%~name: Bad\x1bTitle\n"]) == {"name": "BadTitle"}
+
+    # Path: valid parent and handle
+    meta = legacy._parseOldDocumentMeta([f"%%~path: {C.hChapterDir}/{C.hSceneDoc}\n"])
+    assert meta == {"parent": C.hChapterDir, "handle": C.hSceneDoc}
+
+    # Path: malformed value is ignored entirely
+    assert legacy._parseOldDocumentMeta(["%%~path: onlyonepart\n"]) == {}
+
+    # Path: invalid handles are dropped individually
+    assert legacy._parseOldDocumentMeta(["%%~path: notahandle/alsonot\n"]) == {}
+
+    # Kind: valid class and layout
+    meta = legacy._parseOldDocumentMeta(["%%~kind: NOVEL/DOCUMENT\n"])
+    assert meta == {"class": nwItemClass.NOVEL, "layout": nwItemLayout.DOCUMENT}
+
+    # Kind: malformed value is ignored entirely
+    assert legacy._parseOldDocumentMeta(["%%~kind: onlyonepart\n"]) == {}
+
+    # Kind: unknown class/layout names are dropped individually
+    assert legacy._parseOldDocumentMeta(["%%~kind: BADCLASS/BADLAYOUT\n"]) == {}
+
+    # Hash
+    assert legacy._parseOldDocumentMeta(["%%~hash: abc123\n"]) == {"textHash": "abc123"}
+
+    # Date: valid
+    meta = legacy._parseOldDocumentMeta(["%%~date: 2020-01-01 00:00:00/2020-01-02 00:00:00\n"])
+    assert meta == {"createdDate": "2020-01-01 00:00:00", "updatedDate": "2020-01-02 00:00:00"}
+
+    # Date: malformed value is ignored entirely
+    assert legacy._parseOldDocumentMeta(["%%~date: onlyonepart\n"]) == {}
+
+    # Unknown meta lines are logged and otherwise ignored
+    assert legacy._parseOldDocumentMeta(["%%~unknown: stuff\n"]) == {}
+    assert "Unknown meta data" in caplog.text
 
 
 @pytest.mark.core
@@ -430,10 +636,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
     buildTestProject(project, fncPath)
     legacy = _LegacyStorage(project)
 
-    # The build project functions saves the project, so we must delete
-    # the old gui options file
-    (fncPath / "meta" / nwFiles.OPTS_FILE).unlink()
-
     # Word List
     wordListOld: Path = fncPath / "meta" / "wordlist.txt"
     wordListNew: Path = fncPath / "meta" / nwFiles.DICT_FILE
@@ -460,31 +662,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
     assert sessLogOld.exists() is True
     assert sessLogNew.exists() is False
 
-    # Options File
-    optionsOld: Path = fncPath / "meta" / "guiOptions.json"
-    optionsNew: Path = fncPath / "meta" / nwFiles.OPTS_FILE
-
-    optionsOld.write_text(
-        json.dumps(
-            {
-                "GuiProjectSettings": {
-                    "winWidth": 570,
-                    "winHeight": 375,
-                },
-                "GuiOutline": {
-                    "headerOrder": ["TITLE", "LEVEL", "LABEL", "LINE"],
-                    "columnWidth": {"TITLE": 325, "LEVEL": 40, "LABEL": 267, "LINE": 40},
-                    "columnHidden": {"TITLE": False, "LEVEL": True, "LABEL": False, "LINE": True},
-                },
-            },
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
-
-    assert optionsOld.exists() is True
-    assert optionsNew.exists() is False
-
     # Check Failure
     with monkeypatch.context() as mp:
         mp.setattr("builtins.open", causeOSError)
@@ -493,8 +670,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
         assert wordListNew.exists() is False
         assert sessLogOld.exists() is True
         assert sessLogNew.exists() is False
-        assert optionsOld.exists() is True
-        assert optionsNew.exists() is False
 
     # Check Success
     legacy.deprecatedFiles(fncPath)
@@ -502,8 +677,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
     assert wordListNew.exists() is True
     assert sessLogOld.exists() is False
     assert sessLogNew.exists() is True
-    assert optionsOld.exists() is False
-    assert optionsNew.exists() is True
 
     # Check Word List
     data = json.loads(wordListNew.read_text(encoding="utf-8"))
@@ -534,24 +707,3 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
         "cnotes": 0,
         "idle": 20,
     }
-
-    # Check Options File
-    data = json.loads(optionsNew.read_text(encoding="utf-8"))
-    assert data["novelWriter.guiOptions"]["GuiProjectSettings"] == {
-        "winWidth": 570,
-        "winHeight": 375,
-    }
-    assert data["novelWriter.guiOptions"]["GuiOutline"]["columnState"] == {
-        "TITLE": [False, 325],
-        "LEVEL": [True, 40],
-        "LABEL": [False, 267],
-        "LINE": [True, 40],
-    }
-
-    # An old options file without a GuiOutline section is converted as-is
-    otherOld = fncPath / "meta" / "otherOptions.json"
-    otherNew = fncPath / "meta" / "otherOptions.new.json"
-    otherOld.write_text(json.dumps({"GuiProjectSettings": {"winWidth": 100}}), encoding="utf-8")
-    legacy._convertOldOptionsFile(otherOld, otherNew)
-    data = json.loads(otherNew.read_text(encoding="utf-8"))
-    assert data["novelWriter.guiOptions"] == {"GuiProjectSettings": {"winWidth": 100}}

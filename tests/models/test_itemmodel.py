@@ -393,11 +393,14 @@ def testProjectModel_DragNDrop(mockGUI, mockRnd, fncPath):
     assert model.canDropMimeData(unknownHandleMime, Qt.DropAction.MoveAction, 0, 0, novelIdx) is False
     assert model.canDropMimeData(sceneMime, Qt.DropAction.MoveAction, 0, 0, rootIdx) is False
     assert model.canDropMimeData(sceneMime, Qt.DropAction.MoveAction, 0, 0, novelIdx) is True
-    assert model.canDropMimeData(sceneMime, Qt.DropAction.MoveAction, 0, 1, novelIdx) is False
+    assert model.canDropMimeData(sceneMime, Qt.DropAction.MoveAction, 0, 1, novelIdx) is True
     assert model.canDropMimeData(sceneMime, Qt.DropAction.MoveAction, -2, 0, novelIdx) is False
     assert model.canDropMimeData(sceneMime, Qt.DropAction.MoveAction, 3, 0, novelIdx) is False
     assert model.canDropMimeData(sceneMime, Qt.DropAction.MoveAction, -1, 0, novelIdx) is True
     assert model.canDropMimeData(sceneMime, Qt.DropAction.MoveAction, 2, 0, novelIdx) is True
+
+    # Qt sends row=-1, column=-1 for a drop directly onto an item (not a reorder)
+    assert model.canDropMimeData(sceneMime, Qt.DropAction.MoveAction, -1, -1, novelIdx) is True
     assert model.canDropMimeData(folderMime, Qt.DropAction.MoveAction, 0, 0, folderIdx) is False
     assert model.canDropMimeData(folderMime, Qt.DropAction.MoveAction, 0, 0, chapterIdx) is False
 

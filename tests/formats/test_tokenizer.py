@@ -1279,6 +1279,42 @@ def testTokenizer_ExtractFormats(mockGUI, singleBold):
         (41, TextFmt.I_E, ""),
     ]
 
+    # URLs and Markdown Links
+    # =======================
+
+    # A bare URL is wrapped as a link, and left visible in the text
+    text, fmt = tokens._extractFormats("Text with http://example.com in it.")
+    assert text == "Text with http://example.com in it."
+    assert fmt == [
+        (10, TextFmt.HRF_B, "http://example.com"),
+        (28, TextFmt.HRF_E, ""),
+    ]
+
+    # A Markdown-style link has its brackets stripped, and only the
+    # link text is shown, wrapped as a link pointing to the URL
+    text, fmt = tokens._extractFormats("Text with [a link](http://example.com) in it.")
+    assert text == "Text with a link in it."
+    assert fmt == [
+        (10, TextFmt.STRIP, ""),
+        (10, TextFmt.HRF_B, "http://example.com"),
+        (16, TextFmt.STRIP, ""),
+        (16, TextFmt.HRF_E, ""),
+    ]
+
+    # The URL inside a Markdown-style link must not also be picked up
+    # by the plain URL match, while a separate, bare URL elsewhere in
+    # the same text is still matched normally
+    text, fmt = tokens._extractFormats("See [a link](http://example.com) and also http://other.com here.")
+    assert text == "See a link and also http://other.com here."
+    assert fmt == [
+        (4, TextFmt.STRIP, ""),
+        (4, TextFmt.HRF_B, "http://example.com"),
+        (10, TextFmt.STRIP, ""),
+        (10, TextFmt.HRF_E, ""),
+        (20, TextFmt.HRF_B, "http://other.com"),
+        (36, TextFmt.HRF_E, ""),
+    ]
+
 
 @pytest.mark.core
 def testTokenizer_Paragraphs(mockGUI):

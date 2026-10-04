@@ -21,6 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+import gc
 import logging
 import sys
 
@@ -58,14 +59,13 @@ from novelwriter.extensions.progressbars import NProgressSimple
 from novelwriter.gui.itemdetails import GuiItemDetails
 from novelwriter.gui.mainmenu import GuiMainMenu
 from novelwriter.gui.noveltree import GuiNovelView
-from novelwriter.gui.outline import GuiOutlineView
 from novelwriter.gui.projtree import GuiProjectView
 from novelwriter.gui.search import GuiProjectSearch
 from novelwriter.gui.sidebar import GuiSideBar
 from novelwriter.gui.statusbar import GuiMainStatus
 from novelwriter.manuscript.manuscript import GuiManuscript
+from novelwriter.story.storyview import GuiStoryView
 from novelwriter.tools.dictionaries import GuiDictionaries
-from novelwriter.tools.noveldetails import GuiNovelDetails
 from novelwriter.tools.welcome import GuiWelcome
 from novelwriter.tools.writingstats import GuiWritingStats
 
@@ -129,7 +129,7 @@ class GuiMain(QMainWindow):
         self.docViewer = GuiDocViewer(self)
         self.docViewerPanel = GuiDocViewerPanel(self)
         self.itemDetails = GuiItemDetails(self)
-        self.outlineView = GuiOutlineView(self)
+        self.storyView = GuiStoryView(self)
         self.mainMenu = GuiMainMenu(self)
         self.sideBar = GuiSideBar(self)
 
@@ -178,14 +178,13 @@ class GuiMain(QMainWindow):
         self.splitMain.setSizes([max(s, 100) for s in CONFIG.mainPanePos])
         self.splitMain.setCollapsible(0, False)
         self.splitMain.setCollapsible(1, False)
-        self.splitMain.setStretchFactor(1, 0)
+        self.splitMain.setStretchFactor(0, 0)
         self.splitMain.setStretchFactor(1, 1)
 
-        # Main Stack : Editor / Outline
+        # Main Stack : Editor / Story View
         self.mainStack = QStackedWidget(self)
         self.mainStack.addWidget(self.splitMain)
-        self.mainStack.addWidget(self.outlineView)
-        self.mainStack.currentChanged.connect(self._mainStackChanged)
+        self.mainStack.addWidget(self.storyView)
 
         # Editor / Viewer Default State
         self.splitView.setVisible(False)
@@ -221,6 +220,7 @@ class GuiMain(QMainWindow):
 
         SHARED.focusModeChanged.connect(self._focusModeChanged)
         SHARED.indexAvailable.connect(self.docViewerPanel.indexHasAppeared)
+        SHARED.indexAvailable.connect(self.storyView.indexHasAppeared)
         SHARED.indexChangedRefs.connect(self.docViewerPanel.updateChangedRefs)
         SHARED.indexChangedTags.connect(self.docEditor.updateChangedTags)
         SHARED.indexChangedTags.connect(self.docViewer.updateChangedTags)
@@ -235,9 +235,9 @@ class GuiMain(QMainWindow):
         SHARED.projectStatusChanged.connect(self.mainStatus.updateProjectStatus)
         SHARED.projectStatusMessage.connect(self.mainStatus.setStatusMessage)
         SHARED.rootFolderChanged.connect(self.novelView.updateRootItem)
-        SHARED.rootFolderChanged.connect(self.outlineView.updateRootItem)
         SHARED.rootFolderChanged.connect(self.projSearch.updateRootItem)
         SHARED.rootFolderChanged.connect(self.projView.updateRootItem)
+        SHARED.rootFolderChanged.connect(self.storyView.updateRootItem)
         SHARED.spellLanguageChanged.connect(self.docEditor.processSpellCheckChange)
         SHARED.spellLanguageChanged.connect(self.mainStatus.setLanguage)
         SHARED.statusLabelsChanged.connect(self.docViewerPanel.updateStatusLabels)
@@ -287,9 +287,6 @@ class GuiMain(QMainWindow):
         self.docViewerPanel.loadDocumentTagRequest.connect(self._followTag)
         self.docViewerPanel.openDocumentRequest.connect(self._openDocument)
 
-        self.outlineView.loadDocumentTagRequest.connect(self._followTag)
-        self.outlineView.openDocumentRequest.connect(self._openDocument)
-
         # OS Theme Support
         # ================
 
@@ -317,10 +314,16 @@ class GuiMain(QMainWindow):
         self.asDocTimer = QTimer(self)
         self.asDocTimer.timeout.connect(self._autoSaveDocument)
 
+        # Set Up Garbage Collector Timer
+        self.gcTimer = QTimer(self)
+        self.gcTimer.setInterval(5000)
+        self.gcTimer.timeout.connect(self._runGarbageCollect)
+
         # Initialise Main GUI
         self.initMain()
         self.asProjTimer.start()
         self.asDocTimer.start()
+        self.gcTimer.start()
         self.mainStatus.clearStatus()
 
         logger.debug("Ready: GUI")
@@ -362,6 +365,15 @@ class GuiMain(QMainWindow):
                 ),
             ])
 
+            if CONFIG.installSource == "launchpad":  # pragma: no cover
+                SHARED.info(
+                    "Your version of novelWriter was installed from the Ubuntu Launcpad PPA repository. "
+                    "This install method is deprecated, and will soon stop working. "
+                    "See <a href='https://novelwriter.io/download/install_linux.html'>Installing on Linux</a> "
+                    "for information on how to migrate.",
+                    log=False,
+                )
+
     ##
     #  Project Actions
     ##
@@ -400,7 +412,7 @@ class GuiMain(QMainWindow):
             self.closeViewerPanel(byUser=False)
 
             self.docViewerPanel.closeProjectTasks()
-            self.outlineView.closeProjectTasks()
+            self.storyView.closeProjectTasks()
             self.novelView.closeProjectTasks()
             self.projView.closeProjectTasks()
             self.projSearch.closeProjectTasks()
@@ -473,7 +485,7 @@ class GuiMain(QMainWindow):
         self.mainStatus.initProjectSettings()
         self.projView.openProjectTasks()
         self.novelView.openProjectTasks()
-        self.outlineView.openProjectTasks()
+        self.storyView.openProjectTasks()
         self.projSearch.openProjectTasks()
         self.docViewerPanel.openProjectTasks()
         self._updateStatusWordCount()
@@ -494,7 +506,7 @@ class GuiMain(QMainWindow):
             self.viewDocument(lastViewed)
 
         # Check if we need to rebuild the index
-        if SHARED.project.index.indexBroken:
+        if SHARED.project.index.indexRebuild:
             if not SHARED.project.index.indexUpgrade:
                 SHARED.warn(self.tr("The project index is broken. Rebuilding index."))
             self.rebuildIndex()
@@ -660,7 +672,7 @@ class GuiMain(QMainWindow):
             return False
 
         lastPath = CONFIG.lastPath("import")
-        ffilter = formatFileFilter(["*.txt", "*.md", "*.nwd", "*"])
+        ffilter = formatFileFilter(["*.txt", "*.md", "*"])
         loadFile, _ = QFileDialog.getOpenFileName(self, self.tr("Import File"), str(lastPath), filter=ffilter)
         if not loadFile:
             return False
@@ -709,8 +721,6 @@ class GuiMain(QMainWindow):
                 self.projView.projTree.openSelectedItem()
             elif self.novelView.treeHasFocus():
                 self.novelView.novelTree.openSelectedItem()
-            elif self.outlineView.treeHasFocus():
-                self.outlineView.outlineTree.openSelectedItem()
             else:
                 logger.warning("No item selected")
 
@@ -761,14 +771,6 @@ class GuiMain(QMainWindow):
             dialog = GuiProjectSettings(self, gotoPage=focusTab)
             dialog.newProjectSettingsReady.connect(self._processProjectSettingsChanges)
             dialog.exec()
-
-    @pyqtSlot()
-    def showNovelDetailsDialog(self) -> None:
-        """Open the novel details dialog."""
-        if SHARED.hasProject:
-            dialog = GuiNovelDetails(self)
-            dialog.activateDialog()
-            dialog.updateValues()
 
     @pyqtSlot()
     def showBuildManuscriptDialog(self) -> None:
@@ -842,7 +844,6 @@ class GuiMain(QMainWindow):
 
         if not SHARED.focusMode:
             CONFIG.mainPanePos = self.splitMain.sizes()
-            CONFIG.outlinePanePos = self.outlineView.splitSizes()
             CONFIG.searchPanePos = self.projSearch.splitSizes()
             if self.docViewerPanel.isVisible():
                 CONFIG.viewPanePos = self.splitView.sizes()
@@ -893,6 +894,10 @@ class GuiMain(QMainWindow):
             self.docEditor.initEditor()
             self.docViewer.initViewer()
 
+            # This also forces the icon to update if there was already a message on the status bar (#2886)
+            meta = SHARED.theme.themeInfo
+            self.mainStatus.setStatusMessage(self.tr('Loaded theme "{0}" by {1}').format(meta.name, meta.author))
+
     def refreshThemeColors(self, syntax: bool = False, force: bool = False) -> None:
         """Refresh the GUI theme."""
         SHARED.theme.loadTheme(force=force)
@@ -905,7 +910,7 @@ class GuiMain(QMainWindow):
         self.projView.updateTheme()
         self.novelView.updateTheme()
         self.projSearch.updateTheme()
-        self.outlineView.updateTheme()
+        self.storyView.updateTheme()
         self.itemDetails.updateTheme()
         self.mainStatus.updateTheme()
         SHARED.project.tree.refreshAllItems()
@@ -1048,9 +1053,8 @@ class GuiMain(QMainWindow):
             else:
                 self.docEditor.setFocus()
 
-        elif paneNo == nwFocus.OUTLINE:
-            self._changeView(nwView.OUTLINE, exitFocus=True)
-            self.outlineView.setTreeFocus()
+        elif paneNo == nwFocus.STORY:
+            self._changeView(nwView.STORY, exitFocus=True)
 
     @pyqtSlot(GuiNeedsUpdate)
     def _processConfigChanges(self, update: GuiNeedsUpdate) -> None:
@@ -1077,7 +1081,6 @@ class GuiMain(QMainWindow):
                 self.docViewer.initViewport()
             self.projView.initViewport()
             self.novelView.initViewport()
-            self.outlineView.initViewport()
         if update.spelling:
             SHARED.updateSpellCheckLanguage(reload=True)
 
@@ -1087,6 +1090,7 @@ class GuiMain(QMainWindow):
             self.docViewer.initSettings()
 
         self.projSearch.initSettings()
+        self.storyView.initSettings()
         self.mainStatus.initSettings()
 
         # Force update of word count
@@ -1185,8 +1189,9 @@ class GuiMain(QMainWindow):
             self.mainStack.setCurrentWidget(self.splitMain)
             self.projStack.setCurrentWidget(self.projSearch)
             self.projSearch.beginSearch(self.docEditor.getSelectedText() if self.docEditor.anyFocus() else "")
-        elif view == nwView.OUTLINE:
-            self.mainStack.setCurrentWidget(self.outlineView)
+        elif view == nwView.STORY:
+            self.mainStack.setCurrentWidget(self.storyView)
+            self.storyView.viewStory()
         else:  # pragma: no cover
             pass
 
@@ -1253,6 +1258,13 @@ class GuiMain(QMainWindow):
             self.saveDocument()
 
     @pyqtSlot()
+    def _runGarbageCollect(self) -> None:
+        """Run the cyclic garbage collector on the main thread, since
+        automatic collection is disabled at startup. See #2927.
+        """
+        gc.collect()
+
+    @pyqtSlot()
     def _updateStatusWordCount(self) -> None:
         """Update the word count on the status bar."""
         if not SHARED.hasProject:
@@ -1282,12 +1294,6 @@ class GuiMain(QMainWindow):
 
             self.mainStatus.setProjectStats(cTotal, cTotal - iTotal)
             self.mainStatus.updateGoals(data.targetLastCount, data.dailyProgress)
-
-    @pyqtSlot(int)
-    def _mainStackChanged(self, index: int) -> None:
-        """Process main window tab change."""
-        if self.mainStack.widget(index) == self.outlineView and SHARED.hasProject:
-            self.outlineView.refreshTree()
 
     @pyqtSlot(int)
     def _projStackChanged(self, index: int) -> None:

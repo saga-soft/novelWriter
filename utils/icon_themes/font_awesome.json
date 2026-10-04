@@ -17,6 +17,12 @@
     "cls_trash": "trash-can",
     "cls_world": "earth-africa",
 
+    "key_mention": "user-check",
+
+    "cmn_general": "rectangle-list",
+    "cmn_note": "message",
+    "cmn_story": "asterisk",
+
     "prj_folder": "folder",
     "prj_document": "file-lines",
     "prj_title": "file-lines",
@@ -27,6 +33,7 @@
     "fmt_bold": "bold",
     "fmt_italic": "italic",
     "fmt_mark": "highlighter",
+    "fmt_link": "link",
     "fmt_size": "text-height",
     "fmt_strike": "strikethrough",
     "fmt_subscript": "subscript",
@@ -51,12 +58,11 @@
     "unfold-show": "caret-down",
 
     "sb_build": "up-right-from-square",
-    "sb_details": "list",
     "sb_novel": "book-open",
-    "sb_outline": "table-list",
     "sb_project": "pen-to-square",
     "sb_search": "magnifying-glass",
     "sb_stats": "chart-simple",
+    "sb_story": "table-list",
 
     "theme_light": "sun",
     "theme_dark": "moon",

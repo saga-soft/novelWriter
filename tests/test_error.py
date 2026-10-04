@@ -75,7 +75,7 @@ def testError_Dialog(qtbot, monkeypatch, nwGUI):
         nwErr.setMessage(Exception, "Almost Fine Error", None)  # type: ignore
         message = nwErr.msgBody.toPlainText()
         assert message != ""
-        assert "enchant: Unknown" in message
+        assert "Enchant: Unknown" in message
 
     nwErr._doClose()
     nwErr.close()

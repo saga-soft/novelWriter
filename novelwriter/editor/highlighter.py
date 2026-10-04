@@ -198,6 +198,19 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         self._txtRules.append((rxRule, hlRule))
         self._cmnRules.append((rxRule, hlRule))
 
+        # Markdown Link
+        rxRule = REGEX_PATTERNS.markdownLink
+        hlRule = {
+            1: self._hStyles["markup"],
+            2: self._hStyles["value"],
+            3: self._hStyles["markup"],
+            4: self._hStyles["link"],
+            5: self._hStyles["markup"],
+        }
+        self._minRules.append((rxRule, hlRule))
+        self._txtRules.append((rxRule, hlRule))
+        self._cmnRules.append((rxRule, hlRule))
+
         # Shortcodes
         rxRule = REGEX_PATTERNS.shortcodePlain
         hlRule = {
@@ -274,12 +287,12 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         content type.
         """
         if document := self.document():  # pragma: no branch
-            nBlocks = document.blockCount()
             tStart = time()
-            for i in range(nBlocks):
-                block = document.findBlockByNumber(i)
+            block = document.begin()
+            while block.isValid():
                 if block.userState() & cType > 0:
                     self.rehighlightBlock(block)
+                block = block.next()
             logger.debug("Document highlighted in %.3f ms", (1000 * (time() - tStart)))
 
     ##

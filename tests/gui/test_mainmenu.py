@@ -244,7 +244,7 @@ def testGuiMainMenu_EditFormat(qtbot, monkeypatch, nwGUI, prjLipsum):
     docEditor.setCursorPosition(x + 3)
     mainMenu.aSelectAll.activate(QAction.ActionEvent.Trigger)
     cursor = docEditor.textCursor()
-    assert len(cursor.selectedText()) == 1928
+    assert len(cursor.selectedText()) == 1929
 
     # Clear the Text
     docEditor.clear()
@@ -600,11 +600,11 @@ def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd
     # ====================
 
     mainMenu.aFileDetails.activate(QAction.ActionEvent.Trigger)
-    path = str(projPath / "content" / "000000000000f.nwd")
+    path = str(projPath / "content" / "000000000000f.md")
     assert SHARED.lastAlert[-1] == f"File Location: {path}"
 
     # Focus and View Change
-    # ======================
+    # =====================
 
     with qtbot.waitSignal(mainMenu.requestFocusChange, timeout=1000) as signal:
         mainMenu.aFocusTree.activate(QAction.ActionEvent.Trigger)
@@ -615,8 +615,8 @@ def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd
     assert signal.args == [nwFocus.DOCUMENT]
 
     with qtbot.waitSignal(mainMenu.requestFocusChange, timeout=1000) as signal:
-        mainMenu.aFocusOutline.activate(QAction.ActionEvent.Trigger)
-    assert signal.args == [nwFocus.OUTLINE]
+        mainMenu.aFocusStory.activate(QAction.ActionEvent.Trigger)
+    assert signal.args == [nwFocus.STORY]
 
     with qtbot.waitSignal(mainMenu.requestViewChange, timeout=1000) as signal:
         mainMenu.aFindProj.activate(QAction.ActionEvent.Trigger)

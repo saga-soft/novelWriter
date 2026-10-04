@@ -42,6 +42,7 @@ class RegExPatterns:
     _rxBold2 = re.compile(nwRegEx.FMT_B2)
     _rxStrike = re.compile(nwRegEx.FMT_ST)
     _rxMark = re.compile(nwRegEx.FMT_HL)
+    _rxLink = re.compile(nwRegEx.FMT_LN)
     _rxSCPlain = re.compile(nwRegEx.FMT_SC)
     _rxSCValue = re.compile(nwRegEx.FMT_SV)
 
@@ -81,6 +82,11 @@ class RegExPatterns:
         return self._rxMark
 
     @property
+    def markdownLink(self) -> re.Pattern:
+        """Markdown link style."""
+        return self._rxLink
+
+    @property
     def shortcodePlain(self) -> re.Pattern:
         """Plain shortcode style."""
         return self._rxSCPlain
@@ -98,8 +104,10 @@ class RegExPatterns:
             if CONFIG.dialogStyle in (1, 3):
                 qO = CONFIG.fmtSQuoteOpen.strip()[:1]
                 qC = CONFIG.fmtSQuoteClose.strip()[:1]
-                if qO == qC or qC in self.AMBIGUOUS:
+                if qO == qC:
                     rx.append(f"(?:\\B{qO}.+?{qC}\\B)")
+                elif qC in self.AMBIGUOUS:
+                    rx.append(f"(?:\\B{qO}[^{qO}]+{qC}\\B(?={qO}|\\s*))")
                 else:
                     rx.append(f"(?:{qO}[^{qO}]+{qC})")
                 if CONFIG.allowOpenDial:
@@ -107,8 +115,10 @@ class RegExPatterns:
             if CONFIG.dialogStyle in (2, 3):
                 qO = CONFIG.fmtDQuoteOpen.strip()[:1]
                 qC = CONFIG.fmtDQuoteClose.strip()[:1]
-                if qO == qC or qC in self.AMBIGUOUS:
+                if qO == qC:
                     rx.append(f"(?:\\B{qO}.+?{qC}\\B)")
+                elif qC in self.AMBIGUOUS:
+                    rx.append(f"(?:\\B{qO}[^{qO}]+{qC}\\B(?={qO}|\\s*))")
                 else:
                     rx.append(f"(?:{qO}[^{qO}]+{qC})")
                 if CONFIG.allowOpenDial:

@@ -1,7 +1,8 @@
 {
   "novelWriter.meta": {
     "version": "0x020800a2",
-    "timestamp": "2025-10-05 17:06:58"
+    "timestamp": "2025-10-05 17:06:58",
+    "revision": 15
   },
   "novelWriter.tagsIndex": {
     "bod": {"name": "Bod", "display": "Nobody Owens", "handle": "4c4f28287af27", "heading": "T0001", "class": "CHARACTER"},

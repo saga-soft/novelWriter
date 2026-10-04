@@ -1,8 +1,0 @@
-%%~name: Old File
-%%~path: ae9bf3c3ea159/8a5deb88c0e97
-%%~kind: ARCHIVE/DOCUMENT
-%%~hash: de9f8f39428e9d127504f47c554fc3e701b0b773
-%%~date: Unknown/2023-08-25 16:52:08
-### Discarded Scene
-
-If you have files you no longer want in your main project, you can move them to the “Archive” folder. This is equivalent to turning off the “Include when building project” switch, just that you also put the file away.

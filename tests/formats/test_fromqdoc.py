@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import pytest
 
-from PyQt6.QtGui import QFont, QTextDocument
+from PyQt6.QtGui import QFont, QTextCharFormat, QTextCursor, QTextDocument
 
 from novelwriter import CONFIG
 from novelwriter.core.project import NWProject
@@ -83,6 +83,38 @@ def testFromQTextDocument_General():
     document.setHtml("<p>First</p><p><br></p><p>Second</p>")
     result = FromQTextDocument(document).convertText()
     assert result == "First\n\n\nSecond\n"
+
+
+@pytest.mark.core
+def testFromQTextDocument_MergeSplitFragments():
+    """Test that adjacent Qt fragments with identical Markdown-relevant
+    formatting are merged before being wrapped. See issue #2978.
+    """
+    document = QTextDocument()
+    cursor = QTextCursor(document)
+
+    boldAnchor = QTextCharFormat()
+    boldAnchor.setFontWeight(QFont.Weight.Bold)
+    boldAnchor.setAnchor(True)
+    boldAnchor.setAnchorNames(["motivation"])
+    cursor.insertText("M", boldAnchor)
+
+    bold = QTextCharFormat()
+    bold.setFontWeight(QFont.Weight.Bold)
+    cursor.insertText("otivation", bold)
+
+    # Sanity check that the document really does hold two fragments
+    # here, i.e. that this test exercises the merge and is not
+    # trivially true because Qt already coalesced them.
+    it = document.begin().begin()
+    fragments = []
+    while not it.atEnd():
+        fragments.append(it.fragment().text())
+        it += 1
+    assert fragments == ["M", "otivation"]
+
+    result = FromQTextDocument(document).convertText().strip()
+    assert result == "**Motivation**"
 
 
 @pytest.mark.core

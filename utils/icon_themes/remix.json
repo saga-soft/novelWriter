@@ -17,6 +17,12 @@
     "cls_trash": "delete-bin",
     "cls_world": "road-map",
 
+    "key_mention": "user-heart",
+
+    "cmn_general": "shining",
+    "cmn_note": "chat-4",
+    "cmn_story": "issues",
+
     "prj_folder": "folder-6",
     "prj_document": "file-text",
     "prj_title": "file-text",
@@ -27,6 +33,7 @@
     "fmt_bold": "bold",
     "fmt_italic": "italic",
     "fmt_mark": "mark-pen",
+    "fmt_link": "link",
     "fmt_size": "font-size-2",
     "fmt_strike": "strikethrough",
     "fmt_subscript": "subscript",
@@ -51,12 +58,11 @@
     "unfold-show": "arrow-down-s-fill",
 
     "sb_build": "stack",
-    "sb_details": "pages",
     "sb_novel": "booklet",
-    "sb_outline": "timeline-view",
     "sb_project": "file-edit",
     "sb_search": "file-search",
     "sb_stats": "bar-chart-fill",
+    "sb_story": "timeline-view",
 
     "theme_light": "sun",
     "theme_dark": "moon",

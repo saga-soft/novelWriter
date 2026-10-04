@@ -55,8 +55,8 @@ def testGuiNovelView_Content(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     assert isinstance(contentPath, Path)
     cHandle = "0000000000011"
 
-    (contentPath / f"{cHandle}.nwd").write_text("# Jane Doe\n\n@tag: Jane\n\n", encoding="utf-8")
-    (contentPath / f"{C.hSceneDoc}.nwd").write_text(
+    (contentPath / f"{cHandle}.md").write_text("# Jane Doe\n\n@tag: Jane\n\n", encoding="utf-8")
+    (contentPath / f"{C.hSceneDoc}.md").write_text(
         (
             "### Scene One\n\n"
             "@pov: Jane\n"

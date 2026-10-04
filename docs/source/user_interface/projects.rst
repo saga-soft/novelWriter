@@ -34,9 +34,7 @@ right-clicking it and selecting the **Remove Project** option.
 Project-specific settings are available in **Project Settings** in the **Project** menu. See
 further details below in the :ref:`docs_ui_projects_settings` section.
 
-Details about the project's novel text, including word counts, and a table of contents with word
-and page counts, is available through the **Novel Details** dialog. Statistics about the project
-is also available in the **Manuscript Build** tool.
+Statistics about the project are available in the **Manuscript Build** tool.
 
 
 Template Projects

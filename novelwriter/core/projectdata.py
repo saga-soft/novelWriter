@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-T_LastHandle = Literal["editor", "viewer", "novel", "outline"]
+T_LastHandle = Literal["editor", "viewer", "novel", "story"]
 
 
 class ProjectData:
@@ -70,6 +70,7 @@ class ProjectData:
         "_doBackup",
         "_editTime",
         "_import",
+        "_indexRevision",
         "_initCounts",
         "_language",
         "_lastHandle",
@@ -100,6 +101,7 @@ class ProjectData:
         self._saveCount = 0
         self._autoCount = 0
         self._editTime = 0
+        self._indexRevision = 0
 
         # Project Settings
         self._doBackup = True
@@ -127,7 +129,7 @@ class ProjectData:
             "editor": None,
             "viewer": None,
             "novel": None,
-            "outline": None,
+            "story": None,
         }
         self._autoReplace: dict[str, str] = {}
         self._titleFormat: dict[str, str] = {
@@ -179,6 +181,11 @@ class ProjectData:
     def editTime(self) -> int:
         """Return the number of seconds the project has been edited."""
         return self._editTime
+
+    @property
+    def indexRevision(self) -> int:
+        """Return the last known index revision number."""
+        return self._indexRevision
 
     @property
     def doBackup(self) -> bool:
@@ -357,6 +364,10 @@ class ProjectData:
         self._editTime = checkInt(value, 0)
         self._project.setProjectChanged(True)
 
+    def setIndexRevision(self, value: Any) -> None:
+        """Set the index revision number from last session."""
+        self._indexRevision = checkInt(value, 0)
+
     def setDoBackup(self, value: Any) -> None:
         """Set the do write backup flag."""
         if value != self._doBackup:
@@ -446,8 +457,8 @@ class ProjectData:
         if isinstance(value, dict):
             self._autoReplace = {}
             for key, entry in value.items():
-                if isinstance(entry, str):
-                    self._autoReplace[key] = simplified(entry)
+                if isinstance(key, str) and isinstance(entry, str) and (cleanKey := simplified(key)):
+                    self._autoReplace[cleanKey] = simplified(entry)
             self._project.setProjectChanged(True)
 
     ##

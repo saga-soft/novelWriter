@@ -4,7 +4,7 @@
 Tips & Tricks
 *************
 
-.. _Discussions Page: https://github.com/vkbo/novelWriter/discussions
+.. _Discussions Page: https://github.com/saga-soft/novelWriter/discussions
 
 This is a list of hopefully helpful little tips on how to get the most out of novelWriter.
 

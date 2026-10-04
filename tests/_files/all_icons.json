@@ -17,6 +17,12 @@
     "cls_trash",
     "cls_world",
 
+    "key_mention",
+
+    "cmn_general",
+    "cmn_note",
+    "cmn_story",
+
     "prj_folder",
     "prj_document",
     "prj_title",
@@ -26,6 +32,7 @@
 
     "fmt_bold",
     "fmt_italic",
+    "fmt_link",
     "fmt_mark",
     "fmt_size",
     "fmt_strike",
@@ -51,12 +58,11 @@
     "unfold-show",
 
     "sb_build",
-    "sb_details",
     "sb_novel",
-    "sb_outline",
     "sb_project",
     "sb_search",
     "sb_stats",
+    "sb_story",
 
     "theme_light",
     "theme_dark",

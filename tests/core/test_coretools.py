@@ -93,9 +93,9 @@ def testCoreTools_DocMerger(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd, ip
     # Merge to New
     # ============
 
-    saveFile = fncPath / "content" / "0000000000014.nwd"
-    testFile = tstPaths.outDir / "coreDocTools_DocMerger_0000000000014.nwd"
-    compFile = tstPaths.refDir / "coreDocTools_DocMerger_0000000000014.nwd"
+    saveFile = fncPath / "content" / "0000000000014.md"
+    testFile = tstPaths.outDir / "coreDocTools_DocMerger_0000000000014.md"
+    compFile = tstPaths.refDir / "coreDocTools_DocMerger_0000000000014.md"
 
     docMerger.newTargetDoc(hChapter1, "All of Chapter 1")
     assert docMerger.targetHandle == "0000000000014"
@@ -124,9 +124,9 @@ def testCoreTools_DocMerger(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd, ip
     # Merge into Existing
     # ===================
 
-    saveFile = fncPath / "content" / "0000000000010.nwd"
-    testFile = tstPaths.outDir / "coreDocTools_DocMerger_0000000000010.nwd"
-    compFile = tstPaths.refDir / "coreDocTools_DocMerger_0000000000010.nwd"
+    saveFile = fncPath / "content" / "0000000000010.md"
+    testFile = tstPaths.outDir / "coreDocTools_DocMerger_0000000000010.md"
+    compFile = tstPaths.refDir / "coreDocTools_DocMerger_0000000000010.md"
 
     docMerger.setTargetDoc(hChapter1)
 
@@ -470,8 +470,8 @@ def testCoreTools_DocDuplicator(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd
     # Don't overwrite existing files
     content = project.storage.contentPath
     assert isinstance(content, Path)
-    (content / "0000000000019.nwd").touch()
-    assert (content / "0000000000019.nwd").exists()
+    (content / "0000000000019.md").touch()
+    assert (content / "0000000000019.md").exists()
     assert list(dup.duplicate([C.hChapterDoc, C.hSceneDoc])) == ["0000000000019", "000000000001a"]
 
     # Save and Close

@@ -186,12 +186,14 @@ class GuiTextDocument(QTextDocument):
     def iterBlockByType(self, cType: int, maxCount: int = 1000) -> Iterable[QTextBlock]:
         """Iterate over all text blocks of a given type."""
         count = 0
-        for i in range(self.blockCount()):
-            block = self.findBlockByNumber(i)
-            if count < maxCount and block.isValid() and block.userState() & cType > 0:
-                count += 1
+        block = self.begin()
+        while block.isValid():
+            if block.userState() & cType > 0:
                 yield block
-        return
+                count += 1
+                if count >= maxCount:
+                    return
+            block = block.next()
 
     ##
     #  Private Slots

@@ -56,16 +56,16 @@ class MockProject:
 @pytest.fixture(autouse=True)
 def mockVersion(monkeypatch):
     """Mock the version info to prevent diff from failing."""
-    monkeypatch.setattr("novelwriter.core.projectxml.__version__", "26.2a1")
-    monkeypatch.setattr("novelwriter.core.projectxml.__hexversion__", "0x260200a1")
+    monkeypatch.setattr("novelwriter.core.projectxml.__version__", "26.2rc1")
+    monkeypatch.setattr("novelwriter.core.projectxml.__hexversion__", "0x260200c1")
 
 
 @pytest.mark.core
 def testProjectXMLReader_ReadCurrent(monkeypatch, mockGUI, tstPaths, fncPath):
     """Test reading the current XML file format."""
-    refFile = tstPaths.filesDir / "nwProject-1.5.nwx"
+    refFile = tstPaths.filesDir / "nwProject-1.6.nwx"
     tstFile = tstPaths.outDir / "ProjectXML_ReadCurrent.nwx"
-    xmlFile = fncPath / "nwProject-1.5.nwx"
+    xmlFile = fncPath / "nwProject-1.6.nwx"
     outFile = fncPath / "nwProject.nwx"
 
     xmlReader = ProjectXMLReader(xmlFile)
@@ -93,7 +93,7 @@ def testProjectXMLReader_ReadCurrent(monkeypatch, mockGUI, tstPaths, fncPath):
     writeFile(
         xmlFile,
         (
-            "<novelWriterXML fileVersion='1.5'>"
+            "<novelWriterXML fileVersion='1.6'>"
             "  <project>"
             "    <stuff></stuff>"
             "  </project>"
@@ -136,6 +136,32 @@ def testProjectXMLReader_ReadCurrent(monkeypatch, mockGUI, tstPaths, fncPath):
     assert xmlReader.read(data, content) is True
     assert xmlReader.state == XMLReadState.WAS_LEGACY
 
+    # A file version below current, but saved by a build at or after
+    # the last breaking change, still counts as legacy
+    writeFile(
+        xmlFile,
+        (
+            "<novelWriterXML fileVersion='1.4' hexVersion='0x260200f0'>"
+            "  <project>"
+            "    <stuff></stuff>"
+            "  </project>"
+            "  <settings>"
+            "    <stuff></stuff>"
+            "  </settings>"
+            "  <content>"
+            "    <item>"
+            "      <stuff></stuff>"
+            "    </item>"
+            "    <stuff></stuff>"
+            "  </content>"
+            "  <stuff></stuff>"
+            "</novelWriterXML>"
+        ),
+    )
+    assert xmlReader.read(data, content) is True
+    assert xmlReader.state == XMLReadState.WAS_LEGACY
+    assert xmlReader.hexVersion == 0x260200F0
+
     # Reset data objects
     data = ProjectData(MockProject())  # type: ignore
     content = []
@@ -145,10 +171,10 @@ def testProjectXMLReader_ReadCurrent(monkeypatch, mockGUI, tstPaths, fncPath):
     assert xmlReader.read(data, content) is True
     assert xmlReader.state == XMLReadState.PARSED_OK
     assert xmlReader.xmlRoot == "novelWriterXML"
-    assert xmlReader.xmlVersion == 0x0105
-    assert xmlReader.xmlRevision == 7
-    assert xmlReader.appVersion == "26.2a1"
-    assert xmlReader.hexVersion == 0x260200A1
+    assert xmlReader.xmlVersion == 0x0106
+    assert xmlReader.xmlRevision == 0
+    assert xmlReader.appVersion == "26.2rc1"
+    assert xmlReader.hexVersion == 0x260200C1
 
     # Check loaded data
     assert data.name == "Sample Project"
@@ -167,7 +193,7 @@ def testProjectXMLReader_ReadCurrent(monkeypatch, mockGUI, tstPaths, fncPath):
     assert data.getLastHandle("editor") == "636b6aa9b697b"
     assert data.getLastHandle("viewer") == "636b6aa9b697b"
     assert data.getLastHandle("novel") == "7031beac91f75"
-    assert data.getLastHandle("outline") == "7031beac91f75"
+    assert data.getLastHandle("story") == "7031beac91f75"
 
     assert data.targetCount == 100000
     assert data.targetCountChars is False
@@ -330,7 +356,7 @@ def testProjectXMLReader_ReadLegacy10(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.0
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.0
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.0
 
     assert data.targetCount == 0  # Doesn't exist in 1.0
     assert data.targetCountChars is False  # Doesn't exist in 1.0
@@ -496,7 +522,7 @@ def testProjectXMLReader_ReadLegacy11(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.1
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.1
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.1
 
     assert data.targetCount == 0  # Doesn't exist in 1.1
     assert data.targetCountChars is False  # Doesn't exist in 1.1
@@ -662,7 +688,7 @@ def testProjectXMLReader_ReadLegacy12(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.2
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.2
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.2
 
     assert data.targetCount == 0  # Doesn't exist in 1.2
     assert data.targetCountChars is False  # Doesn't exist in 1.2
@@ -831,7 +857,7 @@ def testProjectXMLReader_ReadLegacy13(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.3
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.3
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.3
 
     assert data.targetCount == 0  # Doesn't exist in 1.3
     assert data.targetCountChars is False  # Doesn't exist in 1.3
@@ -1000,7 +1026,7 @@ def testProjectXMLReader_ReadLegacy14(tstPaths, fncPath, mockGUI, mockRnd):
     assert data.getLastHandle("editor") is None  # Dropped by conversion
     assert data.getLastHandle("viewer") is None  # Dropped by conversion
     assert data.getLastHandle("novel") is None  # Doesn't exist in 1.4
-    assert data.getLastHandle("outline") is None  # Doesn't exist in 1.4
+    assert data.getLastHandle("story") is None  # Doesn't exist in 1.4
 
     assert data.targetCount == 0  # Doesn't exist in 1.4
     assert data.targetCountChars is False  # Doesn't exist in 1.4
@@ -1128,6 +1154,58 @@ def testProjectXMLReader_ReadLegacy14(tstPaths, fncPath, mockGUI, mockRnd):
     assert xmlWriter.write(data, packedContent, timeStamp, 1000) is True
     testFile = tstPaths.outDir / "projectXML_ReadLegacy14.nwx"
     compFile = tstPaths.refDir / "projectXML_ReadLegacy14.nwx"
+    copyfile(outFile, testFile)
+    assert cmpFiles(testFile, compFile)
+
+
+@pytest.mark.core
+def testProjectXMLReader_ReadLegacy15(tstPaths, fncPath, mockGUI, mockRnd):
+    """Test reading the version 1.5 XML file format. It is identical to
+    the first 1.6 format, as the difference is on the document files, so
+    this is just a shallow test.
+    """
+    refFile = tstPaths.filesDir / "nwProject-1.5.nwx"
+    xmlFile = fncPath / "nwProject-1.5.nwx"
+    outFile = fncPath / "nwProject.nwx"
+    copyfile(refFile, xmlFile)
+
+    xmlReader = ProjectXMLReader(xmlFile)
+    assert xmlReader.state == XMLReadState.NO_ACTION
+
+    data = ProjectData(MockProject())  # type: ignore
+    content = []
+
+    assert xmlReader.read(data, content) is True
+    assert xmlReader.state == XMLReadState.WAS_LEGACY
+    assert xmlReader.xmlRoot == "novelWriterXML"
+    assert xmlReader.xmlVersion == 0x0105
+    assert xmlReader.appVersion == "26.2a1"
+    assert xmlReader.hexVersion == 0x260200A1
+
+    # Compare content
+    dumpFile = tstPaths.outDir / "projectXML_ReadLegacy15.json"
+    compFile = tstPaths.refDir / "projectXML_ReadLegacy15.json"
+    with open(dumpFile, mode="w", encoding="utf-8") as dump:
+        json.dump(content, dump, indent=2)
+    assert cmpFiles(dumpFile, compFile)
+
+    packedContent = []
+    mockProject = MockProject()
+    mockProject.data = data
+    status = {}
+    for entry in content:
+        item = ProjectItem(mockProject, "0000000000000")  # type: ignore
+        item.unpack(entry)
+        status[item.itemHandle] = item.getImportStatus()[0]
+        packedContent.append(item.pack())
+
+    # Save the project again, which should produce an identical project xml
+    timeStamp = int(datetime.fromisoformat(xmlReader.timeStamp).timestamp())
+    xmlWriter = ProjectXMLWriter(fncPath / nwFiles.PROJ_FILE)
+    data.setUuid("d0f3fe10-c6e6-4310-8bfd-181eb4224eed")
+    assert xmlWriter.write(data, packedContent, timeStamp, 1000) is True
+    testFile = tstPaths.outDir / "projectXML_ReadLegacy15.nwx"
+    compFile = tstPaths.refDir / "projectXML_ReadLegacy15.nwx"
     copyfile(outFile, testFile)
     assert cmpFiles(testFile, compFile)
 
