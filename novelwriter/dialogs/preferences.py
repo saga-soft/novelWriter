@@ -33,6 +33,7 @@ from PyQt6.QtWidgets import (
     QFileDialog,
     QHBoxLayout,
     QLineEdit,
+    QTextEdit,
     QMenu,
     QPushButton,
     QVBoxLayout,
@@ -1018,6 +1019,106 @@ class GuiPreferences(NDialog):
             self.tr("Switch the editor to use Vim editor commands."),
         )
 
+        
+        # AI Assistant
+        # ============
+
+        title = self.tr("AI Assistant")
+        section += 1
+        self.sidebar.addButton(title, section)
+        self.mainForm.addGroupLabel(title, section)
+
+        # Enable AI
+        self.aiEnabled = NSwitch(self)
+        self.aiEnabled.setChecked(CONFIG.aiEnabled)
+        self.mainForm.addRow(
+            self.tr("Enable AI Assistant"),
+            self.aiEnabled,
+            self.tr("Turn on the AI sidebar."),
+        )
+        
+        # Engine Path
+        self.aiEndpoint = QLineEdit(self)
+        self.aiEndpoint.setText(CONFIG.aiEndpoint)
+        self.mainForm.addRow(
+            self.tr("AI Server Endpoint"),
+            self.aiEndpoint,
+            self.tr("Endpoint URL (e.g. http://127.0.0.1:8080)"),
+        )
+
+
+        
+        # Model Selection
+        modelLayout = QHBoxLayout()
+        self.aiModelCombo = NComboBox(self)
+        self.aiModelCombo.setMinimumWidth(200)
+        self.aiModelCombo.addItem(CONFIG.aiModel)
+        self.aiModelCombo.setCurrentText(CONFIG.aiModel)
+        
+        self.refreshModelsBtn = QPushButton("Refresh", self)
+        self.refreshModelsBtn.clicked.connect(self._refreshAiModels)
+        
+        modelLayout.addWidget(self.aiModelCombo, 1)
+        modelLayout.addWidget(self.refreshModelsBtn)
+        
+        modelWidget = QWidget(self)
+        modelWidget.setLayout(modelLayout)
+        modelLayout.setContentsMargins(0, 0, 0, 0)
+        
+        self.mainForm.addRow(
+            self.tr("Model"),
+            modelWidget,
+            self.tr("Query the endpoint and select a model."),
+        )
+
+        # Context Size
+        self.aiContextSize = NSpinBox(self)
+        self.aiContextSize.setRange(512, 128000)
+        self.aiContextSize.setSingleStep(1024)
+        self.aiContextSize.setValue(CONFIG.aiContextSize)
+        self.mainForm.addRow(
+            self.tr("Context Size"),
+            self.aiContextSize,
+            self.tr("Context window size (-c parameter)."),
+        )
+        
+        # Temperature
+        self.aiTemperature = NDoubleSpinBox(self)
+        self.aiTemperature.setRange(0.0, 2.0)
+        self.aiTemperature.setSingleStep(0.1)
+        self.aiTemperature.setValue(CONFIG.aiTemperature)
+        self.mainForm.addRow(
+            self.tr("Temperature"),
+            self.aiTemperature,
+            self.tr("Higher values make output more random."),
+        )
+
+        # Co-author
+        self.aiPromptCoAuthor = QTextEdit(self)
+        self.aiPromptCoAuthor.setFixedHeight(60)
+        self.aiPromptCoAuthor.setPlainText(CONFIG.aiPromptCoAuthor)
+        self.mainForm.addRow(self.tr("Co-author Role"), self.aiPromptCoAuthor, self.tr("Prompt for the Co-author specialization."))
+        
+        # Editor
+        self.aiPromptEditor = QTextEdit(self)
+        self.aiPromptEditor.setFixedHeight(60)
+        self.aiPromptEditor.setPlainText(CONFIG.aiPromptEditor)
+        self.mainForm.addRow(self.tr("Editor Role"), self.aiPromptEditor, self.tr("Prompt for the Editor specialization."))
+        
+        # Publisher
+        self.aiPromptPublisher = QTextEdit(self)
+        self.aiPromptPublisher.setFixedHeight(60)
+        self.aiPromptPublisher.setPlainText(CONFIG.aiPromptPublisher)
+        self.mainForm.addRow(self.tr("Publisher Role"), self.aiPromptPublisher, self.tr("Prompt for the Publisher specialization."))
+        
+        # Reader
+        self.aiPromptReader = QTextEdit(self)
+        self.aiPromptReader.setFixedHeight(60)
+        self.aiPromptReader.setPlainText(CONFIG.aiPromptReader)
+        self.mainForm.addRow(self.tr("Reader Role"), self.aiPromptReader, self.tr("Prompt for the Reader specialization."))
+
+
+
         self.mainForm.finalise()
         self.sidebar.setSelected(1)
 
@@ -1044,6 +1145,27 @@ class GuiPreferences(NDialog):
     ##
     #  Private Slots
     ##
+
+    @pyqtSlot()
+    def _refreshAiModels(self) -> None:
+        import requests
+        endpoint = self.aiEndpoint.text().strip().rstrip("/")
+        if not endpoint:
+            return
+        try:
+            url = f"{endpoint}/models" if endpoint.endswith("/v1") else f"{endpoint}/v1/models"
+            r = requests.get(url, timeout=3)
+            r.raise_for_status()
+            data = r.json()
+            self.aiModelCombo.clear()
+            for m in data.get("data", []):
+                self.aiModelCombo.addItem(m.get("id", ""))
+            
+            idx = self.aiModelCombo.findText(CONFIG.aiModel)
+            if idx >= 0:
+                self.aiModelCombo.setCurrentIndex(idx)
+        except Exception as e:
+            logger.error(f"Failed to fetch models: {e}")
 
     @pyqtSlot(int)
     def _sidebarClicked(self, section: int) -> None:
@@ -1346,6 +1468,16 @@ class GuiPreferences(NDialog):
         updateVimMode |= CONFIG.vimMode != vimMode
 
         CONFIG.vimMode = vimMode
+        CONFIG.aiEnabled = self.aiEnabled.isChecked()
+        CONFIG.aiEndpoint = self.aiEndpoint.text()
+        CONFIG.aiModel = self.aiModelCombo.currentText()
+        CONFIG.aiContextSize = self.aiContextSize.value()
+        CONFIG.aiTemperature = self.aiTemperature.value()
+        CONFIG.aiPromptCoAuthor = self.aiPromptCoAuthor.toPlainText().strip()
+        CONFIG.aiPromptEditor = self.aiPromptEditor.toPlainText().strip()
+        CONFIG.aiPromptPublisher = self.aiPromptPublisher.toPlainText().strip()
+        CONFIG.aiPromptReader = self.aiPromptReader.toPlainText().strip()
+
 
         # Finalise
         CONFIG.saveConfig()

@@ -62,6 +62,7 @@ from novelwriter.gui.noveltree import GuiNovelView
 from novelwriter.gui.projtree import GuiProjectView
 from novelwriter.gui.search import GuiProjectSearch
 from novelwriter.gui.sidebar import GuiSideBar
+from novelwriter.gui.ai_assistant import AiAssistantDock
 from novelwriter.gui.statusbar import GuiMainStatus
 from novelwriter.manuscript.manuscript import GuiManuscript
 from novelwriter.story.storyview import GuiStoryView
@@ -169,10 +170,15 @@ class GuiMain(QMainWindow):
         self.splitDocs.setCollapsible(1, False)
 
         # Splitter : Project Tree / Document Area
+        
+        self.aiAssistantPane = AiAssistantDock(self)
+        self.aiAssistantPane.setVisible(False)
+
         self.splitMain = QSplitter(Qt.Orientation.Horizontal)
         self.splitMain.setContentsMargins(0, 0, 0, 0)
         self.splitMain.addWidget(self.treePane)
         self.splitMain.addWidget(self.splitDocs)
+        self.splitMain.addWidget(self.aiAssistantPane)
         self.splitMain.setOpaqueResize(False)
         self.splitMain.setHandleWidth(4)
         self.splitMain.setSizes([max(s, 100) for s in CONFIG.mainPanePos])
@@ -1074,6 +1080,7 @@ class GuiMain(QMainWindow):
             self.docEditor.initEditor()
         if update.viewer or update.syntax or update.theme:
             self.docViewer.initViewer()
+        self.sideBar.tbAI.setVisible(CONFIG.aiEnabled)
         if update.viewport:
             if not update.editor:
                 self.docEditor.initViewport()
@@ -1192,6 +1199,18 @@ class GuiMain(QMainWindow):
         elif view == nwView.STORY:
             self.mainStack.setCurrentWidget(self.storyView)
             self.storyView.viewStory()
+        elif view == nwView.AI:
+            is_visible = not self.aiAssistantPane.isVisible()
+            self.aiAssistantPane.setVisible(is_visible)
+            if is_visible:
+                sizes = self.splitMain.sizes()
+                total = sum(sizes)
+                if total > 0 and len(sizes) >= 3:
+                    ai_width = int(total * 0.2)
+                    sizes[1] = max(100, sizes[1] - ai_width + sizes[2])
+                    sizes[2] = ai_width
+                    self.splitMain.setSizes(sizes)
+
         else:  # pragma: no cover
             pass
 

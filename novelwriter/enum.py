@@ -159,6 +159,7 @@ class nwView(Enum):
     NOVEL = 2
     STORY = 3
     SEARCH = 4
+    AI = 5
 
 
 class nwFocus(Enum):

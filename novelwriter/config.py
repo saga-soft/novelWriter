@@ -229,6 +229,16 @@ class Config:
         "viewPanePos",
         "viewSynopsis",
         "vimMode",
+        "aiEnabled",
+        "aiEndpoint",
+        "aiModel",
+        "aiContextSize",
+        "aiTemperature",
+        "aiPromptCoAuthor",
+        "aiPromptEditor",
+        "aiPromptPublisher",
+        "aiPromptReader",
+        "aiActiveRole",
         "welcomeWinSize",
     )
 
@@ -307,7 +317,17 @@ class Config:
         self.nativeFont = True  # Use native font dialog
         self.useCharCount = False  # Use character count as primary count
         self.countUnit = "words"  # Primary count unit
-        self.vimMode = False  # Enable Vim mode
+        self.vimMode = False
+        self.aiEnabled = False
+        self.aiEndpoint = "http://127.0.0.1:8080"
+        self.aiModel = ""
+        self.aiContextSize = 8192
+        self.aiTemperature = 0.7
+        self.aiPromptCoAuthor = "You are a creative co-author. Your goal is to help brainstorm, expand scenes, and enhance the narrative flow. Offer creative suggestions, maintain the author\'s voice, and push the story forward organically."
+        self.aiPromptEditor = "You are a professional literary editor. Focus on pacing, grammar, structural consistency, and clarity. Point out passive voice, repetitive phrasing, and offer precise rewriting suggestions to tighten the prose."
+        self.aiPromptPublisher = "You are a commercial book publisher and marketer. Analyze the text for marketability, genre expectations, hook strength, and audience appeal. Provide feedback on how to make the story more commercially viable."
+        self.aiPromptReader = "You are an avid reader of this genre. Provide emotional reactions, point out where you get confused or bored, and highlight your favorite moments. React as a fan experiencing the story for the first time."
+        self.aiActiveRole = "Co-author"
 
         # Icons
         self.iconTheme = DEF_ICONS  # Icons theme
@@ -821,6 +841,18 @@ class Config:
         self.useCharCount = parser.getBool(sec, "useCharCount", self.useCharCount)
         self.vimMode = parser.getBool(sec, "vimMode", self.vimMode)
 
+        sec = "AI"
+        self.aiEnabled = parser.getBool(sec, "enabled", self.aiEnabled)
+        self.aiEndpoint = parser.getStr(sec, "endpoint", self.aiEndpoint)
+        self.aiModel = parser.getStr(sec, "model", self.aiModel)
+        self.aiContextSize = parser.getInt(sec, "contextSize", self.aiContextSize)
+        self.aiTemperature = parser.getFloat(sec, "temperature", self.aiTemperature)
+        self.aiPromptCoAuthor = parser.getStr(sec, "promptCoAuthor", self.aiPromptCoAuthor)
+        self.aiPromptEditor = parser.getStr(sec, "promptEditor", self.aiPromptEditor)
+        self.aiPromptPublisher = parser.getStr(sec, "promptPublisher", self.aiPromptPublisher)
+        self.aiPromptReader = parser.getStr(sec, "promptReader", self.aiPromptReader)
+        self.aiActiveRole = parser.getStr(sec, "activeRole", self.aiActiveRole)
+
         # Sizes
         sec = "Sizes"
         self.mainWinSize = parser.getIntList(sec, "mainWindow", self.mainWinSize)
@@ -964,6 +996,19 @@ class Config:
             "nativeFont": self.nativeFont,
             "useCharCount": self.useCharCount,
             "vimMode": self.vimMode,
+        }
+
+        config["AI"] = {
+            "enabled": self.aiEnabled,
+            "endpoint": self.aiEndpoint,
+            "model": self.aiModel,
+            "contextSize": self.aiContextSize,
+            "temperature": self.aiTemperature,
+            "promptCoAuthor": self.aiPromptCoAuthor,
+            "promptEditor": self.aiPromptEditor,
+            "promptPublisher": self.aiPromptPublisher,
+            "promptReader": self.aiPromptReader,
+            "activeRole": self.aiActiveRole,
         }
 
         config["Sizes"] = {

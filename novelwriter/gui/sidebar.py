@@ -75,6 +75,15 @@ class GuiSideBar(QWidget):
         self.tbStory.setToolTip("{0} [Ctrl+Shift+T]".format(self.tr("Story View")))
         self.tbStory.clicked.connect(qtWeakLambda(self._emitViewChange, nwView.STORY))
 
+        from PyQt6.QtCore import Qt
+        self.tbAI = NFlatIconButton(self, iSz, "ai_assistant:sidebar", 0.25)
+        # self.tbAI.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
+        self.tbAI.setText("AI")
+        self.tbAI.setToolTip(self.tr("Toggle AI Assistant"))
+        self.tbAI.clicked.connect(qtWeakLambda(self._emitViewChange, nwView.AI))
+        self.tbAI.setVisible(CONFIG.aiEnabled)
+
+
         self.tbTheme = NFlatIconButton(self, iSz, "", 0.25)
         self.tbTheme.setToolTip(self.tr("Switch Colour Theme"))
         self.tbTheme.clicked.connect(self._cycleColorTheme)
@@ -106,6 +115,7 @@ class GuiSideBar(QWidget):
         self.outerBox.addWidget(self.tbSearch)
         self.outerBox.addWidget(self.tbStory)
         self.outerBox.addWidget(self.tbBuild)
+        self.outerBox.addWidget(self.tbAI)
         self.outerBox.addStretch(1)
         self.outerBox.addWidget(self.tbStats)
         self.outerBox.addWidget(self.tbTheme)
@@ -131,6 +141,7 @@ class GuiSideBar(QWidget):
             self.tbStats.refreshTheme()
             self.tbTheme.refreshTheme()
             self.tbSettings.refreshTheme()
+            self.tbAI.setVisible(CONFIG.aiEnabled)
 
         self._setThemeModeIcon()
 
