@@ -208,20 +208,6 @@ class AiAssistantDock(QWidget):
         self.chatBrowser.setOpenExternalLinks(True)
         self.layout.addWidget(self.chatBrowser, 1)
 
-        # Input Area
-        self.inputLayout = QHBoxLayout()
-        self.inputEdit = QTextEdit(self)
-        self.inputEdit.setFixedHeight(80)
-        self.inputEdit.setPlaceholderText("Type your prompt here...")
-
-        self.sendBtn = QPushButton("Send", self)
-        self.sendBtn.clicked.connect(self.sendPrompt)
-
-        self.inputLayout.addWidget(self.inputEdit, 1)
-        self.inputLayout.addWidget(self.sendBtn)
-
-        self.layout.addLayout(self.inputLayout)
-
         # Status & Cancel Area
         self.statusLayout = QHBoxLayout()
         self.statusLabel = QLabel("Ready.", self)
@@ -236,6 +222,20 @@ class AiAssistantDock(QWidget):
         self.statusLayout.addWidget(self.statusLabel, 1)
         self.statusLayout.addWidget(self.cancelBtn)
         self.layout.addLayout(self.statusLayout)
+
+        # Input Area
+        self.inputLayout = QHBoxLayout()
+        self.inputEdit = QTextEdit(self)
+        self.inputEdit.setFixedHeight(80)
+        self.inputEdit.setPlaceholderText("Type your prompt here...")
+
+        self.sendBtn = QPushButton("Send", self)
+        self.sendBtn.clicked.connect(self.sendPrompt)
+
+        self.inputLayout.addWidget(self.inputEdit, 1)
+        self.inputLayout.addWidget(self.sendBtn)
+
+        self.layout.addLayout(self.inputLayout)
 
         self.chatBrowser.append("<b>System:</b> Ready. The assistant will connect to your configured llama server endpoint.")
         self.refreshModels()
