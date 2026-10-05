@@ -1,5 +1,8 @@
 import json
 import time
+import uuid
+import datetime
+from pathlib import Path
 import logging
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
 from PyQt6.QtWidgets import (
@@ -13,6 +16,52 @@ from novelwriter.common import qtWeakLambda
 from novelwriter.extensions.modified import NFlatIconButton
 
 logger = logging.getLogger(__name__)
+
+
+class ChatManager:
+    def __init__(self):
+        self.chats_dir = CONFIG._confPath / "ai_chats"
+        self.chats_dir.mkdir(exist_ok=True)
+        
+    def list_chats(self):
+        chats = []
+        for file in self.chats_dir.glob("*.json"):
+            try:
+                with open(file, "r") as f:
+                    data = json.load(f)
+                    chats.append(data)
+            except:
+                pass
+        return sorted(chats, key=lambda x: x.get("updated_at", 0), reverse=True)
+        
+    def save_chat(self, chat_id, title, role, messages):
+        file = self.chats_dir / f"{chat_id}.json"
+        data = {
+            "id": chat_id,
+            "title": title,
+            "role": role,
+            "messages": messages,
+            "updated_at": time.time()
+        }
+        with open(file, "w") as f:
+            json.dump(data, f)
+            
+    def load_chat(self, chat_id):
+        file = self.chats_dir / f"{chat_id}.json"
+        if file.exists():
+            try:
+                with open(file, "r") as f:
+                    return json.load(f)
+            except:
+                pass
+        return None
+        
+    def delete_chat(self, chat_id):
+        file = self.chats_dir / f"{chat_id}.json"
+        if file.exists():
+            file.unlink()
+
+chat_mgr = ChatManager()
 
 class AiWorker(QThread):
     newToken = pyqtSignal(str)
@@ -84,6 +133,8 @@ class AiAssistantDock(QWidget):
         self.message_history = []
         self.first_token_time = 0
         self.current_response = ""
+        self.current_chat_id = None
+        self.current_chat_title = ""
 
         logger.debug("Create: AiAssistantDock")
         self.setObjectName("AiAssistantDock")
@@ -101,6 +152,25 @@ class AiAssistantDock(QWidget):
         self.headerLayout.addWidget(self.titleLabel)
         self.headerLayout.addStretch()
         self.layout.addLayout(self.headerLayout)
+        
+        # Recent Chats
+        self.recentChatsLayout = QHBoxLayout()
+        self.recentChatsCombo = QComboBox(self)
+        self.recentChatsCombo.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
+        self.recentChatsCombo.activated.connect(self.loadSelectedChat)
+        self.recentChatsLayout.addWidget(self.recentChatsCombo, 1)
+        
+        self.newChatBtn = QPushButton("New", self)
+        self.newChatBtn.setToolTip("New Chat")
+        self.newChatBtn.clicked.connect(self.newChat)
+        self.recentChatsLayout.addWidget(self.newChatBtn)
+        
+        self.delChatBtn = QPushButton("Del", self)
+        self.delChatBtn.setToolTip("Delete Chat")
+        self.delChatBtn.clicked.connect(self.deleteChat)
+        self.recentChatsLayout.addWidget(self.delChatBtn)
+        
+        self.layout.addLayout(self.recentChatsLayout)
 
         # Selectors Layout
         self.selectorsLayout = QHBoxLayout()
@@ -138,25 +208,6 @@ class AiAssistantDock(QWidget):
         self.chatBrowser.setOpenExternalLinks(True)
         self.layout.addWidget(self.chatBrowser, 1)
 
-        # Status & Cancel Area
-        self.statusLayout = QHBoxLayout()
-        self.statusLabel = QLabel("Ready.", self)
-        font = self.statusLabel.font()
-        font.setPointSize(max(8, font.pointSize() - 1))
-        self.statusLabel.setFont(font)
-
-        self.cancelBtn = QPushButton("Cancel", self)
-        self.cancelBtn.setEnabled(False)
-        self.cancelBtn.clicked.connect(self.cancelPrompt)
-        
-        self.clearBtn = QPushButton("Clear", self)
-        self.clearBtn.clicked.connect(self.clearChat)
-
-        self.statusLayout.addWidget(self.statusLabel, 1)
-        self.statusLayout.addWidget(self.cancelBtn)
-        self.statusLayout.addWidget(self.clearBtn)
-        self.layout.addLayout(self.statusLayout)
-
         # Input Area
         self.inputLayout = QHBoxLayout()
         self.inputEdit = QTextEdit(self)
@@ -171,8 +222,88 @@ class AiAssistantDock(QWidget):
 
         self.layout.addLayout(self.inputLayout)
 
+        # Status & Cancel Area
+        self.statusLayout = QHBoxLayout()
+        self.statusLabel = QLabel("Ready.", self)
+        font = self.statusLabel.font()
+        font.setPointSize(max(8, font.pointSize() - 1))
+        self.statusLabel.setFont(font)
+
+        self.cancelBtn = QPushButton("Cancel", self)
+        self.cancelBtn.setEnabled(False)
+        self.cancelBtn.clicked.connect(self.cancelPrompt)
+
+        self.statusLayout.addWidget(self.statusLabel, 1)
+        self.statusLayout.addWidget(self.cancelBtn)
+        self.layout.addLayout(self.statusLayout)
+
         self.chatBrowser.append("<b>System:</b> Ready. The assistant will connect to your configured llama server endpoint.")
         self.refreshModels()
+        self.refreshChatsList()
+
+    def refreshChatsList(self):
+        self.recentChatsCombo.blockSignals(True)
+        self.recentChatsCombo.clear()
+        chats = chat_mgr.list_chats()
+        self.recentChatsCombo.addItem("-- Select Chat --", "")
+        for chat in chats:
+            self.recentChatsCombo.addItem(chat.get("title", "Untitled"), chat.get("id"))
+            
+        if self.current_chat_id:
+            idx = self.recentChatsCombo.findData(self.current_chat_id)
+            if idx >= 0:
+                self.recentChatsCombo.setCurrentIndex(idx)
+                
+        self.recentChatsCombo.blockSignals(False)
+        
+    def loadSelectedChat(self, index):
+        chat_id = self.recentChatsCombo.itemData(index)
+        if not chat_id:
+            return
+            
+        chat = chat_mgr.load_chat(chat_id)
+        if chat:
+            self.current_chat_id = chat_id
+            self.current_chat_title = chat.get("title", "")
+            self.message_history = chat.get("messages", [])
+            
+            # Set role if possible
+            role = chat.get("role", "")
+            if role:
+                idx = self.roleCombo.findText(role)
+                if idx >= 0:
+                    self.roleCombo.setCurrentIndex(idx)
+                    
+            self.chatBrowser.clear()
+            self.chatBrowser.append(f"<b>System:</b> Loaded chat: {self.current_chat_title}")
+            for msg in self.message_history:
+                if msg["role"] == "user":
+                    self.chatBrowser.append(f"<br><b>You:</b> {msg['content']}")
+                else:
+                    self.chatBrowser.append(f"<br><b>{role} says:</b> {msg['content']}")
+            self.chatBrowser.append("<br>")
+            self.statusLabel.setText("Chat loaded.")
+
+    def newChat(self):
+        self.current_chat_id = None
+        self.current_chat_title = ""
+        self.message_history = []
+        self.chatBrowser.clear()
+        self.chatBrowser.append("<b>System:</b> New chat started. Ready for prompt.")
+        self.statusLabel.setText("Ready.")
+        self.refreshChatsList()
+        
+    def deleteChat(self):
+        chat_id = self.current_chat_id
+        if not chat_id:
+            chat_id = self.recentChatsCombo.itemData(self.recentChatsCombo.currentIndex())
+            
+        if chat_id:
+            chat_mgr.delete_chat(chat_id)
+            if chat_id == self.current_chat_id:
+                self.newChat()
+            else:
+                self.refreshChatsList()
 
     def refreshModels(self):
         endpoint = getattr(CONFIG, 'aiEndpoint', '').strip().rstrip("/")
@@ -190,25 +321,9 @@ class AiAssistantDock(QWidget):
                 pass
             return []
             
-        # We'll just do it synchronously for simplicity in the UI thread since it's a quick local request,
-        # but normally we'd use a thread.
         import threading
         def worker():
             models = fetch_models()
-            def update_ui():
-                self.modelCombo.blockSignals(True)
-                self.modelCombo.clear()
-                current_model = getattr(CONFIG, 'aiModel', '')
-                for m in models:
-                    self.modelCombo.addItem(m.get("id", ""))
-                idx = self.modelCombo.findText(current_model)
-                if idx >= 0:
-                    self.modelCombo.setCurrentIndex(idx)
-                elif models:
-                    CONFIG.aiModel = models[0].get("id", "")
-                    self.modelCombo.setCurrentIndex(0)
-                self.modelCombo.blockSignals(False)
-            # Use QMetaObject to invoke on main thread
             from PyQt6.QtCore import QMetaObject, Qt, Q_ARG
             QMetaObject.invokeMethod(self, "_updateModelsUI", Qt.ConnectionType.QueuedConnection, Q_ARG(list, models))
         
@@ -229,12 +344,6 @@ class AiAssistantDock(QWidget):
             self.modelCombo.setCurrentIndex(0)
             CONFIG.saveConfig()
         self.modelCombo.blockSignals(False)
-
-    def clearChat(self):
-        self.message_history = []
-        self.chatBrowser.clear()
-        self.chatBrowser.append("<b>System:</b> Chat cleared. Ready for new prompt.")
-        self.statusLabel.setText("Ready.")
 
     def changeRole(self, role_name: str):
         CONFIG.aiActiveRole = role_name
@@ -272,13 +381,20 @@ class AiAssistantDock(QWidget):
         prompt = self.inputEdit.toPlainText().strip()
         if not prompt:
             return
+            
+        role = self.roleCombo.currentText()
+        
+        if not self.current_chat_id:
+            self.current_chat_id = str(uuid.uuid4())
+            preview = prompt[:20] + "..." if len(prompt) > 20 else prompt
+            date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+            self.current_chat_title = f"{role}: {preview} ({date_str})"
 
         self.inputEdit.clear()
         self.sendBtn.setEnabled(False)
         self.cancelBtn.setEnabled(True)
-        self.clearBtn.setEnabled(False)
 
-        self.chatBrowser.append(f"<br><b>You:</b> {prompt}<br><b>AI:</b> ")
+        self.chatBrowser.append(f"<br><b>You:</b> {prompt}<br><b>{role} says:</b> ")
 
         system_prompt = self.getActiveContext()
         
@@ -286,7 +402,6 @@ class AiAssistantDock(QWidget):
         
         messages = [{"role": "system", "content": system_prompt}] + self.message_history
         
-        # Estimate prompt tokens
         history_text = " ".join([m["content"] for m in self.message_history])
         self.prompt_tokens = len(system_prompt + history_text) // 4
         self.completion_tokens = 0
@@ -308,7 +423,7 @@ class AiAssistantDock(QWidget):
             self.is_thinking = False
             self.first_token_time = time.time()
             
-        elapsed = time.time() - self.first_token_time
+        elapsed = time.time() - self.first_token_time if self.first_token_time else 0
         tps = self.completion_tokens / elapsed if elapsed > 0 else 0
 
         if self.completion_tokens % 3 == 0 or self.completion_tokens == 1:
@@ -322,17 +437,18 @@ class AiAssistantDock(QWidget):
     def onGenerationFinished(self, response: str):
         self.sendBtn.setEnabled(True)
         self.cancelBtn.setEnabled(False)
-        self.clearBtn.setEnabled(True)
         elapsed = time.time() - self.first_token_time if self.first_token_time else 0
         tps = self.completion_tokens / elapsed if elapsed > 0 else 0
         self.statusLabel.setText(f"Finished. (Prompt: ~{self.prompt_tokens} | Output: ~{self.completion_tokens} | Speed: {tps:.1f} t/s)")
         self.chatBrowser.append("<br>")
         self.message_history.append({"role": "assistant", "content": self.current_response})
+        
+        chat_mgr.save_chat(self.current_chat_id, self.current_chat_title, self.roleCombo.currentText(), self.message_history)
+        self.refreshChatsList()
 
     def onGenerationError(self, error: str):
         self.sendBtn.setEnabled(True)
         self.cancelBtn.setEnabled(False)
-        self.clearBtn.setEnabled(True)
         self.statusLabel.setText("Error occurred.")
         self.chatBrowser.append(f"<br><b>Error:</b> {error}<br>")
         
@@ -341,11 +457,12 @@ class AiAssistantDock(QWidget):
             self.worker.stop()
         self.sendBtn.setEnabled(True)
         self.cancelBtn.setEnabled(False)
-        self.clearBtn.setEnabled(True)
         self.statusLabel.setText(f"Cancelled. (Prompt: ~{self.prompt_tokens} | Output: ~{self.completion_tokens})")
         self.chatBrowser.append("<br><i>[Generation Cancelled]</i><br>")
         if self.current_response:
             self.message_history.append({"role": "assistant", "content": self.current_response})
+            chat_mgr.save_chat(self.current_chat_id, self.current_chat_title, self.roleCombo.currentText(), self.message_history)
+            self.refreshChatsList()
 
     def closeEvent(self, event):
         if self.worker:
