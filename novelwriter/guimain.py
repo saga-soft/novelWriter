@@ -179,13 +179,22 @@ class GuiMain(QMainWindow):
         self.splitMain.addWidget(self.treePane)
         self.splitMain.addWidget(self.splitDocs)
         self.splitMain.addWidget(self.aiAssistantPane)
+        self.aiAssistantPane.setMinimumWidth(250)
         self.splitMain.setOpaqueResize(False)
         self.splitMain.setHandleWidth(4)
-        self.splitMain.setSizes([max(s, 100) for s in CONFIG.mainPanePos])
+        
+        # Ensure sizes config handles 3 elements
+        sizes = [max(s, 100) for s in CONFIG.mainPanePos]
+        if len(sizes) == 2:
+            sizes.append(0)  # Hidden AI pane size
+        self.splitMain.setSizes(sizes)
+        
         self.splitMain.setCollapsible(0, False)
         self.splitMain.setCollapsible(1, False)
+        self.splitMain.setCollapsible(2, False)
         self.splitMain.setStretchFactor(0, 0)
         self.splitMain.setStretchFactor(1, 1)
+        self.splitMain.setStretchFactor(2, 0)
 
         # Main Stack : Editor / Story View
         self.mainStack = QStackedWidget(self)

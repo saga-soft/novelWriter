@@ -1,79 +1,11 @@
-import json
-import time
-import logging
-from PyQt6.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QTextBrowser, 
-    QTextEdit, QPushButton, QLabel, QMessageBox, QComboBox
-)
-import requests
+import os
 
-from novelwriter import CONFIG, SHARED
-from novelwriter.common import qtWeakLambda
-from novelwriter.extensions.modified import NFlatIconButton
+with open("novelwriter/gui/ai_assistant.py", "r") as f:
+    content = f.read()
 
-logger = logging.getLogger(__name__)
+prefix = content.split("class AiAssistantDock(QWidget):")[0]
 
-class AiWorker(QThread):
-    newToken = pyqtSignal(str)
-    finishedGeneration = pyqtSignal(str)
-    errorGeneration = pyqtSignal(str)
-
-    def __init__(self, messages: list):
-        super().__init__()
-        self.messages = messages
-        self._is_running = True
-
-    def stop(self):
-        self._is_running = False
-
-    def run(self):
-        base_url = CONFIG.aiEndpoint.rstrip('/') if hasattr(CONFIG, 'aiEndpoint') and CONFIG.aiEndpoint else "http://127.0.0.1:8080"
-        url = f"{base_url}/chat/completions" if base_url.endswith("/v1") else f"{base_url}/v1/chat/completions"
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "model": getattr(CONFIG, 'aiModel', ''),
-            "messages": self.messages,
-            "temperature": getattr(CONFIG, 'aiTemperature', 0.7),
-            "stream": True
-        }
-        
-        thinking_val = getattr(CONFIG, 'aiThinking', 'Off')
-        if thinking_val and thinking_val.lower() != "off":
-            payload["reasoning_effort"] = thinking_val
-            payload["thinking"] = thinking_val
-        
-        full_response = ""
-        try:
-            with requests.post(url, headers=headers, json=payload, stream=True) as response:
-                if response.status_code != 200:
-                    self.errorGeneration.emit(f"Error: {response.status_code} - {response.text}")
-                    return
-
-                for line in response.iter_lines():
-                    if not self._is_running:
-                        break
-                    if line:
-                        decoded_line = line.decode('utf-8')
-                        if decoded_line.startswith("data: "):
-                            data_str = decoded_line[6:]
-                            if data_str.strip() == "[DONE]":
-                                break
-                            try:
-                                data = json.loads(data_str)
-                                if "choices" in data and len(data["choices"]) > 0:
-                                    delta = data["choices"][0].get("delta", {})
-                                    content = delta.get("content", "")
-                                    if content:
-                                        full_response += content
-                                        self.newToken.emit(content)
-                            except json.JSONDecodeError:
-                                pass
-            self.finishedGeneration.emit(full_response)
-        except Exception as e:
-            self.errorGeneration.emit(str(e))
-
-class AiAssistantDock(QWidget):
+dock_code = """class AiAssistantDock(QWidget):
     def __init__(self, mainGui):
         super().__init__(parent=mainGui)
         self.mainGui = mainGui
@@ -81,9 +13,6 @@ class AiAssistantDock(QWidget):
         self.prompt_tokens = 0
         self.completion_tokens = 0
         self.is_thinking = False
-        self.message_history = []
-        self.first_token_time = 0
-        self.current_response = ""
 
         logger.debug("Create: AiAssistantDock")
         self.setObjectName("AiAssistantDock")
@@ -148,13 +77,9 @@ class AiAssistantDock(QWidget):
         self.cancelBtn = QPushButton("Cancel", self)
         self.cancelBtn.setEnabled(False)
         self.cancelBtn.clicked.connect(self.cancelPrompt)
-        
-        self.clearBtn = QPushButton("Clear", self)
-        self.clearBtn.clicked.connect(self.clearChat)
 
         self.statusLayout.addWidget(self.statusLabel, 1)
         self.statusLayout.addWidget(self.cancelBtn)
-        self.statusLayout.addWidget(self.clearBtn)
         self.layout.addLayout(self.statusLayout)
 
         # Input Area
@@ -230,12 +155,6 @@ class AiAssistantDock(QWidget):
             CONFIG.saveConfig()
         self.modelCombo.blockSignals(False)
 
-    def clearChat(self):
-        self.message_history = []
-        self.chatBrowser.clear()
-        self.chatBrowser.append("<b>System:</b> Chat cleared. Ready for new prompt.")
-        self.statusLabel.setText("Ready.")
-
     def changeRole(self, role_name: str):
         CONFIG.aiActiveRole = role_name
         CONFIG.saveConfig()
@@ -262,7 +181,7 @@ class AiAssistantDock(QWidget):
         else:
             sys_prompt = getattr(CONFIG, 'aiPromptReader', '')
 
-        return f"{sys_prompt}\n\nHere is the current text the author is working on:\n\n---\n{text}\n---\n\nAssist the author as requested."
+        return f"{sys_prompt}\\n\\nHere is the current text the author is working on:\\n\\n---\\n{text}\\n---\\n\\nAssist the author as requested."
 
     def sendPrompt(self):
         if not getattr(CONFIG, 'aiEndpoint', None):
@@ -276,26 +195,17 @@ class AiAssistantDock(QWidget):
         self.inputEdit.clear()
         self.sendBtn.setEnabled(False)
         self.cancelBtn.setEnabled(True)
-        self.clearBtn.setEnabled(False)
 
         self.chatBrowser.append(f"<br><b>You:</b> {prompt}<br><b>AI:</b> ")
 
         system_prompt = self.getActiveContext()
         
-        self.message_history.append({"role": "user", "content": prompt})
-        
-        messages = [{"role": "system", "content": system_prompt}] + self.message_history
-        
-        # Estimate prompt tokens
-        history_text = " ".join([m["content"] for m in self.message_history])
-        self.prompt_tokens = len(system_prompt + history_text) // 4
+        self.prompt_tokens = len(system_prompt + prompt) // 4
         self.completion_tokens = 0
-        self.current_response = ""
         self.is_thinking = True
-        self.first_token_time = 0
         self.statusLabel.setText(f"Thinking... (Prompt Tokens: ~{self.prompt_tokens})")
 
-        self.worker = AiWorker(messages)
+        self.worker = AiWorker(system_prompt, prompt)
         self.worker.newToken.connect(self.onNewToken)
         self.worker.finishedGeneration.connect(self.onGenerationFinished)
         self.worker.errorGeneration.connect(self.onGenerationError)
@@ -303,16 +213,11 @@ class AiAssistantDock(QWidget):
 
     def onNewToken(self, token: str):
         self.completion_tokens += 1
-        self.current_response += token
         if self.is_thinking:
             self.is_thinking = False
-            self.first_token_time = time.time()
-            
-        elapsed = time.time() - self.first_token_time
-        tps = self.completion_tokens / elapsed if elapsed > 0 else 0
 
         if self.completion_tokens % 3 == 0 or self.completion_tokens == 1:
-            self.statusLabel.setText(f"Generating... (Prompt: ~{self.prompt_tokens} | Output: ~{self.completion_tokens} | Speed: {tps:.1f} t/s)")
+            self.statusLabel.setText(f"Generating... (Prompt: ~{self.prompt_tokens} | Output: ~{self.completion_tokens})")
 
         cursor = self.chatBrowser.textCursor()
         cursor.movePosition(cursor.MoveOperation.End)
@@ -322,17 +227,12 @@ class AiAssistantDock(QWidget):
     def onGenerationFinished(self, response: str):
         self.sendBtn.setEnabled(True)
         self.cancelBtn.setEnabled(False)
-        self.clearBtn.setEnabled(True)
-        elapsed = time.time() - self.first_token_time if self.first_token_time else 0
-        tps = self.completion_tokens / elapsed if elapsed > 0 else 0
-        self.statusLabel.setText(f"Finished. (Prompt: ~{self.prompt_tokens} | Output: ~{self.completion_tokens} | Speed: {tps:.1f} t/s)")
+        self.statusLabel.setText(f"Finished. (Prompt: ~{self.prompt_tokens} | Output: ~{self.completion_tokens})")
         self.chatBrowser.append("<br>")
-        self.message_history.append({"role": "assistant", "content": self.current_response})
 
     def onGenerationError(self, error: str):
         self.sendBtn.setEnabled(True)
         self.cancelBtn.setEnabled(False)
-        self.clearBtn.setEnabled(True)
         self.statusLabel.setText("Error occurred.")
         self.chatBrowser.append(f"<br><b>Error:</b> {error}<br>")
         
@@ -341,14 +241,17 @@ class AiAssistantDock(QWidget):
             self.worker.stop()
         self.sendBtn.setEnabled(True)
         self.cancelBtn.setEnabled(False)
-        self.clearBtn.setEnabled(True)
         self.statusLabel.setText(f"Cancelled. (Prompt: ~{self.prompt_tokens} | Output: ~{self.completion_tokens})")
         self.chatBrowser.append("<br><i>[Generation Cancelled]</i><br>")
-        if self.current_response:
-            self.message_history.append({"role": "assistant", "content": self.current_response})
 
     def closeEvent(self, event):
         if self.worker:
             self.worker.stop()
             self.worker.wait()
         super().closeEvent(event)
+"""
+
+with open("novelwriter/gui/ai_assistant.py", "w") as f:
+    f.write(prefix + dock_code)
+
+print("AiAssistantDock replaced.")

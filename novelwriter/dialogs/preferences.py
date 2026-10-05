@@ -1093,6 +1093,16 @@ class GuiPreferences(NDialog):
             self.tr("Higher values make output more random."),
         )
 
+        # Thinking
+        self.aiThinkingCombo = NComboBox(self)
+        self.aiThinkingCombo.addItems(["Off", "low", "med", "high", "xhigh"])
+        self.aiThinkingCombo.setCurrentText(getattr(CONFIG, 'aiThinking', 'Off'))
+        self.mainForm.addRow(
+            self.tr("Thinking Variable"),
+            self.aiThinkingCombo,
+            self.tr("Thinking/reasoning effort for supported models."),
+        )
+
         # Co-author
         self.aiPromptCoAuthor = QTextEdit(self)
         self.aiPromptCoAuthor.setFixedHeight(60)
@@ -1473,6 +1483,7 @@ class GuiPreferences(NDialog):
         CONFIG.aiModel = self.aiModelCombo.currentText()
         CONFIG.aiContextSize = self.aiContextSize.value()
         CONFIG.aiTemperature = self.aiTemperature.value()
+        CONFIG.aiThinking = self.aiThinkingCombo.currentText()
         CONFIG.aiPromptCoAuthor = self.aiPromptCoAuthor.toPlainText().strip()
         CONFIG.aiPromptEditor = self.aiPromptEditor.toPlainText().strip()
         CONFIG.aiPromptPublisher = self.aiPromptPublisher.toPlainText().strip()

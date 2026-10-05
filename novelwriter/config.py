@@ -234,6 +234,7 @@ class Config:
         "aiModel",
         "aiContextSize",
         "aiTemperature",
+        "aiThinking",
         "aiPromptCoAuthor",
         "aiPromptEditor",
         "aiPromptPublisher",
@@ -323,6 +324,7 @@ class Config:
         self.aiModel = ""
         self.aiContextSize = 8192
         self.aiTemperature = 0.7
+        self.aiThinking = "Off"
         self.aiPromptCoAuthor = "You are a creative co-author. Your goal is to help brainstorm, expand scenes, and enhance the narrative flow. Offer creative suggestions, maintain the author\'s voice, and push the story forward organically."
         self.aiPromptEditor = "You are a professional literary editor. Focus on pacing, grammar, structural consistency, and clarity. Point out passive voice, repetitive phrasing, and offer precise rewriting suggestions to tighten the prose."
         self.aiPromptPublisher = "You are a commercial book publisher and marketer. Analyze the text for marketability, genre expectations, hook strength, and audience appeal. Provide feedback on how to make the story more commercially viable."
@@ -847,6 +849,7 @@ class Config:
         self.aiModel = parser.getStr(sec, "model", self.aiModel)
         self.aiContextSize = parser.getInt(sec, "contextSize", self.aiContextSize)
         self.aiTemperature = parser.getFloat(sec, "temperature", self.aiTemperature)
+        self.aiThinking = parser.getStr(sec, "thinking", self.aiThinking)
         self.aiPromptCoAuthor = parser.getStr(sec, "promptCoAuthor", self.aiPromptCoAuthor)
         self.aiPromptEditor = parser.getStr(sec, "promptEditor", self.aiPromptEditor)
         self.aiPromptPublisher = parser.getStr(sec, "promptPublisher", self.aiPromptPublisher)
@@ -1004,6 +1007,7 @@ class Config:
             "model": self.aiModel,
             "contextSize": self.aiContextSize,
             "temperature": self.aiTemperature,
+            "thinking": self.aiThinking,
             "promptCoAuthor": self.aiPromptCoAuthor,
             "promptEditor": self.aiPromptEditor,
             "promptPublisher": self.aiPromptPublisher,
