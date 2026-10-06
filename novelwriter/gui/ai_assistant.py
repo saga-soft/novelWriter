@@ -4,7 +4,7 @@ import uuid
 import datetime
 from pathlib import Path
 import logging
-from PyQt6.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
+from PyQt6.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QObject
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QTextBrowser, 
     QTextEdit, QPushButton, QLabel, QMessageBox, QComboBox
@@ -17,6 +17,18 @@ from novelwriter.extensions.modified import NFlatIconButton
 
 logger = logging.getLogger(__name__)
 
+
+class ReturnFilter(QObject):
+    def __init__(self, callback):
+        super().__init__()
+        self.callback = callback
+
+    def eventFilter(self, obj, event):
+        if event.type() == event.Type.KeyPress:
+            if event.key() == Qt.Key.Key_Return and not (event.modifiers() & Qt.KeyboardModifier.ShiftModifier):
+                self.callback()
+                return True
+        return super().eventFilter(obj, event)
 
 class ChatManager:
     def __init__(self):
@@ -68,12 +80,11 @@ class AiWorker(QThread):
     finishedGeneration = pyqtSignal(str)
     errorGeneration = pyqtSignal(str)
 
-    def __init__(self, messages: list, model: str, temperature: float, api_key: str):
+    def __init__(self, messages: list, model: str, temperature: float):
         super().__init__()
         self.messages = messages
         self.model = model
         self.temperature = temperature
-        self.api_key = api_key
         self._is_running = True
 
     def stop(self):
@@ -82,7 +93,14 @@ class AiWorker(QThread):
     def _get_request_config(self):
         """Get the request configuration based on the selected provider."""
         provider = CONFIG.aiProvider
-        api_key = self.api_key
+        if provider == "OpenAI":
+            api_key = getattr(CONFIG, 'aiApiKeyOpenAI', '')
+        elif provider == "Anthropic":
+            api_key = getattr(CONFIG, 'aiApiKeyAnthropic', '')
+        elif provider == "Google Gemini":
+            api_key = getattr(CONFIG, 'aiApiKeyGemini', '')
+        else:
+            api_key = ''
 
         if provider == "Local / Llama.cpp":
             return {
@@ -114,7 +132,7 @@ class AiWorker(QThread):
 
         elif provider == "Google Gemini":
             return {
-                "url": f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:streamGenerateContent?key={api_key}",
+                "url": f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:streamGenerateContent?alt=sse&key={api_key}",
                 "headers": {
                     "Content-Type": "application/json"
                 },
@@ -127,47 +145,59 @@ class AiWorker(QThread):
             "payload_format": "standard"
         }
 
-    def _build_payload(self, system_prompt: str, user_prompt: str, payload_format: str):
-        """Build the payload based on the API format."""
-        temperature = self.temperature if self.temperature is not None else 0.7
+    def _build_payload(self, payload_format: str):
+        """Build the payload based on the API format.
+
+        The temperature parameter is only included for the Local
+        (Llama.cpp) provider; cloud providers use their own defaults.
+        """
+        system_prompt = ""
+        conversation = []
+        for msg in self.messages:
+            if msg.get("role") == "system":
+                system_prompt = msg.get("content", "")
+            else:
+                conversation.append({"role": msg.get("role"), "content": msg.get("content", "")})
+        if not conversation:
+            conversation = [{"role": "user", "content": ""}]
 
         if payload_format == "standard":
-            return {
+            payload = {
                 "model": self.model,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                "temperature": temperature,
+                "messages": conversation,
                 "stream": True
             }
+            if CONFIG.aiProvider == "Local / Llama.cpp":
+                payload["temperature"] = self.temperature if self.temperature is not None else 0.7
 
         elif payload_format == "anthropic":
-            return {
+            payload = {
                 "model": self.model,
                 "system": system_prompt,
-                "messages": [
-                    {"role": "user", "content": user_prompt}
-                ],
-                "temperature": temperature,
+                "messages": conversation,
+                "max_tokens": 4096,
                 "stream": True
             }
 
         elif payload_format == "gemini":
-            return {
-                "contents": [
-                    {"role": "user", "parts": [{"text": user_prompt}]}
-                ],
-                "systemInstruction": {
-                    "parts": [{"text": system_prompt}]}
-                if system_prompt else None,
-                "generationConfig": {
-                    "temperature": temperature
-                },
-                "key": self.api_key
+            gemini_conversation = []
+            for msg in conversation:
+                # Gemini roles are 'user' and 'model'
+                role = "user" if msg["role"] == "user" else "model"
+                gemini_conversation.append({
+                    "role": role,
+                    "parts": [{"text": msg["content"]}]
+                })
+            
+            payload = {
+                "contents": gemini_conversation
             }
+            if system_prompt:
+                payload["systemInstruction"] = {
+                    "parts": [{"text": system_prompt}]
+                }
 
-        return {}
+        return payload
 
     def run(self):
         config = self._get_request_config()
@@ -175,12 +205,13 @@ class AiWorker(QThread):
         headers = config["headers"]
         payload_format = config["payload_format"]
 
-        payload = self._build_payload("", "", payload_format)
-        thinking_val = getattr(CONFIG, 'aiThinking', 'Off')
-
-        if thinking_val and thinking_val.lower() != "off":
-            payload["reasoning_effort"] = thinking_val
-            payload["thinking"] = thinking_val
+        payload = self._build_payload(payload_format)
+        # Thinking/reasoning parameters are only sent to the local engine
+        if CONFIG.aiProvider == "Local / Llama.cpp":
+            thinking_val = getattr(CONFIG, 'aiThinking', 'Off')
+            if thinking_val and thinking_val.lower() != "off":
+                payload["reasoning_effort"] = thinking_val
+                payload["thinking"] = thinking_val
 
         full_response = ""
         try:
@@ -240,7 +271,7 @@ class AiAssistantDock(QWidget):
         self.current_chat_title = ""
         self.model = CONFIG.aiModel
         self.temperature = CONFIG.aiTemperature
-        self.api_key = CONFIG.aiApiKey
+        
 
         logger.debug("Create: AiAssistantDock")
         self.setObjectName("AiAssistantDock")
@@ -293,6 +324,7 @@ class AiAssistantDock(QWidget):
         self.selectorsLayout.addWidget(QLabel("Model:", self))
         self.modelCombo = QComboBox(self)
         self.modelCombo.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
+        self.modelCombo.setEditable(True)
         self.modelCombo.currentTextChanged.connect(self.changeModel)
         # Populate initial
         initial_model = getattr(CONFIG, 'aiModel', '')
@@ -333,7 +365,10 @@ class AiAssistantDock(QWidget):
         self.inputLayout = QHBoxLayout()
         self.inputEdit = QTextEdit(self)
         self.inputEdit.setFixedHeight(80)
-        self.inputEdit.setPlaceholderText("Type your prompt here...")
+        self.inputEdit.setPlaceholderText("Type your prompt here... (Enter to send, Shift+Enter for new line)")
+        
+        self.return_filter = ReturnFilter(self.sendPrompt)
+        self.inputEdit.installEventFilter(self.return_filter)
 
         self.sendBtn = QPushButton("Send", self)
         self.sendBtn.clicked.connect(self.sendPrompt)
@@ -395,7 +430,7 @@ class AiAssistantDock(QWidget):
         self.current_chat_title = ""
         self.model = CONFIG.aiModel
         self.temperature = CONFIG.aiTemperature
-        self.api_key = CONFIG.aiApiKey
+        
         self.message_history = []
         self.chatBrowser.clear()
         self.chatBrowser.append("<b>System:</b> New chat started. Ready for prompt.")
@@ -415,18 +450,52 @@ class AiAssistantDock(QWidget):
                 self.refreshChatsList()
 
     def refreshModels(self):
-        endpoint = getattr(CONFIG, 'aiEndpoint', '').strip().rstrip("/")
-        if not endpoint:
+        """Fetch the model list using the hardcoded base URLs for each provider.
+
+        The endpoint field is only used for Local / Llama.cpp.
+        """
+        provider = getattr(CONFIG, 'aiProvider', 'Local / Llama.cpp')
+
+        if provider == "Local / Llama.cpp":
+            endpoint = getattr(CONFIG, 'aiEndpoint', '').strip().rstrip("/")
+            if not endpoint:
+                return
+            url = f"{endpoint}/models" if endpoint.endswith("/v1") else f"{endpoint}/v1/models"
+            headers = {}
+        elif provider == "OpenAI":
+            url = "https://api.openai.com/v1/models"
+            headers = {"Authorization": f"Bearer {getattr(CONFIG, 'aiApiKeyOpenAI', '')}"}
+        elif provider == "Anthropic":
+            url = "https://api.anthropic.com/v1/models"
+            headers = {
+                "x-api-key": getattr(CONFIG, 'aiApiKeyAnthropic', ''),
+                "anthropic-version": "2023-06-01"
+            }
+        elif provider == "Google Gemini":
+            url = f"https://generativelanguage.googleapis.com/v1beta/models?key={getattr(CONFIG, 'aiApiKeyGemini', '')}"
+            headers = {}
+        else:
             return
-        
-        url = f"{endpoint}/models" if endpoint.endswith("/v1") else f"{endpoint}/v1/models"
-        
+
         def fetch_models():
             try:
-                r = requests.get(url, timeout=3)
+                r = requests.get(url, headers=headers, timeout=5)
                 if r.status_code == 200:
-                    return r.json().get("data", [])
-            except:
+                    data = r.json()
+                    if provider == "Google Gemini":
+                        # Gemini returns {"models": [{"name": "models/xxx", ...}]}
+                        models = []
+                        for m in data.get("models", []):
+                            name = m.get("name", "")
+                            if not name.startswith("models/"):
+                                continue
+                            # Only list models that can generate content
+                            if "generateContent" not in m.get("supportedGenerationMethods", []):
+                                continue
+                            models.append({"id": name[len("models/"):]})
+                        return models
+                    return data.get("data", [])
+            except Exception:
                 pass
             return []
             
@@ -483,9 +552,10 @@ class AiAssistantDock(QWidget):
         return f"{sys_prompt}\n\nHere is the current text the author is working on:\n\n---\n{text}\n---\n\nAssist the author as requested."
 
     def sendPrompt(self):
-        if not getattr(CONFIG, 'aiEndpoint', None):
-            QMessageBox.warning(self, "AI Assistant", "Please configure the AI Endpoint in Preferences.")
-            return
+        if getattr(CONFIG, 'aiProvider', 'Local / Llama.cpp') == "Local / Llama.cpp":
+            if not getattr(CONFIG, 'aiEndpoint', None):
+                QMessageBox.warning(self, "AI Assistant", "Please configure the AI Endpoint in Preferences.")
+                return
 
         prompt = self.inputEdit.toPlainText().strip()
         if not prompt:
@@ -519,7 +589,27 @@ class AiAssistantDock(QWidget):
         self.first_token_time = 0
         self.statusLabel.setText(f"Thinking... (Prompt Tokens: ~{self.prompt_tokens})")
 
-        self.worker = AiWorker(messages, self.model, self.temperature, self.api_key)
+        provider = getattr(CONFIG, 'aiProvider', 'Local / Llama.cpp')
+        if provider == "OpenAI" and not getattr(CONFIG, 'aiApiKeyOpenAI', ''):
+            QMessageBox.warning(self, "AI Assistant", "Please configure the OpenAI API Key in Preferences.")
+            self.sendBtn.setEnabled(True)
+            self.cancelBtn.setEnabled(False)
+            self.clearBtn.setEnabled(True)
+            return
+        elif provider == "Anthropic" and not getattr(CONFIG, 'aiApiKeyAnthropic', ''):
+            QMessageBox.warning(self, "AI Assistant", "Please configure the Anthropic API Key in Preferences.")
+            self.sendBtn.setEnabled(True)
+            self.cancelBtn.setEnabled(False)
+            self.clearBtn.setEnabled(True)
+            return
+        elif provider == "Google Gemini" and not getattr(CONFIG, 'aiApiKeyGemini', ''):
+            QMessageBox.warning(self, "AI Assistant", "Please configure the Gemini API Key in Preferences.")
+            self.sendBtn.setEnabled(True)
+            self.cancelBtn.setEnabled(False)
+            self.clearBtn.setEnabled(True)
+            return
+            
+        self.worker = AiWorker(messages, self.model, self.temperature)
         self.worker.newToken.connect(self.onNewToken)
         self.worker.finishedGeneration.connect(self.onGenerationFinished)
         self.worker.errorGeneration.connect(self.onGenerationError)

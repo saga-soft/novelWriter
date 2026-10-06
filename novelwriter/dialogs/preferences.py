@@ -1047,18 +1047,30 @@ class GuiPreferences(NDialog):
             self.tr("Select the AI service provider."),
         )
         
-        # API Key (only shown for non-local providers)
-        self.aiApiKey = QLineEdit(self)
-        self.aiApiKey.setEchoMode(QLineEdit.EchoMode.Password)
-        self.aiApiKey.setPlaceholderText(self.tr("API Key (e.g., sk-...)"))
-        self.aiApiKey.hide()
-        if CONFIG.aiApiKey:
-            self.aiApiKey.setText(CONFIG.aiApiKey)
-        self.mainForm.addRow(
-            self.tr("API Key"),
-            self.aiApiKey,
-            self.tr("Your API key for cloud providers."),
-        )
+        # API Keys (only shown for respective providers)
+        self.aiApiKeyOpenAI = QLineEdit(self)
+        self.aiApiKeyOpenAI.setEchoMode(QLineEdit.EchoMode.Password)
+        self.aiApiKeyOpenAI.setPlaceholderText(self.tr("OpenAI API Key (sk-...)"))
+        self.aiApiKeyOpenAI.hide()
+        if getattr(CONFIG, 'aiApiKeyOpenAI', ''):
+            self.aiApiKeyOpenAI.setText(CONFIG.aiApiKeyOpenAI)
+        self.mainForm.addRow(self.tr("OpenAI API Key"), self.aiApiKeyOpenAI, self.tr("Your API key for OpenAI."))
+
+        self.aiApiKeyAnthropic = QLineEdit(self)
+        self.aiApiKeyAnthropic.setEchoMode(QLineEdit.EchoMode.Password)
+        self.aiApiKeyAnthropic.setPlaceholderText(self.tr("Anthropic API Key (sk-ant-...)"))
+        self.aiApiKeyAnthropic.hide()
+        if getattr(CONFIG, 'aiApiKeyAnthropic', ''):
+            self.aiApiKeyAnthropic.setText(CONFIG.aiApiKeyAnthropic)
+        self.mainForm.addRow(self.tr("Anthropic API Key"), self.aiApiKeyAnthropic, self.tr("Your API key for Anthropic."))
+
+        self.aiApiKeyGemini = QLineEdit(self)
+        self.aiApiKeyGemini.setEchoMode(QLineEdit.EchoMode.Password)
+        self.aiApiKeyGemini.setPlaceholderText(self.tr("Gemini API Key (AIza...)"))
+        self.aiApiKeyGemini.hide()
+        if getattr(CONFIG, 'aiApiKeyGemini', ''):
+            self.aiApiKeyGemini.setText(CONFIG.aiApiKeyGemini)
+        self.mainForm.addRow(self.tr("Gemini API Key"), self.aiApiKeyGemini, self.tr("Your API key for Google Gemini."))
         
         # Engine Path
         self.aiEndpoint = QLineEdit(self)
@@ -1069,9 +1081,11 @@ class GuiPreferences(NDialog):
             self.tr("Endpoint URL (e.g. http://127.0.0.1:8080)"),
         )
 
-        # Toggle API Key visibility based on provider
+        # Toggle API Key visibility based on provider.
+        # Note: the initial visibility pass is deferred until after
+        # self.mainForm.finalise() below, since the form layout (needed
+        # for labelForField) does not exist yet during buildForm().
         self.aiProvider.currentTextChanged.connect(self._toggle_api_fields)
-        self._toggle_api_fields()
 
 
         
@@ -1079,6 +1093,7 @@ class GuiPreferences(NDialog):
         modelLayout = QHBoxLayout()
         self.aiModelCombo = NComboBox(self)
         self.aiModelCombo.setMinimumWidth(200)
+        self.aiModelCombo.setEditable(True)
         self.aiModelCombo.addItem(CONFIG.aiModel)
         self.aiModelCombo.setCurrentText(CONFIG.aiModel)
         
@@ -1157,6 +1172,7 @@ class GuiPreferences(NDialog):
 
 
         self.mainForm.finalise()
+        self._toggle_api_fields()
         self.sidebar.setSelected(1)
 
     ##
@@ -1185,37 +1201,110 @@ class GuiPreferences(NDialog):
 
     @pyqtSlot()
     def _refreshAiModels(self) -> None:
+        """Fetch the model list using the hardcoded base URLs for each provider.
+
+        The endpoint field is only used for Local / Llama.cpp.
+        """
         import requests
-        endpoint = self.aiEndpoint.text().strip().rstrip("/")
-        if not endpoint:
-            return
-        try:
+
+        provider = self.aiProvider.currentText()
+        if provider == "OpenAI":
+            api_key = self.aiApiKeyOpenAI.text().strip()
+        elif provider == "Anthropic":
+            api_key = self.aiApiKeyAnthropic.text().strip()
+        elif provider == "Google Gemini":
+            api_key = self.aiApiKeyGemini.text().strip()
+        else:
+            api_key = ""
+
+        if provider == "Local / Llama.cpp":
+            endpoint = self.aiEndpoint.text().strip().rstrip("/")
+            if not endpoint:
+                return
             url = f"{endpoint}/models" if endpoint.endswith("/v1") else f"{endpoint}/v1/models"
-            r = requests.get(url, timeout=3)
+            headers = {}
+        elif provider == "OpenAI":
+            if not api_key:
+                return
+            url = "https://api.openai.com/v1/models"
+            headers = {"Authorization": f"Bearer {api_key}"}
+        elif provider == "Anthropic":
+            if not api_key:
+                return
+            url = "https://api.anthropic.com/v1/models"
+            headers = {
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+            }
+        elif provider == "Google Gemini":
+            if not api_key:
+                return
+            url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
+            headers = {}
+        else:
+            return
+
+        try:
+            r = requests.get(url, headers=headers, timeout=5)
             r.raise_for_status()
             data = r.json()
+            if provider == "Google Gemini":
+                # Gemini returns {"models": [{"name": "models/xxx", ...}]}
+                names = []
+                for m in data.get("models", []):
+                    name = m.get("name", "")
+                    if not name.startswith("models/"):
+                        continue
+                    # Only list models that can generate content
+                    if "generateContent" not in m.get("supportedGenerationMethods", []):
+                        continue
+                    names.append(name[len("models/"):])
+            else:
+                names = [m.get("id", "") for m in data.get("data", [])]
+
+            self.aiModelCombo.blockSignals(True)
+            current = CONFIG.aiModel
             self.aiModelCombo.clear()
-            for m in data.get("data", []):
-                self.aiModelCombo.addItem(m.get("id", ""))
-            
-            idx = self.aiModelCombo.findText(CONFIG.aiModel)
+            for name in names:
+                self.aiModelCombo.addItem(name)
+            idx = self.aiModelCombo.findText(current)
             if idx >= 0:
                 self.aiModelCombo.setCurrentIndex(idx)
+            elif names:
+                self.aiModelCombo.setCurrentIndex(0)
+            else:
+                self.aiModelCombo.addItem(current)
+            self.aiModelCombo.blockSignals(False)
         except Exception as e:
             logger.error(f"Failed to fetch models: {e}")
 
     @pyqtSlot()
     def _toggle_api_fields(self) -> None:
-        """Show/hide API key field based on selected provider."""
+        """Show/hide provider-specific fields based on the selected provider.
+
+        The endpoint, context size, and temperature are local-only options;
+        cloud providers use hardcoded base URLs and their own defaults.
+        """
         provider = self.aiProvider.currentText()
-        key_widget = self.aiApiKey
-        
-        if provider == "Local / Llama.cpp":
-            key_widget.setEnabled(False)
-            key_widget.hide()
-        else:
-            key_widget.setEnabled(True)
-            key_widget.show()
+        is_local = provider == "Local / Llama.cpp"
+
+        def set_row_visible(widget, visible: bool) -> None:
+            widget.setVisible(visible)
+            from PyQt6.QtWidgets import QLabel
+            for label in self.mainForm.findChildren(QLabel):
+                if label.buddy() == widget:
+                    label.setVisible(visible)
+
+        # Show the correct API key field
+        set_row_visible(self.aiApiKeyOpenAI, provider == "OpenAI")
+        set_row_visible(self.aiApiKeyAnthropic, provider == "Anthropic")
+        set_row_visible(self.aiApiKeyGemini, provider == "Google Gemini")
+
+        # Endpoint, context size, and temperature apply to Local only
+        set_row_visible(self.aiEndpoint, is_local)
+        set_row_visible(self.aiContextSize, is_local)
+        set_row_visible(self.aiTemperature, is_local)
+        set_row_visible(self.aiThinkingCombo, is_local)
 
     @pyqtSlot(int)
     def _sidebarClicked(self, section: int) -> None:
@@ -1520,7 +1609,9 @@ class GuiPreferences(NDialog):
         CONFIG.vimMode = vimMode
         CONFIG.aiEnabled = self.aiEnabled.isChecked()
         CONFIG.aiProvider = self.aiProvider.currentText()
-        CONFIG.aiApiKey = self.aiApiKey.text()
+        CONFIG.aiApiKeyOpenAI = self.aiApiKeyOpenAI.text()
+        CONFIG.aiApiKeyAnthropic = self.aiApiKeyAnthropic.text()
+        CONFIG.aiApiKeyGemini = self.aiApiKeyGemini.text()
         CONFIG.aiEndpoint = self.aiEndpoint.text()
         CONFIG.aiModel = self.aiModelCombo.currentText()
         CONFIG.aiContextSize = self.aiContextSize.value()
