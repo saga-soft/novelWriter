@@ -474,10 +474,9 @@ class GuiStoryView(QWidget):
             combo.blockSignals(True)
             combo.clear()
             combo.addItem("", "")
-            iPx = SHARED.theme.baseIconHeight
             for tag, name, tClass, _, _ in sorted(index.getTagsData(), key=lambda x: x[1].lower()):
                 iClass = nwItemClass.__members__.get(tClass, nwItemClass.NO_CLASS)
-                combo.addItem(SHARED.theme.getIcon(nwLabels.CLASS_ICON[iClass], iPx, iPx), name, tag)
+                combo.addItem(SHARED.theme.getIcon(nwLabels.CLASS_ICON[iClass]), name, tag)
             combo.setCurrentData(current, "")
             combo.blockSignals(False)
             if combo.currentData() != current:

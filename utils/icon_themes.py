@@ -39,13 +39,13 @@ ET.register_namespace("", "http://www.w3.org/2000/svg")
 # Repo: https://github.com/google/material-design-icons
 # Website: https://fonts.google.com/icons
 
-# FontAwesome
-# Repo: https://github.com/FortAwesome/Font-Awesome
-# Website: https://fontawesome.com/
-
 # Lucide
 # Repo: https://github.com/lucide-icons/lucide
 # Website: https://lucide.dev/
+
+# FontAwesome
+# Repo: https://github.com/FortAwesome/Font-Awesome
+# Website: https://fontawesome.com/
 
 ICON_SOURCES = {
     "material": "https://github.com/google/material-design-icons.git",
@@ -79,6 +79,8 @@ ICONS = [
     "cls_trash",
     "cls_world",
 
+    "key_pov",
+    "key_focus",
     "key_mention",
 
     "cmn_general",
@@ -320,7 +322,7 @@ def processFontAwesome(workDir: Path, iconsDir: Path, jobs: dict) -> None:
             if iconFile.is_file():
                 svg = ET.fromstring(iconFile.read_text(encoding="utf-8"))
                 viewbox = [int(x) for x in svg.get("viewBox", "").split()]
-                viewbox = [viewbox[2] // 2 - 256, 0, 512, 512]
+                viewbox = [viewbox[2] // 2 - 304, -48, 608, 608]  # Pad to match Material icons
                 for elem in svg.iter():
                     elem.attrib.pop("fill", None)
                 svg.set("viewBox", " ".join(str(x) for x in viewbox))
@@ -353,6 +355,7 @@ def processLucide(workDir: Path, iconsDir: Path, jobs: dict) -> None:
             if iconFile.is_file():
                 svg = ET.fromstring(iconFile.read_text(encoding="utf-8"))
                 ET.indent(svg, space="")
+                svg.set("viewBox", "-1 -1 26 26")  # Pad to match Material icons
                 svg.set("fill", "none")
                 svg.set("stroke", "#000000")
                 svg.set("height", "128")

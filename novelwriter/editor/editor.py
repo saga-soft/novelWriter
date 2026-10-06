@@ -71,6 +71,7 @@ from novelwriter.common import (
     qtAddMenu,
     qtLambda,
     qtWeakLambda,
+    stripUnsafe,
     transferCase,
 )
 from novelwriter.constants import nwConst, nwKeyWords, nwShortcode, nwStyles, nwUnicode
@@ -752,7 +753,7 @@ class GuiDocEditor(QTextEdit):
         text. This also clears undo history.
         """
         QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
-        self.setPlainText(text)
+        self.setPlainText(stripUnsafe(text))
         self._qDocument.setLineHeight(CONFIG.lineHeight)
         self.updateDocMargins()
         self.setDocumentChanged(True)
@@ -867,12 +868,12 @@ class GuiDocEditor(QTextEdit):
 
         See: https://doc.qt.io/qt-6/qtextdocument.html#toPlainText
         """
-        return self._qDocument.toRawText().translate(self.SEP_TABLE)
+        return stripUnsafe(self._qDocument.toRawText().translate(self.SEP_TABLE))
 
     def getSelectedText(self) -> str:
         """Get currently selected text."""
         if (cursor := self.textCursor()).hasSelection():
-            return cursor.selectedText().translate(self.SEP_TABLE)
+            return stripUnsafe(cursor.selectedText().translate(self.SEP_TABLE))
         return ""
 
     def getCursorPosition(self) -> int:
@@ -2661,7 +2662,7 @@ class GuiDocEditor(QTextEdit):
             logger.debug("Inserted text into document")
             cursor = self.textCursor()
             cursor.beginEditBlock()
-            cursor.insertText(text)
+            cursor.insertText(stripUnsafe(text))
             cursor.endEditBlock()
             self.setTextCursor(cursor)
             # Deferred to avoid re-entrancy, see #2917

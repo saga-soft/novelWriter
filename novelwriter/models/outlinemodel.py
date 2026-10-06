@@ -110,7 +110,7 @@ class OutlineNode:
         self._chars = ""
         self._progress = ""
         self._lists: dict[str, list[str]] = {}
-        self._entries: list[list[tuple[str, str, str]]] = []
+        self._entries: list[list[tuple[str, str, str, str]]] = []
         self._style = style
 
         self.refresh()
@@ -168,8 +168,10 @@ class OutlineNode:
             pos += len(name) + 2
         return spans
 
-    def entries(self, column: int) -> list[tuple[str, str, str]]:
-        """Return the key, label and text of the entries of a column."""
+    def entries(self, column: int) -> list[tuple[str, str, str, str]]:
+        """Return the key, label, short label and text of the entries
+        of a column. The short label is used when an icon is shown.
+        """
         return self._entries[column] if 0 <= column < len(self._entries) else []
 
     ##
@@ -192,22 +194,23 @@ class OutlineNode:
             self._lists = {k: v for k, v in h.getReferences().items() if v}
 
             kinds = {"story": tr.sStory, "note": tr.sNote}
-            lookup = {k: (tr.sKeys.get(k, k), ", ".join(v)) for k, v in self._lists.items()}
-            lookup[COMMENT_SYNOPSIS] = (tr.sSynopsis, h.synopsis)
+            lookup = {k: (tr.sKeys.get(k, k), "", ", ".join(v)) for k, v in self._lists.items()}
+            lookup[COMMENT_SYNOPSIS] = (tr.sSynopsis, "", h.synopsis)
 
             # Comment keys are matched regardless of spelling
             for key, text in h.comments.items():
                 kind, _, name = key.partition(".")
                 if kind in kinds and name:
-                    lookup[key.lower()] = (f"{kinds[kind]} ({name.title()})", text)
+                    name = name.title()
+                    lookup[key.lower()] = (f"{kinds[kind]} ({name})", name, text)
 
             self._entries = []
             for keys in self._columns:
                 entries = []
                 for key in keys:
-                    label, text = lookup.get(key, ("", ""))
+                    label, short, text = lookup.get(key, ("", "", ""))
                     if text:
-                        entries.append((key, label, nwUnicode.U_LSEP.join(t for t in text.split("\n") if t)))
+                        entries.append((key, label, short, nwUnicode.U_LSEP.join(t for t in text.split("\n") if t)))
                 self._entries.append(entries)
 
 

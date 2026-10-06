@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import logging
+import random
 import uuid
 
 from pathlib import Path
@@ -56,6 +57,8 @@ MAX_COLUMN_KEYS = 5
 SETTINGS_TEMPLATE: dict[str, tuple[type, T_ViewValue]] = {
     "outline.syntaxColors":    (bool, False),
     "outline.rowLines":        (int, 3),
+    "outline.commentIcons":    (bool, False),
+    "outline.referenceIcons":  (bool, False),
 
     "outline.showParts":       (bool, True),
     "outline.showScenes":      (bool, True),
@@ -74,6 +77,8 @@ SETTINGS_LABELS = {
     "outline.grpAppearance":   QT_TRANSLATE_NOOP("StoryViews", "Appearance"),
     "outline.syntaxColors":    QT_TRANSLATE_NOOP("StoryViews", "Use syntax colours"),
     "outline.rowLines":        QT_TRANSLATE_NOOP("StoryViews", "Row height"),
+    "outline.commentIcons":    QT_TRANSLATE_NOOP("StoryViews", "Show icons for comment types"),
+    "outline.referenceIcons":  QT_TRANSLATE_NOOP("StoryViews", "Show icons for reference types"),
 
     "outline.grpDocuments":    QT_TRANSLATE_NOOP("StoryViews", "Documents"),
     "outline.showParts":       QT_TRANSLATE_NOOP("StoryViews", "Show partitions"),
@@ -98,8 +103,11 @@ SETTINGS_LABELS = {
 
 
 def newColumnID() -> str:
-    """Generate a new short outline column ID."""
-    return uuid.uuid4().hex[:8]
+    """Generate a new outline column ID."""
+    # We assume collisions won't happen since there will be very few
+    # columns, but if it happens the user will get a weird overwritten
+    # column bug, and should probably play the lottery
+    return f"{random.getrandbits(32):08x}"
 
 
 def isColumnKey(key: str) -> bool:

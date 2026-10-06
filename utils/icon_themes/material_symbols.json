@@ -17,7 +17,9 @@
     "cls_trash": "delete",
     "cls_world": "globe",
 
-    "key_mention": "person_heart",
+    "key_pov": "person_heart",
+    "key_focus": "person_check",
+    "key_mention": "person_add",
 
     "cmn_general": "notes",
     "cmn_note": "chat",

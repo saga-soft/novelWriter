@@ -50,6 +50,11 @@ logger = logging.getLogger(__name__)
 
 _Type = TypeVar("_Type")
 
+# Non-whitespace Cc/Cs code points, for use with str.translate
+_STRIP_TABLE = dict.fromkeys((*range(0x20), *range(0x7F, 0xA0), *range(0xD800, 0xE000)))
+for _c in "\t\n\v\f\r\x1c\x1d\x1e\x1f\x85":
+    del _STRIP_TABLE[ord(_c)]
+
 
 ##
 #  Checker Functions
@@ -314,11 +319,11 @@ def formatLink(link: str, text: str = "") -> str:
 ##
 
 
-def _stripUnsafe(text: str) -> str:
+def stripUnsafe(text: str) -> str:
     """Drop non-whitespace control characters and lone surrogates from
     a string.
     """
-    return "".join(c for c in str(text) if c.isspace() or unicodedata.category(c) not in ("Cc", "Cs"))
+    return str(text).translate(_STRIP_TABLE)
 
 
 def simplified(text: str) -> str:
@@ -326,12 +331,12 @@ def simplified(text: str) -> str:
     replace all occurrences of (multiple) whitespaces with a 0x20
     space.
     """
-    return " ".join(_stripUnsafe(text).split())
+    return " ".join(stripUnsafe(text).split())
 
 
 def compact(text: str) -> str:
     """Compact a string by removing spaces."""
-    return "".join(_stripUnsafe(text).split())
+    return "".join(stripUnsafe(text).split())
 
 
 def uniqueCompact(text: str) -> str:

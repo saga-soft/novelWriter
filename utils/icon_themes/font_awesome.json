@@ -17,7 +17,9 @@
     "cls_trash": "trash-can",
     "cls_world": "earth-africa",
 
-    "key_mention": "user-check",
+    "key_pov": "user",
+    "key_focus": "user-check",
+    "key_mention": "user-plus",
 
     "cmn_general": "rectangle-list",
     "cmn_note": "message",

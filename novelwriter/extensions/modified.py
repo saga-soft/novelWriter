@@ -401,7 +401,7 @@ class NFlatIconButton(QToolButton):
         """Set an icon from the current theme."""
         self._icon = icon
         if self._iconToggle:
-            self.setIcon(SHARED.theme.getToggleIcon(icon, self.iconSize().width(), self.iconSize().height()))
+            self.setIcon(SHARED.theme.getToggleIcon(icon))
         else:
             self.setIcon(SHARED.theme.getIcon(icon))
 
@@ -459,7 +459,7 @@ class NFlatIconTextButton(QToolButton):
         """Set an icon from the current theme."""
         self._icon = icon
         if self._iconToggle:
-            self.setIcon(SHARED.theme.getToggleIcon(icon, self.iconSize().width(), self.iconSize().height()))
+            self.setIcon(SHARED.theme.getToggleIcon(icon))
         else:
             self.setIcon(SHARED.theme.getIcon(icon))
 

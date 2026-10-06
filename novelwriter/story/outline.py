@@ -23,13 +23,15 @@ from __future__ import annotations
 
 import logging
 import math
+import time
 
 from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import QModelIndex, QPoint, QPointF, QRect, QSize, Qt, pyqtSlot
+from PyQt6.QtCore import QEvent, QModelIndex, QPoint, QPointF, QRect, QSize, Qt, pyqtSlot
 from PyQt6.QtGui import (
     QDropEvent,
     QFontMetrics,
+    QHelpEvent,
     QIcon,
     QPainter,
     QPalette,
@@ -49,6 +51,7 @@ from PyQt6.QtWidgets import (
     QLabel,
     QStyledItemDelegate,
     QStyleOptionViewItem,
+    QToolTip,
     QTreeWidget,
     QTreeWidgetItem,
     QVBoxLayout,
@@ -180,9 +183,13 @@ class GuiOutlineViewSettings(GuiStorySettingsBase):
         self.syntaxColors = NSwitch(self, height=iPx)
         self.rowLines = NSpinBox(self, minVal=MIN_LINES, maxVal=MAX_LINES)
         self.rowLines.setFixedNumbersWidth(3)
+        self.commentIcons = NSwitch(self, height=iPx)
+        self.referenceIcons = NSwitch(self, height=iPx)
 
         self.form.addRow(settings.getLabel("outline.syntaxColors"), self.syntaxColors)
         self.form.addRow(settings.getLabel("outline.rowLines"), self.rowLines, unit=trUnit(nwStdUnit.LINES))
+        self.form.addRow(settings.getLabel("outline.commentIcons"), self.commentIcons)
+        self.form.addRow(settings.getLabel("outline.referenceIcons"), self.referenceIcons)
 
         # Documents
         # =========
@@ -231,6 +238,8 @@ class GuiOutlineViewSettings(GuiStorySettingsBase):
         # General
         self.syntaxColors.setChecked(settings.getBool("outline.syntaxColors"))
         self.rowLines.setValue(settings.getInt("outline.rowLines"))
+        self.commentIcons.setChecked(settings.getBool("outline.commentIcons"))
+        self.referenceIcons.setChecked(settings.getBool("outline.referenceIcons"))
 
         # Documents
         self.showParts.setChecked(settings.getBool("outline.showParts"))
@@ -258,6 +267,8 @@ class GuiOutlineViewSettings(GuiStorySettingsBase):
         # General
         settings.setValue("outline.syntaxColors", self.syntaxColors.isChecked())
         settings.setValue("outline.rowLines", self.rowLines.value())
+        settings.setValue("outline.commentIcons", self.commentIcons.isChecked())
+        settings.setValue("outline.referenceIcons", self.referenceIcons.isChecked())
 
         # Documents
         settings.setValue("outline.showParts", self.showParts.isChecked())
@@ -482,8 +493,7 @@ class _ColumnsPage(NFixedPage):
         """Return the icon of a column key."""
         if not (icon := nwKeyWords.KEY_ICON.get(key)):
             icon = nwLabels.COMMENT_ICON[MODIFIERS.get(key.partition(".")[0], nwComment.PLAIN)]
-        iPx = SHARED.theme.baseIconHeight
-        return SHARED.theme.getIcon(icon, iPx, iPx)
+        return SHARED.theme.getIcon(icon)
 
     def _refreshOptions(self) -> None:
         """Populate the column key options that are not already in use."""
@@ -567,6 +577,16 @@ class GuiStoryOutlineTree(NTreeView):
             header.setSectionResizeMode(QtHeaderInteractive)
 
     ##
+    #  Setters
+    ##
+
+    def setHighlight(self, tags: set[str]) -> None:
+        """Set the reference tag keys to highlight."""
+        self._delegate.setHighlight(tags)
+        if viewport := self.viewport():  # pragma: no branch
+            viewport.update()
+
+    ##
     #  Methods
     ##
 
@@ -588,12 +608,23 @@ class GuiStoryOutlineTree(NTreeView):
         if viewport := self.viewport():  # pragma: no branch
             viewport.update()
 
+    def clear(self) -> None:
+        """Clear the outline."""
+        self._model.clear()
+        self._built = False
+        self._lastHandle = None
+        self._lastRevision = -1
+
     def refresh(self, rootHandle: str | None, force: bool = False) -> None:
         """Rebuild the outline if anything changed, or if forced."""
         index = SHARED.project.index
         if force or not self._built or rootHandle != self._lastHandle or index.indexRevision != self._lastRevision:
             logger.info("Building story view '%s'", self._settings.name)
+
+            start = time.perf_counter()
+            data = SHARED.project.data
             settings = self._settings
+
             levels = set()
             if settings.getBool("outline.showParts"):
                 levels.add(1)
@@ -603,10 +634,11 @@ class GuiStoryOutlineTree(NTreeView):
                 levels.add(3)
             if settings.getBool("outline.showSections"):
                 levels.add(4)
-            data = SHARED.project.data
+
             perPage = settings.getInt("outline.countPerPage") if settings.getBool("outline.showProgress") else 0
             clearDouble = settings.getBool("outline.clearDoublePage")
             target = data.targetCount if settings.getBool("outline.useTargetCount") else 0
+
             columns = settings.columns
             columnIDs = [c.cid for c in columns]
             if columnIDs != self._columnIDs and self._columnIDs is not None:
@@ -629,8 +661,15 @@ class GuiStoryOutlineTree(NTreeView):
                 self._loadColumnState()
 
             self._delegate.setSyntaxColors(settings.getBool("outline.syntaxColors"))
+            self._delegate.setIcons(
+                settings.getBool("outline.commentIcons"),
+                settings.getBool("outline.referenceIcons"),
+            )
             for i, column in enumerate(columns, OutlineModel.C_COLUMNS):
                 self.setColumnHidden(i, not column.keys)
+
+            logger.debug("Outline build in %.3f ms", (time.perf_counter() - start) * 1000)
+
             self._built = True
             self._lastHandle = rootHandle
             self._lastRevision = index.indexRevision
@@ -653,19 +692,6 @@ class GuiStoryOutlineTree(NTreeView):
                     width = header.sectionSize(column)
                 state[key] = width
             self._settings.setState("columns", state)
-
-    def setHighlight(self, tags: set[str]) -> None:
-        """Set the reference tag keys to highlight."""
-        self._delegate.setHighlight(tags)
-        if viewport := self.viewport():  # pragma: no branch
-            viewport.update()
-
-    def clear(self) -> None:
-        """Clear the outline."""
-        self._model.clear()
-        self._built = False
-        self._lastHandle = None
-        self._lastRevision = -1
 
     ##
     #  Overrides
@@ -759,21 +785,26 @@ class _OutlineDelegate(QStyledItemDelegate):
     __slots__ = (
         "_accentFormat",
         "_boldFormat",
+        "_commentIcons",
         "_fm",
         "_fmB",
         "_helpCol",
         "_highlight",
+        "_iconIndent",
+        "_icons",
         "_keyCol",
         "_lineHeight",
         "_margin",
         "_modCol",
         "_modFormat",
         "_noteCol",
+        "_referenceIcons",
         "_rowHeight",
         "_rowLines",
         "_syntaxColors",
         "_tagCol",
         "_textCol",
+        "_tips",
         "_wrapOption",
     )
 
@@ -785,6 +816,11 @@ class _OutlineDelegate(QStyledItemDelegate):
         self._lineHeight = 0
         self._highlight: set[str] = set()
         self._syntaxColors = False
+        self._commentIcons = False
+        self._referenceIcons = False
+        self._iconIndent = 0
+        self._icons: dict[str, QIcon] = {}
+        self._tips: dict[tuple[int, int], list[tuple[QRect, str]]] = {}
         self._boldFormat = QTextCharFormat()
         self._modFormat = QTextCharFormat()
         self._accentFormat = QTextCharFormat()
@@ -805,6 +841,11 @@ class _OutlineDelegate(QStyledItemDelegate):
         self._syntaxColors = enabled
         self._updateColors()
 
+    def setIcons(self, comments: bool, references: bool) -> None:
+        """Set whether to show icons in place of entry labels."""
+        self._commentIcons = comments
+        self._referenceIcons = references
+
     def setRowLines(self, lines: int) -> None:
         """Set the number of lines per row."""
         self._rowLines = min(max(lines, MIN_LINES), MAX_LINES)
@@ -822,6 +863,7 @@ class _OutlineDelegate(QStyledItemDelegate):
         self._boldFormat.setFont(SHARED.theme.guiFontB)
         self._modFormat.setFont(SHARED.theme.guiFontB)
         self._updateColors()
+        self._updateIcons()
 
     ##
     #  Overrides
@@ -841,6 +883,7 @@ class _OutlineDelegate(QStyledItemDelegate):
             super().paint(painter, option, index)
             return
 
+        self._tips.pop((index.row(), index.column()), None)
         rect = option.rect
 
         painter.save()
@@ -884,9 +927,22 @@ class _OutlineDelegate(QStyledItemDelegate):
                     painter.drawText(QRect(x, y + hTitle + hLine, w, hLine), LINE_FLAGS, progress)
 
             case column:
-                self._paintEntries(painter, x, y, w, h, node, node.entries(column - OutlineModel.C_COLUMNS))
+                entries = node.entries(column - OutlineModel.C_COLUMNS)
+                if tips := self._paintEntries(painter, x, y, w, h, node, entries):
+                    self._tips[(index.row(), column)] = tips
 
         painter.restore()
+
+    def helpEvent(
+        self, event: QHelpEvent | None, view: QAbstractItemView | None, option: QStyleOptionViewItem, index: QModelIndex
+    ) -> bool:
+        """Show the full label of an entry icon as a tooltip."""
+        if event and event.type() == QEvent.Type.ToolTip:
+            for area, tip in self._tips.get((index.row(), index.column()), []):
+                if area.contains(event.pos()):
+                    QToolTip.showText(event.globalPos(), tip, view)
+                    return True
+        return super().helpEvent(event, view, option, index)
 
     ##
     #  Internal Functions
@@ -896,6 +952,7 @@ class _OutlineDelegate(QStyledItemDelegate):
         """Refresh the cached row heights from the font metrics."""
         self._lineHeight = self._fmB.height() + 2 * self._margin + 2 * ROW_PAD
         self._rowHeight = self._lineHeight + (self._rowLines - 1) * self._fm.height()
+        self._iconIndent = self._fm.height() + self._fm.horizontalAdvance(" ")
 
     def _updateColors(self) -> None:
         """Refresh the cached colours from the theme."""
@@ -917,24 +974,58 @@ class _OutlineDelegate(QStyledItemDelegate):
         self._modFormat.setForeground(self._modCol)
         self._accentFormat.setForeground(SHARED.theme.accentText)
 
+    def _updateIcons(self) -> None:
+        """Refresh the cached icons, keyed by reference key or comment
+        modifier.
+        """
+        icons = {k: SHARED.theme.getIcon(v) for k, v in nwKeyWords.KEY_ICON.items()}
+        for modifier in ("synopsis", "story", "note"):
+            icons[modifier] = SHARED.theme.getIcon(nwLabels.COMMENT_ICON[MODIFIERS[modifier]])
+        self._icons = icons
+
     def _paintEntries(
-        self, painter: QPainter, x: int, y: int, w: int, h: int, node: OutlineNode, entries: list[tuple[str, str, str]]
-    ) -> None:
-        """Paint wrapped entries, leaving a line for each following one."""
+        self,
+        painter: QPainter,
+        x: int,
+        y: int,
+        w: int,
+        h: int,
+        node: OutlineNode,
+        entries: list[tuple[str, str, str, str]],
+    ) -> list[tuple[QRect, str]]:
+        """Paint wrapped entries, leaving a line for each following one,
+        and return the icon areas with their full labels.
+        """
         hLine = self._fm.height()
         used = 0
-        for i, (key, label, text) in enumerate(entries, 1):
+        tips = []
+        for i, (key, label, short, text) in enumerate(entries, 1):
             reserved = (len(entries) - i) * hLine
-            label = f"{label}:"
-            full = f"{label} {text}"
-            if key in nwKeyWords.VALID_KEYS:
-                formats = [self._labelFormat(len(label), self._boldFormat)]
-                formats.extend(self._highlightFormats(node, key, len(label) + 1))
+            isRef = key in nwKeyWords.VALID_KEYS
+            useIcon = self._referenceIcons if isRef else self._commentIcons
+            icon = self._icons.get(key if isRef else key.partition(".")[0]) if useIcon else None
+            tip = label
+            if icon:
+                label = short
+
+            full = f"{label}: {text}" if label else text
+            offset = len(label) + 2 if label else 0
+            formats = [self._labelFormat(offset - 1, self._boldFormat if isRef else self._modFormat)] if label else []
+            if isRef:
+                formats.extend(self._highlightFormats(node, key, offset))
                 painter.setPen(self._tagCol)
             else:
-                formats = [self._labelFormat(len(label), self._modFormat)]
                 painter.setPen(self._noteCol)
-            used += self._drawLayout(painter, x, y + used, w, h - used - reserved, full, formats)
+
+            indent = self._iconIndent if icon else 0
+            height = self._drawLayout(painter, x, y + used, w, h - used - reserved, full, formats, indent)
+            if icon and height:
+                area = QRect(x, y + used, hLine, hLine)
+                icon.paint(painter, area)
+                tips.append((area, tip))
+            used += height
+
+        return tips
 
     def _labelFormat(self, length: int, fmt: QTextCharFormat) -> QTextLayout.FormatRange:
         """Return a label format range from the start of a text."""
@@ -957,22 +1048,32 @@ class _OutlineDelegate(QStyledItemDelegate):
         return formats
 
     def _drawLayout(
-        self, painter: QPainter, x: int, y: int, w: int, h: int, text: str, formats: list[QTextLayout.FormatRange]
+        self,
+        painter: QPainter,
+        x: int,
+        y: int,
+        w: int,
+        h: int,
+        text: str,
+        formats: list[QTextLayout.FormatRange],
+        indent: int = 0,
     ) -> int:
         """Draw wrapped text in the whole lines that fit, and return the
-        height used.
+        height used. The indent only applies to the first line.
         """
         layout = QTextLayout(text, SHARED.theme.guiFont)
         layout.setFormats(formats)
         layout.setTextOption(self._wrapOption)
         layout.beginLayout()
+        xPos = float(indent)
         yPos = 0.0
         for _ in range(h // self._fm.height()):
             if not (line := layout.createLine()).isValid():
                 break
-            line.setLineWidth(w)
-            line.setPosition(QPointF(0.0, yPos))
+            line.setLineWidth(w - xPos)
+            line.setPosition(QPointF(xPos, yPos))
             yPos += line.height()
+            xPos = 0.0
         layout.endLayout()
         layout.draw(painter, QPointF(x, y))
         return math.ceil(yPos)

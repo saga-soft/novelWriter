@@ -17,6 +17,8 @@
     "cls_trash",
     "cls_world",
 
+    "key_pov",
+    "key_focus",
     "key_mention",
 
     "cmn_general",

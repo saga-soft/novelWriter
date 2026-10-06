@@ -195,6 +195,10 @@ def testProjectDocument_LoadSave(monkeypatch, mockGUI, fncPath, mockRnd):
     assert doc.writeDocument("Stuff\n\n") is True
     assert doc.readDocument() == "Stuff\n\n"
 
+    # Control characters are stripped on read. See #3038.
+    assert doc.writeDocument("Some\x00text\x01with control chars") is True
+    assert doc.readDocument() == "Sometextwith control chars\n"
+
     # Quick Read
     # ==========
 

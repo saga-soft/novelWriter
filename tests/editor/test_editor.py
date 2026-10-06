@@ -3159,6 +3159,42 @@ def testGuiDocEditor_InsertFromMimeData_Urls(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
+def testGuiDocEditor_StripUnsafeCharacters(qtbot, nwGUI, projPath, mockRnd):
+    """Control characters must never survive an import/replace or a
+    paste, and must never be returned by getText or getSelectedText,
+    even if one reaches the document by another route. See #3038.
+    """
+    buildTestProject(NWProject(), projPath)
+    nwGUI.openProject(projPath)
+    docEditor = nwGUI.docEditor
+    assert docEditor.loadText(C.hSceneDoc) is True
+
+    # Import/replace strips control characters
+    docEditor.replaceText("Some\x00text\x01with control chars\n")
+    assert docEditor.getText() == "Sometextwith control chars\n"
+
+    # Paste strips control characters
+    docEditor.setCursorPosition(0)
+    mime = QMimeData()
+    mime.setText("Pasted\x00text")
+    docEditor.insertFromMimeData(mime)
+    assert docEditor.getText().startswith("Pastedtext")
+
+    # getText and getSelectedText strip control characters even if one
+    # reaches the document directly, bypassing the paste/import guards
+    cursor = docEditor.textCursor()
+    cursor.setPosition(0)
+    cursor.insertText("Raw\x00control")
+    docEditor.setTextCursor(cursor)
+    assert docEditor.getText().startswith("Rawcontrol")
+
+    cursor.setPosition(0)
+    cursor.movePosition(QtMoveRight, QtKeepAnchor, len("Raw\x00control"))
+    docEditor.setTextCursor(cursor)
+    assert docEditor.getSelectedText() == "Rawcontrol"
+
+
+@pytest.mark.gui
 def testGuiDocEditor_PasteAsPlainText(qtbot, nwGUI, projPath, mockRnd):
     """Test that the Ctrl+Shift+V shortcut always inserts the
     clipboard's plain text, ignoring any HTML or Markdown formatting

@@ -23,9 +23,9 @@ from __future__ import annotations
 
 import pytest
 
-from PyQt6.QtCore import QModelIndex, QPoint, QPointF, Qt
-from PyQt6.QtGui import QDropEvent, QPainter, QPixmap, QWheelEvent
-from PyQt6.QtWidgets import QApplication, QStyleOptionViewItem
+from PyQt6.QtCore import QEvent, QModelIndex, QPoint, QPointF, Qt
+from PyQt6.QtGui import QDropEvent, QHelpEvent, QPainter, QPixmap, QWheelEvent
+from PyQt6.QtWidgets import QApplication, QStyleOptionViewItem, QToolTip
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.constants import nwKeyWords
@@ -333,14 +333,36 @@ def testStoryOutline_Paint(qtbot, monkeypatch, nwGUI, prjLipsum):
             else {nwKeyWords.FOCUS_KEY: ["John"]}
         )
         refs = {k: ", ".join(v) for k, v in node._lists.items()}
-        node._entries = [[(k, labels[k], refs[k]) for k in keys if k in refs] for keys in node._columns]
-        node._entries[-1].append(("synopsis", "Synopsis", "Text"))
+        node._entries = [[(k, labels[k], "", refs[k]) for k in keys if k in refs] for keys in node._columns]
+        node._entries[-1].append(("synopsis", "Synopsis", "", "Text"))
         if i % 2:
             node._progress = ""
 
     # Paint all rows with one selected
     tree.setCurrentIndex(model.index(3, 0))
     assert not view.grab().isNull()
+
+    # Paint with icons, which show their full labels as tooltips
+    delegate.setIcons(True, True)
+    assert not view.grab().isNull()
+    (row, column), tips = next(iter(delegate._tips.items()))
+    area, tip = tips[0]
+    assert tip in labels.values()
+    index = model.index(row, column)
+    option = QStyleOptionViewItem()
+    outside = area.bottomRight() + QPoint(1, 1)
+    shown = []
+    with monkeypatch.context() as mp:
+        mp.setattr(QToolTip, "showText", lambda pos, text, *a: shown.append(text))
+        assert delegate.helpEvent(QHelpEvent(QEvent.Type.ToolTip, area.center(), area.center()), tree, option, index)
+        assert not delegate.helpEvent(QHelpEvent(QEvent.Type.ToolTip, outside, outside), tree, option, index)
+        delegate.helpEvent(QHelpEvent(QEvent.Type.WhatsThis, area.center(), area.center()), tree, option, index)
+    assert shown == [tip]
+
+    # Tooltips are cleared when the cell is painted without icons
+    delegate.setIcons(False, False)
+    assert not view.grab().isNull()
+    assert (row, column) not in delegate._tips
 
     # Highlighted references
     tree.setHighlight({"jane", "jack", "main", "night", "company", "custom"})
@@ -359,17 +381,17 @@ def testStoryOutline_Paint(qtbot, monkeypatch, nwGUI, prjLipsum):
     calls = []
     drawLayout = _OutlineDelegate._drawLayout
 
-    def recordLayout(self, painter, x, y, w, h, text, formats):
-        used = drawLayout(self, painter, x, y, w, h, text, formats)
-        calls.append((y, h, text, used, painter.pen().color(), formats[0].format))
+    def recordLayout(self, painter, x, y, w, h, text, formats, indent=0):
+        used = drawLayout(self, painter, x, y, w, h, text, formats, indent)
+        calls.append((y, h, text, used, painter.pen().color(), formats, indent))
         return used
 
     hLine = delegate._fm.height()
     pixmap = QPixmap(200, 200)
     painter = QPainter(pixmap)
     entries = [
-        ("@location", "Locations", ", ".join(f"World{i}" for i in range(30))),
-        ("note.purpose", "Note (Purpose)", "Text"),
+        ("@location", "Locations", "", ", ".join(f"World{i}" for i in range(30))),
+        ("note.purpose", "Note (Purpose)", "Purpose", "Text"),
     ]
     with monkeypatch.context() as mp:
         mp.setattr(_OutlineDelegate, "_drawLayout", recordLayout)
@@ -379,10 +401,36 @@ def testStoryOutline_Paint(qtbot, monkeypatch, nwGUI, prjLipsum):
         assert world[2].startswith("Locations: World0, World1")
         assert 2 * hLine - 2 <= world[3] <= 2 * hLine + 2
         assert world[4] == delegate._tagCol
-        assert world[5] == delegate._boldFormat
+        assert world[5][0].format == delegate._boldFormat
+        assert world[6] == 0
         assert note[:3] == (world[3], 3 * hLine - world[3], "Note (Purpose): Text")
         assert note[4] == delegate._noteCol
-        assert note[5] == delegate._modFormat
+        assert note[5][0].format == delegate._modFormat
+        assert note[6] == 0
+
+        # Icons replace the labels, and the first line is indented
+        calls.clear()
+        delegate.setIcons(True, True)
+        delegate._paintEntries(painter, 0, 0, 150, 3 * hLine, node, entries)
+        world, note = calls
+        assert world[2].startswith("World0, World1")
+        assert world[5] == []
+        assert world[6] == delegate._iconIndent
+        assert note[2] == "Purpose: Text"
+        assert [(f.start, f.length) for f in note[5]] == [(0, 8)]
+        assert note[6] == delegate._iconIndent
+
+        # Highlights start at the text when there is no label
+        tree.setHighlight({"europe"})
+        calls.clear()
+        delegate._paintEntries(painter, 0, 0, 150, 3 * hLine, node, [(nwKeyWords.WORLD_KEY, "Location", "", "Europe")])
+        assert [(f.start, f.length) for f in calls[0][5]] == [(0, 6)]
+
+        # No icon is drawn if there is no room
+        calls.clear()
+        delegate._paintEntries(painter, 0, 0, 150, hLine, node, entries)
+        assert [c[3] for c in calls] == [0, hLine]
+        delegate.setIcons(False, False)
 
     painter.end()
 

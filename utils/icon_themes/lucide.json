@@ -17,7 +17,9 @@
     "cls_trash": "trash",
     "cls_world": "earth",
 
-    "key_mention": "user-round-check",
+    "key_pov": "user-star",
+    "key_focus": "user-check",
+    "key_mention": "user-plus",
 
     "cmn_general": "chevrons-right",
     "cmn_note": "message-square-text",

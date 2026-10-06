@@ -29,7 +29,7 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QColor, QFont, QFontDatabase, QIcon, QPalette, QPixmap, QStyleHints
 
 from novelwriter import CONFIG
@@ -533,6 +533,22 @@ def testGuiTheme_IconThemeUnknownMeta(tstPaths):
     theme.iconCache.loadTheme("test_icons")
     assert theme.iconCache._meta.name == "Test Icons"
 
+    # The icon size is read from the first valid icon
+    theme.iconCache.clear()
+    iconsFile.write_text(
+        "meta:name = Test Icons\nicon:add = some-svg-data\n"
+        'icon:remove = <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" />\n',
+        encoding="utf-8",
+    )
+    theme.iconCache.loadTheme("test_icons")
+    assert theme.iconCache._iconSize == QSize(32, 32)
+
+    # A theme without icons has no icon size
+    theme.iconCache.clear()
+    iconsFile.write_text("meta:name = Test Icons\n", encoding="utf-8")
+    theme.iconCache.loadTheme("test_icons")
+    assert not theme.iconCache._iconSize.isValid()
+
 
 @pytest.mark.gui
 def testGuiTheme_LoadIcons():
@@ -544,6 +560,9 @@ def testGuiTheme_LoadIcons():
     theme = GuiTheme()
     theme.initThemes()
     iconCache = theme.iconCache
+
+    # The icon size is read from the theme
+    assert iconCache._iconSize == QSize(128, 128)
 
     # Load Icons
     # ==========
@@ -557,6 +576,11 @@ def testGuiTheme_LoadIcons():
     qIcon = iconCache.getIcon("add:tool")
     assert isinstance(qIcon, QIcon)
     assert qIcon.isNull() is False, "No image data, SVG library may be missing"
+
+    # Icons are cached, and a missing colour is the default colour
+    assert iconCache.getIcon("add:tool") is qIcon
+    assert iconCache.getIcon("add:") is iconCache.getIcon("add")
+    assert iconCache.getIcon("add") is iconCache.getIcon("add:default")
 
     # Load it as a pixmap with a size
     # If this part of the test fails, you may need to set the
@@ -578,7 +602,7 @@ def testGuiTheme_LoadIcons():
     assert qIcon != iconCache._noIcon
 
     # Toggle icon
-    qIcon = iconCache.getToggleIcon("toggle-bullet:tool", 24, 24)
+    qIcon = iconCache.getToggleIcon("toggle-bullet:tool")
     assert isinstance(qIcon, QIcon)
     assert qIcon != iconCache._noIcon
     pOn = qIcon.pixmap(24, 24, QtIconNormal, QtIconOn)
@@ -586,7 +610,7 @@ def testGuiTheme_LoadIcons():
     assert pOn != pOff
 
     # Unknown toggle icon
-    qIcon = iconCache.getToggleIcon("stuff:tool", 24, 24)
+    qIcon = iconCache.getToggleIcon("stuff:tool")
     assert isinstance(qIcon, QIcon)
     assert qIcon == iconCache._noIcon
 

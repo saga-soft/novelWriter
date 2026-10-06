@@ -30,7 +30,7 @@ from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING, TextIO
 
-from novelwriter.common import formatTimeStamp, isHandle, safeExists, safeIsFile
+from novelwriter.common import formatTimeStamp, isHandle, safeExists, safeIsFile, stripUnsafe
 from novelwriter.enum import nwItemClass, nwItemLayout
 from novelwriter.error import formatException, logException
 from novelwriter.formats.tomlparser import NTomlParser
@@ -224,7 +224,7 @@ class ProjectDocument:
 
         self._lastHash = hashlib.sha1(text.encode()).hexdigest()
 
-        return text
+        return stripUnsafe(text)
 
     def writeDocument(self, text: str, forceWrite: bool = False) -> bool:
         """Write the document specified by the handle attribute. Handle

@@ -145,11 +145,11 @@ def testOutlineModel_Columns(nwGUI, prjLipsum):
     commented = model.node(model.index(1, 0))
     assert isinstance(commented, OutlineNode)
     synopsis, goal = commented.entries(0)
-    assert synopsis[:2] == ("synopsis", "Synopsis")
-    assert synopsis[2].startswith("Lorem ipsum dolor sit amet")
-    assert goal == ("story.goal", "Story Structure (Goal)", "Find\u2028the key")
-    assert commented.entries(1) == [("note.consistency", "Note (Consistency)", "Check")]
-    assert commented.entries(2) == [("@pov", "Point of View", "Bod")]
+    assert synopsis[:3] == ("synopsis", "Synopsis", "")
+    assert synopsis[3].startswith("Lorem ipsum dolor sit amet")
+    assert goal == ("story.goal", "Story Structure (Goal)", "Goal", "Find\u2028the key")
+    assert commented.entries(1) == [("note.consistency", "Note (Consistency)", "Consistency", "Check")]
+    assert commented.entries(2) == [("@pov", "Point of View", "", "Bod")]
     assert commented.entries(3) == []
 
 

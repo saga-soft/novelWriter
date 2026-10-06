@@ -262,8 +262,8 @@ class nwKeyWords:
 
     # Map to Class Icons
     KEY_ICON: ClassVar[dict[str, str]] = {
-        POV_KEY: "cls_character:root",
-        FOCUS_KEY: "cls_character:root",
+        POV_KEY: "key_pov:root",
+        FOCUS_KEY: "key_focus:root",
         CHAR_KEY: "cls_character:root",
         PLOT_KEY: "cls_plot:root",
         TIME_KEY: "cls_timeline:root",

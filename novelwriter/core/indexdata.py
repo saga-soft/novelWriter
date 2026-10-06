@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import logging
 
+from collections import defaultdict
 from typing import TYPE_CHECKING, Literal
 
 from novelwriter import CONFIG
@@ -62,7 +63,7 @@ class IndexNode:
         self._handle = tHandle
         self._item = nwItem
         self._headings: dict[str, IndexHeading] = {TT_NONE: IndexHeading(self._cache, TT_NONE)}
-        self._notes: dict[str, set[str]] = {}
+        self._notes: dict[str, set[str]] = defaultdict(set)
         self._count = 0
 
     def __repr__(self) -> str:
@@ -130,8 +131,7 @@ class IndexNode:
 
     def addNoteKey(self, style: T_NoteTypes, key: str) -> None:
         """Add a note key to the index."""
-        if style not in self._notes:
-            self._notes[style] = set()
+        self._cache.keys.add(key)
         self._notes[style].add(key)
 
     ##
@@ -185,7 +185,8 @@ class IndexNode:
                         raise ValueError("The notes style is invalid")
                     if not isListInstance(keys, str):
                         raise ValueError("The notes keys must be a list of strings")
-                    self._notes[style] = set(keys)
+                    self._notes[style].update(keys)
+                    self._cache.keys.update(keys)
             else:
                 raise KeyError("Index node contains an invalid key")
 
@@ -340,6 +341,7 @@ class IndexHeading:
         if keyword in nwKeyWords.VALID_KEYS:
             tag = tag.lower()
             if tag not in self._refs:
+                # This is deliberate since using defaultdict for _refs is unsafe
                 self._refs[tag] = set()
             self._refs[tag].add(keyword)
 

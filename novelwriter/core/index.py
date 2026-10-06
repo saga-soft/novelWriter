@@ -887,12 +887,13 @@ class IndexCache:
     which provides lookup capabilities and caching for shared data.
     """
 
-    __slots__ = ("note", "story", "tags")
+    __slots__ = ("keys", "note", "story", "tags")
 
     def __init__(self, tagsIndex: TagsIndex) -> None:
         self.tags: TagsIndex = tagsIndex
         self.story: set[str] = set()
         self.note: set[str] = set()
+        self.keys: set[str] = set()
 
 
 # The Item Index Objects
@@ -964,7 +965,9 @@ class ItemIndex:
         return
 
     def iterNovelStructure(
-        self, rHandle: str | None = None, activeOnly: bool = False
+        self,
+        rHandle: str | None = None,
+        activeOnly: bool = False,
     ) -> Iterable[tuple[str, str, IndexHeading]]:
         """Iterate over all items and headers in the novel structure for
         a given root handle, or for all if root handle is None.
@@ -1029,12 +1032,9 @@ class ItemIndex:
     def genNewNoteKey(self, tHandle: str, style: T_NoteTypes) -> str:
         """Generate a new notes key for a given item."""
         if style in NOTE_TYPES and (item := self._items.get(tHandle)):
-            keys = set()
-            for entry in self._items.values():
-                keys.update(entry.noteKeys(style))
             for _ in range(MAX_RETRY):
                 key = style[:1] + "".join(random.choices(KEY_SOURCE, k=4))
-                if key not in keys:
+                if key not in self._cache.keys:
                     item.addNoteKey(style, key)
                     return key
         return "err"
