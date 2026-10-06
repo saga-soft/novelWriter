@@ -99,13 +99,18 @@ class AiWorker(QThread):
             api_key = getattr(CONFIG, 'aiApiKeyAnthropic', '')
         elif provider == "Google Gemini":
             api_key = getattr(CONFIG, 'aiApiKeyGemini', '')
+        elif provider == "Local / Llama.cpp":
+            api_key = getattr(CONFIG, 'aiApiKeyLocal', '')
         else:
             api_key = ''
 
         if provider == "Local / Llama.cpp":
+            headers = {"Content-Type": "application/json"}
+            if api_key:
+                headers["Authorization"] = f"Bearer {api_key}"
             return {
                 "url": f"{CONFIG.aiEndpoint}/v1/chat/completions",
-                "headers": {"Content-Type": "application/json"},
+                "headers": headers,
                 "payload_format": "standard"
             }
 
@@ -311,6 +316,15 @@ class AiAssistantDock(QWidget):
 
         # Selectors Layout
         self.selectorsLayout = QHBoxLayout()
+        
+        self.selectorsLayout.addWidget(QLabel("Provider:", self))
+        self.providerCombo = QComboBox(self)
+        self.providerCombo.addItems(["Local / Llama.cpp", "OpenAI", "Anthropic", "Google Gemini"])
+        self.providerCombo.setCurrentText(getattr(CONFIG, "aiProvider", "Local / Llama.cpp"))
+        self.providerCombo.currentTextChanged.connect(self.changeProvider)
+        self.selectorsLayout.addWidget(self.providerCombo)
+        
+        self.selectorsLayout.addSpacing(10)
         
         self.selectorsLayout.addWidget(QLabel("Role:", self))
         self.roleCombo = QComboBox(self)
@@ -523,6 +537,11 @@ class AiAssistantDock(QWidget):
             CONFIG.saveConfig()
         self.modelCombo.blockSignals(False)
 
+    def changeProvider(self, provider_name: str):
+        CONFIG.aiProvider = provider_name
+        CONFIG.saveConfig()
+        self.refreshModels()
+
     def changeRole(self, role_name: str):
         CONFIG.aiActiveRole = role_name
         CONFIG.saveConfig()
@@ -552,11 +571,6 @@ class AiAssistantDock(QWidget):
         return f"{sys_prompt}\n\nHere is the current text the author is working on:\n\n---\n{text}\n---\n\nAssist the author as requested."
 
     def sendPrompt(self):
-        if getattr(CONFIG, 'aiProvider', 'Local / Llama.cpp') == "Local / Llama.cpp":
-            if not getattr(CONFIG, 'aiEndpoint', None):
-                QMessageBox.warning(self, "AI Assistant", "Please configure the AI Endpoint in Preferences.")
-                return
-
         prompt = self.inputEdit.toPlainText().strip()
         if not prompt:
             return
@@ -590,6 +604,13 @@ class AiAssistantDock(QWidget):
         self.statusLabel.setText(f"Thinking... (Prompt Tokens: ~{self.prompt_tokens})")
 
         provider = getattr(CONFIG, 'aiProvider', 'Local / Llama.cpp')
+        
+        # Local endpoint guard
+        if provider == "Local / Llama.cpp":
+            if not getattr(CONFIG, 'aiEndpoint', None):
+                QMessageBox.warning(self, "AI Assistant", "Please configure the AI Endpoint in Preferences.")
+                return
+                
         if provider == "OpenAI" and not getattr(CONFIG, 'aiApiKeyOpenAI', ''):
             QMessageBox.warning(self, "AI Assistant", "Please configure the OpenAI API Key in Preferences.")
             self.sendBtn.setEnabled(True)

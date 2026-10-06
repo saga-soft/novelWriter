@@ -241,6 +241,7 @@ class Config:
         "aiPromptReader",
         "aiActiveRole",
         "aiProvider",
+        "aiApiKeyLocal",
         "aiApiKeyOpenAI",
         "aiApiKeyAnthropic",
         "aiApiKeyGemini",
@@ -335,6 +336,7 @@ class Config:
         self.aiPromptReader = "You are an avid reader of this genre. Provide emotional reactions, point out where you get confused or bored, and highlight your favorite moments. React as a fan experiencing the story for the first time."
         self.aiActiveRole = "Co-author"
         self.aiProvider = "Local / Llama.cpp"
+        self.aiApiKeyLocal = "sk-dummy"
         self.aiApiKeyOpenAI = ""
         self.aiApiKeyAnthropic = ""
         self.aiApiKeyGemini = ""
@@ -864,6 +866,7 @@ class Config:
         self.aiPromptReader = parser.getStr(sec, "promptReader", self.aiPromptReader)
         self.aiActiveRole = parser.getStr(sec, "activeRole", self.aiActiveRole)
         self.aiProvider = parser.getStr(sec, "provider", self.aiProvider)
+        self.aiApiKeyLocal = parser.getStr(sec, "apiKeyLocal", self.aiApiKeyLocal)
         self.aiApiKeyOpenAI = parser.getStr(sec, "apiKeyOpenAI", self.aiApiKeyOpenAI)
         self.aiApiKeyAnthropic = parser.getStr(sec, "apiKeyAnthropic", self.aiApiKeyAnthropic)
         self.aiApiKeyGemini = parser.getStr(sec, "apiKeyGemini", self.aiApiKeyGemini)
@@ -1026,6 +1029,7 @@ class Config:
             "promptReader": self.aiPromptReader,
             "activeRole": self.aiActiveRole,
             "provider": self.aiProvider,
+            "apiKeyLocal": self.aiApiKeyLocal,
             "apiKeyOpenAI": self.aiApiKeyOpenAI,
             "apiKeyAnthropic": self.aiApiKeyAnthropic,
             "apiKeyGemini": self.aiApiKeyGemini,

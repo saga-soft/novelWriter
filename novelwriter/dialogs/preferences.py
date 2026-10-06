@@ -1048,6 +1048,14 @@ class GuiPreferences(NDialog):
         )
         
         # API Keys (only shown for respective providers)
+        self.aiApiKeyLocal = QLineEdit(self)
+        self.aiApiKeyLocal.setEchoMode(QLineEdit.EchoMode.Password)
+        self.aiApiKeyLocal.setPlaceholderText(self.tr("Local API Key (sk-...)"))
+        self.aiApiKeyLocal.hide()
+        if getattr(CONFIG, 'aiApiKeyLocal', ''):
+            self.aiApiKeyLocal.setText(CONFIG.aiApiKeyLocal)
+        self.mainForm.addRow(self.tr("Local API Key"), self.aiApiKeyLocal, self.tr("Your API key for local providers."))
+        
         self.aiApiKeyOpenAI = QLineEdit(self)
         self.aiApiKeyOpenAI.setEchoMode(QLineEdit.EchoMode.Password)
         self.aiApiKeyOpenAI.setPlaceholderText(self.tr("OpenAI API Key (sk-...)"))
@@ -1296,6 +1304,7 @@ class GuiPreferences(NDialog):
                     label.setVisible(visible)
 
         # Show the correct API key field
+        set_row_visible(self.aiApiKeyLocal, is_local)
         set_row_visible(self.aiApiKeyOpenAI, provider == "OpenAI")
         set_row_visible(self.aiApiKeyAnthropic, provider == "Anthropic")
         set_row_visible(self.aiApiKeyGemini, provider == "Google Gemini")
@@ -1609,6 +1618,7 @@ class GuiPreferences(NDialog):
         CONFIG.vimMode = vimMode
         CONFIG.aiEnabled = self.aiEnabled.isChecked()
         CONFIG.aiProvider = self.aiProvider.currentText()
+        CONFIG.aiApiKeyLocal = self.aiApiKeyLocal.text()
         CONFIG.aiApiKeyOpenAI = self.aiApiKeyOpenAI.text()
         CONFIG.aiApiKeyAnthropic = self.aiApiKeyAnthropic.text()
         CONFIG.aiApiKeyGemini = self.aiApiKeyGemini.text()
