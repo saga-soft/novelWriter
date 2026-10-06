@@ -240,6 +240,8 @@ class Config:
         "aiPromptPublisher",
         "aiPromptReader",
         "aiActiveRole",
+        "aiProvider",
+        "aiApiKey",
         "welcomeWinSize",
     )
 
@@ -330,6 +332,8 @@ class Config:
         self.aiPromptPublisher = "You are a commercial book publisher and marketer. Analyze the text for marketability, genre expectations, hook strength, and audience appeal. Provide feedback on how to make the story more commercially viable."
         self.aiPromptReader = "You are an avid reader of this genre. Provide emotional reactions, point out where you get confused or bored, and highlight your favorite moments. React as a fan experiencing the story for the first time."
         self.aiActiveRole = "Co-author"
+        self.aiProvider = "Local / Llama.cpp"
+        self.aiApiKey = ""
 
         # Icons
         self.iconTheme = DEF_ICONS  # Icons theme
@@ -855,6 +859,8 @@ class Config:
         self.aiPromptPublisher = parser.getStr(sec, "promptPublisher", self.aiPromptPublisher)
         self.aiPromptReader = parser.getStr(sec, "promptReader", self.aiPromptReader)
         self.aiActiveRole = parser.getStr(sec, "activeRole", self.aiActiveRole)
+        self.aiProvider = parser.getStr(sec, "provider", self.aiProvider)
+        self.aiApiKey = parser.getStr(sec, "apiKey", self.aiApiKey)
 
         # Sizes
         sec = "Sizes"
@@ -1013,6 +1019,8 @@ class Config:
             "promptPublisher": self.aiPromptPublisher,
             "promptReader": self.aiPromptReader,
             "activeRole": self.aiActiveRole,
+            "provider": self.aiProvider,
+            "apiKey": self.aiApiKey,
         }
 
         config["Sizes"] = {

@@ -68,30 +68,120 @@ class AiWorker(QThread):
     finishedGeneration = pyqtSignal(str)
     errorGeneration = pyqtSignal(str)
 
-    def __init__(self, messages: list):
+    def __init__(self, messages: list, model: str, temperature: float, api_key: str):
         super().__init__()
         self.messages = messages
+        self.model = model
+        self.temperature = temperature
+        self.api_key = api_key
         self._is_running = True
 
     def stop(self):
         self._is_running = False
 
-    def run(self):
-        base_url = CONFIG.aiEndpoint.rstrip('/') if hasattr(CONFIG, 'aiEndpoint') and CONFIG.aiEndpoint else "http://127.0.0.1:8080"
-        url = f"{base_url}/chat/completions" if base_url.endswith("/v1") else f"{base_url}/v1/chat/completions"
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "model": getattr(CONFIG, 'aiModel', ''),
-            "messages": self.messages,
-            "temperature": getattr(CONFIG, 'aiTemperature', 0.7),
-            "stream": True
+    def _get_request_config(self):
+        """Get the request configuration based on the selected provider."""
+        provider = CONFIG.aiProvider
+        api_key = self.api_key
+
+        if provider == "Local / Llama.cpp":
+            return {
+                "url": f"{CONFIG.aiEndpoint}/v1/chat/completions",
+                "headers": {"Content-Type": "application/json"},
+                "payload_format": "standard"
+            }
+
+        elif provider == "OpenAI":
+            return {
+                "url": "https://api.openai.com/v1/chat/completions",
+                "headers": {
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json"
+                },
+                "payload_format": "standard"
+            }
+
+        elif provider == "Anthropic":
+            return {
+                "url": "https://api.anthropic.com/v1/messages",
+                "headers": {
+                    "x-api-key": api_key,
+                    "anthropic-version": "2023-06-01",
+                    "Content-Type": "application/json"
+                },
+                "payload_format": "anthropic"
+            }
+
+        elif provider == "Google Gemini":
+            return {
+                "url": f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:streamGenerateContent?key={api_key}",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "payload_format": "gemini"
+            }
+
+        return {
+            "url": f"{CONFIG.aiEndpoint}/v1/chat/completions",
+            "headers": {"Content-Type": "application/json"},
+            "payload_format": "standard"
         }
-        
+
+    def _build_payload(self, system_prompt: str, user_prompt: str, payload_format: str):
+        """Build the payload based on the API format."""
+        temperature = self.temperature if self.temperature is not None else 0.7
+
+        if payload_format == "standard":
+            return {
+                "model": self.model,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                "temperature": temperature,
+                "stream": True
+            }
+
+        elif payload_format == "anthropic":
+            return {
+                "model": self.model,
+                "system": system_prompt,
+                "messages": [
+                    {"role": "user", "content": user_prompt}
+                ],
+                "temperature": temperature,
+                "stream": True
+            }
+
+        elif payload_format == "gemini":
+            return {
+                "contents": [
+                    {"role": "user", "parts": [{"text": user_prompt}]}
+                ],
+                "systemInstruction": {
+                    "parts": [{"text": system_prompt}]}
+                if system_prompt else None,
+                "generationConfig": {
+                    "temperature": temperature
+                },
+                "key": self.api_key
+            }
+
+        return {}
+
+    def run(self):
+        config = self._get_request_config()
+        url = config["url"]
+        headers = config["headers"]
+        payload_format = config["payload_format"]
+
+        payload = self._build_payload("", "", payload_format)
         thinking_val = getattr(CONFIG, 'aiThinking', 'Off')
+
         if thinking_val and thinking_val.lower() != "off":
             payload["reasoning_effort"] = thinking_val
             payload["thinking"] = thinking_val
-        
+
         full_response = ""
         try:
             with requests.post(url, headers=headers, json=payload, stream=True) as response:
@@ -110,12 +200,25 @@ class AiWorker(QThread):
                                 break
                             try:
                                 data = json.loads(data_str)
-                                if "choices" in data and len(data["choices"]) > 0:
-                                    delta = data["choices"][0].get("delta", {})
-                                    content = delta.get("content", "")
-                                    if content:
-                                        full_response += content
-                                        self.newToken.emit(content)
+                                if payload_format == "standard":
+                                    if "choices" in data and len(data["choices"]) > 0:
+                                        delta = data["choices"][0].get("delta", {})
+                                        content = delta.get("content", "")
+                                        if content:
+                                            full_response += content
+                                            self.newToken.emit(content)
+                                elif payload_format == "anthropic":
+                                    if "delta" in data:
+                                        content = data["delta"].get("content", "")
+                                        if content:
+                                            full_response += content
+                                            self.newToken.emit(content)
+                                elif payload_format == "gemini":
+                                    if "candidates" in data and len(data["candidates"]) > 0:
+                                        content = data["candidates"][0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                                        if content:
+                                            full_response += content
+                                            self.newToken.emit(content)
                             except json.JSONDecodeError:
                                 pass
             self.finishedGeneration.emit(full_response)
@@ -135,6 +238,9 @@ class AiAssistantDock(QWidget):
         self.current_response = ""
         self.current_chat_id = None
         self.current_chat_title = ""
+        self.model = CONFIG.aiModel
+        self.temperature = CONFIG.aiTemperature
+        self.api_key = CONFIG.aiApiKey
 
         logger.debug("Create: AiAssistantDock")
         self.setObjectName("AiAssistantDock")
@@ -287,6 +393,9 @@ class AiAssistantDock(QWidget):
     def newChat(self):
         self.current_chat_id = None
         self.current_chat_title = ""
+        self.model = CONFIG.aiModel
+        self.temperature = CONFIG.aiTemperature
+        self.api_key = CONFIG.aiApiKey
         self.message_history = []
         self.chatBrowser.clear()
         self.chatBrowser.append("<b>System:</b> New chat started. Ready for prompt.")
@@ -410,7 +519,7 @@ class AiAssistantDock(QWidget):
         self.first_token_time = 0
         self.statusLabel.setText(f"Thinking... (Prompt Tokens: ~{self.prompt_tokens})")
 
-        self.worker = AiWorker(messages)
+        self.worker = AiWorker(messages, self.model, self.temperature, self.api_key)
         self.worker.newToken.connect(self.onNewToken)
         self.worker.finishedGeneration.connect(self.onGenerationFinished)
         self.worker.errorGeneration.connect(self.onGenerationError)

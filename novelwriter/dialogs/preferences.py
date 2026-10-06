@@ -1037,6 +1037,29 @@ class GuiPreferences(NDialog):
             self.tr("Turn on the AI sidebar."),
         )
         
+        # AI Provider
+        self.aiProvider = NComboBox(self)
+        self.aiProvider.addItems(["Local / Llama.cpp", "OpenAI", "Anthropic", "Google Gemini"])
+        self.aiProvider.setCurrentText(CONFIG.aiProvider)
+        self.mainForm.addRow(
+            self.tr("AI Provider"),
+            self.aiProvider,
+            self.tr("Select the AI service provider."),
+        )
+        
+        # API Key (only shown for non-local providers)
+        self.aiApiKey = QLineEdit(self)
+        self.aiApiKey.setEchoMode(QLineEdit.EchoMode.Password)
+        self.aiApiKey.setPlaceholderText(self.tr("API Key (e.g., sk-...)"))
+        self.aiApiKey.hide()
+        if CONFIG.aiApiKey:
+            self.aiApiKey.setText(CONFIG.aiApiKey)
+        self.mainForm.addRow(
+            self.tr("API Key"),
+            self.aiApiKey,
+            self.tr("Your API key for cloud providers."),
+        )
+        
         # Engine Path
         self.aiEndpoint = QLineEdit(self)
         self.aiEndpoint.setText(CONFIG.aiEndpoint)
@@ -1045,6 +1068,10 @@ class GuiPreferences(NDialog):
             self.aiEndpoint,
             self.tr("Endpoint URL (e.g. http://127.0.0.1:8080)"),
         )
+
+        # Toggle API Key visibility based on provider
+        self.aiProvider.currentTextChanged.connect(self._toggle_api_fields)
+        self._toggle_api_fields()
 
 
         
@@ -1176,6 +1203,19 @@ class GuiPreferences(NDialog):
                 self.aiModelCombo.setCurrentIndex(idx)
         except Exception as e:
             logger.error(f"Failed to fetch models: {e}")
+
+    @pyqtSlot()
+    def _toggle_api_fields(self) -> None:
+        """Show/hide API key field based on selected provider."""
+        provider = self.aiProvider.currentText()
+        key_widget = self.aiApiKey
+        
+        if provider == "Local / Llama.cpp":
+            key_widget.setEnabled(False)
+            key_widget.hide()
+        else:
+            key_widget.setEnabled(True)
+            key_widget.show()
 
     @pyqtSlot(int)
     def _sidebarClicked(self, section: int) -> None:
@@ -1479,6 +1519,8 @@ class GuiPreferences(NDialog):
 
         CONFIG.vimMode = vimMode
         CONFIG.aiEnabled = self.aiEnabled.isChecked()
+        CONFIG.aiProvider = self.aiProvider.currentText()
+        CONFIG.aiApiKey = self.aiApiKey.text()
         CONFIG.aiEndpoint = self.aiEndpoint.text()
         CONFIG.aiModel = self.aiModelCombo.currentText()
         CONFIG.aiContextSize = self.aiContextSize.value()
