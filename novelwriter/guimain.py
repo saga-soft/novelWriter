@@ -1090,6 +1090,8 @@ class GuiMain(QMainWindow):
         if update.viewer or update.syntax or update.theme:
             self.docViewer.initViewer()
         self.sideBar.tbAI.setVisible(CONFIG.aiEnabled)
+        if hasattr(self.aiAssistantPane, "syncSettings"):
+            self.aiAssistantPane.syncSettings()
         if update.viewport:
             if not update.editor:
                 self.docEditor.initViewport()

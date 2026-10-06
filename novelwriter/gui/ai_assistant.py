@@ -167,9 +167,14 @@ class AiWorker(QThread):
             conversation = [{"role": "user", "content": ""}]
 
         if payload_format == "standard":
+            std_messages = []
+            if system_prompt:
+                std_messages.append({"role": "system", "content": system_prompt})
+            std_messages.extend(conversation)
+            
             payload = {
                 "model": self.model,
-                "messages": conversation,
+                "messages": std_messages,
                 "stream": True
             }
             if CONFIG.aiProvider == "Local / Llama.cpp":
@@ -321,6 +326,7 @@ class AiAssistantDock(QWidget):
         self.providerCombo = QComboBox(self)
         self.providerCombo.addItems(["Local / Llama.cpp", "OpenAI", "Anthropic", "Google Gemini"])
         self.providerCombo.setCurrentText(getattr(CONFIG, "aiProvider", "Local / Llama.cpp"))
+        self.providerCombo.view().setMinimumWidth(250)
         self.providerCombo.currentTextChanged.connect(self.changeProvider)
         self.selectorsLayout.addWidget(self.providerCombo)
         
@@ -330,6 +336,7 @@ class AiAssistantDock(QWidget):
         self.roleCombo = QComboBox(self)
         self.roleCombo.addItems(["Co-author", "Editor", "Publisher", "Reader"])
         self.roleCombo.setCurrentText(getattr(CONFIG, "aiActiveRole", "Co-author"))
+        self.roleCombo.view().setMinimumWidth(200)
         self.roleCombo.currentTextChanged.connect(self.changeRole)
         self.selectorsLayout.addWidget(self.roleCombo)
         
@@ -339,6 +346,7 @@ class AiAssistantDock(QWidget):
         self.modelCombo = QComboBox(self)
         self.modelCombo.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
         self.modelCombo.setEditable(True)
+        self.modelCombo.view().setMinimumWidth(300)
         self.modelCombo.currentTextChanged.connect(self.changeModel)
         # Populate initial
         initial_model = getattr(CONFIG, 'aiModel', '')
@@ -553,10 +561,12 @@ class AiAssistantDock(QWidget):
 
     def getActiveContext(self):
         text = self.mainGui.docEditor.getText()
-        context_size = getattr(CONFIG, 'aiContextSize', 8192)
-        max_chars = int((context_size - 1000) * 3)
-        if len(text) > max_chars:
-            text = "... " + text[-max_chars:]
+        provider = getattr(CONFIG, 'aiProvider', 'Local / Llama.cpp')
+        if provider == "Local / Llama.cpp":
+            context_size = getattr(CONFIG, 'aiContextSize', 8192)
+            max_chars = int((context_size - 1000) * 3)
+            if len(text) > max_chars:
+                text = "... " + text[-max_chars:]
 
         role = self.roleCombo.currentText()
         if role == "Co-author":
@@ -630,7 +640,7 @@ class AiAssistantDock(QWidget):
             self.clearBtn.setEnabled(True)
             return
             
-        self.worker = AiWorker(messages, self.model, self.temperature)
+        self.worker = AiWorker(messages, self.modelCombo.currentText(), self.temperature)
         self.worker.newToken.connect(self.onNewToken)
         self.worker.finishedGeneration.connect(self.onGenerationFinished)
         self.worker.errorGeneration.connect(self.onGenerationError)
@@ -683,6 +693,21 @@ class AiAssistantDock(QWidget):
             self.message_history.append({"role": "assistant", "agent": self.roleCombo.currentText(), "content": self.current_response})
             chat_mgr.save_chat(self.current_chat_id, self.current_chat_title, self.roleCombo.currentText(), self.message_history)
             self.refreshChatsList()
+
+    def syncSettings(self):
+        provider = getattr(CONFIG, "aiProvider", "Local / Llama.cpp")
+        if self.providerCombo.currentText() != provider:
+            self.providerCombo.blockSignals(True)
+            self.providerCombo.setCurrentText(provider)
+            self.providerCombo.blockSignals(False)
+            
+        model = getattr(CONFIG, "aiModel", "")
+        if model and self.modelCombo.currentText() != model:
+            self.modelCombo.blockSignals(True)
+            if self.modelCombo.findText(model) < 0:
+                self.modelCombo.addItem(model)
+            self.modelCombo.setCurrentText(model)
+            self.modelCombo.blockSignals(False)
 
     def closeEvent(self, event):
         if self.worker:
