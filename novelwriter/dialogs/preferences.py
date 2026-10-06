@@ -33,9 +33,9 @@ from PyQt6.QtWidgets import (
     QFileDialog,
     QHBoxLayout,
     QLineEdit,
-    QTextEdit,
     QMenu,
     QPushButton,
+    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -1019,7 +1019,6 @@ class GuiPreferences(NDialog):
             self.tr("Switch the editor to use Vim editor commands."),
         )
 
-        
         # AI Assistant
         # ============
 
@@ -1036,7 +1035,7 @@ class GuiPreferences(NDialog):
             self.aiEnabled,
             self.tr("Turn on the AI sidebar."),
         )
-        
+
         # AI Provider
         self.aiProvider = NComboBox(self)
         self.aiProvider.addItems(["Local / Llama.cpp", "OpenAI", "Anthropic", "Google Gemini"])
@@ -1046,21 +1045,21 @@ class GuiPreferences(NDialog):
             self.aiProvider,
             self.tr("Select the AI service provider."),
         )
-        
+
         # API Keys (only shown for respective providers)
         self.aiApiKeyLocal = QLineEdit(self)
         self.aiApiKeyLocal.setEchoMode(QLineEdit.EchoMode.Password)
         self.aiApiKeyLocal.setPlaceholderText(self.tr("Local API Key (sk-...)"))
         self.aiApiKeyLocal.hide()
-        if getattr(CONFIG, 'aiApiKeyLocal', ''):
+        if getattr(CONFIG, "aiApiKeyLocal", ""):
             self.aiApiKeyLocal.setText(CONFIG.aiApiKeyLocal)
         self.mainForm.addRow(self.tr("Local API Key"), self.aiApiKeyLocal, self.tr("Your API key for local providers."))
-        
+
         self.aiApiKeyOpenAI = QLineEdit(self)
         self.aiApiKeyOpenAI.setEchoMode(QLineEdit.EchoMode.Password)
         self.aiApiKeyOpenAI.setPlaceholderText(self.tr("OpenAI API Key (sk-...)"))
         self.aiApiKeyOpenAI.hide()
-        if getattr(CONFIG, 'aiApiKeyOpenAI', ''):
+        if getattr(CONFIG, "aiApiKeyOpenAI", ""):
             self.aiApiKeyOpenAI.setText(CONFIG.aiApiKeyOpenAI)
         self.mainForm.addRow(self.tr("OpenAI API Key"), self.aiApiKeyOpenAI, self.tr("Your API key for OpenAI."))
 
@@ -1068,18 +1067,20 @@ class GuiPreferences(NDialog):
         self.aiApiKeyAnthropic.setEchoMode(QLineEdit.EchoMode.Password)
         self.aiApiKeyAnthropic.setPlaceholderText(self.tr("Anthropic API Key (sk-ant-...)"))
         self.aiApiKeyAnthropic.hide()
-        if getattr(CONFIG, 'aiApiKeyAnthropic', ''):
+        if getattr(CONFIG, "aiApiKeyAnthropic", ""):
             self.aiApiKeyAnthropic.setText(CONFIG.aiApiKeyAnthropic)
-        self.mainForm.addRow(self.tr("Anthropic API Key"), self.aiApiKeyAnthropic, self.tr("Your API key for Anthropic."))
+        self.mainForm.addRow(
+            self.tr("Anthropic API Key"), self.aiApiKeyAnthropic, self.tr("Your API key for Anthropic.")
+        )
 
         self.aiApiKeyGemini = QLineEdit(self)
         self.aiApiKeyGemini.setEchoMode(QLineEdit.EchoMode.Password)
         self.aiApiKeyGemini.setPlaceholderText(self.tr("Gemini API Key (AIza...)"))
         self.aiApiKeyGemini.hide()
-        if getattr(CONFIG, 'aiApiKeyGemini', ''):
+        if getattr(CONFIG, "aiApiKeyGemini", ""):
             self.aiApiKeyGemini.setText(CONFIG.aiApiKeyGemini)
         self.mainForm.addRow(self.tr("Gemini API Key"), self.aiApiKeyGemini, self.tr("Your API key for Google Gemini."))
-        
+
         # Engine Path
         self.aiEndpoint = QLineEdit(self)
         self.aiEndpoint.setText(CONFIG.aiEndpoint)
@@ -1095,8 +1096,6 @@ class GuiPreferences(NDialog):
         # for labelForField) does not exist yet during buildForm().
         self.aiProvider.currentTextChanged.connect(self._toggle_api_fields)
 
-
-        
         # Model Selection
         modelLayout = QHBoxLayout()
         self.aiModelCombo = NComboBox(self)
@@ -1104,17 +1103,17 @@ class GuiPreferences(NDialog):
         self.aiModelCombo.setEditable(True)
         self.aiModelCombo.addItem(CONFIG.aiModel)
         self.aiModelCombo.setCurrentText(CONFIG.aiModel)
-        
+
         self.refreshModelsBtn = QPushButton("Refresh", self)
         self.refreshModelsBtn.clicked.connect(self._refreshAiModels)
-        
+
         modelLayout.addWidget(self.aiModelCombo, 1)
         modelLayout.addWidget(self.refreshModelsBtn)
-        
+
         modelWidget = QWidget(self)
         modelWidget.setLayout(modelLayout)
         modelLayout.setContentsMargins(0, 0, 0, 0)
-        
+
         self.mainForm.addRow(
             self.tr("Model"),
             modelWidget,
@@ -1131,7 +1130,7 @@ class GuiPreferences(NDialog):
             self.aiContextSize,
             self.tr("Context window size (-c parameter)."),
         )
-        
+
         # Temperature
         self.aiTemperature = NDoubleSpinBox(self)
         self.aiTemperature.setRange(0.0, 2.0)
@@ -1146,7 +1145,7 @@ class GuiPreferences(NDialog):
         # Thinking
         self.aiThinkingCombo = NComboBox(self)
         self.aiThinkingCombo.addItems(["Off", "low", "med", "high", "xhigh"])
-        self.aiThinkingCombo.setCurrentText(getattr(CONFIG, 'aiThinking', 'Off'))
+        self.aiThinkingCombo.setCurrentText(getattr(CONFIG, "aiThinking", "Off"))
         self.mainForm.addRow(
             self.tr("Thinking Variable"),
             self.aiThinkingCombo,
@@ -1157,27 +1156,33 @@ class GuiPreferences(NDialog):
         self.aiPromptCoAuthor = QTextEdit(self)
         self.aiPromptCoAuthor.setFixedHeight(60)
         self.aiPromptCoAuthor.setPlainText(CONFIG.aiPromptCoAuthor)
-        self.mainForm.addRow(self.tr("Co-author Role"), self.aiPromptCoAuthor, self.tr("Prompt for the Co-author specialization."))
-        
+        self.mainForm.addRow(
+            self.tr("Co-author Role"), self.aiPromptCoAuthor, self.tr("Prompt for the Co-author specialization.")
+        )
+
         # Editor
         self.aiPromptEditor = QTextEdit(self)
         self.aiPromptEditor.setFixedHeight(60)
         self.aiPromptEditor.setPlainText(CONFIG.aiPromptEditor)
-        self.mainForm.addRow(self.tr("Editor Role"), self.aiPromptEditor, self.tr("Prompt for the Editor specialization."))
-        
+        self.mainForm.addRow(
+            self.tr("Editor Role"), self.aiPromptEditor, self.tr("Prompt for the Editor specialization.")
+        )
+
         # Publisher
         self.aiPromptPublisher = QTextEdit(self)
         self.aiPromptPublisher.setFixedHeight(60)
         self.aiPromptPublisher.setPlainText(CONFIG.aiPromptPublisher)
-        self.mainForm.addRow(self.tr("Publisher Role"), self.aiPromptPublisher, self.tr("Prompt for the Publisher specialization."))
-        
+        self.mainForm.addRow(
+            self.tr("Publisher Role"), self.aiPromptPublisher, self.tr("Prompt for the Publisher specialization.")
+        )
+
         # Reader
         self.aiPromptReader = QTextEdit(self)
         self.aiPromptReader.setFixedHeight(60)
         self.aiPromptReader.setPlainText(CONFIG.aiPromptReader)
-        self.mainForm.addRow(self.tr("Reader Role"), self.aiPromptReader, self.tr("Prompt for the Reader specialization."))
-
-
+        self.mainForm.addRow(
+            self.tr("Reader Role"), self.aiPromptReader, self.tr("Prompt for the Reader specialization.")
+        )
 
         self.mainForm.finalise()
         self._toggle_api_fields()
@@ -1266,7 +1271,7 @@ class GuiPreferences(NDialog):
                     # Only list models that can generate content
                     if "generateContent" not in m.get("supportedGenerationMethods", []):
                         continue
-                    names.append(name[len("models/"):])
+                    names.append(name[len("models/") :])
             else:
                 names = [m.get("id", "") for m in data.get("data", [])]
 
@@ -1299,6 +1304,7 @@ class GuiPreferences(NDialog):
         def set_row_visible(widget, visible: bool) -> None:
             widget.setVisible(visible)
             from PyQt6.QtWidgets import QLabel
+
             for label in self.mainForm.findChildren(QLabel):
                 if label.buddy() == widget:
                     label.setVisible(visible)
@@ -1631,7 +1637,6 @@ class GuiPreferences(NDialog):
         CONFIG.aiPromptEditor = self.aiPromptEditor.toPlainText().strip()
         CONFIG.aiPromptPublisher = self.aiPromptPublisher.toPlainText().strip()
         CONFIG.aiPromptReader = self.aiPromptReader.toPlainText().strip()
-
 
         # Finalise
         CONFIG.saveConfig()

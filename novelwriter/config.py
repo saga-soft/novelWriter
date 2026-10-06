@@ -114,6 +114,22 @@ class Config:
         "_recentPaths",
         "_recentProjects",
         "_splash",
+        "aiActiveRole",
+        "aiApiKeyAnthropic",
+        "aiApiKeyGemini",
+        "aiApiKeyLocal",
+        "aiApiKeyOpenAI",
+        "aiContextSize",
+        "aiEnabled",
+        "aiEndpoint",
+        "aiModel",
+        "aiPromptCoAuthor",
+        "aiPromptEditor",
+        "aiPromptPublisher",
+        "aiPromptReader",
+        "aiProvider",
+        "aiTemperature",
+        "aiThinking",
         "allowOpenDial",
         "altDialogClose",
         "altDialogOpen",
@@ -229,22 +245,6 @@ class Config:
         "viewPanePos",
         "viewSynopsis",
         "vimMode",
-        "aiEnabled",
-        "aiEndpoint",
-        "aiModel",
-        "aiContextSize",
-        "aiTemperature",
-        "aiThinking",
-        "aiPromptCoAuthor",
-        "aiPromptEditor",
-        "aiPromptPublisher",
-        "aiPromptReader",
-        "aiActiveRole",
-        "aiProvider",
-        "aiApiKeyLocal",
-        "aiApiKeyOpenAI",
-        "aiApiKeyAnthropic",
-        "aiApiKeyGemini",
         "welcomeWinSize",
     )
 
@@ -330,13 +330,13 @@ class Config:
         self.aiContextSize = 8192
         self.aiTemperature = 0.7
         self.aiThinking = "Off"
-        self.aiPromptCoAuthor = "You are a creative co-author. Your goal is to help brainstorm, expand scenes, and enhance the narrative flow. Offer creative suggestions, maintain the author\'s voice, and push the story forward organically."
+        self.aiPromptCoAuthor = "You are a creative co-author. Your goal is to help brainstorm, expand scenes, and enhance the narrative flow. Offer creative suggestions, maintain the author's voice, and push the story forward organically."
         self.aiPromptEditor = "You are a professional literary editor. Focus on pacing, grammar, structural consistency, and clarity. Point out passive voice, repetitive phrasing, and offer precise rewriting suggestions to tighten the prose."
         self.aiPromptPublisher = "You are a commercial book publisher and marketer. Analyze the text for marketability, genre expectations, hook strength, and audience appeal. Provide feedback on how to make the story more commercially viable."
         self.aiPromptReader = "You are an avid reader of this genre. Provide emotional reactions, point out where you get confused or bored, and highlight your favorite moments. React as a fan experiencing the story for the first time."
         self.aiActiveRole = "Co-author"
         self.aiProvider = "Local / Llama.cpp"
-        self.aiApiKeyLocal = "sk-dummy"
+        self.aiApiKeyLocal = ""
         self.aiApiKeyOpenAI = ""
         self.aiApiKeyAnthropic = ""
         self.aiApiKeyGemini = ""
