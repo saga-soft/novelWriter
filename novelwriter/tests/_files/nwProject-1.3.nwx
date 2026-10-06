@@ -1,0 +1,313 @@
+<?xml version='1.0' encoding='utf-8'?>
+<novelWriterXML appVersion="1.6.6" hexVersion="0x010606f0" fileVersion="1.3" timeStamp="2022-10-25 18:26:15">
+  <project>
+    <name>Sample Project</name>
+    <title>Sample Project</title>
+    <author>Jane Smith</author>
+    <author>Jay Doh</author>
+    <saveCount>5</saveCount>
+    <autoCount>10</autoCount>
+    <editTime>1000</editTime>
+  </project>
+  <settings>
+    <doBackup>True</doBackup>
+    <language>en_GB</language>
+    <spellCheck>True</spellCheck>
+    <spellLang>en_GB</spellLang>
+    <autoOutline>True</autoOutline>
+    <lastEdited>636b6aa9b697b</lastEdited>
+    <lastViewed>636b6aa9b697b</lastViewed>
+    <lastWordCount>1206</lastWordCount>
+    <novelWordCount>830</novelWordCount>
+    <notesWordCount>376</notesWordCount>
+    <autoReplace>
+      <entry key="A">B</entry>
+      <entry key="B">E</entry>
+      <entry key="C">D</entry>
+    </autoReplace>
+    <titleFormat>
+      <title>%title%</title>
+      <chapter>Chapter %chw%: %title%</chapter>
+      <unnumbered>%title%</unnumbered>
+      <scene>Scene %ch%.%sc%: %title%</scene>
+      <section></section>
+    </titleFormat>
+    <status>
+      <entry blue="100" green="100" red="100">New</entry>
+      <entry blue="0" green="50" red="200">Notes</entry>
+      <entry blue="0" green="60" red="182">Started</entry>
+      <entry blue="0" green="129" red="193">1st Draft</entry>
+      <entry blue="0" green="129" red="193">2nd Draft</entry>
+      <entry blue="0" green="129" red="193">3rd Draft</entry>
+      <entry blue="58" green="180" red="58">Finished</entry>
+    </status>
+    <importance>
+      <entry blue="100" green="100" red="100">None</entry>
+      <entry blue="188" green="122" red="0">Minor</entry>
+      <entry blue="180" green="0" red="21">Major</entry>
+      <entry blue="175" green="0" red="117">Main</entry>
+    </importance>
+  </settings>
+  <content count="25">
+    <item handle="7031beac91f75" order="0" parent="None">
+      <name>Novel</name>
+      <type>ROOT</type>
+      <class>NOVEL</class>
+      <status>Started</status>
+      <expanded>True</expanded>
+    </item>
+    <item handle="53b69b83cdafc" order="0" parent="7031beac91f75">
+      <name>Title Page</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>Started</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>93</charCount>
+      <wordCount>19</wordCount>
+      <paraCount>2</paraCount>
+      <cursorPos>2</cursorPos>
+    </item>
+    <item handle="974e400180a99" order="1" parent="7031beac91f75">
+      <name>Page</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>New</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>186</charCount>
+      <wordCount>39</wordCount>
+      <paraCount>2</paraCount>
+      <cursorPos>212</cursorPos>
+    </item>
+    <item handle="edca4be2fcaf8" order="2" parent="7031beac91f75">
+      <name>Part One</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>New</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>26</charCount>
+      <wordCount>6</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>33</cursorPos>
+    </item>
+    <item handle="e7ded148d6e4a" order="3" parent="7031beac91f75">
+      <name>A Folder</name>
+      <type>FOLDER</type>
+      <class>NOVEL</class>
+      <status>1st Draft</status>
+      <expanded>True</expanded>
+    </item>
+    <item handle="6a2d6d5f4f401" order="0" parent="e7ded148d6e4a">
+      <name>Chapter One</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>Notes</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>75</charCount>
+      <wordCount>14</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>279</cursorPos>
+    </item>
+    <item handle="636b6aa9b697b" order="1" parent="e7ded148d6e4a">
+      <name>Making a Scene</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>1st Draft</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>2429</charCount>
+      <wordCount>432</wordCount>
+      <paraCount>14</paraCount>
+      <cursorPos>62</cursorPos>
+    </item>
+    <item handle="bc0cbd2a407f3" order="2" parent="e7ded148d6e4a">
+      <name>Another Scene</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>1st Draft</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>476</charCount>
+      <wordCount>93</wordCount>
+      <paraCount>3</paraCount>
+      <cursorPos>577</cursorPos>
+    </item>
+    <item handle="ba8a28a246524" order="3" parent="e7ded148d6e4a">
+      <name>Interlude</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>New</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>617</charCount>
+      <wordCount>101</wordCount>
+      <paraCount>3</paraCount>
+      <cursorPos>4</cursorPos>
+    </item>
+    <item handle="96b68994dfa3d" order="4" parent="e7ded148d6e4a">
+      <name>A Note on Structure</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>2nd Draft</status>
+      <exported>False</exported>
+      <layout>NOTE</layout>
+      <charCount>1692</charCount>
+      <wordCount>313</wordCount>
+      <paraCount>6</paraCount>
+      <cursorPos>1110</cursorPos>
+    </item>
+    <item handle="88706ddc78b1b" order="5" parent="e7ded148d6e4a">
+      <name>Chapter Two</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>1st Draft</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>139</charCount>
+      <wordCount>28</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>343</cursorPos>
+    </item>
+    <item handle="ae7339df26ded" order="6" parent="e7ded148d6e4a">
+      <name>We Found John!</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>1st Draft</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>189</charCount>
+      <wordCount>37</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>224</cursorPos>
+    </item>
+    <item handle="f6622b4617424" order="1" parent="None">
+      <name>Characters</name>
+      <type>ROOT</type>
+      <class>CHARACTER</class>
+      <status>None</status>
+      <expanded>True</expanded>
+    </item>
+    <item handle="f7e2d9f330615" order="0" parent="f6622b4617424">
+      <name>Main Characters</name>
+      <type>FOLDER</type>
+      <class>CHARACTER</class>
+      <status>None</status>
+      <expanded>True</expanded>
+    </item>
+    <item handle="14298de4d9524" order="0" parent="f7e2d9f330615">
+      <name>John Smith</name>
+      <type>FILE</type>
+      <class>CHARACTER</class>
+      <status>Minor</status>
+      <exported>True</exported>
+      <layout>NOTE</layout>
+      <charCount>49</charCount>
+      <wordCount>9</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>24</cursorPos>
+    </item>
+    <item handle="bb2c23b3c42cc" order="1" parent="f7e2d9f330615">
+      <name>Jane Smith</name>
+      <type>FILE</type>
+      <class>CHARACTER</class>
+      <status>Major</status>
+      <exported>True</exported>
+      <layout>NOTE</layout>
+      <charCount>55</charCount>
+      <wordCount>9</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>25</cursorPos>
+    </item>
+    <item handle="15c4492bd5107" order="2" parent="None">
+      <name>Locations</name>
+      <type>ROOT</type>
+      <class>WORLD</class>
+      <status>None</status>
+      <expanded>True</expanded>
+    </item>
+    <item handle="b3e74dbc1f584" order="0" parent="15c4492bd5107">
+      <name>Earth</name>
+      <type>FILE</type>
+      <class>WORLD</class>
+      <status>Main</status>
+      <exported>True</exported>
+      <layout>NOTE</layout>
+      <charCount>76</charCount>
+      <wordCount>15</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>20</cursorPos>
+    </item>
+    <item handle="f1471bef9f2ae" order="1" parent="15c4492bd5107">
+      <name>Space</name>
+      <type>FILE</type>
+      <class>WORLD</class>
+      <status>Minor</status>
+      <exported>True</exported>
+      <layout>NOTE</layout>
+      <charCount>115</charCount>
+      <wordCount>24</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>133</cursorPos>
+    </item>
+    <item handle="5eaea4e8cdee8" order="2" parent="15c4492bd5107">
+      <name>Mars</name>
+      <type>FILE</type>
+      <class>WORLD</class>
+      <status>Major</status>
+      <exported>True</exported>
+      <layout>NOTE</layout>
+      <charCount>28</charCount>
+      <wordCount>6</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>45</cursorPos>
+    </item>
+    <item handle="6827118336ac1" order="3" parent="None">
+      <name>Archive</name>
+      <type>ROOT</type>
+      <class>ARCHIVE</class>
+      <status>New</status>
+      <expanded>True</expanded>
+    </item>
+    <item handle="ae9bf3c3ea159" order="0" parent="6827118336ac1">
+      <name>Scenes</name>
+      <type>FOLDER</type>
+      <class>ARCHIVE</class>
+      <status>New</status>
+      <expanded>True</expanded>
+    </item>
+    <item handle="8a5deb88c0e97" order="0" parent="ae9bf3c3ea159">
+      <name>Old File</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>1st Draft</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>314</charCount>
+      <wordCount>55</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>322</cursorPos>
+    </item>
+    <item handle="98acd8c76c93a" order="4" parent="None">
+      <name>Trash</name>
+      <type>TRASH</type>
+      <class>TRASH</class>
+      <status>None</status>
+      <expanded>True</expanded>
+    </item>
+    <item handle="b8136a5a774a0" order="0" parent="98acd8c76c93a">
+      <name>Delete Me!</name>
+      <type>FILE</type>
+      <class>NOVEL</class>
+      <status>New</status>
+      <exported>True</exported>
+      <layout>DOCUMENT</layout>
+      <charCount>30</charCount>
+      <wordCount>6</wordCount>
+      <paraCount>1</paraCount>
+      <cursorPos>36</cursorPos>
+    </item>
+  </content>
+</novelWriterXML>

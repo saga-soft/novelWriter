@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<novelWriterXML appVersion="26.2a1" hexVersion="0x260200a1" fileVersion="1.5" fileRevision="7" timeStamp="2026-07-23 16:18:11">
+  <project id="d0f3fe10-c6e6-4310-8bfd-181eb4224eed" saveCount="1" autoCount="1" editTime="0">
+    <name>New Project</name>
+    <author>Jane Doe</author>
+  </project>
+  <settings>
+    <doBackup>yes</doBackup>
+    <language>None</language>
+    <spellChecking auto="no">None</spellChecking>
+    <projectTarget date="None" last="10" mode="words">0</projectTarget>
+    <dailyTarget auto="no" last="10" date="2026-07-19">0</dailyTarget>
+    <targetSkipRoots />
+    <lastHandle>
+      <entry key="editor">None</entry>
+      <entry key="viewer">None</entry>
+      <entry key="novel">None</entry>
+      <entry key="story">None</entry>
+    </lastHandle>
+    <autoReplace />
+    <status>
+      <entry key="s000000" count="7" color="faded" shape="STAR">New</entry>
+      <entry key="s000001" count="0" color="red" shape="TRIANGLE">Note</entry>
+      <entry key="s000002" count="0" color="yellow" shape="CIRCLE_T">Draft</entry>
+      <entry key="s000003" count="0" color="green" shape="STAR">Finished</entry>
+    </status>
+    <importance>
+      <entry key="i000004" count="6" color="purple" shape="SQUARE">New</entry>
+      <entry key="i000005" count="0" color="purple" shape="BLOCK_2">Minor</entry>
+      <entry key="i000006" count="0" color="purple" shape="BLOCK_3">Major</entry>
+      <entry key="i000007" count="0" color="purple" shape="BLOCK_4">Main</entry>
+    </importance>
+  </settings>
+  <content items="13" novelWords="10" notesWords="9" novelChars="45" notesChars="33">
+    <item handle="0000000000008" parent="None" root="0000000000008" order="0" type="ROOT" class="NOVEL">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Novel</name>
+    </item>
+    <item handle="000000000000c" parent="0000000000008" root="0000000000008" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H1" charCount="20" wordCount="5" paraCount="1" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Title Page</name>
+    </item>
+    <item handle="000000000000d" parent="0000000000008" root="0000000000008" order="1" type="FOLDER" class="NOVEL">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">New Folder</name>
+    </item>
+    <item handle="000000000000e" parent="000000000000d" root="0000000000008" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H2" charCount="11" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">New Chapter</name>
+    </item>
+    <item handle="000000000000f" parent="000000000000d" root="0000000000008" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">New Scene</name>
+    </item>
+    <item handle="0000000000010" parent="0000000000008" root="0000000000008" order="2" type="FOLDER" class="NOVEL">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Stuff</name>
+    </item>
+    <item handle="0000000000011" parent="0000000000010" root="0000000000008" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H2" charCount="5" wordCount="1" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Hello</name>
+    </item>
+    <item handle="0000000000009" parent="None" root="0000000000009" order="1" type="ROOT" class="PLOT">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Plot</name>
+    </item>
+    <item handle="000000000000a" parent="None" root="000000000000a" order="2" type="ROOT" class="CHARACTER">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Characters</name>
+    </item>
+    <item handle="0000000000012" parent="000000000000a" root="000000000000a" order="0" type="FILE" class="CHARACTER" layout="NOTE">
+      <meta expanded="no" heading="H1" charCount="11" wordCount="3" paraCount="1" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Jane</name>
+    </item>
+    <item handle="0000000000013" parent="000000000000a" root="000000000000a" order="1" type="FILE" class="CHARACTER" layout="NOTE">
+      <meta expanded="no" heading="H1" charCount="11" wordCount="3" paraCount="1" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">John</name>
+    </item>
+    <item handle="0000000000014" parent="000000000000a" root="000000000000a" order="2" type="FILE" class="CHARACTER" layout="NOTE">
+      <meta expanded="no" heading="H1" charCount="11" wordCount="3" paraCount="1" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Mike</name>
+    </item>
+    <item handle="000000000000b" parent="None" root="000000000000b" order="3" type="ROOT" class="WORLD">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Locations</name>
+    </item>
+  </content>
+</novelWriterXML>

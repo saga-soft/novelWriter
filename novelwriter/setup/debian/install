@@ -1,0 +1,4 @@
+data/hicolor usr/share/icons
+data/novelwriter.desktop usr/share/applications
+data/novelwriter.png usr/share/pixmaps
+data/x-novelwriter-project.xml usr/share/mime/packages

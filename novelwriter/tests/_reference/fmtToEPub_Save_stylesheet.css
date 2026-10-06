@@ -1,0 +1,14 @@
+a {
+  text-decoration: underline;
+  display: inline
+}
+
+hr {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto
+}
+
+.sep {
+  text-align: center
+}

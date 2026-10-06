@@ -1,0 +1,367 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 17:22+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/user_interface/projects.rst:5
+msgid "Managing Projects"
+msgstr "Gestion des projets"
+
+#: ../../source/user_interface/projects.rst:7
+msgid ""
+"Your text in novelWriter is organised into projects. Each project is "
+"meant to contain one novel and associated notes. If you have multiple "
+"novels in a series, with the same characters and shared notes, it is "
+"also possible to keep all of them in the same project by creating "
+"multiple **Novel** root folders. See :ref:`docs_usage_project_roots` for "
+"more details."
+msgstr ""
+"Votre texte dans novelWriter est organisé en projets. Chaque projet est "
+"censé contenir un roman et les notes associées. Si vous avez plusieurs "
+"romans dans une série, avec les mêmes personnages et des notes "
+"partagées, il est également possible de les garder tous dans le même "
+"projet en créant plusieurs dossiers racine **Roman**. Voir :ref:"
+"`docs_usage_project_roots` pour plus de détails."
+
+#: ../../source/user_interface/projects.rst:16
+msgid "Creating A New Project"
+msgstr "Créer un nouveau projet"
+
+#: ../../source/user_interface/projects.rst:18
+msgid ""
+"You can create a new project from the **Project** menu by selecting "
+"**Create or Open Project**. This will open the **Welcome** dialog, where "
+"you can select the :guilabel:`New` button that will assist you in "
+"creating a project. This dialog is also displayed when you start "
+"novelWriter."
+msgstr ""
+"Vous pouvez créer un nouveau projet à partir du menu **Projet** en "
+"sélectionnant **Créer ou ouvrir un projet**. Cela ouvrira la boîte de "
+"dialogue **Accueil**, où vous pourrez sélectionner le bouton :guilabel:"
+"`Nouveau` qui vous aidera à créer un projet. Cette boîte de dialogue "
+"s'affiche également lorsque vous démarrez novelWriter."
+
+#: ../../source/user_interface/projects.rst:22
+msgid ""
+"A novelWriter project requires a dedicated folder for storing its files "
+"on the local file system. If you're interested in the details of how "
+"projects are stored, you can have a look at the section :ref:"
+"`docs_technical_storage`."
+msgstr ""
+"Un projet novelWriter nécessite un dossier dédié pour stocker ses "
+"fichiers sur le système de fichiers local. Si vous êtes intéressé par "
+"les détails de la façon dont les projets sont stockés, vous pouvez "
+"consulter la section :ref:`docs_technical_storage`."
+
+#: ../../source/user_interface/projects.rst:26
+msgid ""
+"A list of recently opened projects is maintained, and displayed in the "
+"**Welcome** dialog. A project can be removed from this list by selecting "
+"it and pressing the :kbd:`Del` key or by right-clicking it and selecting "
+"the **Remove Project** option."
+msgstr ""
+"Une liste des projets récemment ouverts est maintenue et affichée dans "
+"la boîte de dialogue **Bienvenue**. Un projet peut être supprimé de "
+"cette liste en le sélectionnant et en appuyant sur la touche :kbd:"
+"`Suppr` ou en faisant un clic droit sur le projet et en sélectionnant "
+"l'option **Supprimer le projet**."
+
+#: ../../source/user_interface/projects.rst:32
+msgid ""
+"The project list (left) and new project form (right) of the **Welcome** "
+"dialog."
+msgstr ""
+"La liste des projets (à gauche) et le formulaire de nouveau projet (à "
+"droite) de la boîte de dialogue **Bienvenue**."
+
+#: ../../source/user_interface/projects.rst:34
+msgid ""
+"Project-specific settings are available in **Project Settings** in the "
+"**Project** menu. See further details below in the :ref:"
+"`docs_ui_projects_settings` section."
+msgstr ""
+"Les paramètres spécifiques au projet sont disponibles dans **Paramètres "
+"du projet** dans le menu **Projet**. Voir plus de détails ci-dessous "
+"dans la section :ref:`docs_ui_projects_settings`."
+
+#: ../../source/user_interface/projects.rst:37
+msgid ""
+"Details about the project's novel text, including word counts, and a "
+"table of contents with word and page counts, is available through the "
+"**Novel Details** dialog. Statistics about the project is also available "
+"in the **Manuscript Build** tool."
+msgstr ""
+"Les détails du texte du roman du projet, y compris le nombre de mots et "
+"une table des matières avec le nombre de mots et de pages, sont "
+"disponibles dans la boîte de dialogue **Détails du roman**. Des "
+"statistiques sur le projet sont également disponibles dans l'outil "
+"**Compiler le manuscrit**."
+
+#: ../../source/user_interface/projects.rst:43
+msgid "Template Projects"
+msgstr "Modèles de projets"
+
+#: ../../source/user_interface/projects.rst:45
+msgid ""
+"From the Welcome dialog you can also create a new from another existing "
+"project. If you have a specific structure you want to use for all your "
+"new projects, you can create a dedicated project to be used as a "
+"template, and select to copy an existing project from the \"Prefill "
+"Project\" option from the **New Project** form."
+msgstr ""
+"Dans la boîte de dialogue de bienvenue, vous pouvez également créer un "
+"nouveau projet à partir d'un autre projet existant. Si vous souhaitez "
+"utiliser une structure spécifique pour tous vos nouveaux projets, vous "
+"pouvez créer un projet dédié qui servira de modèle et choisir de copier "
+"un projet existant à partir de l'option « Pré-remplir le projet » du "
+"formulaire **Nouveau projet**."
+
+#: ../../source/user_interface/projects.rst:54
+msgid "Project Settings"
+msgstr "Paramètres du projet"
+
+#: ../../source/user_interface/projects.rst:56
+msgid ""
+"The **Project Settings** can be accessed from the **Project** menu, or "
+"by pressing :kbd:`Ctrl+Shift+,`. This will open a dialog box, with a set "
+"of tabs."
+msgstr ""
+"Les **Paramètres du projet** sont accessibles depuis le menu **Projet**, "
+"ou en appuyant sur :kbd:`Ctrl+Maj+,`. Cela ouvrira une boîte de "
+"dialogue, avec une série d'onglets."
+
+#: ../../source/user_interface/projects.rst:61
+msgid "General Settings"
+msgstr "Paramètres généraux"
+
+#: ../../source/user_interface/projects.rst:63
+msgid ""
+"The **Settings** tab holds the project name, author, and language "
+"settings."
+msgstr ""
+"L'onglet **Paramètres** contient les paramètres relatifs au nom du "
+"projet, à l'auteur et à la langue."
+
+#: ../../source/user_interface/projects.rst:65
+msgid ""
+"The **Project Name** can be edited here. It is used for the main window "
+"title and for generating backup files. So keep in mind that if you do "
+"change this setting, the backup file names will change too."
+msgstr ""
+"Le **Nom du projet** peut être modifié ici. Il est utilisé pour le titre "
+"de la fenêtre principale et pour la génération des fichiers de "
+"sauvegarde. Gardez donc à l'esprit que si vous modifiez ce paramètre, "
+"les noms des fichiers de sauvegarde changeront également."
+
+#: ../../source/user_interface/projects.rst:69
+msgid ""
+"You can also change the **Author** and **Project Language** setting. "
+"These are only used when building the manuscript, for some formats. The "
+"language setting is also used when inserting text into documents in the "
+"viewer, like for instance labels for keywords and special comments."
+msgstr ""
+"Vous pouvez également modifier les paramètres **Auteur** et **Langue du "
+"projet**. Ces paramètres ne sont utilisés que lors de la compilation du "
+"manuscrit, pour certains formats. Le paramètre de langue est également "
+"utilisé lors de l'insertion de texte dans les documents dans "
+"l'afficheur, comme par exemple les étiquettes pour les mots-clés et les "
+"commentaires spéciaux."
+
+#: ../../source/user_interface/projects.rst:73
+msgid ""
+"If your project is in a different language than your main spell checking "
+"language is set to, you can override the default setting here. The "
+"project language can also be changed from the **Tools** menu."
+msgstr ""
+"Si votre projet est rédigé dans une langue différente de la langue de "
+"vérification orthographique principale, vous pouvez remplacer le "
+"paramètre par défaut ici. La langue du projet peut également être "
+"modifiée à partir du menu **Outils**."
+
+#: ../../source/user_interface/projects.rst:77
+msgid ""
+"You can also override the automatic backup setting for the project if "
+"you wish."
+msgstr ""
+"Vous pouvez également remplacer le paramètre de sauvegarde automatique "
+"du projet si vous le souhaitez."
+
+#: ../../source/user_interface/projects.rst:83
+msgid "Status and Importance"
+msgstr "Statut et Importance"
+
+#: ../../source/user_interface/projects.rst:85
+msgid ""
+"Each document or folder of type **Novel** can be given a \"Status\" "
+"label accompanied by a coloured icon with an optional shape selected "
+"from a list of pre-defined shapes. Each document or folder of the "
+"remaining types can be given an \"Importance\" label with the same "
+"customisation options."
+msgstr ""
+"Chaque document ou dossier de type **Roman** peut recevoir une étiquette "
+"« Statut » accompagnée d'une icône colorée avec une forme optionnelle "
+"sélectionnée dans une liste de formes prédéfinies. Chaque document ou "
+"dossier des autres types peut recevoir une étiquette « Importance » avec "
+"les mêmes options de personnalisation."
+
+#: ../../source/user_interface/projects.rst:89
+msgid ""
+"These labels are there purely for your convenience, and you are not "
+"required to use them for any other features to work. No other part of "
+"novelWriter accesses this information. The intention is to use these to "
+"indicate at what stage of completion each novel document is, or how "
+"important the content of a note is to the story. You don't have to use "
+"them this way, that's just what they were intended for, but you can make "
+"them whatever you want."
+msgstr ""
+"Ces étiquettes sont là uniquement pour votre commodité, et vous n'êtes "
+"pas obligé de les utiliser pour que d'autres fonctionnalités "
+"fonctionnent. Aucune autre partie de novelWriter n'accède à ces "
+"informations. L'intention est de les utiliser pour indiquer à quel stade "
+"d'achèvement se trouve chaque document de roman, ou à quel point le "
+"contenu d'une note est important pour l'histoire. Vous n'êtes pas obligé "
+"de les utiliser de cette manière, c'est juste ce pour quoi elles ont été "
+"conçues, mais vous pouvez en faire ce que vous voulez."
+
+#: ../../source/user_interface/projects.rst:95
+msgid ""
+"Both status and importance labels can be exported and imported so you "
+"can share them between projects, or define a standard set for all your "
+"writing projects. When you import labels to a project, they are always "
+"added as *new* labels."
+msgstr ""
+"Les étiquettes de statut et d'importance peuvent être exportées et "
+"importées afin que vous puissiez les partager entre les projets ou "
+"définir un ensemble standard pour tous vos projets d'écriture. Lorsque "
+"vous importez des étiquettes dans un projet, elles sont toujours "
+"ajoutées en tant que *nouvelles* étiquettes."
+
+#: ../../source/user_interface/projects.rst:99
+msgid "See also :ref:`docs_usage_project_status`."
+msgstr "Voir aussi :ref:`docs_usage_project_status`."
+
+#: ../../source/user_interface/projects.rst:103
+msgid ""
+"Status or importance level currently in use cannot be deleted, but they "
+"can be edited."
+msgstr ""
+"Le statut ou le niveau d'importance en cours d'utilisation ne peut pas "
+"être supprimé, mais il peut être modifié."
+
+#: ../../source/user_interface/projects.rst:107
+msgid "Text Auto-Replace"
+msgstr "Remplacement automatique du texte"
+
+#: ../../source/user_interface/projects.rst:109
+msgid ""
+"A set of automatically replaced keywords can be added in this tab. The "
+"keywords in the left column will be replaced by the text in the right "
+"column when documents are opened in the viewer. They will also be "
+"applied to manuscript builds."
+msgstr ""
+"Un ensemble de mots-clés de remplacement automatiquement peut être "
+"ajouté dans cet onglet. Les mots-clés de la colonne de gauche seront "
+"remplacés par le texte de la colonne de droite lorsque les documents "
+"seront ouverts dans l'afficheur. Ils seront également appliqués aux "
+"constructions de manuscrits."
+
+#: ../../source/user_interface/projects.rst:113
+msgid ""
+"The auto-replace feature will replace text in angle brackets that is in "
+"this list. The syntax highlighter will add an alternate colour to text "
+"matching the syntax, but it doesn't check if the text is in this list."
+msgstr ""
+"La fonction de remplacement automatique remplace le texte entre crochets "
+"qui se trouve dans cette liste. Le surligneur syntaxique ajoutera une "
+"couleur alternative au texte correspondant à la syntaxe, mais il ne "
+"vérifie pas si le texte se trouve dans cette liste."
+
+#: ../../source/user_interface/projects.rst:119
+msgid ""
+"A keyword cannot contain spaces. The angle brackets are added by "
+"default, and when used in the text are a part of the keyword to be "
+"replaced. This is to ensure that parts of the text aren't "
+"unintentionally replaced by the content of the list."
+msgstr ""
+"Un mot-clé ne peut pas contenir d'espaces. Les crochets sont ajoutés par "
+"défaut et, lorsqu'ils sont utilisés dans le texte, ils font partie du "
+"mot-clé à remplacer. Cela permet de s'assurer que certaines parties du "
+"texte ne sont pas remplacées involontairement par le contenu de la liste."
+
+#: ../../source/user_interface/projects.rst:127
+msgid "Backup"
+msgstr "Sauvegarde"
+
+#: ../../source/user_interface/projects.rst:129
+msgid ""
+"An automatic backup system is built into novelWriter. In order to use "
+"it, a backup path to where the backup files are to be stored must be "
+"provided in **Preferences**. The path defaults to a folder named "
+"\"Backups\" in your home directory."
+msgstr ""
+"Un système de sauvegarde automatique est intégré à novelWriter. Pour "
+"l'utiliser, un chemin d'accès à l'endroit où les fichiers de sauvegarde "
+"doivent être stockés doit être indiqué dans les **Préférences**. Le "
+"chemin d'accès est par défaut un dossier nommé « Backups » dans votre "
+"répertoire personnel."
+
+#: ../../source/user_interface/projects.rst:133
+msgid ""
+"Backups can run automatically when a project is closed, which also "
+"implies it is run when the application itself is closed. Backups are "
+"date stamped zip files of the project files in the project folder (files "
+"not strictly a part of the project are ignored). The zip archives are "
+"stored in a subfolder of the backup path. The subfolder will have the "
+"same name as the **Project Name** defined in :ref:"
+"`docs_ui_projects_settings`."
+msgstr ""
+"Les sauvegardes peuvent être exécutées automatiquement lorsqu'un projet "
+"est fermé, ce qui implique également qu'elles sont exécutées lorsque "
+"l'application elle-même est fermée. Les sauvegardes sont des fichiers "
+"zip ayant la même date que les  fichiers du projet dans le dossier du "
+"projet (les fichiers qui ne font pas strictement partie du projet sont "
+"ignorés). Les archives zip sont stockées dans un sous-dossier du chemin "
+"de sauvegarde. Le sous-dossier aura le même nom que le **Nom du projet** "
+"défini dans :ref:`docs_ui_projects_settings`."
+
+#: ../../source/user_interface/projects.rst:139
+msgid ""
+"The backup feature, when configured, can also be run manually from the "
+"**Tools** menu. It is also possible to disable automated backups for a "
+"given project in **Project Settings**."
+msgstr ""
+"La fonction de sauvegarde, lorsqu'elle est configurée, peut également "
+"être exécutée manuellement à partir du menu **Outils**. Il est également "
+"possible de désactiver les sauvegardes automatiques pour un projet donné "
+"dans **Paramètres du projet**."
+
+#: ../../source/user_interface/projects.rst:144
+msgid ""
+"For the backup to be able to run, the **Project Name** must be set in "
+"**Project Settings**. This value is used to generate the name and path "
+"of the backups. Without it, the backup will not run at all, but it will "
+"produce a warning message."
+msgstr ""
+"Pour que la sauvegarde puisse être exécutée, le **Nom du projet** doit "
+"être défini dans **Paramètres du projet**. Cette valeur est utilisée "
+"pour générer le nom et le chemin des sauvegardes. Sans cette valeur, la "
+"sauvegarde ne s'exécutera pas du tout, mais elle produira un message "
+"d'avertissement."

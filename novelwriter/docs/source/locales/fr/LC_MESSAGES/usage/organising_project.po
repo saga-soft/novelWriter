@@ -1,0 +1,538 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 14:11+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/usage/organising_project.rst:5
+msgid "Organising Your Project"
+msgstr "Organiser votre projet"
+
+#: ../../source/usage/organising_project.rst:7
+msgid ""
+"Your project is organised into a set of top level folders called \"Root "
+"Folders\", which each have specific meaning in the project. Your project "
+"documents and notes are stored under these root folders. All the content "
+"of your project is available in the **Project Content** panel on the "
+"left side of the main window."
+msgstr ""
+"Votre projet est organisé en un ensemble de dossiers de premier niveau "
+"appelés « dossiers racines », qui ont chacun une signification "
+"spécifique dans le projet. Les documents et les notes de votre projet "
+"sont stockés dans ces dossiers racines. Tout le contenu de votre projet "
+"est disponible dans le panneau **Contenu du projet** sur le côté gauche "
+"de la fenêtre principale."
+
+#: ../../source/usage/organising_project.rst:14
+msgid "The **Project Content** tree populated with example documents."
+msgstr ""
+"L'arborescence **Contenu du projet** avec des exemples de documents."
+
+#: ../../source/usage/organising_project.rst:16
+msgid ""
+"Each line in the project tree shows the name of each item, its word "
+"count (or alternatively character count), an icon for :ref:"
+"`docs_usage_project_active`, and a custom icon for :ref:"
+"`docs_usage_project_status` of each item. These latter two are covered "
+"alter in this section."
+msgstr ""
+"Chaque ligne de l'arborescence du projet montre le nom de chaque "
+"élément, son nombre de mots (ou de caractères), une icône pour :ref:"
+"`docs_usage_project_active`, et une icône personnalisée pour :ref:"
+"`docs_usage_project_status` de chaque élément. Ces deux derniers points "
+"sont abordés plus loin dans cette section."
+
+#: ../../source/usage/organising_project.rst:20
+msgid ""
+"You can add, view and edit documents in the project tree by right-"
+"clicking on them. Some features are also located in the buttons along "
+"the top, next to the **Project Content** label."
+msgstr ""
+"Vous pouvez ajouter, visualiser et modifier des documents dans "
+"l'arborescence du projet en cliquant dessus avec le bouton droit de la "
+"souris. Certaines fonctions se trouvent également dans les boutons "
+"situés en haut, à côté de l'étiquette **Contenu du projet**."
+
+#: ../../source/usage/organising_project.rst:27
+msgid "How Root Folders Work"
+msgstr "Fonctionnement des dossiers racines"
+
+#: ../../source/usage/organising_project.rst:29
+msgid ""
+"Projects are structured into a set of top level folders called \"Root "
+"Folders\". They are visible in the project tree at the left side of the "
+"main window. Each type of root folder has a distinct icon."
+msgstr ""
+"Les projets sont structurés en un ensemble de dossiers de premier niveau "
+"appelés « dossiers racines ». Ils sont visibles dans l'arborescence du "
+"projet, à gauche de la fenêtre principale. Chaque type de dossier racine "
+"possède une icône distincte."
+
+#: ../../source/usage/organising_project.rst:32
+msgid ""
+"The documents that make up your story go into a root folder of type "
+"**Novel**. Your notes go into the other root folders. These other root "
+"folder types are separated into types depending on what kind of notes go "
+"into them. This is not only for organisation. It also matters to how you "
+"can reference these notes later. We will come back to this in the :ref:"
+"`docs_usage_tags_refs` section."
+msgstr ""
+"Les documents qui constituent votre histoire sont placés dans un dossier "
+"racine de type **roman**. Vos notes sont placées dans les autres "
+"dossiers racines. Ces autres types de dossiers racines sont séparés en "
+"fonction du type de notes qu'ils contiennent. Il ne s'agit pas seulement "
+"d'une question d'organisation. Cela a également une incidence sur la "
+"manière dont vous pourrez faire référence à ces notes ultérieurement. "
+"Nous y reviendrons dans la section :ref:`docs_usage_tags_refs`."
+
+#: ../../source/usage/organising_project.rst:37
+msgid ""
+"A new project may not have all of the root folders present, but you can "
+"add the ones you want from the project tree tool bar."
+msgstr ""
+"Un nouveau projet peut ne pas contenir tous les dossiers racines, mais "
+"vous pouvez ajouter ceux que vous souhaitez à partir de la barre "
+"d'outils de l'arborescence du projet."
+
+#: ../../source/usage/organising_project.rst:40
+msgid ""
+"The intended usage of each type of root folder is listed below. However, "
+"aside from the **Novel** folder, no restrictions are applied by "
+"novelWriter on what you put in them. You can use them however you want."
+msgstr ""
+"L'utilisation prévue de chaque type de dossier racine est indiquée ci-"
+"dessous. Cependant, à part le dossier **Roman**, aucune restriction "
+"n'est appliquée par novelWriter sur ce que vous mettez dans ces "
+"dossiers. Vous pouvez les utiliser comme bon vous semble."
+
+#: ../../source/usage/organising_project.rst:46
+msgid "Root Folder Types"
+msgstr "Types de dossiers racines"
+
+#: ../../source/usage/organising_project.rst:48
+msgid "**Novel** (Story)"
+msgstr "**roman** (histoire)"
+
+#: ../../source/usage/organising_project.rst:49
+msgid ""
+"This is where you put the documents that are part of your story. You can "
+"create multiple Novel folders if you wish, but various parts of the "
+"application assumes each Novel folder belong to one novel."
+msgstr ""
+"C'est là que vous placez les documents qui font partie de votre "
+"histoire. Vous pouvez créer plusieurs dossiers Roman si vous le "
+"souhaitez, mais plusieurs parties de l'application supposent que chaque "
+"dossier Roman appartient à un seul roman."
+
+#: ../../source/usage/organising_project.rst:53
+msgid ""
+"The Novel folder is somewhat special in that it can contain documents "
+"for chapters, scenes and story partitions. How this is indicated is "
+"covered in the section :ref:`docs_usage_headings`."
+msgstr ""
+"Le dossier roman est un peu spécial en ce sens qu'il peut contenir des "
+"documents pour les chapitres, les scènes et les parties de l'histoire. "
+"La façon dont cela est indiqué est couverte dans la section :ref:"
+"`docs_usage_headings`."
+
+#: ../../source/usage/organising_project.rst:56
+msgid "**Plot** (Notes)"
+msgstr "**Intrigue** (Notes)"
+
+#: ../../source/usage/organising_project.rst:57
+msgid ""
+"This is where you can keep notes and outlines of your story plots. Such "
+"notes can be particularly useful if you have outlines for sub plot. You "
+"can make references to these subplots from the scene documents, which "
+"makes it easier to track story progress."
+msgstr ""
+"C'est là que vous pouvez conserver des notes et les grandes lignes des "
+"intrigues de votre histoire. Ces notes peuvent être particulièrement "
+"utiles si vous avez des plans de sous-intrigues. Vous pouvez faire "
+"référence à ces intrigues secondaires à partir des documents de scène, "
+"ce qui facilite le suivi de la progression de l'histoire."
+
+#: ../../source/usage/organising_project.rst:61
+msgid "**Characters** (Notes)"
+msgstr "**Personnages** (Notes)"
+
+#: ../../source/usage/organising_project.rst:62
+msgid ""
+"Character notes go in this root folder type. For your main characters, "
+"you may want to make one document for each character. For smaller "
+"characters you can put multiple into the same document. In your chapters "
+"and scenes you can reference these character notes as point-of-view or "
+"focus characters."
+msgstr ""
+"Les notes concernant les personnages sont placées dans ce type de "
+"dossier racine. Pour vos personnages principaux, vous pouvez créer un "
+"document pour chacun d'entre eux. Pour les personnages secondaires, vous "
+"pouvez en mettre plusieurs dans le même document. Dans vos chapitres et "
+"vos scènes, vous pouvez faire référence à ces notes de personnages en "
+"tant que points de vue ou personnages principaux."
+
+#: ../../source/usage/organising_project.rst:67
+msgid "**Locations** (Notes)"
+msgstr "**Lieux** (Notes)"
+
+#: ../../source/usage/organising_project.rst:68
+msgid ""
+"The locations where your story takes place can be documented here. This, "
+"together with Plot and Characters are the key story elements to track, "
+"and to reference from your chapter and scene documents."
+msgstr ""
+"Les lieux où se déroule votre histoire peuvent être documentés ici. Avec "
+"l'intrigue et les personnages, ce sont les éléments clés de l'histoire "
+"qu'il faut suivre et auxquels il faut faire référence dans les documents "
+"relatifs aux chapitres et aux scènes."
+
+#: ../../source/usage/organising_project.rst:72
+msgid "**Timeline** (Notes)"
+msgstr "**Ligne de temps** (Notes)"
+
+#: ../../source/usage/organising_project.rst:73
+msgid ""
+"If the story has multiple plot timelines or jumps in time within the "
+"same plot, this folder type can be used to track this."
+msgstr ""
+"Si l'histoire comporte plusieurs lignes temporelles ou des sauts dans le "
+"temps au sein d'une même intrigue, ce type de dossier peut être utilisé "
+"pour en assurer le suivi."
+
+#: ../../source/usage/organising_project.rst:76
+msgid "**Objects** (Notes)"
+msgstr "**Objets** (Notes)"
+
+#: ../../source/usage/organising_project.rst:77
+msgid ""
+"Important objects in the story, for instance physical objects that "
+"change hands often, can be tracked here."
+msgstr ""
+"Les objets importants de l'histoire, par exemple les objets physiques "
+"qui changent souvent de mains, peuvent être suivis ici."
+
+#: ../../source/usage/organising_project.rst:80
+msgid "**Entities** (Notes)"
+msgstr "**Entités** (Notes)"
+
+#: ../../source/usage/organising_project.rst:81
+msgid ""
+"Does your plot have many powerful organisations or companies? Or other "
+"entities that are part of the plot? They can be organised here."
+msgstr ""
+"Votre intrigue comporte-t-elle de nombreuses organisations ou "
+"entreprises puissantes ? Ou d'autres entités qui font partie de "
+"l'intrigue ? Vous pouvez les organiser ici."
+
+#: ../../source/usage/organising_project.rst:84
+msgid "**Custom** (Notes)"
+msgstr "**Personnalisé** (Notes)"
+
+#: ../../source/usage/organising_project.rst:85
+msgid ""
+"The custom root folder type can be used for tracking anything else not "
+"covered by the above options."
+msgstr ""
+"Le type de dossier racine personnalisé peut être utilisé pour suivre "
+"tout ce qui n'est pas couvert par les options ci-dessus."
+
+#: ../../source/usage/organising_project.rst:88
+msgid "**Templates**"
+msgstr "Modèles"
+
+#: ../../source/usage/organising_project.rst:89
+msgid ""
+"Any document added under this root folder will be made available as "
+"template options when creating new documents. See :ref:"
+"`docs_usage_project_documents_templates` for more details."
+msgstr ""
+"Tout document ajouté dans ce dossier racine sera disponible en tant "
+"qu'options de modèle lors de la création de nouveaux documents. Voir :"
+"ref:`docs_usage_project_documents_templates` pour plus de détails."
+
+#: ../../source/usage/organising_project.rst:92
+msgid "**Archive**"
+msgstr "**Archive**"
+
+#: ../../source/usage/organising_project.rst:93
+msgid ""
+"If you don't want to delete a document, or put it in the **Trash** "
+"folder where it may be deleted, but still want it out of your main "
+"project, you can put it in this folder. The contents of the document "
+"will be ignored by the scanner that looks for tags, and it will be "
+"ignored in any outline view and in your manuscript."
+msgstr ""
+"Si vous ne voulez pas supprimer un document ou le placer dans le dossier "
+"**Poubelle** où il peut être supprimé, mais que vous voulez quand même "
+"le retirer de votre projet principal, vous pouvez le placer dans ce "
+"dossier. Le contenu du document sera ignoré par le scanner qui recherche "
+"les balises, et il sera ignoré dans toute vue d'ensemble et dans votre "
+"manuscrit."
+
+#: ../../source/usage/organising_project.rst:98
+msgid "**Trash**"
+msgstr "**Poubelle**"
+
+#: ../../source/usage/organising_project.rst:99
+msgid ""
+"This folder behaves like you expect. Anything dropped in here can be "
+"deleted permanently from the project, and the content doesn't show up "
+"anywhere else in novelWriter."
+msgstr ""
+"Ce dossier se comporte comme vous vous y attendez. Tout ce qui y est "
+"déposé peut être supprimé définitivement du projet, et son contenu "
+"n'apparaît nulle part ailleurs dans novelWriter."
+
+#: ../../source/usage/organising_project.rst:102
+msgid ""
+"The root folder types are closely tied to the tags and reference system. "
+"Each folder type for novel and notes corresponds to one or more "
+"categories of tags that can be used to reference the content in them. "
+"See :ref:`docs_usage_tags_refs` for more details."
+msgstr ""
+"Les types de dossiers racine sont étroitement liés au système de balises "
+"et de références. Chaque type de dossier pour les romans et les notes "
+"correspond à une ou plusieurs catégories de balises qui peuvent être "
+"utilisées pour référencer le contenu qu'ils contiennent. Voir :ref:"
+"`docs_usage_tags_refs` pour plus de détails."
+
+#: ../../source/usage/organising_project.rst:108
+msgid ""
+"The root folders have standard names, but you can rename them to "
+"whatever you want."
+msgstr ""
+"Les dossiers racine ont des noms standard, mais vous pouvez les renommer "
+"comme vous le souhaitez."
+
+#: ../../source/usage/organising_project.rst:114
+msgid "Regular Folders"
+msgstr "Dossiers ordinaires"
+
+#: ../../source/usage/organising_project.rst:116
+msgid ""
+"You can add regular folders anywhere you want in the project. The "
+"folders are there purely as a way for you to organise the documents in "
+"meaningful sections and to be able to collapse and hide them in the "
+"project tree when you're not working on those documents."
+msgstr ""
+"Vous pouvez ajouter des dossiers ordinaires où vous le souhaitez dans le "
+"projet. Les dossiers sont là uniquement pour vous permettre d'organiser "
+"les documents en sections significatives et pour pouvoir les réduire et "
+"les cacher dans l'arborescence du projet lorsque vous ne travaillez pas "
+"sur ces documents."
+
+#: ../../source/usage/organising_project.rst:120
+msgid ""
+"When novelWriter is processing the documents in a project, like for "
+"instance when you create a manuscript from it, these folders are "
+"ignored. Only the order of the documents themselves matter."
+msgstr ""
+"Lorsque novelWriter traite les documents d'un projet, comme par exemple "
+"lorsque vous créez un manuscrit à partir de ce projet, ces dossiers sont "
+"ignorés. Seul l'ordre des documents eux-mêmes compte."
+
+#: ../../source/usage/organising_project.rst:127
+msgid "Documents"
+msgstr "Documents"
+
+#: ../../source/usage/organising_project.rst:129
+msgid ""
+"You can add documents anywhere you want in your project structure. You "
+"can even add documents as child items of other documents, just as if "
+"they were folders. This makes it easy to associate a set of scenes with "
+"their chapter. You can also do this in your notes, where you for "
+"instance may have a hierarchy of your locations."
+msgstr ""
+"Vous pouvez ajouter des documents où vous le souhaitez dans la structure "
+"de votre projet. Vous pouvez même ajouter des documents en tant "
+"qu'éléments enfants d'autres documents, comme s'il s'agissait de "
+"dossiers. Cela permet d'associer facilement un ensemble de scènes à leur "
+"chapitre. Vous pouvez également procéder de la même manière dans vos "
+"notes, où vous pouvez par exemple avoir une hiérarchie de vos lieux."
+
+#: ../../source/usage/organising_project.rst:134
+msgid ""
+"The name on a document in the project tree is not linked to any headings "
+"in the document text. Think of the document name as a file name. You can "
+"rename a document, or any other item in the project, at any time."
+msgstr ""
+"Le nom d'un document dans l'arborescence du projet n'est lié à aucun "
+"titre dans le texte du document. Considérez le nom du document comme un "
+"nom de fichier. Vous pouvez renommer un document, ou tout autre élément "
+"du projet, à tout moment."
+
+#: ../../source/usage/organising_project.rst:138
+msgid "Documents come in two types:"
+msgstr "Les documents sont de deux types :"
+
+#: ../../source/usage/organising_project.rst:140
+msgid "**Novel Documents**"
+msgstr "**Documents du roman**"
+
+#: ../../source/usage/organising_project.rst:141
+msgid ""
+"These are the documents that make up your story or novel. They can only "
+"be added under a root folder of type **Novel**. You can technically also "
+"add them under **Archive**. See :ref:`docs_usage_headings` for more "
+"details on how these documents are handled by novelWriter."
+msgstr ""
+"Ce sont les documents qui constituent votre histoire ou votre roman. Ils "
+"ne peuvent être ajoutés que dans un dossier racine de type **Roman**. "
+"Techniquement, vous pouvez aussi les ajouter dans **Archive**. Voir :ref:"
+"`docs_usage_headings` pour plus de détails sur la façon dont ces "
+"documents sont gérés par novelWriter."
+
+#: ../../source/usage/organising_project.rst:145
+msgid "**Project Notes**"
+msgstr "*Notes de projet**"
+
+#: ../../source/usage/organising_project.rst:146
+msgid ""
+"These are the documents where you keep your notes. You can add them "
+"anywhere in your project, including under **Novel** type folders. If you "
+"do add them there, they are not treated as a part of the story by "
+"default."
+msgstr ""
+"Il s'agit des documents dans lesquels vous conservez vos notes. Vous "
+"pouvez les ajouter n'importe où dans votre projet, y compris dans les "
+"dossiers de type **Roman**. Si vous les ajoutez à cet endroit, ils ne "
+"sont pas traités par défaut comme faisant partie de l'histoire."
+
+#: ../../source/usage/organising_project.rst:150
+msgid ""
+"You can convert between the two types of documents where both types are "
+"allowed. You can also convert folders into documents, which may "
+"sometimes be convenient too."
+msgstr ""
+"Vous pouvez convertir les deux types de documents lorsque les deux types "
+"sont autorisés. Vous pouvez également convertir des dossiers en "
+"documents, ce qui peut parfois s'avérer pratique."
+
+#: ../../source/usage/organising_project.rst:153
+msgid ""
+"Another convenient feature is that documents can be split into sub-"
+"documents by its headings, or multiple documents merged into one. This "
+"is particularly useful if you start out with larger structural "
+"documents, like one containing all chapters and scenes in an act, and "
+"then split those when you start writing. See :ref:`docs_ui_split_merge` "
+"for more details."
+msgstr ""
+"Une autre caractéristique pratique est que les documents peuvent être "
+"divisés en sous-documents par leurs titres, ou que plusieurs documents "
+"peuvent être fusionnés en un seul. Ceci est particulièrement utile si "
+"vous commencez avec des documents structurels plus importants, comme un "
+"document contenant tous les chapitres et scènes d'un acte, et que vous "
+"les divisez ensuite lorsque vous commencez à écrire. Voir :ref:"
+"`docs_ui_split_merge` pour plus de détails."
+
+#: ../../source/usage/organising_project.rst:162
+msgid "Document Templates"
+msgstr "Modèles de documents"
+
+#: ../../source/usage/organising_project.rst:164
+msgid ""
+"If you wish to create template documents to be used when creating new "
+"documents, like for instance a character note template, you can add a "
+"**Templates** root folder to your project. Any document added to this "
+"root folder will show up in the **Add Item** menu in the project tree "
+"toolbar. When selected, a new document is created with its content "
+"copied from the chosen template."
+msgstr ""
+"Si vous souhaitez créer des documents modèles à utiliser lors de la "
+"création de nouveaux documents, comme par exemple un modèle de note de "
+"personnage, vous pouvez ajouter un dossier racine **Modèles** à votre "
+"projet.Tout document ajouté à ce dossier racine apparaîtra dans le menu "
+"**Ajouter un élément** de la barre d'outils de l'arborescence du projet."
+"Lorsqu'il est sélectionné, un nouveau document est créé dont le contenu "
+"est copié à partir du modèle choisi."
+
+#: ../../source/usage/organising_project.rst:175
+msgid "Active and Inactive Documents"
+msgstr "Documents actifs et inactifs"
+
+#: ../../source/usage/organising_project.rst:177
+msgid ""
+"A document can be set as \"Active\" or \"Inactive\", which alters the "
+"icon in the third column of the project tree. These are mostly intended "
+"for your convenience as they will indicate whether the document is meant "
+"to be included in the manuscript or not. You can think of an inactive "
+"status as a whole-document out-take. It allows you to take it out "
+"without moving it to **Archive**."
+msgstr ""
+"Un document peut être défini comme « actif » ou « inactif », ce qui "
+"modifie l'icône dans la troisième colonne de l'arborescence du projet. "
+"Ces statuts sont principalement destinés à vous faciliter la tâche, car "
+"ils indiquent si le document est destiné à être inclus dans le manuscrit "
+"ou non. Vous pouvez considérer le statut inactif comme un retrait du "
+"document entier. Il vous permet de le retirer sans le déplacer vers "
+"**Archives**."
+
+#: ../../source/usage/organising_project.rst:182
+msgid ""
+"Inactive documents are by default excluded from your manuscript, but you "
+"can override this if you wish. See :ref:`docs_ui_manuscript_selection` "
+"for more details."
+msgstr ""
+"Les documents inactifs sont par défaut exclus de votre manuscrit, mais "
+"vous pouvez modifier cela si vous le souhaitez. Voir :ref:"
+"`docs_ui_manuscript_selection` pour plus de détails."
+
+#: ../../source/usage/organising_project.rst:189
+msgid "Importance and Status"
+msgstr "Importance et état"
+
+#: ../../source/usage/organising_project.rst:191
+msgid ""
+"Each document or folder in your project can have either a \"Status\" or "
+"\"Importance\" label set. These are labels and icons that you control "
+"and define yourself, and novelWriter doesn't use them for anything. You "
+"can modify these labels in **Project Settings**. See :ref:"
+"`docs_ui_projects_settings_status` for more details."
+msgstr ""
+"Chaque document ou dossier de votre projet peut avoir une étiquette « "
+"Statut » ou « Importance ». Ce sont des étiquettes et des icônes que "
+"vous contrôlez et définissez vous-même, et novelWriter ne les utilise "
+"pas pour quoi que ce soit. Vous pouvez modifier ces étiquettes dans "
+"**Paramètres du projet**. Voir :ref:`docs_ui_projects_settings_status` "
+"pour plus de détails."
+
+#: ../../source/usage/organising_project.rst:196
+msgid ""
+"The \"Status\" labels are intended to tag a novel document as for "
+"instance a draft or as completed, and the \"Importance\" labels are "
+"intended to tag character notes, or other project notes, as for instance "
+"a main, major, or minor character or story element."
+msgstr ""
+"Les étiquettes « Statut » sont destinées à étiqueter un document de "
+"roman comme étant par exemple un brouillon ou comme étant terminé, et "
+"les étiquettes « Importance » sont destinées à étiqueter les notes sur "
+"les personnages, ou d'autres notes sur le projet, comme par exemple un "
+"personnage principal, majeur ou mineur ou un élément de l'histoire."
+
+#: ../../source/usage/organising_project.rst:200
+msgid ""
+"Whether a document uses a \"Status\" or \"Importance\" label depends on "
+"which root folder it lives in. If it's in a **Novel** type folder, it "
+"uses the \"Status\" label, otherwise it uses an \"Importance\" label."
+msgstr ""
+"L'utilisation d'une étiquette « Statut » ou « Importance » pour un "
+"document dépend du dossier racine dans lequel il se trouve. S'il se "
+"trouve dans un dossier de type **Roman**, il utilise l'étiquette « "
+"Statut », sinon il utilise l'étiquette « Importance »."

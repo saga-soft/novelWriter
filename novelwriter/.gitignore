@@ -1,0 +1,74 @@
+# Setup/Install
+/MANIFEST
+/build/
+/build_*/
+/deploy/
+/dist/
+/dist_*/
+*.spec
+*.egg-info
+setup.iss
+/novelwriter.desktop
+/novelWriter.pyw
+/setup/macos/Info.plist
+/setup/windows/build
+.flatpak-builder
+.venv
+.env
+
+# Translations
+/novelwriter/assets/i18n/*.qm
+.qmake.stash
+i18n/*.qm
+i18n/*.qph
+
+# Documentation
+/docs/build/
+/docs/source/locales/**/*.mo
+/novelwriter/assets/manual*.pdf
+.~lock.*
+
+# Python Temp
+__pycache__
+*.pyc
+
+# Sample Project
+/novelwriter/assets/sample.zip
+/sample/meta
+/sample/**/*.bak
+/sample/*.lock
+/sample/ToC.txt
+
+# PyTest
+/prof/
+/htmlcov/
+/tests/temp
+/tests/_temp
+/.pytest_cache
+/pytestdebug.log
+
+# Coverage
+/.coverage
+/.coveragerc
+/coverage.*
+
+# Other
+.config
+.local
+*.patch
+
+# IDE
+.vscode
+.ruff_cache
+
+# No AI files
+AGENTS.md
+CLAUSE.md
+GEMINI.md
+.claude/
+.cursor*
+.codex/
+.gemini/
+
+# Debug
+/debug/

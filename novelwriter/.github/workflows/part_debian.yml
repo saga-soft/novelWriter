@@ -1,0 +1,82 @@
+name: Part Debian
+
+on:
+  workflow_call:
+    inputs:
+      publish:
+        required: false
+        type: boolean
+        default: false
+      build_number:
+        required: false
+        type: string
+        default: "0"
+      codename:
+        required: true
+        type: string
+      family:
+        required: true
+        type: string
+      image:
+        required: true
+        type: string
+    secrets:
+      CLOUDSMITH_API_KEY:
+        required: false
+
+jobs:
+  buildPackage:
+    name: Build Debian Package
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    container:
+      image: ${{ inputs.image }}
+    steps:
+      - name: Install Checkout Prerequisites
+        run: |
+          apt-get update
+          apt-get install -y git ca-certificates python3
+
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Download Assets Artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: nw-assets
+          path: novelwriter/assets
+
+      - name: Install Native Packages
+        run: apt-get install -y $(python3 pkgutils.py build-deb-depends ${{ inputs.codename }})
+
+      - name: Build Package
+        run: python3 pkgutils.py build-deb ${{ inputs.codename }} --build ${{ inputs.build_number }} --install-source Cloudsmith
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: nw-deb-${{ inputs.codename }}
+          path: dist_upload/*
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Set up Cloudsmith CLI with OIDC
+        if: ${{ inputs.publish }}
+        uses: cloudsmith-io/cloudsmith-cli-action@v3
+        with:
+          oidc-namespace: "saga-soft"
+          oidc-service-slug: "github-actions-lcpr"
+          verify-auth: true
+
+      - name: Publish to Cloudsmith
+        if: ${{ inputs.publish }}
+        run: |
+          CHANNEL="$(python3 pkgutils.py channel)"
+          REPO="stable"
+          if [ "$CHANNEL" = "pre" ]; then
+            REPO="testing"
+          fi
+          DEB_FILE="$(find dist_upload -name '*.deb')"
+          cloudsmith push deb "saga-soft/$REPO/${{ inputs.family }}/${{ inputs.codename }}" "$DEB_FILE" --republish

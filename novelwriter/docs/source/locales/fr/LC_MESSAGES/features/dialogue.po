@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 22:09+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/features/dialogue.rst:5
+msgid "Dialogue Highlighting"
+msgstr "Mise en évidence du dialogue"
+
+#: ../../source/features/dialogue.rst:7
+msgid ""
+"Dialogue recognition and colour highlighting is available both while "
+"you're writing and in generated manuscript documents."
+msgstr ""
+"La reconnaissance des dialogues et le surlignage des couleurs sont "
+"disponibles à la fois pendant que vous écrivez et dans les documents "
+"manuscrits générés."
+
+#: ../../source/features/dialogue.rst:10
+msgid ""
+"The default language settings in novelWriter are for English. That "
+"includes the dialogue highlighting settings. But many dialogue styles "
+"are supported. You can tune a number of settings to fit your language "
+"and style preferences in the \"Text Highlighting\" section in "
+"**Preferences**. You can mix and match these settings."
+msgstr ""
+"Les paramètres linguistiques par défaut de novelWriter sont ceux de "
+"l'anglais. Cela inclut les paramètres de mise en évidence des dialogues. "
+"Mais de nombreux styles de dialogue sont pris en charge. Vous pouvez "
+"ajuster un certain nombre de paramètres en fonction de vos préférences "
+"linguistiques et stylistiques dans la section « Surlignage du texte » "
+"des **Préférences**. Vous pouvez combiner ces paramètres.\n"
+"\n"
+"Traduit avec DeepL.com (version gratuite)"
+
+#: ../../source/features/dialogue.rst:17
+msgid "The **Text Highlighting** section of **Preferences**."
+msgstr "La section **Mise en évidence du texte** des **Préférences**."
+
+#: ../../source/features/dialogue.rst:21
+msgid "Quoted Dialogue"
+msgstr "Dialogue entre guillemets"
+
+#: ../../source/features/dialogue.rst:23
+msgid ""
+"By default, dialogue highlighting is enabled for the double quote "
+"symbols you have defined in the **Quotation Style** section of "
+"**Preferences**."
+msgstr ""
+"Par défaut, la mise en évidence du dialogue est activée pour les "
+"symboles de guillemets doubles que vous avez définis dans la section "
+"**Style de guillemets** des **Préférences**."
+
+#: ../../source/features/dialogue.rst:28
+msgid "The **Quotation Style** section of **Preferences**."
+msgstr "La section **Style de guillemets** des **Préférences**."
+
+#: ../../source/features/dialogue.rst:30
+msgid ""
+"You can change which quote symbols are highlighted by selecting one of "
+"\"None\", \"Single\", \"Double\", or \"Both\" from the \"Highlight "
+"dialogue\" setting under **Text Highlighting**."
+msgstr ""
+"Vous pouvez modifier les symboles de guillemets mis en évidence en "
+"sélectionnant « Aucun », « Simple », « Double » ou « Les deux » dans le "
+"paramètre « Mettre les dialogues en évidence » sous **Surlignage du "
+"texte**."
+
+#: ../../source/features/dialogue.rst:33
+msgid ""
+"You can also enable or disable the \"Allow open-ended dialogue\" setting "
+"to allow for the style where multi-paragraph dialogue is not closed "
+"until the last paragraph."
+msgstr ""
+"Vous pouvez également activer ou désactiver le paramètre « Autoriser les "
+"dialogues ouverts » pour autoriser le style dans lequel les dialogues à "
+"plusieurs paragraphes ne sont pas clos avant le dernier paragraphe."
+
+#: ../../source/features/dialogue.rst:36
+msgid "Limitations"
+msgstr "Restrictions"
+
+#: ../../source/features/dialogue.rst:38
+msgid ""
+"Dialogue highlighting for single quotes is difficult to process when the "
+"same single quote symbol is also used for apostrophes. There isn't a "
+"good solution to this. Your best option in the cases where the "
+"highlighting is wrong is to insert an alternative apostrophe symbol "
+"instead. See :ref:`docs_more_typographical_symbols_apostrophe` for more "
+"details."
+msgstr ""
+"La mise en évidence du dialogue pour les guillemets simples est "
+"difficile à traiter lorsque le même symbole de guillemet simple est "
+"également utilisé pour les apostrophes. Il n'existe pas de bonne "
+"solution à ce problème. Votre meilleure option dans les cas où la mise "
+"en évidence est erronée est d'insérer un symbole d'apostrophe alternatif "
+"à la place. Voir :ref:`docs_more_typographical_symbols_apostrophe` pour "
+"plus de détails."
+
+#: ../../source/features/dialogue.rst:45
+msgid "Alternative Dialogue"
+msgstr "Dialogue alternatif"
+
+#: ../../source/features/dialogue.rst:47
+msgid ""
+"You can use the \"Alternative dialogue symbols\" setting for custom "
+"dialogue wrapper symbols. These are highlighted in a different colour "
+"than regular dialogue."
+msgstr ""
+"Vous pouvez utiliser le paramètre « Symboles de dialogue alternatifs » "
+"pour les symboles de dialogue personnalisés. Ceux-ci sont mis en "
+"évidence dans une couleur différente de celle des dialogues normaux."
+
+#: ../../source/features/dialogue.rst:50
+msgid ""
+"The intended use case here is if you use an alternative style to "
+"distinguish a different style of communication. The feature idea came "
+"from a science fiction series where mind-to-mind communication used a "
+"different quotation style."
+msgstr ""
+"Le cas d'utilisation prévu ici est celui où vous utilisez un style "
+"alternatif pour distinguer un style de communication différent. L'idée "
+"est venue d'une série de science-fiction dans laquelle la communication "
+"d'esprit à esprit utilisait un style de citation différent."
+
+#: ../../source/features/dialogue.rst:56
+msgid "Dialogue Line Symbols"
+msgstr "Symboles des lignes de dialogue"
+
+#: ../../source/features/dialogue.rst:58
+msgid ""
+"In some languages, a single symbol at the start of a paragraph can "
+"indicate that the whole paragraph is dialogue. For instance, this symbol "
+"can be a short dash (en dash)."
+msgstr ""
+"Dans certaines langues, un seul symbole au début d'un paragraphe peut "
+"indiquer que tout le paragraphe est un dialogue. Par exemple, ce symbole "
+"peut être un tiret demi-cadratin."
+
+#: ../../source/features/dialogue.rst:63
+msgid "An example of dialogue starting with a short dash."
+msgstr "Exemple de dialogue commençant par un tiret demi-cadratin."
+
+#: ../../source/features/dialogue.rst:65
+msgid ""
+"You can enable this feature by adding the symbols to the \"Dialogue line "
+"symbols\" setting. Multiple symbols are allowed."
+msgstr ""
+"Vous pouvez activer cette fonction en ajoutant les symboles au paramètre "
+"« Symboles de la ligne de dialogue ». Plusieurs symboles sont autorisés."
+
+#: ../../source/features/dialogue.rst:70
+msgid "Dialogue with Narrator Break"
+msgstr "Dialogue avec incise"
+
+#: ../../source/features/dialogue.rst:72
+msgid ""
+"The dialogue symbol setting will not detect if the dialogue ends in the "
+"paragraph. In some styles there is no way to actually indicate the "
+"switch from dialogue to narration; in others there are. These a narrator "
+"break symbols are usually dashes. You can select one of the supported "
+"dash symbols for narrator breaks. These can be used with any of the "
+"above dialogue recognition settings."
+msgstr ""
+"Le réglage du symbole de dialogue ne détecte pas si le dialogue se "
+"termine dans le paragraphe. Dans certains styles, il n'y a aucun moyen "
+"d'indiquer le passage du dialogue à la narration ; dans d'autres, il y "
+"en a un. Ces symboles de rupture avec le narrateur sont généralement des "
+"tirets. Vous pouvez sélectionner l'un des symboles de tirets pris en "
+"charge pour les ruptures de narration. Ces symboles peuvent être "
+"utilisés avec n'importe lequel des paramètres de reconnaissance de "
+"dialogue ci-dessus."
+
+#: ../../source/features/dialogue.rst:79
+msgid ""
+"An example of dialogue starting with a short dash and a long dash "
+"narrator break."
+msgstr ""
+"Exemple de dialogue commençant par un tiret demi-cadratin, une incise "
+"par un tiret cadratin."
+
+#: ../../source/features/dialogue.rst:83
+msgid "Alternating Dialogue and Narration"
+msgstr "Dialogue et narration alternés"
+
+#: ../../source/features/dialogue.rst:85
+msgid ""
+"The alternating dialogue and narration style is supported with the "
+"\"Alternating dialogue/narration symbol\" setting. It can be set to one "
+"of the supported dashes. This style will switch into dialogue mode when "
+"it first encounters the selected dash in a paragraph, and switch back "
+"out when it sees the next one, and so forth."
+msgstr ""
+"Le style de dialogue et de narration alternés est pris en charge par le "
+"paramètre « Symbole de dialogue/narration alternés ». Il peut être "
+"défini sur l'un des tirets pris en charge. Ce style passe en mode "
+"dialogue lorsqu'il rencontre pour la première fois le tiret sélectionné "
+"dans un paragraphe, et revient en mode dialogue lorsqu'il rencontre le "
+"tiret suivant, et ainsi de suite."
+
+#: ../../source/features/dialogue.rst:92
+msgid "An example of alternating dialogue and narration using a long dash."
+msgstr ""
+"Exemple d'alternance de dialogue et de narration à l'aide d'un tiret "
+"cadratin."

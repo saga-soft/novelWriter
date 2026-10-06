@@ -1,0 +1,14 @@
+span.guilabel {
+    font-weight: 400;
+}
+
+.nw-sidebar-title {
+    height: unset;
+    max-height: unset;
+    flex-direction: column;
+    justify-content: center;
+    gap: .25rem;
+    font-size: 1.25rem;
+    font-weight: normal;
+    text-align: center;
+}

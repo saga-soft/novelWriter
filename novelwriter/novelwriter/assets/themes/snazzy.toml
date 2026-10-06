@@ -1,0 +1,114 @@
+[Main]
+name   = "Snazzy Light"
+mode   = "light"
+author = "Veronica Berglyd Olsen"
+credit = "Florian Reuschel, Sindre Sorhus"
+url    = "https://github.com/loilo/vscode-snazzy-light"
+
+##
+# Colours:
+# Background   = fafbfc : 250, 251, 252
+# Foreground   = 565869 :  86,  88, 105
+# Comment      = 9194a2 : 145, 148, 162
+# Yellow       = cf9c00 : 207, 156,   0
+# Red          = ff5c57 : 255,  92,  87
+# Pink         = f767bb : 247, 103, 187
+# Blue         = 09a1ed :   9, 161, 237
+# Cyan         = 13bbb7 :  19, 187, 183
+# Green        = 2dae58 :  45, 174,  88
+##
+
+[Base]
+base    = "#fafbfc"
+default = "#565869"
+faded   = "#545554"
+red     = "#ff5c57"
+orange  = "#f5b900"
+yellow  = "#cf9c00"
+green   = "#2dae58"
+cyan    = "#13bbb7"
+blue    = "#09a1ed"
+purple  = "#f767bb"
+
+[Project]
+root     = "blue"
+folder   = "yellow"
+file     = "faded"
+title    = "green"
+chapter  = "red"
+scene    = "blue"
+note     = "yellow"
+active   = "green"
+inactive = "red"
+disabled = "faded"
+
+[Icon]
+tool      = "default"
+sidebar   = "default"
+accept    = "green"
+reject    = "red"
+action    = "blue"
+option    = "orange"
+apply     = "green"
+create    = "yellow"
+destroy   = "faded"
+reset     = "green"
+add       = "green"
+change    = "green"
+remove    = "red"
+shortcode = "default"
+markdown  = "orange"
+system    = "yellow"
+info      = "blue"
+warning   = "orange"
+error     = "red"
+
+[Palette]
+window          = "#f3f4f5"
+windowText      = "default"
+base            = "base"
+alternateBase   = "#eaeaeb"
+text            = "default"
+tooltipBase     = "#f5e9c2"
+tooltipText     = "default"
+button          = "base"
+buttonText      = "default"
+brightText      = "base"
+highlight       = "blue"
+highlightedText = "#ffffff"
+link            = "blue"
+linkVisited     = "blue"
+accent          = "blue"
+
+[GUI]
+helpText     = "blue"
+fadedText    = "faded"
+errorText    = "red"
+accentText   = "blue"
+activeButton = "blue:96"
+activeBase   = "#d7d7d7"
+searchMatch  = "orange:96"
+
+[Syntax]
+background     = "base"
+text           = "default"
+line           = "default:32"
+link           = "blue"
+headerText     = "green"
+headerTag      = "green:D125"
+emphasis       = "purple"
+whitespace     = "purple:64"
+dialog         = "blue"
+altDialog      = "yellow"
+note           = "cyan"
+hidden         = "purple:D150"
+shortcode      = "purple"
+keyword        = "blue"
+tag            = "green"
+value          = "yellow"
+optional       = "yellow"
+spellCheckLine = "red"
+errorLine      = "green"
+replaceTag     = "cyan"
+modifier       = "purple"
+textHighlight  = "yellow:96"

@@ -1,0 +1,537 @@
+[
+  {
+    "name": "Novel",
+    "itemAttr": {
+      "handle": "7031beac91f75",
+      "parent": null,
+      "root": null,
+      "order": 0,
+      "type": "ROOT",
+      "class": "NOVEL"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "expanded": true
+    },
+    "nameAttr": {
+      "status": "s000002"
+    }
+  },
+  {
+    "name": "Title Page",
+    "itemAttr": {
+      "handle": "53b69b83cdafc",
+      "parent": "7031beac91f75",
+      "root": null,
+      "order": 0,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 93,
+      "wordCount": 19,
+      "paraCount": 2,
+      "cursorPos": 2
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000002"
+    }
+  },
+  {
+    "name": "Page",
+    "itemAttr": {
+      "handle": "974e400180a99",
+      "parent": "7031beac91f75",
+      "root": null,
+      "order": 1,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 186,
+      "wordCount": 39,
+      "paraCount": 2,
+      "cursorPos": 212
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000000"
+    }
+  },
+  {
+    "name": "Part One",
+    "itemAttr": {
+      "handle": "edca4be2fcaf8",
+      "parent": "7031beac91f75",
+      "root": null,
+      "order": 2,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 26,
+      "wordCount": 6,
+      "paraCount": 1,
+      "cursorPos": 33
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000000"
+    }
+  },
+  {
+    "name": "A Folder",
+    "itemAttr": {
+      "handle": "e7ded148d6e4a",
+      "parent": "7031beac91f75",
+      "root": null,
+      "order": 3,
+      "type": "FOLDER",
+      "class": "NOVEL"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "expanded": true
+    },
+    "nameAttr": {
+      "status": "s000003"
+    }
+  },
+  {
+    "name": "Chapter One",
+    "itemAttr": {
+      "handle": "6a2d6d5f4f401",
+      "parent": "e7ded148d6e4a",
+      "root": null,
+      "order": 0,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 75,
+      "wordCount": 14,
+      "paraCount": 1,
+      "cursorPos": 279
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000001"
+    }
+  },
+  {
+    "name": "Making a Scene",
+    "itemAttr": {
+      "handle": "636b6aa9b697b",
+      "parent": "e7ded148d6e4a",
+      "root": null,
+      "order": 1,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 2429,
+      "wordCount": 432,
+      "paraCount": 14,
+      "cursorPos": 62
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000003"
+    }
+  },
+  {
+    "name": "Another Scene",
+    "itemAttr": {
+      "handle": "bc0cbd2a407f3",
+      "parent": "e7ded148d6e4a",
+      "root": null,
+      "order": 2,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 476,
+      "wordCount": 93,
+      "paraCount": 3,
+      "cursorPos": 577
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000003"
+    }
+  },
+  {
+    "name": "Interlude",
+    "itemAttr": {
+      "handle": "ba8a28a246524",
+      "parent": "e7ded148d6e4a",
+      "root": null,
+      "order": 3,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 617,
+      "wordCount": 101,
+      "paraCount": 3,
+      "cursorPos": 4
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000000"
+    }
+  },
+  {
+    "name": "A Note on Structure",
+    "itemAttr": {
+      "handle": "96b68994dfa3d",
+      "parent": "e7ded148d6e4a",
+      "root": null,
+      "order": 4,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 1692,
+      "wordCount": 313,
+      "paraCount": 6,
+      "cursorPos": 1110
+    },
+    "nameAttr": {
+      "active": false,
+      "status": "s000004"
+    }
+  },
+  {
+    "name": "Chapter Two",
+    "itemAttr": {
+      "handle": "88706ddc78b1b",
+      "parent": "e7ded148d6e4a",
+      "root": null,
+      "order": 5,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 139,
+      "wordCount": 28,
+      "paraCount": 1,
+      "cursorPos": 343
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000003"
+    }
+  },
+  {
+    "name": "We Found John!",
+    "itemAttr": {
+      "handle": "ae7339df26ded",
+      "parent": "e7ded148d6e4a",
+      "root": null,
+      "order": 6,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 189,
+      "wordCount": 37,
+      "paraCount": 1,
+      "cursorPos": 224
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000003"
+    }
+  },
+  {
+    "name": "Characters",
+    "itemAttr": {
+      "handle": "f6622b4617424",
+      "parent": null,
+      "root": null,
+      "order": 1,
+      "type": "ROOT",
+      "class": "CHARACTER"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "expanded": true
+    },
+    "nameAttr": {
+      "import": null
+    }
+  },
+  {
+    "name": "Main Characters",
+    "itemAttr": {
+      "handle": "f7e2d9f330615",
+      "parent": "f6622b4617424",
+      "root": null,
+      "order": 0,
+      "type": "FOLDER",
+      "class": "CHARACTER"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "expanded": true
+    },
+    "nameAttr": {
+      "import": null
+    }
+  },
+  {
+    "name": "John Smith",
+    "itemAttr": {
+      "handle": "14298de4d9524",
+      "parent": "f7e2d9f330615",
+      "root": null,
+      "order": 0,
+      "type": "FILE",
+      "class": "CHARACTER",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 49,
+      "wordCount": 9,
+      "paraCount": 1,
+      "cursorPos": 24
+    },
+    "nameAttr": {
+      "active": true,
+      "import": "i000008"
+    }
+  },
+  {
+    "name": "Jane Smith",
+    "itemAttr": {
+      "handle": "bb2c23b3c42cc",
+      "parent": "f7e2d9f330615",
+      "root": null,
+      "order": 1,
+      "type": "FILE",
+      "class": "CHARACTER",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 55,
+      "wordCount": 9,
+      "paraCount": 1,
+      "cursorPos": 25
+    },
+    "nameAttr": {
+      "active": true,
+      "import": "i000009"
+    }
+  },
+  {
+    "name": "Locations",
+    "itemAttr": {
+      "handle": "15c4492bd5107",
+      "parent": null,
+      "root": null,
+      "order": 2,
+      "type": "ROOT",
+      "class": "WORLD"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "expanded": true
+    },
+    "nameAttr": {
+      "import": null
+    }
+  },
+  {
+    "name": "Earth",
+    "itemAttr": {
+      "handle": "b3e74dbc1f584",
+      "parent": "15c4492bd5107",
+      "root": null,
+      "order": 0,
+      "type": "FILE",
+      "class": "WORLD",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 76,
+      "wordCount": 15,
+      "paraCount": 1,
+      "cursorPos": 20
+    },
+    "nameAttr": {
+      "active": true,
+      "import": "i00000a"
+    }
+  },
+  {
+    "name": "Space",
+    "itemAttr": {
+      "handle": "f1471bef9f2ae",
+      "parent": "15c4492bd5107",
+      "root": null,
+      "order": 1,
+      "type": "FILE",
+      "class": "WORLD",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 115,
+      "wordCount": 24,
+      "paraCount": 1,
+      "cursorPos": 133
+    },
+    "nameAttr": {
+      "active": true,
+      "import": "i000008"
+    }
+  },
+  {
+    "name": "Mars",
+    "itemAttr": {
+      "handle": "5eaea4e8cdee8",
+      "parent": "15c4492bd5107",
+      "root": null,
+      "order": 2,
+      "type": "FILE",
+      "class": "WORLD",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 28,
+      "wordCount": 6,
+      "paraCount": 1,
+      "cursorPos": 45
+    },
+    "nameAttr": {
+      "active": true,
+      "import": "i000009"
+    }
+  },
+  {
+    "name": "Archive",
+    "itemAttr": {
+      "handle": "6827118336ac1",
+      "parent": null,
+      "root": null,
+      "order": 3,
+      "type": "ROOT",
+      "class": "ARCHIVE"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "expanded": true
+    },
+    "nameAttr": {
+      "status": "s000000"
+    }
+  },
+  {
+    "name": "Scenes",
+    "itemAttr": {
+      "handle": "ae9bf3c3ea159",
+      "parent": "6827118336ac1",
+      "root": null,
+      "order": 0,
+      "type": "FOLDER",
+      "class": "ARCHIVE"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "expanded": true
+    },
+    "nameAttr": {
+      "status": "s000000"
+    }
+  },
+  {
+    "name": "Old File",
+    "itemAttr": {
+      "handle": "8a5deb88c0e97",
+      "parent": "ae9bf3c3ea159",
+      "root": null,
+      "order": 0,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 314,
+      "wordCount": 55,
+      "paraCount": 1,
+      "cursorPos": 322
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000003"
+    }
+  },
+  {
+    "name": "Trash",
+    "itemAttr": {
+      "handle": "98acd8c76c93a",
+      "parent": null,
+      "root": null,
+      "order": 4,
+      "type": "ROOT",
+      "class": "TRASH"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "expanded": true
+    },
+    "nameAttr": {
+      "import": null
+    }
+  },
+  {
+    "name": "Delete Me!",
+    "itemAttr": {
+      "handle": "b8136a5a774a0",
+      "parent": "98acd8c76c93a",
+      "root": null,
+      "order": 0,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "heading": "H0",
+      "charCount": 30,
+      "wordCount": 6,
+      "paraCount": 1,
+      "cursorPos": 36
+    },
+    "nameAttr": {
+      "active": true,
+      "status": "s000000"
+    }
+  }
+]

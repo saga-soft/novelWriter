@@ -1,0 +1,285 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 16:22+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/usage/howto.rst:5
+msgid "Tips & Tricks"
+msgstr "Trucs et astuces"
+
+#: ../../source/usage/howto.rst:9
+msgid ""
+"This is a list of hopefully helpful little tips on how to get the most out of "
+"novelWriter."
+msgstr ""
+"Il s'agit d'une liste de petits conseils, que nous espérons utiles, sur la "
+"façon de tirer le meilleur parti de novelWriter."
+
+#: ../../source/usage/howto.rst:12
+msgid ""
+"This section will be expanded over time. If you would like to have something "
+"added, feel free to contribute, or start a discussion on the project's "
+"`Discussions Page`_."
+msgstr ""
+"Cette section sera développée au fil du temps. Si vous souhaitez que quelque "
+"chose soit ajouté, n'hésitez pas à contribuer, ou à lancer une discussion sur "
+"la `Page des discussions`_ du projet."
+
+#: ../../source/usage/howto.rst:17
+msgid "Managing the Project"
+msgstr "Gestion du projet"
+
+#: ../../source/usage/howto.rst
+msgid "How do I create a project from a template?"
+msgstr "Comment créer un projet à partir d'un modèle ?"
+
+#: ../../source/usage/howto.rst:22
+msgid ""
+"On the Welcome dialog's **Create New Project** form, you can select to "
+"\"Prefill Project\" from the content of a different project. This feature is "
+"most useful if you copy a project you have dedicated to be a template project. "
+"If you have a structure and settings you want to use for every new project, "
+"this is the best solution."
+msgstr ""
+"Dans le formulaire **Créer un nouveau projet** de la boîte de dialogue "
+"d'accueil, vous pouvez choisir de « pré-remplir le projet » à partir du contenu "
+"d'un autre projet. Cette fonction est particulièrement utile si vous copiez un "
+"projet que vous avez dédié à être un projet modèle. Si vous avez une structure "
+"et des paramètres que vous souhaitez utiliser pour chaque nouveau projet, c'est "
+"la meilleure solution."
+
+#: ../../source/usage/howto.rst
+msgid "How do I merge multiple documents into one?"
+msgstr "Comment fusionner plusieurs documents en un seul ?"
+
+#: ../../source/usage/howto.rst:30
+msgid ""
+"If you need to merge a selection of documents in your project into a single "
+"document, you can achieve this by first making a new folder for just that "
+"purpose, and drag all the documents you want merged into this folder. Then you "
+"can right click the folder, select :guilabel:`Transform` and :guilabel:`Merge "
+"Documents in Folder`."
+msgstr ""
+"Si vous avez besoin de fusionner une sélection de documents dans votre projet "
+"en un seul document, vous pouvez le faire en créant un nouveau dossier à cet "
+"effet, et en faisant glisser tous les documents que vous voulez fusionner dans "
+"ce dossier. Ensuite, vous pouvez faire un clic droit sur le dossier, "
+"sélectionner :guilabel:`Transformer` et :guilabel:`Fusionner les documents du "
+"dossier`."
+
+#: ../../source/usage/howto.rst:35
+msgid ""
+"In the dialog that pops up, the documents will be in the same order as in the "
+"folder, but you can rearrange them here of you wish. See :ref:"
+"`docs_ui_split_merge` for more details."
+msgstr ""
+"Dans la boîte de dialogue qui s'ouvre, les documents seront dans le même ordre "
+"que dans le dossier, mais vous pouvez les réorganiser ici si vous le souhaitez. "
+"Voir :ref:`docs_ui_split_merge` pour plus de détails."
+
+#: ../../source/usage/howto.rst
+msgid "How do I share status or importance labels between projects?"
+msgstr ""
+"Comment puis-je partager des étiquettes d'état ou d'importance entre les "
+"projets ?"
+
+#: ../../source/usage/howto.rst:41
+msgid ""
+"The status or importance labels you have defined in a project can be exported "
+"from **Project Settings** from the respective configuration tabs. You can then "
+"import these labels in another project."
+msgstr ""
+"Les étiquettes d'état ou d'importance que vous avez définies dans un projet "
+"peuvent être exportées à partir de **Paramètres du projet** dans les onglets de "
+"configuration respectifs. Vous pouvez ensuite importer ces étiquettes dans un "
+"autre projet."
+
+#: ../../source/usage/howto.rst:47
+msgid "Layout Tricks"
+msgstr "Astuces de mise en page"
+
+#: ../../source/usage/howto.rst
+msgid "How do I create a table?"
+msgstr "Comment créer un tableau ?"
+
+#: ../../source/usage/howto.rst:52
+msgid ""
+"The formatting tools available in novelWriter don't allow for complex "
+"structures like tables. However, the editor does render tabs in a similar way "
+"that regular word processors do. You can set the width of a tab in "
+"**Preferences**."
+msgstr ""
+"Les outils de formatage disponibles dans novelWriter ne permettent pas de créer "
+"des structures complexes telles que des tableaux. Cependant, l'éditeur rend les "
+"tabulations de la même manière que les traitements de texte classiques. Vous "
+"pouvez définir la largeur d'un onglet dans les **Préférences**."
+
+#: ../../source/usage/howto.rst:56
+msgid ""
+"The tab key should have the same distance in the editor as in the viewer, so "
+"you can align text in columns using the tab key, and it should look the same "
+"when viewed next to the editor."
+msgstr ""
+"La touche de tabulation doit avoir la même distance dans l'éditeur que dans "
+"l'afficheur, de sorte que vous puissiez aligner du texte en colonnes à l'aide "
+"de la touche de tabulation, et que l'aspect soit le même lorsque vous regardez "
+"à côté de l'éditeur."
+
+#: ../../source/usage/howto.rst:59
+msgid ""
+"This is most suitable for your notes, as the result in exported documents "
+"cannot be guaranteed to match. Especially if you don't use the same font in "
+"your manuscript as in the editor."
+msgstr ""
+"Cette méthode convient surtout à vos notes, car il n'est pas garanti que le "
+"résultat dans les documents exportés corresponde à la réalité. Surtout si vous "
+"n'utilisez pas la même police dans votre manuscrit que dans l'éditeur."
+
+#: ../../source/usage/howto.rst
+msgid "How do I force a line break when line breaks are ignored in my manuscript?"
+msgstr ""
+"Comment forcer un saut de ligne lorsque les sauts de ligne sont ignorés dans "
+"mon manuscrit ?"
+
+#: ../../source/usage/howto.rst:65
+msgid ""
+"In the **Manuscript Build Settings** you can choose to ignore line breaks "
+"within paragraphs in your text. However, some times you still need those "
+"breaks. Like for instance on the cover page where you may need to add your name "
+"and address. In such cases, you can add ``[br]`` where you want line breaks. "
+"These breaks cannot be ignored by any settings and will always be respected."
+msgstr ""
+"Dans les **Paramètres de compilation du manuscrit**, vous pouvez choisir "
+"d'ignorer les sauts de ligne dans les paragraphes de votre texte. Cependant, "
+"ces sauts de ligne sont parfois nécessaires. Comme par exemple sur la page de "
+"couverture où vous pouvez avoir besoin d'ajouter votre nom et votre adresse. "
+"Dans ce cas, vous pouvez ajouter ``[br]`` à l'endroit où vous souhaitez des "
+"sauts de ligne. Ces sauts de ligne ne peuvent être ignorés par aucun paramètre "
+"et seront toujours respectés."
+
+#: ../../source/usage/howto.rst
+msgid "How do I turn off first line indent for a specific paragraph?"
+msgstr ""
+"Comment désactiver l'indentation de la première ligne pour un paragraphe "
+"spécifique ?"
+
+#: ../../source/usage/howto.rst:75
+msgid ""
+"If you have first line indent enabled, but have a specific paragraph that you "
+"don't want indented, you can disable the indentation by explicitly adding text "
+"alignment. For instance by adding ``<<`` to the end to left-align it. Aligned "
+"paragraphs are not indented."
+msgstr ""
+"Si l'indentation de la première ligne est activée, mais qu'un paragraphe "
+"spécifique ne doit pas être indenté, vous pouvez désactiver l'indentation en "
+"ajoutant explicitement l'alignement du texte. Par exemple, en ajoutant ``<<`` à "
+"la fin du paragraphe pour l'aligner à gauche. Les paragraphes alignés ne sont "
+"pas indentés."
+
+#: ../../source/usage/howto.rst:79
+msgid "See :ref:`docs_usage_align_indent` for more details."
+msgstr "Voir :ref:`docs_usage_align_indent` pour plus de détails."
+
+#: ../../source/usage/howto.rst:83
+msgid "Organising Your Text"
+msgstr "Organiser son texte"
+
+#: ../../source/usage/howto.rst
+msgid "How do I add introductory text to chapters?"
+msgstr "Comment ajouter un texte d'introduction aux chapitres ?"
+
+#: ../../source/usage/howto.rst:88
+msgid ""
+"Sometimes chapters have a short preface, like a brief piece of text or a quote "
+"to set the stage before the first scene begins."
+msgstr ""
+"Parfois, les chapitres sont précédés d'une courte préface, comme un court texte "
+"ou une citation pour planter le décor avant le début de la première scène."
+
+#: ../../source/usage/howto.rst:91
+msgid ""
+"If you add separate files for chapters and scenes, the chapter file is the "
+"perfect place to add such text. Separating chapter and scene files also allows "
+"you to make scene files child documents of the chapter."
+msgstr ""
+"Si vous ajoutez des fichiers distincts pour les chapitres et les scènes, le "
+"fichier de chapitre est l'endroit idéal pour ajouter ce type de texte. La "
+"séparation des fichiers de chapitres et de scènes vous permet également de "
+"faire des fichiers de scènes des documents enfants du chapitre."
+
+#: ../../source/usage/howto.rst
+msgid "How do I distinguishing between soft and hard scene breaks?"
+msgstr ""
+"Comment faire la distinction entre les ruptures de scènes douces et les "
+"ruptures de scènes dures ?"
+
+#: ../../source/usage/howto.rst:98
+msgid ""
+"Depending on your writing style, you may need to separate between soft and hard "
+"scene breaks within chapters. Like for instance if you switch point-of-view "
+"character often."
+msgstr ""
+"En fonction de votre style d'écriture, vous pouvez avoir besoin de faire une "
+"distinction entre les ruptures de scènes douces et les ruptures de scènes dures "
+"au sein des chapitres. Par exemple, si vous changez souvent de point de vue."
+
+#: ../../source/usage/howto.rst:101
+msgid ""
+"In such cases you may want to use different scene headings for hard and soft "
+"scene breaks. The **Build Manuscript** tool will let you define a different "
+"format for scenes using the ``###`` and ``###!`` heading codes when you "
+"generate your manuscript. You can for instance add the common \"``* * *``\" for "
+"hard breaks and select to hide soft scene breaks, which will just insert an "
+"empty paragraph in their place. See :ref:`docs_ui_manuscript_settings` for more "
+"details."
+msgstr ""
+"Dans ce cas, vous pouvez utiliser des titres de scène différents pour les "
+"coupures de scène dures et douces. L'outil **Compilation du manuscrit** vous "
+"permettra de définir un format différent pour les scènes en utilisant les codes "
+"d'en-tête ``###`` et ``###!`` lors de la génération de votre manuscrit. Vous "
+"pouvez par exemple ajouter l'habituel « ``* * *`` » pour les coupures dures et "
+"choisir de masquer les coupures douces, ce qui aura pour effet d'insérer un "
+"paragraphe vide à leur place. Voir :ref:`docs_ui_manuscript_settings` pour plus "
+"de détails."
+
+#: ../../source/usage/howto.rst:111
+msgid "Other Tools"
+msgstr "Autres outils"
+
+#: ../../source/usage/howto.rst
+msgid "How do I convert my project to/from the yWriter format?"
+msgstr "Comment convertir mon projet au format yWriter ?"
+
+#: ../../source/usage/howto.rst:116
+msgid ""
+"There is a tool available that lets you convert a `yWriter <http://spacejock."
+"com/yWriter7.html>`_ project to a novelWriter project, and vice versa."
+msgstr ""
+"Il existe un outil qui vous permet de convertir un projet `yWriter <http://"
+"spacejock.com/yWriter7.html>`_ en un projet novelWriter, et vice versa."
+
+#: ../../source/usage/howto.rst:119
+msgid ""
+"The tool is available at `peter88213.github.io/yw2nw <https://peter88213.github."
+"io/yw2nw/>`__"
+msgstr ""
+"L'outil est disponible à l'adresse `peter88213.github.io/yw2nw <https://"
+"peter88213.github.io/yw2nw/>`__"

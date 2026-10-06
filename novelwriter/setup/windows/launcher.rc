@@ -1,0 +1,22 @@
+IDI_ICON1 ICON DISCARDABLE "novelWriter.ico"
+1 VERSIONINFO
+FILEVERSION 1,3,1,0
+PRODUCTVERSION 1,3,1,0
+FILEOS 0x4
+FILETYPE 0x1
+{
+    BLOCK "StringFileInfo" {
+        BLOCK "040904b0" {
+            VALUE "CompanyName",      "Veronica Berglyd Olsen\0"
+            VALUE "FileDescription",  "novelWriter Launcher\0"
+            VALUE "FileVersion",      "1.3.1.0\0"
+            VALUE "LegalCopyright",   "(c) 2026 Veronica Berglyd Olsen\0"
+            VALUE "OriginalFilename", "novelWriter.exe\0"
+            VALUE "ProductName",      "novelWriter\0"
+            VALUE "ProductVersion",   "1.3.1.0\0"
+        }
+    }
+    BLOCK "VarFileInfo" {
+        VALUE "Translation", 0x0809, 1200
+    }
+}

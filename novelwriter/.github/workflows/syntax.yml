@@ -1,0 +1,41 @@
+name: Syntax
+
+on:
+  push:
+    branches:
+      - main
+      - release
+  pull_request:
+    branches:
+      - main
+      - release
+
+jobs:
+  checkSyntax:
+    name: Linting and Type Checking
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Install UV and Python
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          enable-cache: true
+
+      - name: Install Dependencies
+        run: |
+          uv sync --no-dev --group lint
+
+      - name: Ruff Check
+        run: |
+          uv run --no-sync ruff --version
+          uv run --no-sync ruff format --check
+          uv run --no-sync ruff check --output-format github
+
+      - name: Pyright Check
+        run: |
+          uv run --no-sync pyright --version
+          uv run --no-sync pyright

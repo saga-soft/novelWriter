@@ -1,0 +1,677 @@
+[
+  {
+    "name": "Novel",
+    "itemAttr": {
+      "handle": "7031beac91f75",
+      "parent": null,
+      "root": "7031beac91f75",
+      "order": 0,
+      "type": "ROOT",
+      "class": "NOVEL",
+      "layout": "NO_LAYOUT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 0,
+      "wordCount": 0,
+      "paraCount": 0,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "sc24b8f",
+      "import": "ia857f0",
+      "active": false
+    }
+  },
+  {
+    "name": "Title Page",
+    "itemAttr": {
+      "handle": "53b69b83cdafc",
+      "parent": "7031beac91f75",
+      "root": "7031beac91f75",
+      "order": 0,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 93,
+      "wordCount": 19,
+      "paraCount": 2,
+      "cursorPos": 119
+    },
+    "nameAttr": {
+      "status": "sc24b8f",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Page",
+    "itemAttr": {
+      "handle": "974e400180a99",
+      "parent": "7031beac91f75",
+      "root": "7031beac91f75",
+      "order": 1,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 251,
+      "wordCount": 50,
+      "paraCount": 2,
+      "cursorPos": 277
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Part One",
+    "itemAttr": {
+      "handle": "edca4be2fcaf8",
+      "parent": "7031beac91f75",
+      "root": "7031beac91f75",
+      "order": 2,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 26,
+      "wordCount": 6,
+      "paraCount": 1,
+      "cursorPos": 36
+    },
+    "nameAttr": {
+      "status": "s90e6c9",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Chapter One",
+    "itemAttr": {
+      "handle": "6a2d6d5f4f401",
+      "parent": "7031beac91f75",
+      "root": "7031beac91f75",
+      "order": 3,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 95,
+      "wordCount": 18,
+      "paraCount": 1,
+      "cursorPos": 291
+    },
+    "nameAttr": {
+      "status": "sf24ce6",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Making a Scene",
+    "itemAttr": {
+      "handle": "636b6aa9b697b",
+      "parent": "6a2d6d5f4f401",
+      "root": "7031beac91f75",
+      "order": 0,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 2687,
+      "wordCount": 479,
+      "paraCount": 14,
+      "cursorPos": 67
+    },
+    "nameAttr": {
+      "status": "s90e6c9",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Another Scene",
+    "itemAttr": {
+      "handle": "bc0cbd2a407f3",
+      "parent": "6a2d6d5f4f401",
+      "root": "7031beac91f75",
+      "order": 1,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 548,
+      "wordCount": 108,
+      "paraCount": 3,
+      "cursorPos": 465
+    },
+    "nameAttr": {
+      "status": "s90e6c9",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Interlude",
+    "itemAttr": {
+      "handle": "ba8a28a246524",
+      "parent": "7031beac91f75",
+      "root": "7031beac91f75",
+      "order": 4,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 617,
+      "wordCount": 101,
+      "paraCount": 3,
+      "cursorPos": 310
+    },
+    "nameAttr": {
+      "status": "s78ea90",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "A Note on Structure",
+    "itemAttr": {
+      "handle": "96b68994dfa3d",
+      "parent": "7031beac91f75",
+      "root": "7031beac91f75",
+      "order": 5,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 1909,
+      "wordCount": 346,
+      "paraCount": 7,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "sf24ce6",
+      "import": "ia857f0",
+      "active": false
+    }
+  },
+  {
+    "name": "Chapter Two",
+    "itemAttr": {
+      "handle": "88706ddc78b1b",
+      "parent": "7031beac91f75",
+      "root": "7031beac91f75",
+      "order": 6,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 139,
+      "wordCount": 28,
+      "paraCount": 1,
+      "cursorPos": 188
+    },
+    "nameAttr": {
+      "status": "s90e6c9",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "We Found John!",
+    "itemAttr": {
+      "handle": "ae7339df26ded",
+      "parent": "88706ddc78b1b",
+      "root": "7031beac91f75",
+      "order": 0,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 189,
+      "wordCount": 37,
+      "paraCount": 1,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "s90e6c9",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Sequel",
+    "itemAttr": {
+      "handle": "e5e47ebf63b1c",
+      "parent": null,
+      "root": "e5e47ebf63b1c",
+      "order": 1,
+      "type": "ROOT",
+      "class": "NOVEL",
+      "layout": "NO_LAYOUT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 0,
+      "wordCount": 0,
+      "paraCount": 0,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "ia857f0",
+      "active": false
+    }
+  },
+  {
+    "name": "Title Page",
+    "itemAttr": {
+      "handle": "bacb7059e3083",
+      "parent": "e5e47ebf63b1c",
+      "root": "e5e47ebf63b1c",
+      "order": 0,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 27,
+      "wordCount": 5,
+      "paraCount": 1,
+      "cursorPos": 100
+    },
+    "nameAttr": {
+      "status": "sc24b8f",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Chapter One",
+    "itemAttr": {
+      "handle": "a520879ca0b45",
+      "parent": "e5e47ebf63b1c",
+      "root": "e5e47ebf63b1c",
+      "order": 1,
+      "type": "FILE",
+      "class": "NOVEL",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 299,
+      "wordCount": 55,
+      "paraCount": 2,
+      "cursorPos": 104
+    },
+    "nameAttr": {
+      "status": "s90e6c9",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Characters",
+    "itemAttr": {
+      "handle": "f6622b4617424",
+      "parent": null,
+      "root": "f6622b4617424",
+      "order": 2,
+      "type": "ROOT",
+      "class": "CHARACTER",
+      "layout": "NO_LAYOUT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 0,
+      "wordCount": 0,
+      "paraCount": 0,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "ia857f0",
+      "active": false
+    }
+  },
+  {
+    "name": "Main Characters",
+    "itemAttr": {
+      "handle": "f7e2d9f330615",
+      "parent": "f6622b4617424",
+      "root": "f6622b4617424",
+      "order": 0,
+      "type": "FOLDER",
+      "class": "CHARACTER",
+      "layout": "NO_LAYOUT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 0,
+      "wordCount": 0,
+      "paraCount": 0,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "ia857f0",
+      "active": false
+    }
+  },
+  {
+    "name": "John Smith",
+    "itemAttr": {
+      "handle": "14298de4d9524",
+      "parent": "f7e2d9f330615",
+      "root": "f6622b4617424",
+      "order": 0,
+      "type": "FILE",
+      "class": "CHARACTER",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 49,
+      "wordCount": 9,
+      "paraCount": 1,
+      "cursorPos": 24
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "icfb3a5",
+      "active": true
+    }
+  },
+  {
+    "name": "Jane Smith",
+    "itemAttr": {
+      "handle": "bb2c23b3c42cc",
+      "parent": "f7e2d9f330615",
+      "root": "f6622b4617424",
+      "order": 1,
+      "type": "FILE",
+      "class": "CHARACTER",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 55,
+      "wordCount": 9,
+      "paraCount": 1,
+      "cursorPos": 25
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "i2d7a54",
+      "active": true
+    }
+  },
+  {
+    "name": "Locations",
+    "itemAttr": {
+      "handle": "15c4492bd5107",
+      "parent": null,
+      "root": "15c4492bd5107",
+      "order": 3,
+      "type": "ROOT",
+      "class": "WORLD",
+      "layout": "NO_LAYOUT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 0,
+      "wordCount": 0,
+      "paraCount": 0,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "ia857f0",
+      "active": false
+    }
+  },
+  {
+    "name": "Earth",
+    "itemAttr": {
+      "handle": "b3e74dbc1f584",
+      "parent": "15c4492bd5107",
+      "root": "15c4492bd5107",
+      "order": 0,
+      "type": "FILE",
+      "class": "WORLD",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 76,
+      "wordCount": 15,
+      "paraCount": 1,
+      "cursorPos": 20
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "i56be10",
+      "active": true
+    }
+  },
+  {
+    "name": "Space",
+    "itemAttr": {
+      "handle": "f1471bef9f2ae",
+      "parent": "15c4492bd5107",
+      "root": "15c4492bd5107",
+      "order": 1,
+      "type": "FILE",
+      "class": "WORLD",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 115,
+      "wordCount": 24,
+      "paraCount": 1,
+      "cursorPos": 133
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "icfb3a5",
+      "active": true
+    }
+  },
+  {
+    "name": "Mars",
+    "itemAttr": {
+      "handle": "5eaea4e8cdee8",
+      "parent": "15c4492bd5107",
+      "root": "15c4492bd5107",
+      "order": 2,
+      "type": "FILE",
+      "class": "WORLD",
+      "layout": "NOTE"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 28,
+      "wordCount": 6,
+      "paraCount": 1,
+      "cursorPos": 45
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "i2d7a54",
+      "active": true
+    }
+  },
+  {
+    "name": "Archive",
+    "itemAttr": {
+      "handle": "6827118336ac1",
+      "parent": null,
+      "root": "6827118336ac1",
+      "order": 4,
+      "type": "ROOT",
+      "class": "ARCHIVE",
+      "layout": "NO_LAYOUT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 0,
+      "wordCount": 0,
+      "paraCount": 0,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "ia857f0",
+      "active": false
+    }
+  },
+  {
+    "name": "Scenes",
+    "itemAttr": {
+      "handle": "ae9bf3c3ea159",
+      "parent": "6827118336ac1",
+      "root": "6827118336ac1",
+      "order": 0,
+      "type": "FOLDER",
+      "class": "ARCHIVE",
+      "layout": "NO_LAYOUT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 0,
+      "wordCount": 0,
+      "paraCount": 0,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "ia857f0",
+      "active": false
+    }
+  },
+  {
+    "name": "Old File",
+    "itemAttr": {
+      "handle": "8a5deb88c0e97",
+      "parent": "ae9bf3c3ea159",
+      "root": "6827118336ac1",
+      "order": 0,
+      "type": "FILE",
+      "class": "ARCHIVE",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 232,
+      "wordCount": 42,
+      "paraCount": 1,
+      "cursorPos": 239
+    },
+    "nameAttr": {
+      "status": "s90e6c9",
+      "import": "ia857f0",
+      "active": true
+    }
+  },
+  {
+    "name": "Trash",
+    "itemAttr": {
+      "handle": "98acd8c76c93a",
+      "parent": null,
+      "root": "98acd8c76c93a",
+      "order": 5,
+      "type": "ROOT",
+      "class": "TRASH",
+      "layout": "NO_LAYOUT"
+    },
+    "metaAttr": {
+      "expanded": true,
+      "heading": "H0",
+      "charCount": 0,
+      "wordCount": 0,
+      "paraCount": 0,
+      "cursorPos": 0
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "ia857f0",
+      "active": false
+    }
+  },
+  {
+    "name": "Delete Me!",
+    "itemAttr": {
+      "handle": "b8136a5a774a0",
+      "parent": "98acd8c76c93a",
+      "root": "98acd8c76c93a",
+      "order": 0,
+      "type": "FILE",
+      "class": "TRASH",
+      "layout": "DOCUMENT"
+    },
+    "metaAttr": {
+      "expanded": false,
+      "heading": "H0",
+      "charCount": 30,
+      "wordCount": 6,
+      "paraCount": 1,
+      "cursorPos": 36
+    },
+    "nameAttr": {
+      "status": "sf12341",
+      "import": "ia857f0",
+      "active": true
+    }
+  }
+]

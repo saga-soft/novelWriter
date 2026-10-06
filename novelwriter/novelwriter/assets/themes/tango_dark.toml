@@ -1,0 +1,115 @@
+[Main]
+name   = "Tango Dark"
+mode   = "dark"
+author = "Veronica Berglyd Olsen"
+credit = "Tango Desktop Project"
+url    = "https://en.wikipedia.org/wiki/Tango_Desktop_Project"
+
+##
+# Colours:
+# Background = #30302f
+# Foreground = #eeeeec
+# Comment    = #8f8f8d
+# Red        = #ef2929
+# Orange     = #c4a000
+# Yellow     = #fce94f
+# Green      = #8ae234
+# Cyan       = #34e2e2
+# Blue       = #3465a4
+# Purple     = #ad7fa8
+##
+
+[Base]
+base    = "#2e3436"
+default = "#eeeeec"
+faded   = "#babdb6"
+red     = "#ef2929"
+orange  = "#fcaf3e"
+yellow  = "#fce94f"
+green   = "#8ae234"
+cyan    = "#34e2e2"
+blue    = "#729fcf"
+purple  = "#ad7fa8"
+
+[Project]
+root     = "blue"
+folder   = "yellow"
+file     = "default"
+title    = "green"
+chapter  = "red"
+scene    = "blue"
+note     = "yellow"
+active   = "green"
+inactive = "red"
+disabled = "faded"
+
+[Icon]
+tool      = "default"
+sidebar   = "default"
+accept    = "green"
+reject    = "red"
+action    = "blue"
+option    = "orange"
+apply     = "green"
+create    = "yellow"
+destroy   = "faded"
+reset     = "green"
+add       = "green"
+change    = "green"
+remove    = "red"
+shortcode = "default"
+markdown  = "orange"
+system    = "yellow"
+info      = "blue"
+warning   = "orange"
+error     = "red"
+
+[Palette]
+window          = "base:L140"
+windowText      = "default"
+base            = "base"
+alternateBase   = "#454e51"
+text            = "default"
+tooltipBase     = "#ffffc0"
+tooltipText     = "#15150d"
+button          = "#555753"
+buttonText      = "default"
+brightText      = "#555753"
+highlight       = "blue"
+highlightedText = "#ffffff"
+link            = "blue"
+linkVisited     = "blue"
+accent          = "blue"
+
+[GUI]
+helpText     = "orange"
+fadedText    = "faded"
+errorText    = "red"
+accentText   = "blue"
+activeButton = "blue:128"
+activeBase   = "#525d60"
+searchMatch  = "orange:128"
+
+[Syntax]
+background     = "base"
+text           = "default"
+line           = "default:32"
+link           = "blue"
+headerText     = "blue"
+headerTag      = "blue:160"
+emphasis       = "orange"
+whitespace     = "orange:64"
+dialog         = "green"
+altDialog      = "yellow"
+note           = "yellow:L115"
+hidden         = "faded"
+shortcode      = "blue"
+keyword        = "red"
+tag            = "purple"
+value          = "red"
+optional       = "blue"
+spellCheckLine = "red"
+errorLine      = "green"
+replaceTag     = "cyan"
+modifier       = "blue"
+textHighlight  = "yellow:96"

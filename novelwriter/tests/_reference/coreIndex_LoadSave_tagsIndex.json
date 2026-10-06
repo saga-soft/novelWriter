@@ -1,0 +1,118 @@
+{
+  "novelWriter.meta": {
+    "version": "0x260300a0",
+    "timestamp": "2026-10-04 18:07:50",
+    "revision": 15
+  },
+  "novelWriter.tagsIndex": {
+    "bod": {"name": "Bod", "display": "Nobody Owens", "handle": "4c4f28287af27", "heading": "T0001", "class": "CHARACTER"},
+    "main": {"name": "Main", "display": "Main", "handle": "2426c6f0ca922", "heading": "T0001", "class": "PLOT"},
+    "europe": {"name": "Europe", "display": "Ancient Europe", "handle": "04468803b92e1", "heading": "T0001", "class": "WORLD"}
+  },
+  "novelWriter.itemIndex": {
+    "7a992350f3eb6": {
+      "T0001": {
+        "meta": {"level": "H1", "title": "Lorem Ipsum", "mod": true, "line": 1, "tag": "", "counts": [259, 44, 5]}
+      }
+    },
+    "8c58a65414c23": {
+      "T0000": {
+        "meta": {"level": "H0", "title": "", "mod": false, "line": 0, "tag": "", "counts": [1058, 176, 2]}
+      }
+    },
+    "88d59a277361b": {
+      "T0001": {
+        "meta": {"level": "H2", "title": "Prologue", "mod": true, "line": 1, "tag": "", "counts": [605, 94, 2]},
+        "summary": "Explanation from the lipsum.com website.",
+        "note.Purpose": "Introduction"
+      },
+      "document": {
+        "footnotes": ["f9kgf"]
+      }
+    },
+    "db7e733775d4d": {
+      "T0001": {
+        "meta": {"level": "H1", "title": "Act One", "mod": false, "line": 1, "tag": "", "counts": [35, 6, 1]}
+      }
+    },
+    "fb609cd8319dc": {
+      "T0001": {
+        "meta": {"level": "H2", "title": "Chapter One", "mod": false, "line": 1, "tag": "", "counts": [419, 67, 1]},
+        "refs": {"bod": "@pov", "main": "@plot", "europe": "@location"},
+        "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque at aliquam quam."
+      }
+    },
+    "88243afbe5ed8": {
+      "T0001": {
+        "meta": {"level": "H3", "title": "Scene One", "mod": false, "line": 1, "tag": "", "counts": [1197, 174, 2]},
+        "refs": {"bod": "@pov", "main": "@plot", "europe": "@location"},
+        "summary": "Aenean ut placerat velit. Etiam laoreet ullamcorper risus, eget lobortis enim scelerisque non. Suspendisse id maximus nunc, et mollis sapien. Curabitur vel semper sapien, non pulvinar dolor. Etiam finibus nisi vel mi molestie consectetur."
+      },
+      "T0002": {
+        "meta": {"level": "H4", "title": "Scene One, Section Two", "mod": false, "line": 13, "tag": "", "counts": [1561, 230, 2]}
+      }
+    },
+    "f96ec11c6a3da": {
+      "T0001": {
+        "meta": {"level": "H3", "title": "Scene Two", "mod": false, "line": 1, "tag": "", "counts": [2034, 299, 3]},
+        "refs": {"bod": "@pov", "main": "@plot", "europe": "@location"},
+        "summary": "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer sapien nulla, dictum at lacus a, dignissim consectetur dolor. Nunc vel eleifend lacus, eu dapibus orci."
+      },
+      "T0002": {
+        "meta": {"level": "H4", "title": "Scene Two, Section Two", "mod": false, "line": 15, "tag": "", "counts": [2009, 301, 3]}
+      }
+    },
+    "846352075de7d": {
+      "T0001": {
+        "meta": {"level": "H2", "title": "Why do we use it?", "mod": true, "line": 1, "tag": "", "counts": [631, 109, 3]}
+      }
+    },
+    "441420a886d82": {
+      "T0001": {
+        "meta": {"level": "H2", "title": "Chapter Two", "mod": false, "line": 1, "tag": "", "counts": [477, 70, 1]},
+        "refs": {"bod": "@pov", "main": "@plot", "europe": "@location"},
+        "summary": "Curabitur a elit posuere, varius ex et, convallis neque. Phasellus sagittis pharetra sem vitae dapibus. Curabitur varius lorem non pulvinar congue."
+      }
+    },
+    "eb103bc70c90c": {
+      "T0001": {
+        "meta": {"level": "H3", "title": "Scene Three", "mod": false, "line": 1, "tag": "", "counts": [3006, 439, 4]},
+        "refs": {"bod": "@pov", "main": "@plot", "europe": "@location"},
+        "summary": "Aenean ut libero ut lectus porttitor rhoncus vel et massa. Nam pretium, nibh et varius vehicula, urna metus blandit eros, euismod pharetra diam diam et libero. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos."
+      }
+    },
+    "f8c0562e50f1b": {
+      "T0001": {
+        "meta": {"level": "H3", "title": "Scene Four", "mod": false, "line": 1, "tag": "", "counts": [3839, 563, 6]},
+        "refs": {"bod": "@pov", "main": "@plot", "europe": "@location"},
+        "summary": "Nam tempor blandit magna laoreet aliquet. Vestibulum auctor posuere leo, ac gravida nisi rhoncus varius. Aenean posuere dolor vitae condimentum volutpat. Donec egestas volutpat risus, quis luctus justo."
+      }
+    },
+    "47666c91c7ccf": {
+      "T0001": {
+        "meta": {"level": "H3", "title": "Scene Five", "mod": false, "line": 1, "tag": "", "counts": [3644, 543, 5]},
+        "refs": {"bod": "@pov", "main": "@plot", "europe": "@location"},
+        "summary": "Praesent eget est porta, dictum ante in, egestas risus. Mauris risus mauris, consequat aliquam mauris et, feugiat iaculis ipsum. Aliquam arcu ipsum, fermentum ut arcu sed, lobortis euismod sem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus."
+      }
+    },
+    "4c4f28287af27": {
+      "T0001": {
+        "meta": {"level": "H1", "title": "Nobody Owens", "mod": false, "line": 1, "tag": "bod", "counts": [1864, 284, 3]},
+        "refs": {"main": "@plot"},
+        "summary": "The Hero"
+      }
+    },
+    "2426c6f0ca922": {
+      "T0001": {
+        "meta": {"level": "H1", "title": "Main Plot", "mod": false, "line": 1, "tag": "main", "counts": [1369, 195, 2]},
+        "summary": "Where it all happens"
+      }
+    },
+    "04468803b92e1": {
+      "T0001": {
+        "meta": {"level": "H1", "title": "Ancient Europe", "mod": false, "line": 1, "tag": "europe", "counts": [1770, 259, 3]},
+        "summary": "A strange place"
+      }
+    }
+  }
+}

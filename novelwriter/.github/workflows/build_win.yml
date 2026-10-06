@@ -1,0 +1,16 @@
+name: Build Windows
+
+on: workflow_dispatch
+
+jobs:
+  buildAssets:
+    uses: ./.github/workflows/part_assets.yml
+    permissions:
+      contents: read
+
+  buildWin-X64:
+    needs: buildAssets
+    uses: ./.github/workflows/part_win_x64.yml
+    secrets: inherit
+    permissions:
+      contents: read

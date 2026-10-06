@@ -1,0 +1,41 @@
+name: i18n
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release
+    paths:
+      - i18n/*.ts
+
+jobs:
+  buildI18n:
+    name: Build i18n
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Python Setup
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          architecture: x64
+
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Install System Packages
+        run: |
+          sudo apt update
+          sudo apt install qttools5-dev-tools
+
+      - name: Build Assets
+        run: python pkgutils.py qtlrelease
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: nw-i18n
+          path: novelwriter/assets/i18n/*.qm
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,121 @@
+[Main]
+name   = "Tomorrow"
+mode   = "light"
+author = "Veronica Berglyd Olsen"
+credit = "Chris Kempson"
+url    = "https://github.com/chriskempson/tomorrow-theme"
+
+##
+# Theme:  Tomorrow
+# Source: https://github.com/chriskempson/tomorrow-theme
+# Credit: Chris Kempson
+##
+# Colours:
+# Background   = #ffffff
+# Current Line = #efefef
+# Selection    = #d6d6d6
+# Foreground   = #4d4d4c
+# Comment      = #8e908c
+# Red          = #c82829
+# Orange       = #f5871f
+# Yellow       = #eab700
+# Green        = #718c00
+# Aqua         = #3e999f
+# Blue         = #4271ae
+# Purple       = #8959a8
+##
+
+[Base]
+base    = "#ffffff"
+default = "#484848"
+faded   = "#6c6c6c"
+red     = "#c82829"
+orange  = "#f5871f"
+yellow  = "#eab700"
+green   = "#718c00"
+cyan    = "#3e999f"
+blue    = "#4271ae"
+purple  = "#8959a8"
+
+[Project]
+root     = "blue"
+folder   = "yellow"
+file     = "default"
+title    = "green"
+chapter  = "red"
+scene    = "blue"
+note     = "yellow"
+active   = "green"
+inactive = "red"
+disabled = "faded"
+
+[Icon]
+tool      = "default"
+sidebar   = "default"
+accept    = "green"
+reject    = "red"
+action    = "blue"
+option    = "orange"
+apply     = "green"
+create    = "yellow"
+destroy   = "faded"
+reset     = "green"
+add       = "green"
+change    = "green"
+remove    = "red"
+shortcode = "default"
+markdown  = "orange"
+system    = "yellow"
+info      = "blue"
+warning   = "orange"
+error     = "red"
+
+[Palette]
+window          = "#efefef"
+windowText      = "#000000"
+base            = "base"
+alternateBase   = "#d6d6d6"
+text            = "#000000"
+tooltipBase     = "#ffffc0"
+tooltipText     = "#15150d"
+button          = "#efefef"
+buttonText      = "#000000"
+brightText      = "#efefef"
+highlight       = "blue"
+highlightedText = "base"
+link            = "blue"
+linkVisited     = "blue"
+accent          = "blue"
+
+[GUI]
+helpText     = "#5c5c5c"
+fadedText    = "faded"
+errorText    = "red"
+accentText   = "blue"
+activeButton = "blue:96"
+activeBase   = "#d6d6d6"
+searchMatch  = "orange:96"
+
+[Syntax]
+background     = "base"
+text           = "#4d4d4c"
+line           = "default:32"
+link           = "blue"
+headerText     = "blue"
+headerTag      = "blue:L135"
+emphasis       = "orange"
+whitespace     = "orange:64"
+dialog         = "green"
+altDialog      = "yellow"
+note           = "#b38c00"
+hidden         = "faded"
+shortcode      = "blue"
+keyword        = "red"
+tag            = "purple"
+value          = "yellow"
+optional       = "blue"
+spellCheckLine = "red"
+errorLine      = "green"
+replaceTag     = "cyan"
+modifier       = "orange"
+textHighlight  = "yellow:96"

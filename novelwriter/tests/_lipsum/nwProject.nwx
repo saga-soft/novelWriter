@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='utf-8'?>
+<novelWriterXML appVersion="26.2b1" hexVersion="0x260200b1" fileVersion="1.5" fileRevision="7" timeStamp="2026-08-01 21:51:30">
+  <project id="5ac0df12-8b8b-476b-9905-21d33685687c" saveCount="56" autoCount="34" editTime="2780" indexRevision="46">
+    <name>Lorem Ipsum</name>
+    <author>lipsum.com</author>
+  </project>
+  <settings>
+    <doBackup>no</doBackup>
+    <language>en_GB</language>
+    <spellChecking auto="no">None</spellChecking>
+    <projectTarget date="None" last="3006" mode="words">0</projectTarget>
+    <dailyTarget auto="no" last="0" date="2026-08-01">0</dailyTarget>
+    <targetSkipRoots />
+    <lastHandle>
+      <entry key="editor">7a992350f3eb6</entry>
+      <entry key="viewer">None</entry>
+      <entry key="novel">b3643d0f92e32</entry>
+      <entry key="story">None</entry>
+    </lastHandle>
+    <autoReplace>
+      <entry key="Rep1">Replace Text 1</entry>
+      <entry key="Rep2">Replace Text 2</entry>
+    </autoReplace>
+    <status>
+      <entry key="sbaa94f" count="3" color="base" shape="CIRCLE">New</entry>
+      <entry key="s27bf7c" count="0" color="red" shape="CIRCLE">Note</entry>
+      <entry key="s92a87b" count="5" color="yellow" shape="CIRCLE">Draft</entry>
+      <entry key="sedd043" count="7" color="green" shape="CIRCLE">Finished</entry>
+    </status>
+    <importance>
+      <entry key="i613591" count="4" color="base" shape="SQUARE">New</entry>
+      <entry key="i560cbf" count="0" color="red" shape="SQUARE">Minor</entry>
+      <entry key="i37861c" count="1" color="yellow" shape="SQUARE">Major</entry>
+      <entry key="id6b1d0" count="2" color="green" shape="SQUARE">Main</entry>
+    </importance>
+  </settings>
+  <content items="22" novelWords="3115" notesWords="738" novelChars="20774" notesChars="5003">
+    <item handle="b3643d0f92e32" parent="None" root="b3643d0f92e32" order="0" type="ROOT" class="NOVEL">
+      <meta expanded="yes" />
+      <name status="sbaa94f" import="i613591">Novel</name>
+    </item>
+    <item handle="7a992350f3eb6" parent="b3643d0f92e32" root="b3643d0f92e32" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H1" charCount="259" wordCount="44" paraCount="5" cursorPos="116" />
+      <name status="sedd043" import="i613591" active="yes">Lorem Ipsum</name>
+    </item>
+    <item handle="8c58a65414c23" parent="b3643d0f92e32" root="b3643d0f92e32" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="1058" wordCount="176" paraCount="2" cursorPos="53" />
+      <name status="sedd043" import="i613591" active="yes">Front Matter</name>
+    </item>
+    <item handle="88d59a277361b" parent="b3643d0f92e32" root="b3643d0f92e32" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H2" charCount="605" wordCount="94" paraCount="2" cursorPos="94" />
+      <name status="s92a87b" import="i613591" active="yes">Prologue</name>
+    </item>
+    <item handle="db7e733775d4d" parent="b3643d0f92e32" root="b3643d0f92e32" order="3" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H1" charCount="35" wordCount="6" paraCount="1" cursorPos="42" />
+      <name status="sbaa94f" import="i613591" active="yes">Act One</name>
+    </item>
+    <item handle="45e6b01ca35c1" parent="b3643d0f92e32" root="b3643d0f92e32" order="4" type="FOLDER" class="NOVEL">
+      <meta expanded="yes" />
+      <name status="s92a87b" import="i613591">Chapter One</name>
+    </item>
+    <item handle="fb609cd8319dc" parent="45e6b01ca35c1" root="b3643d0f92e32" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H2" charCount="419" wordCount="67" paraCount="1" cursorPos="155" />
+      <name status="s92a87b" import="i613591" active="yes">Chapter One</name>
+    </item>
+    <item handle="88243afbe5ed8" parent="45e6b01ca35c1" root="b3643d0f92e32" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="2758" wordCount="404" paraCount="4" cursorPos="57" />
+      <name status="sedd043" import="i613591" active="yes">Scene One</name>
+    </item>
+    <item handle="f96ec11c6a3da" parent="45e6b01ca35c1" root="b3643d0f92e32" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="4043" wordCount="600" paraCount="6" cursorPos="57" />
+      <name status="sedd043" import="i613591" active="yes">Scene Two</name>
+    </item>
+    <item handle="846352075de7d" parent="b3643d0f92e32" root="b3643d0f92e32" order="5" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H2" charCount="631" wordCount="109" paraCount="3" cursorPos="376" />
+      <name status="sbaa94f" import="i613591" active="no">Interlude</name>
+    </item>
+    <item handle="6bd935d2490cd" parent="b3643d0f92e32" root="b3643d0f92e32" order="6" type="FOLDER" class="NOVEL">
+      <meta expanded="yes" />
+      <name status="s92a87b" import="i613591">Chapter Two</name>
+    </item>
+    <item handle="441420a886d82" parent="6bd935d2490cd" root="b3643d0f92e32" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H2" charCount="477" wordCount="70" paraCount="1" cursorPos="58" />
+      <name status="s92a87b" import="i613591" active="yes">Chapter Two</name>
+    </item>
+    <item handle="eb103bc70c90c" parent="6bd935d2490cd" root="b3643d0f92e32" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="3006" wordCount="439" paraCount="4" cursorPos="59" />
+      <name status="sedd043" import="i613591" active="yes">Scene Three</name>
+    </item>
+    <item handle="f8c0562e50f1b" parent="6bd935d2490cd" root="b3643d0f92e32" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="3839" wordCount="563" paraCount="6" cursorPos="58" />
+      <name status="sedd043" import="i613591" active="yes">Scene Four</name>
+    </item>
+    <item handle="47666c91c7ccf" parent="6bd935d2490cd" root="b3643d0f92e32" order="3" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="3644" wordCount="543" paraCount="5" cursorPos="58" />
+      <name status="sedd043" import="i613591" active="yes">Scene Five</name>
+    </item>
+    <item handle="67a8707f2f249" parent="None" root="67a8707f2f249" order="1" type="ROOT" class="CHARACTER">
+      <meta expanded="yes" />
+      <name status="sbaa94f" import="i613591">Characters</name>
+    </item>
+    <item handle="4c4f28287af27" parent="67a8707f2f249" root="67a8707f2f249" order="0" type="FILE" class="CHARACTER" layout="NOTE">
+      <meta expanded="no" heading="H1" charCount="1864" wordCount="284" paraCount="3" cursorPos="70" />
+      <name status="sbaa94f" import="id6b1d0" active="yes">Mr. Nobody</name>
+    </item>
+    <item handle="6c6afb1247750" parent="None" root="6c6afb1247750" order="2" type="ROOT" class="PLOT">
+      <meta expanded="yes" />
+      <name status="sbaa94f" import="i613591">Plot</name>
+    </item>
+    <item handle="2426c6f0ca922" parent="6c6afb1247750" root="6c6afb1247750" order="0" type="FILE" class="PLOT" layout="NOTE">
+      <meta expanded="no" heading="H1" charCount="1369" wordCount="195" paraCount="2" cursorPos="53" />
+      <name status="sbaa94f" import="id6b1d0" active="yes">Main</name>
+    </item>
+    <item handle="60bdf227455cc" parent="None" root="60bdf227455cc" order="3" type="ROOT" class="WORLD">
+      <meta expanded="yes" />
+      <name status="sbaa94f" import="i613591">World</name>
+    </item>
+    <item handle="04468803b92e1" parent="60bdf227455cc" root="60bdf227455cc" order="0" type="FILE" class="WORLD" layout="NOTE">
+      <meta expanded="no" heading="H1" charCount="1770" wordCount="259" paraCount="3" cursorPos="1119" />
+      <name status="sbaa94f" import="i37861c" active="yes">Ancient Europe</name>
+    </item>
+    <item handle="1ace7ab1a0fc6" parent="None" root="1ace7ab1a0fc6" order="4" type="ROOT" class="TRASH">
+      <meta expanded="no" />
+      <name status="sbaa94f" import="i613591">Trash</name>
+    </item>
+  </content>
+</novelWriterXML>

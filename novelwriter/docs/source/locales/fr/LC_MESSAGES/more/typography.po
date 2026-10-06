@@ -1,0 +1,267 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 23:17+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/more/typography.rst:5
+msgid "Typographical Notes"
+msgstr "Notes typographiques"
+
+#: ../../source/more/typography.rst:12
+msgid ""
+"novelWriter has some support for typographical symbols that are not usually "
+"easily available in many text editors. This includes for instance the "
+"proper unicode quotation marks, dashes, ellipsis, thin spaces, etc. All "
+"these symbols are available from the **Insert** menu, and via keyboard "
+"shortcuts. See :ref:`docs_features_shortcuts_insert`."
+msgstr ""
+"novelWriter prend en charge certains symboles typographiques qui ne sont "
+"généralement pas disponibles dans de nombreux éditeurs de texte. Cela "
+"inclut par exemple les guillemets unicode, les tirets, les ellipses, les "
+"espaces fins, etc. Tous ces symboles sont disponibles dans le menu "
+"**Insérer**, et via des raccourcis clavier. Voir :ref:"
+"`docs_features_shortcuts_insert`."
+
+#: ../../source/more/typography.rst:17
+msgid ""
+"This chapter provides some additional information on how novelWriter "
+"handles these symbols."
+msgstr ""
+"Ce chapitre fournit des informations supplémentaires sur la manière dont "
+"novelWriter gère ces symboles."
+
+#: ../../source/more/typography.rst:21
+msgid "Dashes and Ellipsis"
+msgstr "Tirets et points de suspension"
+
+#: ../../source/more/typography.rst:23
+msgid ""
+"With the auto-replace feature enabled (see :ref:`docs_ui_edit_view_auto`), "
+"two and three hyphens are converted automatically to short and long dashes, "
+"four hyphens to a horizontal bar, and three dots to ellipsis."
+msgstr ""
+"Lorsque la fonction de remplacement automatique est activée (voir :ref:"
+"`docs_ui_edit_view_auto`), les deux et trois traits d'union sont "
+"automatiquement convertis en tirets demi-cadratin et cadratin, les quatre "
+"traits d'union en barre horizontale et les trois points en points de "
+"suspension."
+
+#: ../../source/more/typography.rst:29
+msgid ""
+"The last auto-replace can always be reverted with the undo command :kbd:"
+"`Ctrl+Z`, reverting the text to what you typed before the automatic "
+"replacement occurred."
+msgstr ""
+"Le dernier remplacement automatique peut toujours être annulé avec la "
+"commande d'annulation :kbd:`Ctrl+Z`, rétablissant le texte tel qu'il était "
+"avant le remplacement automatique."
+
+#: ../../source/more/typography.rst:32
+msgid ""
+"In addition, \"Figure Dash\" is available. The Figure Dash is a dash that "
+"has the same width as the numbers of the same font, for most fonts. It "
+"helps to align numbers nicely in columns when you need to use a dash in "
+"them."
+msgstr ""
+"En outre, le « tiret chiffré » est disponible. Il s'agit d'un tiret de la "
+"même largeur que les chiffres de la même police, pour la plupart des "
+"polices. Il permet de bien aligner les chiffres dans les colonnes lorsque "
+"vous devez utiliser un tiret."
+
+#: ../../source/more/typography.rst:38
+msgid "Single and Double Quotes"
+msgstr "Guillemets simples et doubles"
+
+#: ../../source/more/typography.rst:40
+msgid ""
+"All the different quotation marks listed on the `Quotation Mark`_ Wikipedia "
+"page are available, and can be selected as auto-replaced symbols for "
+"straight single and double quote key strokes. The settings can be found in "
+"**Preferences**."
+msgstr ""
+"Tous les différents guillemets listés sur la page Wikipedia `Quotation "
+"Mark`_ sont disponibles, et peuvent être sélectionnés comme symboles auto-"
+"remplacés pour les touches de guillemets simples et doubles. Les réglages "
+"se trouvent dans les **Préférences**."
+
+#: ../../source/more/typography.rst:44
+msgid ""
+"If your text contains straight single and double quotes, there are two "
+"convenience functions in the **Format** menu that can be used to re-format "
+"a selected section of text with the correct quote symbols."
+msgstr ""
+"Si votre texte contient des guillemets simples et doubles, deux fonctions "
+"pratiques du menu **Format** permettent de reformater une section de texte "
+"sélectionnée avec les symboles de guillemets corrects."
+
+#: ../../source/more/typography.rst:48
+msgid ""
+"You can enable dialogue recognition and colour highlighting for novel "
+"documents. See :ref:`docs_features_dialogue` for more details."
+msgstr ""
+"Vous pouvez activer la reconnaissance du dialogue et la mise en évidence "
+"des couleurs pour les nouveaux documents. Voir :ref:"
+"`docs_features_dialogue` pour plus de détails."
+
+#: ../../source/more/typography.rst:53
+msgid "Single and Double Prime"
+msgstr "Simple et double prime"
+
+#: ../../source/more/typography.rst:55
+msgid ""
+"Both single and double prime symbols are available in the **Insert** menu. "
+"These symbols are the correct symbols to use for unit symbols for feet, "
+"inches, minutes, and seconds. The usage of these is described in more "
+"detail on the Wikipedia Prime_ page. They look very similar to single and "
+"double straight quotes, and may be rendered similarly by the font, but they "
+"have different codes. Using these correctly will also prevent the auto-"
+"replace and dialogue highlighting features misunderstanding their meaning "
+"in the text."
+msgstr ""
+"Les symboles de prime simple et double sont disponibles dans le menu "
+"**Insérer**. Ces symboles sont les symboles corrects à utiliser pour les "
+"symboles d'unités pour les pieds, les pouces, les minutes et les secondes. "
+"L'utilisation de ces symboles est décrite plus en détail sur la page Prime_ "
+"de Wikipedia. Ils ressemblent beaucoup aux guillemets simples et doubles et "
+"peuvent être rendus de la même manière par la police, mais ils ont des "
+"codes différents. En les utilisant correctement, vous éviterez que les "
+"fonctions de remplacement automatique et de mise en évidence des dialogues "
+"ne se méprennent sur leur signification dans le texte."
+
+#: ../../source/more/typography.rst:66
+msgid "Modifier Letter Apostrophe"
+msgstr "Modificateur Lettre Apostrophe"
+
+#: ../../source/more/typography.rst:68
+msgid ""
+"The auto-replace feature will consider any right-facing single straight "
+"quote as a quote symbol, even if it is intended as an apostrophe. This also "
+"includes the syntax highlighter, which may assume the first following "
+"apostrophe is the closing symbol of a single quoted region of text."
+msgstr ""
+"La fonction de remplacement automatique considère tout guillemet droit "
+"simple orienté vers la droite comme un symbole de guillemet, même s'il "
+"s'agit d'une apostrophe. Cela s'applique également à l'outil de mise en "
+"évidence de la syntaxe, qui peut supposer que la première apostrophe qui "
+"suit est le symbole de fermeture d'une région de texte entre guillemets."
+
+#: ../../source/more/typography.rst:72
+msgid ""
+"To get around this, an alternative apostrophe is available. It is a special "
+"Unicode character that is not categorised as punctuation, but as a "
+"modifier. It is usually rendered the same way as the right single quotation "
+"marks, depending on the font. There is a Wikipedia article for the "
+"`Modifier letter apostrophe`_ with more details."
+msgstr ""
+"Pour contourner ce problème, il existe une apostrophe alternative. Il "
+"s'agit d'un caractère Unicode spécial qui n'est pas considéré comme une "
+"ponctuation, mais comme un modificateur. Il est généralement rendu de la "
+"même manière que les guillemets simples de droite, en fonction de la police "
+"de caractères. Il existe un article de Wikipédia sur la `lettre "
+"modificatrice apostrophe`_ avec plus de détails."
+
+#: ../../source/more/typography.rst:79
+msgid ""
+"On export with the **Build Manuscript** tool, these apostrophes will be "
+"replaced automatically with the corresponding right hand single quote "
+"symbol as is generally recommended. Therefore it doesn't really matter if "
+"you only use them to correct syntax highlighting in some places, and not "
+"others."
+msgstr ""
+"Lors de l'exportation à l'aide de l'outil **Compiler le manuscrit**, ces "
+"apostrophes seront automatiquement remplacées par le symbole de guillemet "
+"simple de droite correspondant, comme cela est généralement recommandé. Par "
+"conséquent, il importe peu que vous les utilisiez uniquement pour corriger "
+"la coloration syntaxique à certains endroits, et pas à d'autres."
+
+#: ../../source/more/typography.rst:86
+msgid "White Space Symbols"
+msgstr "Symboles de l'espace"
+
+#: ../../source/more/typography.rst:88
+msgid ""
+"A few variations of the regular space character is supported. The correct "
+"typographical way to separate a number from its unit is with a `thin "
+"space`_. It is usually 2/3 the width of a regular space. For numbers and "
+"units, this should in addition be a non-breaking space, that is, the text "
+"wrapping should not add a line break on this particular space."
+msgstr ""
+"Quelques variations du caractère espace régulier sont prises en charge. La "
+"manière typographique correcte de séparer un nombre de son unité est "
+"d'utiliser une `espace fine`_. Sa largeur est généralement égale aux deux "
+"tiers de celle d'une espace normale. Pour les nombres et les unités, il "
+"doit en outre s'agir d'un espace insécable, c'est-à-dire que l'habillage du "
+"texte ne doit pas ajouter de saut de ligne sur cet espace particulier."
+
+#: ../../source/more/typography.rst:93
+msgid "A regular space can also be made into a non-breaking space if needed."
+msgstr ""
+"Un espace régulier peut également être transformé en espace insécable si "
+"nécessaire."
+
+#: ../../source/more/typography.rst:95
+msgid ""
+"All non-breaking spaces are highlighted with a differently coloured "
+"background to make it easier to spot them in the text. The colour will "
+"depend on the selected colour theme."
+msgstr ""
+"Tous les espaces insécables sont mis en évidence par un arrière-plan de "
+"couleur différente pour faciliter leur repérage dans le texte. La couleur "
+"dépend du thème de couleur sélectionné."
+
+#: ../../source/more/typography.rst:98
+msgid ""
+"You can insert these spaces in your text using the following keyboard "
+"combinations:"
+msgstr ""
+"Vous pouvez insérer ces espaces dans votre texte en utilisant les "
+"combinaisons de clavier suivantes :"
+
+#: ../../source/more/typography.rst:100
+msgid "A non-breaking space can be inserted with :kbd:`Ctrl+K`, :kbd:`Space`."
+msgstr ""
+"Un espace insécable peut être inséré avec :kbd:`Ctrl+K`, :kbd:`Espace`."
+
+#: ../../source/more/typography.rst:101
+msgid ""
+"Thin spaces are also supported, and can be inserted with :kbd:`Ctrl+K`, :"
+"kbd:`Shift+Space`."
+msgstr ""
+"Les espaces courtes sont également supportés, et peuvent être insérés avec :"
+"kbd:`Ctrl+K`, :kbd:`Maj+Espace`."
+
+#: ../../source/more/typography.rst:102
+msgid ""
+"Non-breaking thin space can be inserted with :kbd:`Ctrl+K`, :kbd:"
+"`Ctrl+Space`."
+msgstr ""
+"Une espace courte insécable peut être insérée avec :kbd:`Ctrl+K`, :kbd:"
+"`Ctrl+Espace`."
+
+#: ../../source/more/typography.rst:104
+msgid ""
+"These are all insert features, and the **Insert** menu has more. The "
+"keyboard shortcuts for them are also listed in :ref:"
+"`docs_features_shortcuts`."
+msgstr ""
+"Ce sont toutes des fonctions d'insertion, et le menu **Insérer** en propose "
+"d'autres. Les raccourcis clavier sont également listés dans :ref:"
+"`docs_features_shortcuts`."

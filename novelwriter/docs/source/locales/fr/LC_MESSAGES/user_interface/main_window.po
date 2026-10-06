@@ -1,0 +1,500 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 16:42+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/user_interface/main_window.rst:5
+msgid "The Main Window"
+msgstr "La fenêtre principale"
+
+#: ../../source/user_interface/main_window.rst:7
+msgid ""
+"The user interface of novelWriter is intended to be as minimalistic as "
+"practically possible, while at the same time provide useful features "
+"needed for writing a novel."
+msgstr ""
+"L'interface utilisateur de novelWriter se veut aussi minimaliste que "
+"possible, tout en offrant les fonctionnalités utiles à l'écriture d'un "
+"roman."
+
+#: ../../source/user_interface/main_window.rst:10
+msgid ""
+"The main window does not by default have an editor toolbar like many "
+"other applications do. This reduces clutter, and since the documents are "
+"formatted with style tags, it is not needed most of the time. Still, a "
+"small formatting toolbar can be popped out by clicking the left-most "
+"button in the header of the document editor. It gives quick access to "
+"standard formatting codes."
+msgstr ""
+"La fenêtre principale ne comporte pas, par défaut, de barre d'outils "
+"d'édition, comme c'est le cas dans de nombreuses autres applications. "
+"Cela réduit l'encombrement et, comme les documents sont formatés avec "
+"des balises de style, la barre d'outils n'est pas nécessaire la plupart "
+"du temps. Néanmoins, une petite barre d'outils de formatage peut être "
+"affichée en cliquant sur le bouton le plus à gauche dans l'en-tête de "
+"l'éditeur de documents. Elle permet d'accéder rapidement aux codes de "
+"formatage standard."
+
+#: ../../source/user_interface/main_window.rst:15
+msgid ""
+"Most formatting features supported are also available through keyboard "
+"shortcuts, as well as available in the main menu under **Format**, so "
+"you don't have to look up formatting codes every time you need them. For "
+"reference, a list of all shortcuts can be found in the :ref:"
+"`docs_features_shortcuts` section."
+msgstr ""
+"La plupart des fonctions de formatage supportées sont également "
+"disponibles par des raccourcis clavier, ainsi que dans le menu principal "
+"sous **Format**, de sorte que vous n'avez pas à chercher les codes de "
+"formatage à chaque fois que vous en avez besoin. Pour référence, une "
+"liste de tous les raccourcis peut être trouvée dans la section :ref:"
+"`docs_features_shortcuts`."
+
+#: ../../source/user_interface/main_window.rst:20
+msgid ""
+"On the left side of the main window you will find a sidebar. This bar "
+"has buttons for the standard views you can switch between, a quick link "
+"to the **Build Manuscript** tool, and a set of project-related tools and "
+"quick access to settings at the bottom."
+msgstr ""
+"Sur le côté gauche de la fenêtre principale, vous trouverez une barre "
+"latérale. Cette barre comporte des boutons pour les vues standard entre "
+"lesquelles vous pouvez basculer, un lien rapide vers l'outil **Compiler "
+"le manuscrit**, ainsi qu'un ensemble d'outils liés au projet et un accès "
+"rapide aux paramètres dans la partie inférieure."
+
+#: ../../source/user_interface/main_window.rst:26
+msgid "Project Tree and Editor View"
+msgstr "Arborescence du projet et vue de l'éditeur"
+
+#: ../../source/user_interface/main_window.rst:30
+msgid "A screenshot of the Project Tree and Editor View."
+msgstr ""
+"Capture d'écran de l'arborescence du projet et de la vue de l'éditeur."
+
+#: ../../source/user_interface/main_window.rst:32
+msgid ""
+"When **Project Tree View** in the sidebar is selected, the work area is "
+"split in two, or optionally three, panels. The left-most panel contains "
+"the project tree and all the documents in your project. The second panel "
+"is the document editor."
+msgstr ""
+"Lorsque l'option **Arborescence du projet** de la barre latérale est "
+"sélectionnée, l'espace de travail est divisé en deux, ou éventuellement "
+"trois, panneaux. Le panneau le plus à gauche contient l'arborescence du "
+"projet et tous les documents de votre projet. Le deuxième panneau est "
+"l'éditeur de documents."
+
+#: ../../source/user_interface/main_window.rst:36
+msgid ""
+"An optional third panel on the right side contains a document viewer "
+"which can view any document in your project independently of what is "
+"open in the document editor. This panel is not intended as a preview "
+"window, although you can use it for this purpose if you wish. For "
+"instance if you need to check that the formatting tags behave as you "
+"expect. However, the main purpose of the viewer is for viewing your "
+"notes next to your editor while you're writing."
+msgstr ""
+"Un troisième panneau facultatif sur le côté droit contient une "
+"visionneuse de documents qui peut afficher n'importe quel document de "
+"votre projet indépendamment de ce qui est ouvert dans l'éditeur de "
+"documents. Ce panneau n'est pas conçu comme une fenêtre de "
+"prévisualisation, bien que vous puissiez l'utiliser à cette fin si vous "
+"le souhaitez. Par exemple, si vous avez besoin de vérifier que les "
+"balises de formatage se comportent comme vous le souhaitez. Cependant, "
+"l'objectif principal de la visionneuse est de visualiser vos notes à "
+"côté de votre éditeur pendant que vous écrivez."
+
+#: ../../source/user_interface/main_window.rst:42
+msgid ""
+"The editor also has a **Focus Mode** you can toggle either from the "
+"menu, from the icon in the editor's header, or by pressing :kbd:`F8`. "
+"When **Focus Mode** is enabled, all the user interface elements other "
+"than the document editor itself are hidden away."
+msgstr ""
+"L'éditeur dispose également d'un **Mode sans distraction** que vous "
+"pouvez activer soit à partir du menu, soit à partir de l'icône dans l'en-"
+"tête de l'éditeur, soit en appuyant sur :kbd:`F8`. Lorsque le **Mode "
+"sans distraction** est activé, tous les éléments de l'interface "
+"utilisateur autres que l'éditeur de document lui-même sont cachés."
+
+#: ../../source/user_interface/main_window.rst:46
+msgid ""
+"The project tree will highlight with a different background colour the "
+"document that is currently open in the editor."
+msgstr ""
+"L'arborescence du projet met en évidence, avec une couleur d'arrière-"
+"plan différente, le document actuellement ouvert dans l'éditeur."
+
+#: ../../source/user_interface/main_window.rst:51
+msgid "Drag & Drop"
+msgstr "Glisser-déposer"
+
+#: ../../source/user_interface/main_window.rst:53
+msgid ""
+"The project tree allows drag & drop so you to reorder your documents and "
+"folders. Moving a document in the project tree will affect the text's "
+"position when you assemble your manuscript in the **Manuscript Build** "
+"tool."
+msgstr ""
+"L'arborescence du projet permet d'effectuer un glisser-déposer pour "
+"réorganiser les documents et les dossiers. Le déplacement d'un document "
+"dans l'arborescence du projet affectera la position du texte lorsque "
+"vous assemblerez votre manuscrit dans l'outil **Compilation du "
+"manuscrit**."
+
+#: ../../source/user_interface/main_window.rst:57
+msgid ""
+"Documents and their folders can be rearranged freely within their root "
+"folders. If you move a **Novel Document** out of a **Novel** folder, it "
+"will be converted to a **Project Note**. Notes can be moved freely "
+"between all root folders, but keep in mind that if you move a note into "
+"a **Novel** type root folder, its \"Importance\" setting will be "
+"replaced by a \"Status\" setting. See :ref:`docs_usage_project_status` "
+"for more details. The old value will not be overwritten though, and "
+"should be restored if you move it back at some point."
+msgstr ""
+"Les documents et leurs dossiers peuvent être réorganisés librement à "
+"l'intérieur de leur dossier racine. Si vous déplacez un **Document "
+"roman** hors d'un dossier **Roman**, il sera converti en **Note de "
+"projet**. Les notes peuvent être déplacées librement entre tous les "
+"dossiers racine, mais gardez à l'esprit que si vous déplacez une note "
+"dans un dossier racine de type **Roman**, son paramètre « Importance » "
+"sera remplacé par un paramètre « Statut ». Voir :ref:"
+"`docs_usage_project_status` pour plus de détails. L'ancienne valeur ne "
+"sera pas écrasée, et devrait être restaurée si vous la déplacez à "
+"nouveau à un moment donné."
+
+#: ../../source/user_interface/main_window.rst:64
+msgid ""
+"Root folders in the project tree cannot be dragged and dropped at all. "
+"If you want to reorder them, you can move them up or down with respect "
+"to each other using the arrow buttons at the top of the project tree, or "
+"by pressing :kbd:`Ctrl+Up` or :kbd:`Ctrl+Down` when they are selected."
+msgstr ""
+"Les dossiers racines de l'arborescence du projet ne peuvent pas être "
+"déplacés. Si vous souhaitez les réorganiser, vous pouvez les déplacer "
+"vers le haut ou vers le bas en utilisant les boutons fléchés en haut de "
+"l'arborescence du projet, ou en appuyant sur :kbd:`Ctrl+Haut` ou :kbd:"
+"`Ctrl+Bas` lorsqu'ils sont sélectionnés."
+
+#: ../../source/user_interface/main_window.rst:70
+msgid ""
+"You can drag and drop documents onto the editor or viewer panel to open "
+"them."
+msgstr ""
+"Vous pouvez faire glisser et déposer des documents sur le panneau de "
+"l'éditeur ou de la visionneuse pour les ouvrir."
+
+#: ../../source/user_interface/main_window.rst:76
+msgid ""
+"You can now select multiple items in the project tree by holding down "
+"the :kbd:`Ctrl` or :kbd:`Shift` key while selecting items."
+msgstr ""
+"Vous pouvez maintenant sélectionner plusieurs éléments dans "
+"l'arborescence du projet en maintenant la touche :kbd:`Ctrl` ou :kbd:"
+"`Maj` enfoncée pendant la sélection des éléments."
+
+#: ../../source/user_interface/main_window.rst:85
+msgid "Novel View and Editor View"
+msgstr "Vue du roman et vue de l'éditeur"
+
+#: ../../source/user_interface/main_window.rst:89
+msgid "A screenshot of the Novel Tree and Editor View."
+msgstr ""
+"Capture d'écran de l'arborescence des romans et de la vue de l'éditeur."
+
+#: ../../source/user_interface/main_window.rst:91
+msgid ""
+"When **Novel Tree View** in the sidebar is selected, the project tree is "
+"replaced by an overview of your novel structure for a specific **Novel** "
+"type root folder. Instead of showing individual documents, the tree now "
+"shows all headings of your text. This includes multiple headings within "
+"the same document."
+msgstr ""
+"Lorsque l'option **Arborescence du roman** de la barre latérale est "
+"sélectionnée, l'arborescence du projet est remplacée par une vue "
+"d'ensemble de la structure de votre roman pour un dossier racine "
+"spécifique de type **Roman**. Au lieu d'afficher des documents "
+"individuels, l'arborescence montre maintenant tous les titres de votre "
+"texte. Cela inclut les titres multiples au sein d'un même document."
+
+#: ../../source/user_interface/main_window.rst:96
+msgid ""
+"Each heading is indented according to the heading level, not its parent/"
+"child relationship to other elements of your project. You can open and "
+"edit your novel documents from this view as well. All headings contained "
+"in the currently open document should be highlighted in the view to "
+"indicate which ones belong together in the same document."
+msgstr ""
+"Chaque titre est indenté en fonction du niveau du titre, et non de sa "
+"relation parent/enfant avec d'autres éléments de votre projet. Vous "
+"pouvez également ouvrir et modifier vos nouveaux documents à partir de "
+"cette vue. Toutes les rubriques contenues dans le document actuellement "
+"ouvert doivent être mises en évidence dans la vue pour indiquer celles "
+"qui appartiennent au même document."
+
+#: ../../source/user_interface/main_window.rst:101
+msgid ""
+"If you have multiple **Novel** type root folders, the header of the "
+"novel view becomes a dropdown box. You can then switch between them by "
+"clicking the :guilabel:`Outline of ...` text. You can also click the "
+"novel icon button next to it."
+msgstr ""
+"Si vous avez plusieurs dossiers racine de type **Nouveau**, l'en-tête de "
+"la vue roman devient une liste déroulante. Vous pouvez alors passer de "
+"l'un à l'autre en cliquant sur le texte :guilabel:`Plan de ...`. Vous "
+"pouvez également cliquer sur le bouton de l'icône du roman situé à côté."
+
+#: ../../source/user_interface/main_window.rst:105
+msgid ""
+"Generally, the novel view should update when you make changes to the "
+"novel structure, including edits of the current document in the editor. "
+"The information is only updated when the automatic save of the document "
+"is triggered, or you manually press :kbd:`Ctrl+S` to save changes. (You "
+"can adjust the auto-save interval in **Preferences**.) You can also "
+"regenerate the whole novel view by pressing the refresh button in the "
+"novel view header."
+msgstr ""
+"En général, la vue du roman doit être mise à jour lorsque vous apportez "
+"des modifications à la structure du roman, y compris les modifications "
+"du document courant dans l'éditeur. Les informations ne sont mises à "
+"jour que lorsque la sauvegarde automatique du document est déclenchée, "
+"ou lorsque vous appuyez manuellement sur :kbd:`Ctrl+S` pour sauvegarder "
+"les modifications (vous pouvez ajuster l'intervalle de sauvegarde "
+"automatique dans **Préférences**). Vous pouvez également régénérer la "
+"vue du roman en entier en appuyant sur le bouton d'actualisation dans "
+"l'en-tête de la vue du roman."
+
+#: ../../source/user_interface/main_window.rst:111
+msgid ""
+"It is possible to show an optional third column in the novel view. The "
+"settings are available from the menu button in the toolbar."
+msgstr ""
+"Il est possible d'afficher une troisième colonne facultative dans la vue "
+"nouvelle. Les paramètres sont disponibles à partir du bouton de menu "
+"dans la barre d'outils."
+
+#: ../../source/user_interface/main_window.rst:114
+msgid ""
+"If you click the triangular icon to the right of each item, a tooltip "
+"will pop out showing all the meta data collected for that heading."
+msgstr ""
+"Si vous cliquez sur l'icône triangulaire à droite de chaque élément, une "
+"infobulle s'affichera, indiquant toutes les métadonnées collectées pour "
+"cette rubrique."
+
+#: ../../source/user_interface/main_window.rst:119
+msgid ""
+"You cannot reorganise the entries in the novel view, or add any new "
+"documents, as that would imply restructuring the content of the "
+"documents themselves. Any such editing must be done in the project tree. "
+"However, you can add new headings to existing documents, or change "
+"references, which will be updated in this view when the document is "
+"saved."
+msgstr ""
+"Il n'est pas possible de réorganiser les entrées dans la vue roman, ni "
+"d'ajouter de nouveaux documents, car cela impliquerait de restructurer "
+"le contenu des documents eux-mêmes. Toute modification de ce type doit "
+"être effectuée dans l'arborescence du projet. Cependant, vous pouvez "
+"ajouter de nouveaux titres aux documents existants ou modifier les "
+"références, qui seront mises à jour dans cette vue lors de "
+"l'enregistrement du document."
+
+#: ../../source/user_interface/main_window.rst:128
+msgid "Novel Outline View"
+msgstr "Vue d'ensemble du roman"
+
+#: ../../source/user_interface/main_window.rst:132
+msgid "A screenshot of the Novel Outline View."
+msgstr "Capture d'écran de l'affichage du plan du roman."
+
+#: ../../source/user_interface/main_window.rst:134
+msgid ""
+"When **Novel Outline View** in the sidebar is selected, the tree, editor "
+"and viewer are replaced by a table that shows the entire novel structure "
+"with all the tags and references listed. You can select which novel "
+"folder to display from the dropdown menu. You can optionally choose to "
+"show a combination of all novel folders."
+msgstr ""
+"Lorsque vous sélectionnez **Vue du plan du roman** dans la barre "
+"latérale, l'arborescense, l'éditeur et la visionneuse sont remplacés par "
+"un tableau qui affiche la structure complète du roman avec toutes les "
+"étiquettes et références répertoriées. Vous pouvez sélectionner le "
+"dossier du roman à afficher dans le menu déroulant. Vous pouvez "
+"également choisir d'afficher une combinaison de tous les dossiers de "
+"romans."
+
+#: ../../source/user_interface/main_window.rst:139
+msgid ""
+"Pretty much all collected meta data is available in this view. You can "
+"select which columns to display from the menu button. This includes "
+"various meta data and information extracted from your :ref:"
+"`docs_usage_tags_refs`. The order of the columns can also be changed by "
+"dragging them to a different position. You column settings are saved "
+"between sessions on a per-project basis."
+msgstr ""
+"Pratiquement toutes les métadonnées collectées sont disponibles dans "
+"cette vue. Vous pouvez sélectionner les colonnes à afficher à partir du "
+"bouton de menu. Cela inclut diverses métadonnées et informations "
+"extraites de vos :ref:`docs_usage_tags_refs`. L'ordre des colonnes peut "
+"également être modifié en les faisant glisser vers une position "
+"différente. Les paramètres de vos colonnes sont sauvegardés entre les "
+"sessions sur une base par projet."
+
+#: ../../source/user_interface/main_window.rst:146
+msgid "The **Title** column cannot be disabled or moved."
+msgstr "La colonne **Titre** ne peut pas être désactivée ou déplacée."
+
+#: ../../source/user_interface/main_window.rst:148
+msgid ""
+"The information viewed in the outline is based on the project index. "
+"While novelWriter does its best to keep the index up to date when "
+"contents change, you can always rebuild it manually by pressing :kbd:"
+"`F9` if something isn't right."
+msgstr ""
+"Les informations affichées dans le plan sont basées sur l'index du "
+"projet. Bien que novelWriter fasse de son mieux pour maintenir l'index à "
+"jour lorsque le contenu change, vous pouvez toujours le reconstruire "
+"manuellement en appuyant sur :kbd:`F9` si quelque chose ne va pas."
+
+#: ../../source/user_interface/main_window.rst:152
+msgid ""
+"The outline view itself can be regenerated by pressing the refresh "
+"button. By default, the content is refreshed each time you switch to "
+"this view."
+msgstr ""
+"La vue d'ensemble elle-même peut être régénérée en appuyant sur le "
+"bouton d'actualisation. Par défaut, le contenu est actualisé chaque fois "
+"que vous basculez dans cette vue."
+
+#: ../../source/user_interface/main_window.rst:155
+msgid ""
+"The **Synopsis** column of the outline view takes its information from a "
+"specially formatted comment. See :ref:`docs_usage_comments_synopsis`."
+msgstr ""
+"La colonne **Synopsis** de la vue d'ensemble tire ses informations d'un "
+"commentaire spécialement formaté. Voir :ref:"
+"`docs_usage_comments_synopsis`."
+
+#: ../../source/user_interface/main_window.rst:160
+msgid "Project Search"
+msgstr "Recherche dans un projet"
+
+#: ../../source/user_interface/main_window.rst:162
+msgid ""
+"A global search tool is available from the side bar. It allows you to "
+"search through your entire project. The tool does not provide a replace "
+"feature. There is a search and replace tool available in the document "
+"editor that acts on the open document. See :ref:"
+"`docs_ui_edit_view_search` for more details."
+msgstr ""
+"Un outil de recherche global est disponible dans la barre latérale. Il "
+"vous permet d'effectuer une recherche dans l'ensemble de votre projet. "
+"Cet outil n'offre pas de fonction de remplacement. Il existe un outil de "
+"recherche et de remplacement disponible dans l'éditeur de document qui "
+"agit sur le document ouvert. Voir :ref:`docs_ui_edit_view_search` pour "
+"plus de détails."
+
+#: ../../source/user_interface/main_window.rst:171
+msgid "Switching Focus"
+msgstr "Changer de focus"
+
+#: ../../source/user_interface/main_window.rst:173
+msgid ""
+"If the project or novel view does not have focus, pressing :kbd:`Ctrl+T` "
+"switches focus to whichever of the two is visible. If one of them "
+"already has focus, the key press will switch between them instead."
+msgstr ""
+"Si la vue du projet ou du roman n'a pas le focus, presser :kbd:`Ctrl+T` "
+"fait basculer le focus sur celle des deux qui est visible. Si l'une "
+"d'entre elles a déjà le focus, la pression sur la touche permet de "
+"passer de l'une à l'autre."
+
+#: ../../source/user_interface/main_window.rst:177
+msgid ""
+"Likewise, pressing :kbd:`Ctrl+E` will switch focus to the document "
+"editor or viewer, or if any of them already have focus, it will switch "
+"focus between them."
+msgstr ""
+"De même, en appuyant sur :kbd:`Ctrl+E`, le focus passe à l'éditeur ou à "
+"l'afficheur du document, ou si l'un d'entre eux est déjà au focus, il "
+"passe de l'un à l'autre."
+
+#: ../../source/user_interface/main_window.rst:180
+msgid ""
+"These two shortcuts make it possible to jump between all these GUI "
+"elements without having to reach for the mouse or touchpad."
+msgstr ""
+"Ces deux raccourcis permettent de passer d'un élément de l'interface "
+"graphique à l'autre sans avoir à saisir la souris ou le pavé tactile."
+
+#: ../../source/user_interface/main_window.rst:183
+msgid "See :ref:`docs_features_shortcuts` for more details."
+msgstr "Voir :ref:`docs_features_shortcuts` pour plus de détails."
+
+#: ../../source/user_interface/main_window.rst:187
+msgid "Colour Themes"
+msgstr "Thèmes"
+
+#: ../../source/user_interface/main_window.rst:189
+msgid ""
+"By default, novelWriter uses a light colour theme. You can also choose "
+"between a standard dark theme that have neutral colours, or a series of "
+"other included themes, from **Preferences**."
+msgstr ""
+"Par défaut, novelWriter utilise un thème de couleur claire. Vous pouvez "
+"également choisir un thème sombre standard avec des couleurs neutres, ou "
+"une série d'autres thèmes inclus, dans les **Préférences**."
+
+#: ../../source/user_interface/main_window.rst:192
+msgid ""
+"If you wish, you *can* create your own colour themes, and even have them "
+"added to the application. See :ref:`docs_more_custom_theme` for more "
+"details."
+msgstr ""
+"Si vous le souhaitez, vous pouvez créer vos propres thèmes de couleurs, "
+"et même les ajouter à l'application. Voir :ref:`docs_more_custom_theme` "
+"pour plus de détails."
+
+#: ../../source/user_interface/main_window.rst:195
+msgid ""
+"Switching the GUI colour theme does not affect the colours of the editor "
+"and viewer. They have separate themes selectable from the \"Document "
+"colour theme\" setting in **Preferences**. They are separated because "
+"there are a lot more options to choose from for the editor and viewer."
+msgstr ""
+"Le changement de thème de couleur de l'interface graphique n'affecte pas "
+"les couleurs de l'éditeur et de l'afficheur. Ils ont des thèmes séparés "
+"qui peuvent être sélectionnés à partir du paramètre « Thème de couleur "
+"du document » dans les **Préférences**. Ils sont séparés parce qu'il y a "
+"beaucoup plus d'options à choisir pour l'éditeur et l'aff."
+
+#: ../../source/user_interface/main_window.rst:201
+msgid ""
+"If you switch between light and dark mode on the GUI, you should also "
+"switch editor theme to match, otherwise icons may be hard to see in the "
+"editor and viewer."
+msgstr ""
+"Si vous passez du mode clair au mode foncé dans l'interface graphique, "
+"vous devez également changer le thème de l'éditeur pour qu'il "
+"corresponde, sinon les icônes risquent d'être difficiles à voir dans "
+"l'éditeur et l'afficheur."

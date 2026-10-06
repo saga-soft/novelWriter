@@ -1,0 +1,548 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 14:07+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/usage/tags_and_references.rst:5
+msgid "Tags and References"
+msgstr "Étiquettes et références"
+
+#: ../../source/usage/tags_and_references.rst:7
+msgid ""
+"One of the core features of novelWriter is its **Tags and References** "
+"system. This is perhaps one of the features that makes novelWriter "
+"different from other similar applications. It is therefore not always "
+"obvious to new users how this is supposed to work."
+msgstr ""
+"L'une des principales caractéristiques de novelWriter est son système "
+"d'**Étiquettes et de Références**. C'est peut-être l'une des "
+"caractéristiques qui différencie novelWriter d'autres applications "
+"similaires. Il n'est donc pas toujours évident pour les nouveaux "
+"utilisateurs de comprendre comment cela est censé fonctionner."
+
+#: ../../source/usage/tags_and_references.rst:11
+msgid ""
+"In novelWriter there are no forms or tables to fill in to define "
+"characters, locations or other elements of your story. Instead, you "
+"create documents in one of the root folders for notes. Within these "
+"documents you can set **tags**, like for instance for your main "
+"character. If you then want to annotate a scene with this character as "
+"its point-of-view, you create a **reference** to the tag."
+msgstr ""
+"Dans novelWriter, il n'y a pas de formulaires ou de tableaux à remplir "
+"pour définir les personnages, les lieux ou d'autres éléments de votre "
+"histoire. Au lieu de cela, vous créez des documents dans l'un des "
+"dossiers racine pour les notes. Dans ces documents, vous pouvez définir "
+"des **étiquettes**, par exemple pour votre personnage principal. Si vous "
+"souhaitez ensuite annoter une scène avec ce personnage comme point de "
+"vue, vous créez une **référence** à l'étiquette."
+
+#: ../../source/usage/tags_and_references.rst:19
+msgid ""
+"If you find the Tags and Reference system difficult to follow just from "
+"reading this chapter, you can create a new project in the **Welcome** "
+"dialog's New Project form and select \"Create an example project\" from "
+"the \"Pre-fill project\" option. The example project contains several "
+"examples of tags and references."
+msgstr ""
+"Si le système d'étiquettes et de références vous semble difficile à "
+"suivre à la seule lecture de ce chapitre, vous pouvez créer un nouveau "
+"projet dans le formulaire Nouveau projet de la boîte de dialogue "
+"**Bienvenue** et sélectionner « Créer un projet d'exemple » dans l'option "
+"« Pré-remplir le projet ». Le projet d'exemple contient plusieurs "
+"exemples d'étiquettes et de références."
+
+#: ../../source/usage/tags_and_references.rst:28
+msgid "How to Use Tags"
+msgstr "Comment utiliser les étiquettes"
+
+#: ../../source/usage/tags_and_references.rst:30
+msgid ""
+"The structure of your novelWriter project is inferred from the headings "
+"within the documents, not the documents themselves. See :ref:"
+"`docs_usage_headings` for more details. Therefore, metadata is also "
+"associated with headings, and not the documents themselves."
+msgstr ""
+"La structure de votre projet novelWriter est déduite des titres des "
+"documents, et non des documents eux-mêmes. Voir :ref:"
+"`docs_usage_headings` pour plus de détails. Par conséquent, les "
+"métadonnées sont également associées aux titres, et non aux documents eux-"
+"mêmes."
+
+#: ../../source/usage/tags_and_references.rst:34
+msgid ""
+"A \"tag\" in novelWriter is a word or phrase that you define as belonging "
+"to a heading. Tags are set by using the ``@tag`` keyword."
+msgstr ""
+"Une « étiquette » dans novelWriter est un mot ou une phrase que vous "
+"définissez comme appartenant à une rubrique. Les étiquettes sont définies "
+"en utilisant le mot-clé ``@tag``."
+
+#: ../../source/usage/tags_and_references.rst:37
+msgid "The basic format of a tag is ``@tag: TagName``."
+msgstr "Le format de base d'un tag est ``@tag: NomÉtiquette``."
+
+#: ../../source/usage/tags_and_references.rst:39
+msgid "An alternative format of a tag is ``@tag: TagName | Display Name``."
+msgstr ""
+"Un autre format de balise est ``@tag : NomÉtiquette | Nom Affiché``."
+
+#: ../../source/usage/tags_and_references.rst:41
+msgid "``tagName`` (Required)"
+msgstr "``NomÉtiquette`` (Requis)"
+
+#: ../../source/usage/tags_and_references.rst:42
+msgid ""
+"This is a unique identifier of your choosing. It is the value you use "
+"later for making references back to the heading in the document. The tag "
+"must be unique."
+msgstr ""
+"Il s'agit d'un identifiant unique de votre choix. C'est la valeur que "
+"vous utiliserez plus tard pour faire référence à l'intitulé dans le "
+"document. L'étiquette doit être unique."
+
+#: ../../source/usage/tags_and_references.rst:45
+msgid "``Display Name`` (Optional)"
+msgstr "``Nom Affiché`` (Facultatif)"
+
+#: ../../source/usage/tags_and_references.rst:46
+msgid ""
+"This is an optional display name used for the tag. When you build your "
+"manuscript, you can for instance insert the point-of-view character name "
+"directly into chapter titles. By default, the ``tagName`` value is used "
+"in such headings, but if you use a shortened format internally in your "
+"project, you can use the display name to specify a more suitable format "
+"for your chapter title."
+msgstr ""
+"Il s'agit d'un nom d'affichage facultatif utilisé pour l'étiquette. "
+"Lorsque vous construisez votre manuscrit, vous pouvez par exemple insérer "
+"le nom du personnage du point de vue directement dans les titres des "
+"chapitres. Par défaut, la valeur ``NomÉtiquette`` est utilisée dans ces "
+"titres, mais si vous utilisez un format raccourci en interne dans votre "
+"projet, vous pouvez utiliser le nom d'affichage pour spécifier un format "
+"plus approprié pour votre titre de chapitre."
+
+#: ../../source/usage/tags_and_references.rst:53
+msgid ""
+"You can only set **one** tag per heading, and the tag has to be unique "
+"across **all** documents in the project."
+msgstr ""
+"Vous ne pouvez définir **qu'une seule** étiquette par en-tête, et "
+"l'étiquette doit être unique dans **tous** les documents du projet."
+
+#: ../../source/usage/tags_and_references.rst:56
+msgid ""
+"After a tag has been defined, it can be referenced in novel documents, or "
+"cross-referenced in other notes. Tags will also show up in the **Outline "
+"View** and in the **References** panel under the document viewer when a "
+"document is open in the viewer. See :ref:`docs_ui_main_outline` and :ref:"
+"`docs_ui_edit_view_view_references` for more details."
+msgstr ""
+"Une fois qu'une étiquette a été définie, elle peut être référencée dans "
+"de nouveaux documents ou faire l'objet de références croisées dans "
+"d'autres notes. Les étiquettes apparaîtront également dans la **Vue en "
+"plan** et dans le panneau **Références** sous l'afficheur de documents "
+"lorsqu'un document est ouvert dans l'afficheur. Voir :ref:"
+"`docs_ui_main_outline` et :ref:`docs_ui_edit_view_view_references` pour "
+"plus de détails."
+
+#: ../../source/usage/tags_and_references.rst:61
+msgid ""
+"The editor will indicate to you that the keyword is correctly used and "
+"that the tag is allowed, that is, the tag is unique, by adding a colour "
+"highlighting to it. An invalid tag should have a wiggly line under it, "
+"and will not receive the colour that valid tags do."
+msgstr ""
+"L'éditeur vous indiquera que le mot-clé est correctement utilisé et que "
+"l'étiquette est autorisée, c'est-à-dire qu'elle est unique, en la "
+"surlignant d'une couleur. Une étiquette non valide doit être soulignée "
+"par une ligne ondulée et ne reçoit pas la même couleur que les étiquettes "
+"valides."
+
+#: ../../source/usage/tags_and_references.rst:65
+msgid ""
+"The tag is the only part of notes that novelWriter uses. The rest of the "
+"document content is there for you to use in whatever way you wish."
+msgstr ""
+"L'étiquette est la seule partie des notes que novelWriter utilise. Le "
+"reste du contenu du document peut être utilisé comme bon vous semble."
+
+#: ../../source/usage/tags_and_references.rst:70
+msgid ""
+"Tags are no longer case sensitive. The tags are by default displayed with "
+"the capitalisation you use when defining the tag, but you don't have to "
+"use the same capitalisation when referencing it later."
+msgstr ""
+"Les étiquettes ne sont plus sensibles à la casse. Les étiquettes sont "
+"affichées par défaut avec la majuscule utilisée lors de la définition de "
+"l'étiquette, mais vous n'êtes pas obligé d'utiliser la même majuscule "
+"lorsque vous y faites référence ultérieurement."
+
+#: ../../source/usage/tags_and_references.rst:76
+msgid "Tags can have an optional display name for manuscript builds."
+msgstr ""
+"Les étiquettes peuvent avoir un nom d'affichage facultatif pour la "
+"compilation du manuscrit."
+
+#: ../../source/usage/tags_and_references.rst:80
+msgid ""
+"You can now add tags also to Novel Documents. These can be used for cross-"
+"referencing between chapters and scenes, and also from notes if desired."
+msgstr ""
+"Vous pouvez désormais ajouter des étiquettes aux documents du roman. "
+"Celles-ci peuvent être utilisées pour les références croisées entre les "
+"chapitres et les scènes, ainsi qu'à partir des notes si vous le souhaitez."
+
+#: ../../source/usage/tags_and_references.rst:83
+#: ../../source/usage/tags_and_references.rst:200
+msgid ":bdg-info:`Example`"
+msgstr ":bdg-info:`Exemple`"
+
+#: ../../source/usage/tags_and_references.rst:85
+msgid "Example of a note document for a character with a tag set:"
+msgstr ""
+"Exemple de document de notes pour un personnage avec un jeu d'étiquettes :"
+
+#: ../../source/usage/tags_and_references.rst:95
+msgid ""
+"When this is done in a document in a root folder of type **Characters**, "
+"the tag is automatically treated as an available character in your "
+"project with the value \"Jane\". You will then be able to reference "
+"\"Jane\" in any of your other documents using the reference keywords for "
+"characters."
+msgstr ""
+"Lorsque cela est fait dans un document d'un dossier racine de type "
+"**Personnages**, l'étiquette est automatiquement traitée comme un "
+"personnage disponible dans votre projet avec la valeur « Jane ». Vous "
+"pourrez alors faire référence à « Jane » dans n'importe lequel de vos "
+"autres documents en utilisant les mots-clés de référence pour les "
+"personnages."
+
+#: ../../source/usage/tags_and_references.rst:99
+msgid ""
+"The character \"Jane\" will also show up in the **Character** tab in the "
+"**Reference** panel below the document viewer."
+msgstr ""
+"Le personnage « Jane » apparaîtra également dans l'onglet **Personnage** "
+"du panneau **Référence** situé sous l'afficheur de document."
+
+#: ../../source/usage/tags_and_references.rst:104
+msgid ""
+"It is the root folder type that defines what category of story elements "
+"the tag is indexed under. See :ref:`docs_usage_project_roots` for more "
+"details."
+msgstr ""
+"C'est le type de dossier racine qui définit la catégorie d'éléments de "
+"l'histoire sous laquelle l'étiquette est indexée. Voir :ref:"
+"`docs_usage_project_roots` pour plus de détails."
+
+#: ../../source/usage/tags_and_references.rst:111
+msgid "How to Use References"
+msgstr "Comment utiliser les références"
+
+#: ../../source/usage/tags_and_references.rst:113
+msgid ""
+"Each heading of any level in your project can contain references to tags "
+"set in your notes. The references are gathered by the project index and "
+"used to generate the **Outline View**, among other things."
+msgstr ""
+"Chaque titre de n'importe quel niveau de votre projet peut contenir des "
+"références à des étiquettes définies dans vos notes. Ces références sont "
+"rassemblées par l'index du projet et utilisées pour générer la **Vue "
+"d'ensemble**, entre autres choses."
+
+#: ../../source/usage/tags_and_references.rst:117
+msgid ""
+"References are set with a special keyword, with a list of corresponding "
+"tags. The valid keywords are listed below. The format of a reference line "
+"is ``@keyword: value1, [value2] ... [valueN]``. All reference keywords "
+"allow multiple values."
+msgstr ""
+"Les références sont définies à l'aide d'un mot-clé spécial, accompagné "
+"d'une liste d'étiquettes correspondantes. Les mots-clés valides sont "
+"listés ci-dessous. Le format d'une ligne de référence est ``@mot-clé : "
+"valeur1, [valeur2] ... [valeurN]``. Tous les mots-clés de référence "
+"autorisent des valeurs multiples."
+
+#: ../../source/usage/tags_and_references.rst:121
+msgid "``@pov``"
+msgstr "``@pov``"
+
+#: ../../source/usage/tags_and_references.rst:122
+msgid ""
+"The point-of-view character for the current section. The target must be a "
+"note tag in a **Character** type root folder."
+msgstr ""
+"Le personnage de point de vue pour la section en cours. La cible doit "
+"être une étiquette note dans un dossier racine de type **Personnages**."
+
+#: ../../source/usage/tags_and_references.rst:125
+msgid "``@focus``"
+msgstr "``@focus``"
+
+#: ../../source/usage/tags_and_references.rst:126
+msgid ""
+"The character that has the focus for the current section. This can be "
+"used in cases where the focus is not the point-of-view character. The "
+"target must be a note tag in a **Character** type root folder."
+msgstr ""
+"Le personnage qui est au centre de l'attention pour la section en cours. "
+"Ceci peut être utilisé dans les cas où le focus n'est pas un personnage "
+"de point de vue. La cible doit être une étiquette note dans un dossier "
+"racine de type **Personnages**."
+
+#: ../../source/usage/tags_and_references.rst:130
+msgid "``@char``"
+msgstr "``@char``"
+
+#: ../../source/usage/tags_and_references.rst:131
+msgid ""
+"For other characters in the current section. The target must be a note "
+"tag in a **Character** type root folder. This should not include the "
+"point-of-view or focus character if those references are used."
+msgstr ""
+"Autres personnages de la section courante. La cible doit être une "
+"étiquette de note dans un dossier racine de type **Personnages**. Cela ne "
+"doit pas inclure le point de vue ou le personnage principal si ces "
+"références sont utilisées."
+
+#: ../../source/usage/tags_and_references.rst:135
+msgid "``@plot``"
+msgstr "``@plot``"
+
+#: ../../source/usage/tags_and_references.rst:136
+msgid ""
+"The plot or subplot advanced in the current section. The target must be a "
+"note tag in a **Plot** type root folder."
+msgstr ""
+"L'intrigue ou la sous-intrigue développée dans la section en cours. La "
+"cible doit être une étiquette note dans un dossier racine de type "
+"**Intrigue**."
+
+#: ../../source/usage/tags_and_references.rst:139
+msgid "``@time``"
+msgstr "``@time``"
+
+#: ../../source/usage/tags_and_references.rst:140
+msgid ""
+"The timelines touched by the current section. The target must be a note "
+"tag in a **Timeline** type root folder."
+msgstr ""
+"Les lignes de temps concernées par la section en cours. La cible doit "
+"être une étiquette note dans un dossier racine de type **Chronologie**."
+
+#: ../../source/usage/tags_and_references.rst:143
+msgid "``@location``"
+msgstr "``@location``"
+
+#: ../../source/usage/tags_and_references.rst:144
+msgid ""
+"The location the current section takes place in. The target must be a "
+"note tag in a **Locations** type root folder."
+msgstr ""
+"L'endroit où se déroule la section en cours. La cible doit être une "
+"étiquette note dans un dossier racine de type **lieux**."
+
+#: ../../source/usage/tags_and_references.rst:147
+msgid "``@object``"
+msgstr "``@object``"
+
+#: ../../source/usage/tags_and_references.rst:148
+msgid ""
+"Objects present in the current section. The target must be a note tag in "
+"a **Object** type root folder."
+msgstr ""
+"Objets présents dans la section courante. La cible doit être une "
+"étiquette de note dans un dossier racine de type **Objets**."
+
+#: ../../source/usage/tags_and_references.rst:151
+msgid "``@entity``"
+msgstr "``@entity``"
+
+#: ../../source/usage/tags_and_references.rst:152
+msgid ""
+"Entities present in the current section. The target must be a note tag in "
+"an **Entities** type root folder."
+msgstr ""
+"Entités présentes dans la section courante. La cible doit être une "
+"étiquette note dans un dossier racine de type **Entités**."
+
+#: ../../source/usage/tags_and_references.rst:155
+msgid "``@custom``"
+msgstr "``@custom``"
+
+#: ../../source/usage/tags_and_references.rst:156
+msgid ""
+"Custom references in the current section. The target must be a note tag "
+"in a **Custom** type root folder. The custom folder are for any other "
+"category of notes you may want to use."
+msgstr ""
+"Références personnalisées dans la section en cours. La cible doit être "
+"une étiquette de note dans un dossier racine de type **personnalisé**. "
+"Les dossiers personnalisés sont destinés à toute autre catégorie de notes "
+"que vous souhaiteriez utiliser."
+
+#: ../../source/usage/tags_and_references.rst:159
+msgid "``@mention``"
+msgstr "``@mention``"
+
+#: ../../source/usage/tags_and_references.rst:160
+msgid ""
+"For anything, anyone or anyplace mentioned, but not present in the "
+"current section. It is intended for those cases where you reveal details "
+"about a character or place in a scene without otherwise being a part of "
+"it. This can be useful when checking for consistency later. Any tag in "
+"any root note folder can be listed under ``@mention``."
+msgstr ""
+"Pour toute chose, toute personne ou tout lieu mentionné, mais non présent "
+"dans la section en cours. Il est destiné aux cas où vous révélez des "
+"détails sur un personnage ou un lieu dans une scène sans en faire partie. "
+"Cela peut s'avérer utile pour vérifier la cohérence ultérieurement. "
+"N'importe quel étiquette dans n'importe quel dossier de notes racine peut "
+"être listé sous `@mention``."
+
+#: ../../source/usage/tags_and_references.rst:165
+msgid "``@story``"
+msgstr "``@story``"
+
+#: ../../source/usage/tags_and_references.rst:166
+msgid ""
+"This is used when referencing a Novel Document, like a scene or chapter, "
+"from somewhere else in your project. It is possible to also set tags in "
+"documents in a **Novel** type folder, and this is the keyword you use to "
+"reference those."
+msgstr ""
+"Ce mot-clé est utilisé pour référencer un document de roman, comme une "
+"scène ou un chapitre, à partir d'un autre endroit de votre projet. Il est "
+"également possible de définir des étiquettes dans les documents d'un "
+"dossier de type **Roman**, et c'est le mot-clé que vous utilisez pour "
+"référencer ces documents."
+
+#: ../../source/usage/tags_and_references.rst:170
+msgid ""
+"When tags and references are used correctly, it will be indicated by "
+"highlight colours in the editor."
+msgstr ""
+"Lorsque les étiquettes et les références sont utilisés correctement, cela "
+"est indiqué par des couleurs en surbrillance dans l'éditeur."
+
+#: ../../source/usage/tags_and_references.rst:175
+msgid ""
+"The highlighter may be mistaken if the index of defined tags is out of "
+"date. If so, press :kbd:`F9` to regenerate it, or select **Rebuild "
+"Index** from the **Tools** menu. In general, the index for a document is "
+"regenerated when it is saved, so this shouldn't normally be necessary."
+msgstr ""
+"Le surligneur peut se tromper si l'index des étiquettes définies n'est "
+"pas à jour. Si c'est le cas, appuyez sur :kbd:`F9` pour le régénérer, ou "
+"sélectionnez **Reconstruire l'index** dans le menu **Outils**. En "
+"général, l'index d'un document est régénéré lorsqu'il est sauvegardé, ce "
+"qui ne devrait pas être nécessaire."
+
+#: ../../source/usage/tags_and_references.rst:181
+msgid ""
+"If you add a reference in the editor to a tag that doesn't yet exist, you "
+"can right-click it and select **Create Note for Tag**. This will generate "
+"a new note automatically in the correct type of root folder, with the new "
+"tag defined."
+msgstr ""
+"Si vous ajoutez une référence dans l'éditeur à une étiquette qui n'existe "
+"pas encore, vous pouvez cliquer dessus avec le bouton droit de la souris "
+"et sélectionner **Créer une note pour l'étiquette**. Cela générera "
+"automatiquement une nouvelle note dans le bon type de dossier racine, "
+"avec la nouvelle étiquette définie."
+
+#: ../../source/usage/tags_and_references.rst:185
+msgid ""
+"One note can also reference another note in the same way novel documents "
+"do. When the note is opened in the document viewer, the references become "
+"clickable links, making it easier to follow connections in the plot. You "
+"can follow links in the document editor by clicking them with the mouse "
+"while holding down the :kbd:`Ctrl` key. Clicked links are always opened "
+"in the view panel."
+msgstr ""
+"Une note peut également faire référence à une autre note, de la même "
+"manière que les documents de romans. Lorsque la note est ouverte dans "
+"l'éditeur de documents, les références deviennent des liens cliquables, "
+"ce qui facilite le suivi des connexions dans l'intrigue. Vous pouvez "
+"suivre les liens dans l'éditeur de documents en les cliquant avec la "
+"souris tout en maintenant la touche :kbd:`Ctrl` enfoncée. Les liens "
+"cliqués sont toujours ouverts dans le panneau de visualisation."
+
+#: ../../source/usage/tags_and_references.rst:190
+msgid ""
+"Your notes don't show up in the **Outline View**, so referencing between "
+"notes is only meaningful if you want to be able to click-navigate between "
+"them, or of course if you just want to highlight that two notes are "
+"related."
+msgstr ""
+"Vos notes n'apparaissent pas dans la **Vue d'ensemble**, de sorte que les "
+"références entre les notes n'ont de sens que si vous souhaitez pouvoir "
+"naviguer d'une note à l'autre par un simple clic ou, bien sûr, si vous "
+"souhaitez simplement mettre en évidence que deux notes sont liées."
+
+#: ../../source/usage/tags_and_references.rst:196
+msgid ""
+"If you cross-reference between notes and export your project as an HTML "
+"document using the **Manuscript Build** tool, the cross-references become "
+"clickable links in the exported HTML document as well."
+msgstr ""
+"Si vous faites des références croisées entre les notes et que vous "
+"exportez votre projet en tant que document HTML à l'aide de l'outil "
+"**Compiler le manuscrit**, les références croisées deviennent également "
+"des liens cliquables dans le document HTML exporté."
+
+#: ../../source/usage/tags_and_references.rst:202
+msgid "Example of a novel document with references to characters and plots:"
+msgstr ""
+"Exemple de document de roman avec références aux personnages et aux "
+"intrigues :"
+
+#: ../../source/usage/tags_and_references.rst:221
+msgid "Auto-Completion in the Editor"
+msgstr "Autocomplétion dans l'éditeur"
+
+#: ../../source/usage/tags_and_references.rst:223
+msgid ""
+"An auto-completer context menu will show up automatically in the document "
+"editor when you type the character ``@`` on a new line. It will first "
+"suggest tag or reference keywords for you to add, and after the ``:`` has "
+"been added, suggest references from the list of tags you have already "
+"defined."
+msgstr ""
+"Un menu contextuel d'auto-complétion s'affiche automatiquement dans "
+"l'éditeur de document lorsque vous tapez le caractère ``@`` sur une "
+"nouvelle ligne. Il vous proposera d'abord des mots-clés d'étiquette ou de "
+"référence à ajouter, puis, après l'ajout de ``:``, des références à "
+"partir de la liste des étiquettes que vous avez déjà définies."
+
+#: ../../source/usage/tags_and_references.rst:227
+msgid ""
+"You can use the auto-completer to add multiple references with a ``,`` "
+"between them, and even type new ones. Notes for new references can be "
+"created by right-clicking on them and selecting **Create Note for Tag** "
+"from the menu."
+msgstr ""
+"Vous pouvez utiliser l'auto-complétion pour ajouter plusieurs références "
+"avec un ``,`` entre elles, et même en taper de nouvelles. Les notes pour "
+"les nouvelles références peuvent être créées en faisant un clic droit sur "
+"celles-ci et en sélectionnant **Créer une note pour l'étiquette** dans le "
+"menu."

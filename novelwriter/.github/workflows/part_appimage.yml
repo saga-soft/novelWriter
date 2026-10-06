@@ -1,0 +1,141 @@
+name: Part AppImage
+
+on: workflow_call
+
+jobs:
+  buildLinux-AppImage:
+    # Needs to stay on 22.04 as long as we're using manylinux_2_28
+    # as libxcb-cursor0 in 22.04 supports glibc >= 2.17
+    name: Build AppImage
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    env:
+      PYTHON_VERSION: "3.14"
+      LINUX_TAG: "manylinux_2_28"
+      LINUX_ARCH: "x86_64"
+    steps:
+      - name: Python Setup
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          architecture: x64
+
+      - name: Install Packages (apt)
+        run: |
+          sudo apt update
+          sudo apt install libxcb-cursor0
+
+      - name: Install Packages (pip)
+        run: pip install python-appimage setuptools
+
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: nw-assets
+          path: novelwriter/assets
+
+      - name: Build AppImage
+        id: build
+        run: |
+          wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$LINUX_ARCH.AppImage
+          chmod +x appimagetool-$LINUX_ARCH.AppImage
+          export APPIMAGE_TOOL_EXEC="$(pwd)/appimagetool-$LINUX_ARCH.AppImage"
+          echo "BUILD_VERSION=$(python pkgutils.py version)" >> $GITHUB_OUTPUT
+          python pkgutils.py build-appimage $LINUX_TAG $LINUX_ARCH $PYTHON_VERSION
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: novelWriter-${{ steps.build.outputs.BUILD_VERSION }}-Linux-AppImage
+          path: dist_appimage/*.AppImage*
+          if-no-files-found: error
+          retention-days: 14
+
+  smokeTest:
+    name: Smoke Test AppImage (${{ matrix.distro }})
+    needs: buildLinux-AppImage
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: Ubuntu 22.04
+            image: ubuntu:22.04
+          - distro: Debian 12
+            image: debian:12
+          - distro: Fedora 40
+            image: fedora:40
+          - distro: Arch Linux
+            image: archlinux:latest
+          - distro: Manjaro
+            image: manjarolinux/base:latest
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - name: Install Runtime Dependencies
+        run: |
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y ca-certificates libgl1 libxkbcommon0 libegl1 libfontconfig1 libglib2.0-0 libdbus-1-3
+          elif command -v dnf >/dev/null 2>&1; then
+            dnf install -y ca-certificates coreutils mesa-libGL mesa-libEGL libxkbcommon fontconfig glib2 dbus-libs
+          elif command -v pacman >/dev/null 2>&1; then
+            pacman -Syu --noconfirm --needed ca-certificates coreutils mesa libxkbcommon fontconfig glib2 dbus
+          fi
+
+      - name: Download AppImage Artifact
+        uses: actions/download-artifact@v8
+        with:
+          pattern: novelWriter-*-Linux-AppImage
+          merge-multiple: true
+          path: appimage-dist
+
+      - name: Run AppImage Smoke Test
+        run: |
+          set -eu
+          APPIMAGE_FILE="$(find appimage-dist -maxdepth 1 -name '*.AppImage' | head -n1)"
+          if [ -z "$APPIMAGE_FILE" ]; then
+            echo "No AppImage artifact found"
+            exit 1
+          fi
+
+          chmod +x "$APPIMAGE_FILE"
+          export QT_QPA_PLATFORM=offscreen
+          export QT_NO_XDG_DESKTOP_PORTAL=1
+          export APPIMAGE_EXTRACT_AND_RUN=1
+
+          set +e
+          timeout 25s "$APPIMAGE_FILE" > smoke.log 2>&1
+          EXIT_CODE=$?
+          set -e
+
+          if [ "$EXIT_CODE" -eq 139 ]; then
+            echo "AppImage crashed with segmentation fault"
+            exit 1
+          fi
+
+          if grep -Eiq 'segmentation fault|core dumped' smoke.log; then
+            echo "Crash signature found in smoke log"
+            exit 1
+          fi
+
+          if [ "$EXIT_CODE" -ne 0 ] && [ "$EXIT_CODE" -ne 124 ]; then
+            echo "Unexpected exit code: $EXIT_CODE"
+            cat smoke.log
+            exit 1
+          fi
+
+      - name: Upload Smoke Logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: appimage-smoke-log-${{ matrix.distro }}
+          path: smoke.log
+          if-no-files-found: ignore
+          retention-days: 14

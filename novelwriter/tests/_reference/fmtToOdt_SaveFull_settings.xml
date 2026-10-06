@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<office:document-settings xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" office:version="1.3">
+  <office:settings>
+    <config:config-item-set config:name="ooo:configuration-settings">
+      <config:config-item config:name="JustifyLinesWithShrinking" config:type="boolean">false</config:config-item>
+      <config:config-item config:name="DoNotJustifyLinesWithManualBreak" config:type="boolean">false</config:config-item>
+    </config:config-item-set>
+  </office:settings>
+</office:document-settings>

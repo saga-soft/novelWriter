@@ -1,0 +1,221 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 22:28+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/features/story_comments.rst:5
+msgid "Story Comments"
+msgstr "Commentaires sur l'histoire"
+
+#: ../../source/features/story_comments.rst:7
+msgid ""
+"A special set of comment styles allow for annotating your text with "
+"structure information. There are two styles of comments available. They "
+"are an extension to regular comments as described in :ref:"
+"`docs_usage_comments`."
+msgstr ""
+"Un ensemble spécial de styles de commentaires permet d'annoter votre "
+"texte avec des informations sur la structure. Deux styles de "
+"commentaires sont disponibles. Ils sont une extension des commentaires "
+"normaux tels que décrits dans :ref:`docs_usage_comments`."
+
+#: ../../source/features/story_comments.rst:15
+msgid "Story Structure Comments"
+msgstr "Commentaires sur la structure de l'histoire"
+
+#: ../../source/features/story_comments.rst:17
+msgid ""
+"You can annotate story structure by using the ``%Story`` style of "
+"comment. To use the feature, make the first word of a comment ``Story``, "
+"followed by a period, a structure term, a colon, a space and the text "
+"for that term."
+msgstr ""
+"Vous pouvez annoter la structure de l'histoire en utilisant le style de "
+"commentaire ``%Story``. Pour utiliser cette fonctionnalité, le premier "
+"mot du commentaire doit être ``Story``, suivi d'un point, d'un terme de "
+"structure, de deux points, d'un espace et du texte correspondant à ce "
+"terme."
+
+#: ../../source/features/story_comments.rst:23
+#: ../../source/features/story_comments.rst:88
+msgid "Usage"
+msgstr "Utilisation"
+
+#: ../../source/features/story_comments.rst:25
+msgid ""
+"The story term can be anything that you want to track in the manuscript. "
+"This construct is intended to make it easier to extract metadata from a "
+"work to perform a structural analysis of the story."
+msgstr ""
+"Le terme de l'histoire peut être n'importe quoi que vous voulez suivre "
+"dans le manuscrit. Cette construction est destinée à faciliter "
+"l'extraction des métadonnées d'une œuvre afin d'effectuer une analyse "
+"structurelle de l'histoire."
+
+#: ../../source/features/story_comments.rst:28
+msgid ""
+"There are probably as many ways to examine story structure as there are "
+"authors and editors combined. For this reason the story tag is flexible. "
+"You can use any terms you want and track any aspect of the story that "
+"serves your purposes."
+msgstr ""
+"Il y a probablement autant de façons d'examiner la structure d'une "
+"histoire qu'il y a d'auteurs et d'éditeurs réunis. C'est la raison pour "
+"laquelle l'étiquette « histoire » est flexible. Vous pouvez utiliser les "
+"termes de votre choix et suivre tous les aspects de l'histoire qui vous "
+"intéressent."
+
+#: ../../source/features/story_comments.rst:32
+msgid ""
+"An example method has been advanced by Shawn Coyne in *The Story Grid*. "
+"This method asserts that a story is composed of \"beats\", and that each "
+"beat has an inciting incident, a complication, a crisis, and a "
+"resolution. One might capture these elements of a beat where a character "
+"overcomes their fear of giving a speech as:"
+msgstr ""
+"Un exemple de méthode a été proposé par Shawn Coyne dans *The Story "
+"Grid*. Cette méthode affirme qu'une histoire est composée de « temps » "
+"et que chaque temps comporte un incident déclencheur, une complication, "
+"une crise et une résolution. On pourrait saisir les éléments d'un temps "
+"où un personnage surmonte sa peur de faire un discours comme suit :"
+
+#: ../../source/features/story_comments.rst:37
+#: ../../source/features/story_comments.rst:94
+msgid ":bdg-info:`Example`"
+msgstr ":bdg-info:`Exemple`"
+
+#: ../../source/features/story_comments.rst:50
+msgid ""
+"Other analytical models propose tracking a scene's pace, how it affects "
+"the mood of the story, or which element(s) of the story's genre are "
+"being satisfied. An author can use this mechanism to track any element "
+"of a scene. Some examples include time of day, how much time passes in "
+"the scene, or even the physical form of a shape-shifting character. If a "
+"story involves magic, one could track which wand a main character has in "
+"hand. It's up to tha author."
+msgstr ""
+"D'autres modèles analytiques proposent de suivre le rythme d'une scène, "
+"la façon dont il affecte l'ambiance de l'histoire ou les éléments du "
+"genre de l'histoire qui sont satisfaits. Un auteur peut utiliser ce "
+"mécanisme pour suivre n'importe quel élément d'une scène. Il peut "
+"s'agir, par exemple, de l'heure, du temps qui s'écoule dans la scène ou "
+"même de la forme physique d'un personnage qui change de forme. Si "
+"l'histoire fait appel à la magie, il est possible de savoir quelle "
+"baguette le personnage principal tient en main. C'est à l'auteur de "
+"décider."
+
+#: ../../source/features/story_comments.rst:56
+msgid ""
+"When the story and other scene metadata is extracted into a tabular "
+"form, it is possible to get a comprehensive overview of the story and to "
+"identify possible issues. For example, so many fast-paced scenes without "
+"a break that readers might become fatigued or over-stimulated."
+msgstr ""
+"Lorsque les métadonnées de l'histoire et d'autres scènes sont extraites "
+"sous forme de tableau, il est possible d'obtenir une vue d'ensemble de "
+"l'histoire et d'identifier les problèmes éventuels. Par exemple, un si "
+"grand nombre de scènes au rythme rapide, sans pause, que les lecteurs "
+"risquent de se fatiguer ou d'être trop stimulés."
+
+#: ../../source/features/story_comments.rst:62
+#: ../../source/features/story_comments.rst:106
+msgid "Output"
+msgstr "Production"
+
+#: ../../source/features/story_comments.rst:64
+msgid ""
+"The story structure comments can be included in the manuscript, and are "
+"formatted similarly to the synopsis comments:"
+msgstr ""
+"Les commentaires sur la structure de l'histoire peuvent être inclus dans "
+"le manuscrit et sont formatés de la même manière que les commentaires "
+"sur le synopsis :"
+
+#: ../../source/features/story_comments.rst:69
+msgid "A set of story structure comments as shown in the Manuscript tool."
+msgstr ""
+"Une série de commentaires sur la structure de l'histoire, tels qu'ils "
+"apparaissent dans l'outil Manuscrit."
+
+#: ../../source/features/story_comments.rst:71
+msgid ""
+"When you export your project data from the Outline View, all story "
+"structure terms are added as columns to the exported file, which can "
+"then be opened in the spread sheet software of your choice."
+msgstr ""
+"Lorsque vous exportez les données de votre projet à partir de la vue en "
+"plan, tous les termes de la structure du récit sont ajoutés en tant que "
+"colonnes au fichier exporté, qui peut ensuite être ouvert dans le "
+"logiciel de feuille de calcul de votre choix."
+
+#: ../../source/features/story_comments.rst:76
+msgid "Story Notes"
+msgstr "Notes sur l'histoire"
+
+#: ../../source/features/story_comments.rst:78
+msgid ""
+"Story notes are similar to story structure comments, but have no "
+"predefined meaning. Essentially they are a generalisation of the story "
+"structure comment, and the only point of having this additional format "
+"is to allow you do filter them in and out of your manuscript "
+"independently."
+msgstr ""
+"Les notes de récit sont similaires aux commentaires de structure de "
+"récit, mais n'ont pas de signification prédéfinie. Il s'agit "
+"essentiellement d'une généralisation du commentaire de structure, et le "
+"seul intérêt de ce format supplémentaire est de vous permettre de les "
+"filtrer dans et hors de votre manuscrit de manière indépendante."
+
+#: ../../source/features/story_comments.rst:82
+msgid ""
+"You can annotate story notes by using the ``%Note`` style of comment. To "
+"use the feature, make the first word of a comment ``Note``, followed by "
+"a period, a term, a colon, a space and the text for the note."
+msgstr ""
+"Vous pouvez annoter les notes d'articles en utilisant le style de "
+"commentaire ``%Note``. Pour utiliser cette fonctionnalité, le premier "
+"mot du commentaire doit être « Note », suivi d'un point, d'un terme, de "
+"deux points, d'un espace et du texte de la note."
+
+#: ../../source/features/story_comments.rst:90
+msgid ""
+"These notes are free form, but one intended use case is to add "
+"consistency annotations to your text to remind yourself where you have "
+"described something that must be checked against other parts of your "
+"text later on."
+msgstr ""
+"Ces notes sont libres, mais l'une des utilisations prévues est d'ajouter "
+"des annotations de cohérence à votre texte pour vous rappeler où vous "
+"avez décrit quelque chose qui doit être vérifié ultérieurement par "
+"rapport à d'autres parties de votre texte."
+
+#: ../../source/features/story_comments.rst:108
+msgid ""
+"Story notes are included in the manuscript in exactly the same way story "
+"structure comments are, but has a separate inclusion setting in the "
+"build settings. They are also included in CSV exports from the **Outline "
+"View**."
+msgstr ""
+"Les notes de récit sont incluses dans le manuscrit de la même manière "
+"que les commentaires sur la structure du récit, mais elles ont un "
+"paramètre d'inclusion distinct dans les paramètres de construction. "
+"Elles sont également incluses dans les exportations CSV à partir de la "
+"**Vue d'ensemble**."

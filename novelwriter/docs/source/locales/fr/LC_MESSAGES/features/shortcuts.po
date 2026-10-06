@@ -1,0 +1,978 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 22:50+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/features/shortcuts.rst:5
+msgid "Keyboard Shortcuts"
+msgstr "Raccourcis clavier"
+
+#: ../../source/features/shortcuts.rst:7
+msgid ""
+"Most features in novelWriter are available as keyboard shortcuts. This "
+"is a reference list of those shortcuts. Most of them are also listed in "
+"the application's user interface."
+msgstr ""
+"La plupart des fonctionnalités de novelWriter sont disponibles sous "
+"forme de raccourcis clavier. Il s'agit d'une liste de référence de ces "
+"raccourcis. La plupart d'entre eux sont également listés dans "
+"l'interface utilisateur de l'application."
+
+#: ../../source/features/shortcuts.rst:12
+msgid "On MacOS, replace :kbd:`Ctrl` with :kbd:`Cmd`."
+msgstr "Sous MacOS, remplacez :kbd:`Ctrl` par :kbd:`Cmd`."
+
+#: ../../source/features/shortcuts.rst:16
+msgid "Main Window Shortcuts"
+msgstr "Raccourcis de la fenêtre principale"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Shortcut"
+msgstr "Raccourci"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`F1`"
+msgstr ":kbd:`F1`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the online user manual"
+msgstr "Ouvrir le manuel d'utilisation en ligne"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`F5`"
+msgstr ":kbd:`F5`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the **Build Manuscript** tool"
+msgstr "Ouvrir l'outil **Compiler le manuscrit**"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`F6`"
+msgstr ":kbd:`F6`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the **Writing Statistics** tool"
+msgstr "Ouvrir l'outil **Statistiques d'écriture**"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`F8`"
+msgstr ":kbd:`F8`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Toggle **Focus Mode**"
+msgstr "Basculer **Mode sans distraction**"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`F9`"
+msgstr ":kbd:`F9`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Re-build the project's index"
+msgstr "Reconstruire l'index du projet"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`F11`"
+msgstr ":kbd:`F11`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Toggle full screen mode"
+msgstr "Basculer en mode plein écran"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+,`"
+msgstr ":kbd:`Ctrl+,`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the **Preferences** dialog"
+msgstr "Ouvrir la boîte de dialogue **Préférences**"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+E`"
+msgstr ":kbd:`Ctrl+E`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Switch or toggle focus for the editor or viewer"
+msgstr ""
+"Changement ou basculement du focus de l'éditeur ou du visualisateur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+T`"
+msgstr ":kbd:`Ctrl+T`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Switch or toggle focus for the project tree or novel view"
+msgstr ""
+"Changement de focalisation de l'arborescence du projet ou de la vue du "
+"roman"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Q`"
+msgstr ":kbd:`Ctrl+Q`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Exit novelWriter"
+msgstr "Quitter novelWriter"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+,`"
+msgstr ":kbd:`Ctrl+Maj+,`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the **Project Settings** dialog"
+msgstr "Ouvrir la boîte de dialogue **Paramètres du projet**"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+O`"
+msgstr ":kbd:`Ctrl+Maj+O`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the Welcome dialog to open or create a project"
+msgstr ""
+"Ouvrir la boîte de dialogue de bienvenue pour ouvrir ou créer un projet"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+S`"
+msgstr ":kbd:`Ctrl+Maj+S`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Save the current project"
+msgstr "Enregistrer le projet en cours"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+T`"
+msgstr ":kbd:`Ctrl+Maj+T`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Switch focus to the outline view"
+msgstr "Basculer vers la vue d'ensemble"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+W`"
+msgstr ":kbd:`Ctrl+Maj+W`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Close the current project"
+msgstr "Fermer le projet en cours"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Shift+F1`"
+msgstr ":kbd:`Maj+F1`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the local user manual (PDF) if it is available"
+msgstr "Ouvrir le manuel d'utilisation local (PDF) s'il est disponible"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Shift+F6`"
+msgstr ":kbd:`Maj+F6`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the **Project Details** dialog"
+msgstr "Ouvrir la boîte de dialogue **Détails du projet**"
+
+#: ../../source/features/shortcuts.rst:41
+msgid "Project Tree Shortcuts"
+msgstr "Raccourcis de l'arborescence du projet"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`F2`"
+msgstr ":kbd:`F2`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Edit the label of the selected item"
+msgstr "Modifier le libellé de l'élément sélectionné"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Return`"
+msgstr ":kbd:`Retour`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the selected document in the editor"
+msgstr "Ouvrir le document sélectionné dans l'éditeur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Alt+Up`"
+msgstr ":kbd:`Alt+Haut`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Jump or go to the previous item at same level in the tree"
+msgstr ""
+"Sauter ou aller à l'élément précédent au même niveau dans 'l'arborescence"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Alt+Down`"
+msgstr ":kbd:`Alt+Bas`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Jump or go to the next item at same level in the tree"
+msgstr ""
+"Sauter ou aller à l'élément suivant au même niveau dans l'arborescence"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Alt+Left`"
+msgstr ":kbd:`Alt+Gauche`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Jump to the parent item in the tree"
+msgstr "Sauter à l'élément parent dans l'arborescence"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Alt+Right`"
+msgstr ":kbd:`Alt+Droite`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Jump to the first child item in the project tree"
+msgstr "Sauter au premier élément enfant dans l'arborescence du projet"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+.`"
+msgstr ":kbd:`Ctrl+.`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the context menu on the selected item"
+msgstr "Ouvrir le menu contextuel de l'élément sélectionné"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+L`"
+msgstr ":kbd:`Ctrl+L`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the **Quick Links** menu"
+msgstr "Ouvrir le menu **Liens rapides**"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+N`"
+msgstr ":kbd:`Ctrl+N`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the **Create New Item** menu"
+msgstr "Ouvrir le menu **Créer un nouvel élément**"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+O`"
+msgstr ":kbd:`Ctrl+O`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+R`"
+msgstr ":kbd:`Ctrl+R`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the selected document in the viewer"
+msgstr "Ouvrir le document sélectionné dans le visualisateur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Up`"
+msgstr ":kbd:`Ctrl+Haut`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Move selected item one step up in the tree"
+msgstr "Déplacer l'élément sélectionné d'un cran dans l'arborescence"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Down`"
+msgstr ":kbd:`Ctrl+Bas`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Move selected item one step down in the tree"
+msgstr "Déplacer l'élément sélectionné d'un cran dans l'arborescence"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+Del`"
+msgstr ":kbd:`Ctrl+Maj+Suppr`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Move the selected item to Trash"
+msgstr "Déplacer l'élément sélectionné vers la corbeille"
+
+#: ../../source/features/shortcuts.rst:63
+msgid "Document Editor Shortcuts"
+msgstr "Raccourcis de l'éditeur de documents"
+
+#: ../../source/features/shortcuts.rst:67
+msgid "Text Search Shortcuts"
+msgstr "Raccourcis de recherche de texte"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`F3`"
+msgstr ":kbd:`F3`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Find the next occurrence of the search word"
+msgstr "Trouver la prochaine occurrence du mot recherché"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+F`"
+msgstr ":kbd:`Ctrl+F`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open search and look for the selected word"
+msgstr "Ouvrir la recherche et rechercher le mot sélectionné"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+G`"
+msgstr ":kbd:`Ctrl+G`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+H`"
+msgstr ":kbd:`Ctrl+H`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open replace and look for the selected word (Mac :kbd:`Cmd+=`)"
+msgstr ""
+"Ouvrir remplacer et rechercher le mot sélectionné (Mac :kbd:`Cmd+=`)"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+1`"
+msgstr ":kbd:`Ctrl+Maj+1`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Replace selected occurrence, and move to the next"
+msgstr "Remplacer l'occurrence sélectionnée et passer à la suivante"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+G`"
+msgstr ":kbd:`Ctrl+Maj+G`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Find the previous occurrence of the search word"
+msgstr "Trouver l'occurrence précédente du mot recherché"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+F`"
+msgstr ":kbd:`Ctrl+Maj+F`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open project search and look for the selected word"
+msgstr "Ouvrir la recherche de projet et recherchez le mot sélectionné"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Shift+F3`"
+msgstr ":kbd:`Maj+F3`"
+
+#: ../../source/features/shortcuts.rst:83
+msgid "Text Formatting Shortcuts"
+msgstr "Raccourcis de mise en forme du texte"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+'`"
+msgstr ":kbd:`Ctrl+'`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Wrap selected text, or word under cursor, in single quotes"
+msgstr ""
+"Mettre le texte sélectionné, ou le mot sous le curseur, entre guillemets "
+"simples"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+\"`"
+msgstr ":kbd:`Ctrl+\"`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Wrap selected text, or word under cursor, in double quotes"
+msgstr ""
+"Mettre le texte sélectionné, ou le mot sous le curseur, entre guillemets"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+/`"
+msgstr ":kbd:`Ctrl+/`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Toggle comment format for block or selected text"
+msgstr ""
+"Modifier le format des commentaires pour le bloc ou le texte sélectionné"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+0`"
+msgstr ":kbd:`Ctrl+0`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Remove format for block or selected text"
+msgstr "Supprimer le format d'un bloc ou d'un texte sélectionné"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+1`"
+msgstr ":kbd:`Ctrl+1`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Change block format to heading level 1"
+msgstr "Modifier le format du bloc au niveau de titre 1"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+2`"
+msgstr ":kbd:`Ctrl+2`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Change block format to heading level 2"
+msgstr "Modifier le format du bloc en titre de niveau 2"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+3`"
+msgstr ":kbd:`Ctrl+3`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Change block format to heading level 3"
+msgstr "Modifier le format du bloc en titre de niveau 3"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+4`"
+msgstr ":kbd:`Ctrl+4`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Change block format to heading level 4"
+msgstr "Modifier le format du bloc en titre de niveau 4"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+5`"
+msgstr ":kbd:`Ctrl+5`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Change block alignment to left-aligned"
+msgstr "Aligner le bloc à gauche"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+6`"
+msgstr ":kbd:`Ctrl+6`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Change block alignment to centred"
+msgstr "Aligner le bloc au centre"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+7`"
+msgstr ":kbd:`Ctrl+7`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Change block alignment to right-aligned"
+msgstr "Aligner le bloc à droite"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+8`"
+msgstr ":kbd:`Ctrl+8`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Add a left margin to the block"
+msgstr "Ajouter une marge gauche au bloc"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+9`"
+msgstr ":kbd:`Ctrl+9`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Add a right margin to the block"
+msgstr "Ajouter une marge droite au bloc"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+B`"
+msgstr ":kbd:`Ctrl+B`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Format selected text, or word under cursor, with bold"
+msgstr "Formater le texte sélectionné, ou le mot sous le curseur, en gras"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+D`"
+msgstr ":kbd:`Ctrl+D`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Format selected text, or word under cursor, with strike through"
+msgstr ""
+"Formater le texte sélectionné, ou le mot sous le curseur, en le barrant"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+I`"
+msgstr ":kbd:`Ctrl+I`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Format selected text, or word under cursor, with italic"
+msgstr ""
+"Formater le texte sélectionné, ou le mot sous le curseur, avec de "
+"l'italique"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+/`"
+msgstr ":kbd:`Ctrl+Maj+/`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+D`"
+msgstr ":kbd:`Ctrl+Maj+D`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Toggle ignored text format for block or selected text"
+msgstr ""
+"Basculer le format de texte ignoré pour le bloc ou le texte sélectionné"
+
+#: ../../source/features/shortcuts.rst:109
+msgid "Other Editor Shortcuts"
+msgstr "Autres raccourcis de l'éditeur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`F7`"
+msgstr ":kbd:`F7`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Re-run the spell checker on the document"
+msgstr "Ré-exécuter le correcteur orthographique sur le document"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the context menu at the current cursor location"
+msgstr "Ouvrir le menu contextuel à l'emplacement actuel du curseur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+A`"
+msgstr ":kbd:`Ctrl+A`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Select all text in the document"
+msgstr "Sélectionner tout le texte dans le document"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+C`"
+msgstr ":kbd:`Ctrl+C`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Copy selected text to clipboard"
+msgstr "Copier le texte sélectionné dans le presse-papiers"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`"
+msgstr ":kbd:`Ctrl+K`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ""
+"Activate the insert commands (see list in :ref:"
+"`docs_features_shortcuts_insert`)"
+msgstr ""
+"Activer les commandes d'insertion (voir la liste dans :ref:"
+"`docs_features_shortcuts_insert`)"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open or reload the current document in the viewer"
+msgstr "Ouvrir ou recharger le document en cours dans le visualisateur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+S`"
+msgstr ":kbd:`Ctrl+S`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Save the current document"
+msgstr "Enregistrer le document en cours"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+V`"
+msgstr ":kbd:`Ctrl+V`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Paste text from clipboard to cursor position"
+msgstr "Coller le texte du presse-papiers à la position du curseur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+W`"
+msgstr ":kbd:`Ctrl+W`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Close the current document"
+msgstr "Fermer le document en cours"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+X`"
+msgstr ":kbd:`Ctrl+X`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Cut selected text to clipboard"
+msgstr "Couper le texte sélectionné dans le presse-papiers"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Y`"
+msgstr ":kbd:`Ctrl+Y`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Redo latest undo"
+msgstr "Rétablir la dernière annulation"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Z`"
+msgstr ":kbd:`Ctrl+Z`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Undo latest changes"
+msgstr "Annuler les dernières modifications"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Backspace`"
+msgstr ":kbd:`Ctrl+Retour arrière`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Delete the word before the cursor"
+msgstr "Supprimer le mot précédant le curseur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Del`"
+msgstr ":kbd:`Ctrl+Suppr`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Delete the word after the cursor"
+msgstr "Supprimer le mot après le curseur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+F7`"
+msgstr ":kbd:`Ctrl+F7`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Toggle spell checking"
+msgstr "Vérifier l'orthographe"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Return`"
+msgstr ":kbd:`Ctrl+Retour`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Open the tag or reference under the cursor in the viewer"
+msgstr ""
+"Ouvrir la balise ou la référence sous le curseur dans le visualiseur"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+A`"
+msgstr ":kbd:`Ctrl+Maj+A`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Select all text in the current paragraph"
+msgstr "Sélectionner tout le texte du paragraphe en cours"
+
+#: ../../source/features/shortcuts.rst:136
+msgid "Insert Shortcuts"
+msgstr "Raccourcis d'insertion"
+
+#: ../../source/features/shortcuts.rst:138
+msgid ""
+"A set of insert features are also available through shortcuts, but they "
+"require a double combination of key sequences. The insert feature is "
+"activated with :kbd:`Ctrl+K`, followed by a key or key combination for "
+"the inserted content."
+msgstr ""
+"Un ensemble de fonctions d'insertion sont également disponibles par le "
+"biais de raccourcis, mais elles nécessitent une double combinaison de "
+"séquences de touches. La fonction d'insertion est activée avec :kbd:"
+"`Ctrl+K`, suivi d'une touche ou d'une combinaison de touches pour le "
+"contenu inséré."
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Space`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Espace`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a non-breaking space"
+msgstr "Insérer un espace insécable"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`_`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`_`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a long dash (em dash)"
+msgstr "Insérer un tiret long"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`.`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`.`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert an ellipsis"
+msgstr "Insérer un point de suspension"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`'`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`'`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a modifier apostrophe"
+msgstr "Insérer une apostrophe"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`*`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`*`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a list bullet"
+msgstr "Insérer une puce de liste"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`%`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`%`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a per mille symbol"
+msgstr "Insérer un symbole pour mille"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`~`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`~`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a figure dash (same width as a number)"
+msgstr "Insérer un tiret (de la même largeur qu'un chiffre)"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`−`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`−`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a short dash (en dash)"
+msgstr "Insérer un tiret court"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`1`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`1`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a left single quote"
+msgstr "Insérer un guillemet simple gauche"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`2`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`2`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a right single quote"
+msgstr "Insérer un guillemet simple à droite"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`3`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`3`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a left double quote"
+msgstr "Insérer un double guillemet gauche"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`4`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`4`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a right double quote"
+msgstr "Insérer un double guillemet droit"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`C`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`C`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a ``@char`` keyword"
+msgstr "Insérer un mot-clé ``@char``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`E`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`E`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert an ``@entity`` keyword"
+msgstr "Insérer un mot-clé ``@entity``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`F`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`F`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a ``@focus`` keyword"
+msgstr "Insérer un mot-clé ``@focus``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`G`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`G`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a ``@tag`` keyword"
+msgstr "Insérer un mot-clé ``@tag``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`H`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`H`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a short description comment"
+msgstr "Insérer un bref commentaire de description"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`L`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`L`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a ``@location`` keyword"
+msgstr "Insérer un mot-clé ``@location``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`M`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`M`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a ``@mention`` keyword"
+msgstr "Insérer un mot-clé ``@mention``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`O`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`O`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert an ``@object`` keyword"
+msgstr "Insérer un mot-clé ``@object``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`P`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`P`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a ``@plot`` keyword"
+msgstr "Insérer un mot-clé `@plot``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`S`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`S`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a synopsis comment"
+msgstr "Insérer un commentaire de synopsis"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`T`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`T`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a ``@time`` keyword"
+msgstr "Insérer un mot-clé ``@time``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`V`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`V`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a ``@pov`` keyword"
+msgstr "Insérer un mot-clé ``@pov``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`X`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`X`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a ``@custom`` keyword"
+msgstr "Insérer un mot-clé ``@custom``"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Ctrl+Space`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Ctrl+Espace`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a thin non-breaking space"
+msgstr "Insérer un espace fin insécable"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Ctrl+_`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Ctrl+_`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a horizontal bar (quotation dash)"
+msgstr "Insérer une barre horizontale"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Ctrl+'`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Ctrl+'`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a prime"
+msgstr "Insérer une prime"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Ctrl+\"`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Ctrl+\"`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a double prime"
+msgstr "Insérer une double prime"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Ctrl+*`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Ctrl+*`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a flower mark (alternative bullet)"
+msgstr "Insérer une fleur (puce alternative)"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Ctrl+−`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Ctrl+−`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a hyphen bullet (alternative bullet)"
+msgstr "Insérer une puce à tiret (puce alternative)"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Ctrl+D`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Ctrl+D`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a division sign"
+msgstr "Insérer un signe de division"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Ctrl+O`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Ctrl+O`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a degree symbol"
+msgstr "Insérer un symbole de degré"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Ctrl+X`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Ctrl+X`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a times sign"
+msgstr "Insert a times sign"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+K`, :kbd:`Shift+Space`"
+msgstr ":kbd:`Ctrl+K`, :kbd:`Maj+Espace`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Insert a thin space"
+msgstr "Insérer un espace fin"
+
+#: ../../source/features/shortcuts.rst:183
+msgid "Document Viewer Shortcuts"
+msgstr "Raccourcis de la fenêtre de visualisation des documents"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Move backward in the view history"
+msgstr "Reculer dans l'historique des vues"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Move forward in the view history"
+msgstr "Avancer dans l'historique des vues"
+
+#: ../../source/features/shortcuts.rst:1
+msgid ":kbd:`Ctrl+Shift+R`"
+msgstr ":kbd:`Ctrl+Maj+R`"
+
+#: ../../source/features/shortcuts.rst:1
+msgid "Close the document viewer"
+msgstr "Fermer l'afficheur de documents"

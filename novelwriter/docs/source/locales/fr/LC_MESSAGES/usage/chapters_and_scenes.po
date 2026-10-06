@@ -1,0 +1,261 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-29 14:27+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/usage/chapters_and_scenes.rst:5
+msgid "Chapters and Scenes"
+msgstr "Chapitres et scènes"
+
+#: ../../source/usage/chapters_and_scenes.rst:9
+msgid ""
+"Since novelWriter uses a plain text format, the structure of your novel must "
+"follow a certain set of simple rules. For documents in a **Novel** type root "
+"folder, it is the heading that determines if the document is a chapter or a "
+"scene."
+msgstr ""
+"Comme novelWriter utilise un format de texte brut, la structure de votre "
+"roman doit suivre un certain nombre de règles simples. Pour les documents "
+"situés dans un dossier racine de type **Roman**, c'est le titre qui détermine "
+"s'il s'agit d'un chapitre ou d'une scène."
+
+#: ../../source/usage/chapters_and_scenes.rst:13
+msgid ""
+"The formatting of headings is based on Markdown_. A heading is indicated by a "
+"line starting with one or more ``#`` characters. It accepts up to four of "
+"these. You can use multiple headings in the same document, but it is the "
+"first heading that determines which icon and information is displayed in the "
+"project tree."
+msgstr ""
+"Le formatage des titres est basé sur Markdown_. Un titre est indiqué par une "
+"ligne commençant par un ou plusieurs caractères ``#``. Il en accepte jusqu'à "
+"quatre. Vous pouvez utiliser plusieurs titres dans le même document, mais "
+"c'est le premier titre qui détermine l'icône et les informations affichées "
+"dans l'arborescence du projet."
+
+#: ../../source/usage/chapters_and_scenes.rst:20
+msgid ""
+"You can use the same heading levels for your notes in the other root folders, "
+"but they aren't treated as chapters or scenes, so there you are free to use "
+"them as you want."
+msgstr ""
+"Vous pouvez utiliser les mêmes niveaux de titres pour vos notes dans les "
+"autres dossiers racines, mais ils ne sont pas traités comme des chapitres ou "
+"des scènes, et vous êtes donc libre de les utiliser comme vous le souhaitez."
+
+#: ../../source/usage/chapters_and_scenes.rst:27
+msgid "Heading Levels"
+msgstr "Niveaux d'en-tête"
+
+#: ../../source/usage/chapters_and_scenes.rst:31
+msgid "An illustration of how heading levels correspond to the novel structure."
+msgstr ""
+"Illustration de la correspondance entre les niveaux d'en-tête et la structure "
+"du roman."
+
+#: ../../source/usage/chapters_and_scenes.rst:33
+msgid ""
+"Four levels of headings are understood for novel documents. You can pick and "
+"choose from these as you want, but if your story has chapters, you should use "
+"these headings to indicate them. If you also add scene headings, you have "
+"better control of how your scene separators are formatted in your manuscript. "
+"The chapter and scenes headings are also displayed in the :ref:`Novel View "
+"<docs_ui_main_novel>` and :ref:`Outline View <docs_ui_main_outline>`."
+msgstr ""
+"Quatre niveaux d'en-têtes sont prévus pour les documents de roman. Vous "
+"pouvez les choisir à votre guise, mais si votre histoire comporte des "
+"chapitres, vous devez utiliser ces titres pour les indiquer. Si vous ajoutez "
+"également des titres de scènes, vous pourrez mieux contrôler la façon dont "
+"vos séparateurs de scènes sont formatés dans votre manuscrit. Les titres de "
+"chapitres et de scènes sont également affichés dans les vues :ref:`Novel View "
+"<docs_ui_main_novel>` et :ref:`Outline View <docs_ui_main_outline>`."
+
+#: ../../source/usage/chapters_and_scenes.rst:39
+msgid "``# Title Text``"
+msgstr "``# Texte de titre``"
+
+#: ../../source/usage/chapters_and_scenes.rst:40
+msgid ""
+"This is a heading level one. This heading indicates the start of a new "
+"partition. Partitions are for when you want to split your story into \"Part "
+"1\", \"Part 2\", etc. You can also choose to use them for splitting the text "
+"up into acts, and then hide these headings in your manuscript so that they "
+"are not included in the output."
+msgstr ""
+"Il s'agit d'une en-tête de niveau un. Ce titre indique le début d'une "
+"nouvelle partie. Les parties sont utilisées lorsque vous souhaitez diviser "
+"votre histoire en « Partie 1 », « Partie 2 », etc. Vous pouvez également "
+"choisir de les utiliser pour diviser le texte en actes, puis de masquer ces "
+"titres dans votre manuscrit afin qu'ils ne soient pas inclus dans la sortie."
+
+#: ../../source/usage/chapters_and_scenes.rst:45
+msgid "``## Chapter Title``"
+msgstr "``## Titre de chapitre``"
+
+#: ../../source/usage/chapters_and_scenes.rst:46
+msgid ""
+"This is a heading level two. This heading indicates the start of a new "
+"chapter. Chapter numbers can be inserted automatically when building the "
+"manuscript, so you don't have to do this in the title. See :ref:"
+"`docs_ui_manuscript_head_numbers` for more details."
+msgstr ""
+"Il s'agit d'une en-tête de niveau deux. Ce titre indique le début d'un "
+"nouveau chapitre. Les numéros de chapitre peuvent être insérés "
+"automatiquement lors de la construction du manuscrit, de sorte que vous "
+"n'avez pas à le faire dans le titre. Voir :ref:"
+"`docs_ui_manuscript_head_numbers` pour plus de détails."
+
+#: ../../source/usage/chapters_and_scenes.rst:50
+msgid "``### Scene Title``"
+msgstr "``### Titre de scène``"
+
+#: ../../source/usage/chapters_and_scenes.rst:51
+msgid ""
+"This is a heading level three. This heading indicates the start of a new "
+"scene. Scene numbers or scene separators can be inserted automatically when "
+"building the manuscript, so you can use the title field as a working title "
+"for your scenes if you wish, but you must provide a minimal title."
+msgstr ""
+"Il s'agit d'une en-tête de niveau trois. Ce titre indique le début d'une "
+"nouvelle scène. Des numéros de scène ou des séparateurs de scène peuvent être "
+"insérés automatiquement lors de la construction du manuscrit. Vous pouvez "
+"donc utiliser le champ titre comme titre de travail pour vos scènes si vous "
+"le souhaitez, mais vous devez fournir un titre minimal."
+
+#: ../../source/usage/chapters_and_scenes.rst:56
+msgid "``#### Section Title``"
+msgstr "``#### Titre de section``"
+
+#: ../../source/usage/chapters_and_scenes.rst:57
+msgid ""
+"This is a heading level four. This heading indicates the start of a new "
+"section. Section titles can be replaced by separators or ignored completely "
+"when building the manuscript. The meaning of a section is really whatever you "
+"want it to be. You can use it to split your scenes up into chunks, or into "
+"separate documents."
+msgstr ""
+"Il s'agit d'une en-tête de niveau quatre. Ce titre indique le début d'une "
+"nouvelle section. Les titres de section peuvent être remplacés par des "
+"séparateurs ou ignorés complètement lors de la construction du manuscrit. La "
+"signification d'une section est en fait celle que vous voulez lui donner. "
+"Vous pouvez l'utiliser pour diviser vos scènes en morceaux ou en documents "
+"distincts."
+
+#: ../../source/usage/chapters_and_scenes.rst:62
+msgid ""
+"For headings level one through three, adding a ``!`` modifies the meaning of "
+"the heading. The alternative meaning of the heading is only relevant when you "
+"generate your manuscript, but you may want to keep the use cases in mind "
+"while writing."
+msgstr ""
+"Pour les en-têtes de niveau un à trois, l'ajout d'un ``!`` modifie la "
+"signification de l'en-tête. La signification alternative de l'en-tête n'est "
+"pertinente que lorsque vous générez votre manuscrit, mais vous pouvez garder "
+"à l'esprit les cas d'utilisation lors de la rédaction."
+
+#: ../../source/usage/chapters_and_scenes.rst:66
+msgid "``#! Title Text``"
+msgstr "``#! Texte de titre``"
+
+#: ../../source/usage/chapters_and_scenes.rst:67
+msgid ""
+"This tells the **Manuscript Build** tool that the level one heading is "
+"intended to be used for the novel or notes folder's main title, like for "
+"instance the novel title on the cover page. When building the manuscript, "
+"this will use a different styling of the title, which you can modify "
+"independently from how partition titles are styled. See :ref:"
+"`docs_usage_front_back_matter_title` for more details."
+msgstr ""
+"Cela indique à l'outil **Compiler le manuscrit** que l'en-tête de niveau un "
+"est destiné à être utilisé pour le titre principal du roman ou du dossier de "
+"notes, comme par exemple le titre du roman sur la page de couverture. Lors de "
+"la compilation du manuscrit, l'outil utilisera un style différent pour le "
+"titre, que vous pouvez modifier indépendamment de la façon dont les titres "
+"des parties sont stylisés. Voir :ref:`docs_usage_front_back_matter_title` "
+"pour plus de détails."
+
+#: ../../source/usage/chapters_and_scenes.rst:73
+msgid "``##! Chapter Title``"
+msgstr "``## ! Titre de chapitre``"
+
+#: ../../source/usage/chapters_and_scenes.rst:74
+msgid ""
+"This tells the **Manuscript Build** tool to not assign a chapter number to "
+"this chapter title if automatic chapter numbers are enabled. Such titles are "
+"useful for prologues and epilogues for instance. See :ref:"
+"`docs_usage_front_back_matter_unnumbered` for more details."
+msgstr ""
+"Cette option indique à l'outil **Compilation du manuscrit** de ne pas "
+"attribuer de numéro de chapitre à ce titre de chapitre si la numérotation "
+"automatique des chapitres est activée. De tels titres sont utiles pour les "
+"prologues et les épilogues par exemple. Voir :ref:"
+"`docs_usage_front_back_matter_unnumbered` pour plus de détails."
+
+#: ../../source/usage/chapters_and_scenes.rst:78
+msgid "``###! Scene Title``"
+msgstr "``###! Titre de scène``"
+
+#: ../../source/usage/chapters_and_scenes.rst:79
+msgid ""
+"This is an alternative scene heading that can be formatted differently in the "
+"**Manuscript Build** tool. It is intended for separating \"soft\" and "
+"\"hard\" scene breaks. Aside from this, it behaves identically to a regular "
+"scene heading. See :ref:`docs_ui_manuscript_head_hard_soft` for more details."
+msgstr ""
+"Il s'agit d'un titre de scène alternatif qui peut être formaté différemment "
+"dans l'outil **Compilation du manuscrit**. Il est destiné à séparer les "
+"coupures de scène « douces » et « dures ». A part cela, il se comporte de la "
+"même manière qu'un titre de scène normal. Voir :ref:"
+"`docs_ui_manuscript_head_hard_soft` pour plus de détails."
+
+#: ../../source/usage/chapters_and_scenes.rst:84
+msgid ""
+"The formatting of these headings can be customised quite extensively in the :"
+"ref:`Manuscript Tool <docs_ui_manuscript>`, which is covered in a separate "
+"part of the documentation."
+msgstr ""
+"Le formatage de ces en-têtes peut être personnalisé de manière assez poussée "
+"dans l'outil :ref:`Manuscript Tool <docs_ui_manuscript>`, qui fait l'objet "
+"d'une partie distincte de la documentation."
+
+#: ../../source/usage/chapters_and_scenes.rst:90
+msgid ""
+"The space after the ``#`` or ``!`` character is mandatory. The editor will "
+"change colour and font size when the heading is correctly formatted."
+msgstr ""
+"L'espace après le caractère ``#`` ou ``!`` est obligatoire. L'éditeur "
+"changera de couleur et de taille de police lorsque le titre sera correctement "
+"formaté."
+
+#: ../../source/usage/chapters_and_scenes.rst:93
+msgid ""
+"Page breaks can be automatically added before titles, partition, chapter and "
+"scene headings from the **Manuscript Build** tool when you build your project "
+"to a format that supports page breaks. If you want page breaks in other "
+"places, you have to specify them manually. See :ref:"
+"`docs_usage_formatting_breaks` for more details."
+msgstr ""
+"Les sauts de page peuvent être automatiquement ajoutés avant les titres, les "
+"parties, les chapitres et les scènes à partir de l'outil **Compilation du "
+"manuscrit** lorsque vous créez votre projet dans un format qui prend en "
+"charge les sauts de page. Si vous voulez des sauts de page à d'autres "
+"endroits, vous devez les spécifier manuellement. Voir :ref:"
+"`docs_usage_formatting_breaks` pour plus de détails."

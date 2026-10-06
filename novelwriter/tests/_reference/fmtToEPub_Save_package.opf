@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns:dc="http://purl.org/dc/elements/1.1/" version="3.0" xml:lang="en_GB" xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid">
+  <metadata>
+    <dc:title />
+    <dc:creator>Jane Smith</dc:creator>
+    <dc:publisher>Jane Smith</dc:publisher>
+    <dc:language>en_GB</dc:language>
+    <dc:date>2026-07-01</dc:date>
+    <dc:identifier id="uid">urn:uuid:</dc:identifier>
+    <meta refines="#pub-id" property="identifier-type" scheme="xsd:string">uuid</meta>
+    <meta refines="#creator" property="role" scheme="marc:relators">aut</meta>
+    <meta property="dcterms:date">2026-07-01</meta>
+    <meta property="dcterms:modified">2026-07-01T23:14:44+00:00</meta>
+    <meta property="dcterms:creator">Jane Smith</meta>
+  </metadata>
+  <manifest>
+    <item id="sec_1" href="xhtml/frontmatter1.xhtml" media-type="application/xhtml+xml" />
+    <item id="sec_2" href="xhtml/chapter1.xhtml" media-type="application/xhtml+xml" />
+    <item id="sec_3" href="xhtml/chapter2.xhtml" media-type="application/xhtml+xml" />
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />
+    <item id="css" href="styles/stylesheet.css" media-type="text/css" />
+    <item id="toc" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+  </manifest>
+  <spine toc="toc">
+    <itemref idref="sec_1" />
+    <itemref idref="sec_2" />
+    <itemref idref="sec_3" />
+  </spine>
+</package>

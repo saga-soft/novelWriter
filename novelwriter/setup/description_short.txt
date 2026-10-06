@@ -1,0 +1,6 @@
+novelWriter is a plain text editor designed for writing novels assembled from
+many smaller text documents. It uses a minimal formatting syntax inspired by
+Markdown, and adds a meta data syntax for comments, synopsis, and
+cross-referencing. It's designed to be a simple text editor that allows for
+easy organisation of text and notes, using human readable text files as
+storage for robustness.

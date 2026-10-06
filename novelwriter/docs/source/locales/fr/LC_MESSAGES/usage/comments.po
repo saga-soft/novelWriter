@@ -1,0 +1,254 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 11:20+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/usage/comments.rst:5
+msgid "Comments and Notes"
+msgstr "Commentaires et notes"
+
+#: ../../source/usage/comments.rst:7
+msgid ""
+"You can add comments to your text that are not a part of the story. "
+"Regular comments are intended for you to add notes to yourself inside "
+"the text, which may be useful when you revise your drafts. However, "
+"there are several types of comments you can use."
+msgstr ""
+"Vous pouvez ajouter à votre texte des commentaires qui ne font pas "
+"partie de l'histoire. Les commentaires ordinaires sont destinés à vous "
+"permettre d'ajouter des notes à l'intérieur du texte, ce qui peut "
+"s'avérer utile lorsque vous révisez vos projets. Cependant, il existe "
+"plusieurs types de commentaires que vous pouvez utiliser."
+
+#: ../../source/usage/comments.rst:11
+msgid ""
+"This section covers the basic comment types. There are a couple of "
+"advanced features that use comment syntax too, but they are covered "
+"later."
+msgstr ""
+"Cette section couvre les types de commentaires de base. Il existe "
+"quelques fonctions avancées qui utilisent également la syntaxe des "
+"commentaires, mais elles sont abordées plus loin."
+
+#: ../../source/usage/comments.rst:18
+msgid "Plain Comments"
+msgstr "Commentaires simples"
+
+#: ../../source/usage/comments.rst:20
+msgid ""
+"A plain comment is a line or paragraph that starts with the character "
+"``%`` as its first character. You can put them wherever you like in your "
+"documents, and you can choose to include or exclude them from your "
+"manuscript."
+msgstr ""
+"Un commentaire simple est une ligne ou un paragraphe qui commence par le "
+"caractère ``%``. Vous pouvez les placer où vous le souhaitez dans vos "
+"documents, et vous pouvez choisir de les inclure ou de les exclure de "
+"votre manuscrit."
+
+#: ../../source/usage/comments.rst:24
+msgid ""
+"For the most part, novelWriter completely ignores these comments. They "
+"are not included in your word or character counts either, and are only "
+"displayed in the document viewer panel if you enable them."
+msgstr ""
+"La plupart du temps, novelWriter ignore complètement ces commentaires. "
+"Ils ne sont pas non plus inclus dans le décompte des mots ou des "
+"caractères, et ne sont affichés dans le panneau de visualisation du "
+"document que si vous les activez."
+
+#: ../../source/usage/comments.rst:28 ../../source/usage/comments.rst:63
+#: ../../source/usage/comments.rst:80 ../../source/usage/comments.rst:128
+#: ../../source/usage/comments.rst:156
+msgid ":bdg-info:`Example`"
+msgstr ":bdg-info:`Exemple`"
+
+#: ../../source/usage/comments.rst:44
+msgid "Synopsis or Description Comments"
+msgstr "Commentaires Synopsis ou Description"
+
+#: ../../source/usage/comments.rst:46
+msgid ""
+"A special kind of comments are **Synopsis** and **Short Description** "
+"comments. They are different from plain comments in that they can be "
+"displayed alongside other information about a scene or a character or "
+"other story element described in a note. As with plain comments, they "
+"can be included in your manuscript, but they are formatted differently "
+"than plain comments."
+msgstr ""
+"Les commentaires **Synopsis** et **Description courte** constituent un "
+"type particulier de commentaires. Ils se distinguent des commentaires "
+"ordinaires par le fait qu'ils peuvent être affichés à côté d'autres "
+"informations concernant une scène, un personnage ou un autre élément de "
+"l'histoire décrit dans une note. Comme les commentaires ordinaires, ils "
+"peuvent être inclus dans votre manuscrit, mais leur format est différent "
+"de celui des commentaires ordinaires."
+
+#: ../../source/usage/comments.rst:53
+msgid ""
+"A summary or description comment can be used once, and only once, for "
+"each heading as they are considered a description of the content of the "
+"text under that heading. If you add two such comments under the same "
+"heading, the last one will be used."
+msgstr ""
+"Un commentaire de résumé ou de description peut être utilisé une fois, "
+"et une seule, pour chaque rubrique, car il est considéré comme une "
+"description du contenu du texte de cette rubrique. Si vous ajoutez deux "
+"commentaires de ce type sous la même rubrique, c'est le dernier qui sera "
+"utilisé."
+
+#: ../../source/usage/comments.rst:59
+msgid "Synopsis"
+msgstr "Synopsis"
+
+#: ../../source/usage/comments.rst:61
+msgid ""
+"A **Synopsis** comment is intended for adding a summary of your chapters "
+"and scenes."
+msgstr ""
+"Un commentaire **Synopsis** est destiné à ajouter un résumé de vos "
+"chapitres et scènes."
+
+#: ../../source/usage/comments.rst:75
+msgid "Short Description"
+msgstr "Brève description"
+
+#: ../../source/usage/comments.rst:77
+msgid ""
+"A **Short Description** comment behaves exactly the same as a synopsis "
+"comment, but is intended as a description of a story element, like a "
+"character."
+msgstr ""
+"Un commentaire **Brève description** se comporte exactement de la même "
+"manière qu'un commentaire de synopsis, mais il est destiné à décrire un "
+"élément de l'histoire, tel qu'un personnage."
+
+#: ../../source/usage/comments.rst:100
+msgid ""
+"The ``%Synopsis:`` and ``%Short:`` comment prefixes are interchangeable, "
+"but when you include them in the manuscript, they are labelled based on "
+"the prefix, so the latter may make more sense for a Character note than "
+"the former."
+msgstr ""
+"Les préfixes de commentaire ``%Synopsis:`` et ``%Short:`` sont "
+"interchangeables, mais lorsque vous les incluez dans le manuscrit, ils "
+"sont étiquetés en fonction du préfixe, de sorte que ce dernier peut "
+"avoir plus de sens pour une note de caractère que le premier."
+
+#: ../../source/usage/comments.rst:108
+msgid "Footnote Comments"
+msgstr "Commentaires de note de bas de page"
+
+#: ../../source/usage/comments.rst:110
+msgid ""
+"Footnotes are added with a shortcode, paired with a matching comment for "
+"the actual footnote text. The matching is done with a key that links the "
+"two. If you insert a footnote from the **Insert** menu, a unique key is "
+"generated for you. Shortcodes in general are covered in more detail in :"
+"ref:`docs_usage_formatting_shortcodes`."
+msgstr ""
+"Les notes de bas de page sont ajoutées à l'aide d'un shortcode, associé "
+"à un commentaire correspondant au texte de la note de bas de page. La "
+"correspondance est assurée par une clé qui lie les deux. Si vous insérez "
+"une note de bas de page à partir du menu **Insérer**, une clé unique est "
+"générée pour vous. Les shortcodes en général sont couverts plus en "
+"détail dans :ref:`docs_usage_formatting_shortcodes`."
+
+#: ../../source/usage/comments.rst:115
+msgid ""
+"The insert footnote feature will add the footnote shortcode marker at "
+"the position of your cursor in the editor panel, and create the "
+"associated footnote comment right after the paragraph. It will then move "
+"the cursor there so you can immediately start typing the footnote text."
+msgstr ""
+"La fonction d'insertion d'une note de bas de page ajoute le marqueur de "
+"shortcode de note de bas de page à l'emplacement de votre curseur dans "
+"le panneau de l'éditeur et crée le commentaire de note de bas de page "
+"associé juste après le paragraphe. Elle déplacera ensuite le curseur à "
+"cet endroit afin que vous puissiez immédiatement commencer à taper le "
+"texte de la note de bas de page."
+
+#: ../../source/usage/comments.rst:119
+msgid ""
+"The footnote comment can be anywhere in the document, so if you wish to "
+"move them to, say, the bottom of the text, you are free to do so."
+msgstr ""
+"Le commentaire de la note de bas de page peut se trouver n'importe où "
+"dans le document, de sorte que si vous souhaitez le placer, par exemple, "
+"au bas du texte, vous êtes libre de le faire."
+
+#: ../../source/usage/comments.rst:122
+msgid ""
+"Footnote keys are only required to be unique within a document, so if "
+"you copy, move or merge text, you must make sure the keys are not "
+"duplicated. If you use the automatically generated keys from the "
+"**Insert** menu, they are unique among all indexed documents. They are "
+"not guaranteed to be unique against footnotes in the **Archive** or "
+"**Trash** folder though, but the chance of accidentally generating the "
+"same key twice in a project is relatively small."
+msgstr ""
+"Les clés de notes de bas de page ne doivent être uniques qu'à "
+"l'intérieur d'un document. Par conséquent, si vous copiez, déplacez ou "
+"fusionnez du texte, vous devez vous assurer que les clés ne sont pas "
+"dupliquées. Si vous utilisez les clés générées automatiquement à partir "
+"du menu **Insérer**, elles sont uniques parmi tous les documents "
+"indexés. Il n'est pas garanti qu'elles soient uniques par rapport aux "
+"notes de bas de page du dossier Archives ou Corbeille, mais le risque de "
+"générer accidentellement la même clé deux fois dans un projet est "
+"relativement faible."
+
+#: ../../source/usage/comments.rst:144
+msgid "Ignored Text"
+msgstr "Texte ignoré"
+
+#: ../../source/usage/comments.rst:146
+msgid ""
+"If you want to completely ignore some of the text in your documents, but "
+"are not ready to delete it, you can add ``%~`` before the text paragraph "
+"or line. This will cause novelWriter to skip the text entirely when "
+"generating previews or building manuscripts."
+msgstr ""
+"Si vous souhaitez ignorer complètement une partie du texte dans vos "
+"documents, mais que vous n'êtes pas prêt à l'effacer, vous pouvez "
+"ajouter ``%~`` devant le paragraphe ou la ligne de texte. Cela permettra "
+"à novelWriter d'ignorer complètement le texte lors de la génération "
+"d'aperçus ou de la construction de manuscrits."
+
+#: ../../source/usage/comments.rst:150
+msgid ""
+"This is a better way of removing text than converting them to regular "
+"comments, as you may want to include regular comments in your previews "
+"or draft manuscript."
+msgstr ""
+"Il s'agit d'un meilleur moyen de supprimer le texte que de le convertir "
+"en commentaires normaux, car vous souhaiterez peut-être inclure des "
+"commentaires normaux dans vos prévisualisations ou votre projet de "
+"manuscrit."
+
+#: ../../source/usage/comments.rst:153
+msgid ""
+"You can toggle the ignored text feature on and off for a paragraph by "
+"pressing :kbd:`Ctrl+Shift+D` on your keyboard with your cursor somewhere "
+"in the paragraph."
+msgstr ""
+"Vous pouvez activer ou désactiver la fonction de texte ignoré pour un "
+"paragraphe en appuyant sur :kbd:`Ctrl+Maj+D` sur votre clavier avec "
+"votre curseur quelque part dans le paragraphe."

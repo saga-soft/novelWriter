@@ -1,0 +1,26 @@
+name: Build PyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        required: false
+        description: "Publish to PyPI?"
+        type: boolean
+        default: false
+
+jobs:
+  buildAssets:
+    uses: ./.github/workflows/part_assets.yml
+    permissions:
+      contents: read
+
+  buildAndPublish-PyPI:
+    name: PyPI Package
+    needs: buildAssets
+    uses: ./.github/workflows/part_pypi.yml
+    with:
+      publish: ${{ inputs.publish }}
+    permissions:
+      id-token: write
+      contents: read

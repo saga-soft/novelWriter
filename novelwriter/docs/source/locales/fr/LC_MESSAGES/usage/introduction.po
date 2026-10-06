@@ -1,0 +1,161 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-27 21:24+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/usage/introduction.rst:5
+msgid "Introduction"
+msgstr "Introduction"
+
+#: ../../source/usage/introduction.rst:9
+msgid ""
+"In a nutshell, novelWriter is a plain text editor that lets you organise "
+"one or more novels and associated notes as many smaller documents. You "
+"can at any time generate standard document formats from these plain text "
+"documents. Whether it is an outline of your story, a draft, a complete "
+"manuscript, or even a collection of your character notes or other notes."
+msgstr ""
+"En bref, novelWriter est un éditeur de texte brut qui vous permet "
+"d'organiser un ou plusieurs romans et les notes associées sous la forme "
+"de plusieurs petits documents. Vous pouvez à tout moment générer des "
+"formats de documents standard à partir de ces documents en texte brut. "
+"Qu'il s'agisse d'une ébauche de votre histoire, d'un brouillon, d'un "
+"manuscrit complet ou même d'une collection de notes sur les personnages "
+"ou d'autres notes."
+
+#: ../../source/usage/introduction.rst:16
+msgid "Why Plain Text?"
+msgstr "Pourquoi du texte brut ?"
+
+#: ../../source/usage/introduction.rst:18
+msgid ""
+"The idea is to let you be creative without having to deal with "
+"formatting while you are writing, or be distracted by it."
+msgstr ""
+"L'idée est de vous permettre d'être créatif sans avoir à vous préoccuper "
+"de la mise en forme pendant que vous écrivez, ou sans être distrait par "
+"elle."
+
+#: ../../source/usage/introduction.rst:21
+msgid ""
+"Of course, you probably need *some* form of minimal formatting for your "
+"text. At the very least you need emphasis. Most people are familiar with "
+"adding emphasis using ``_underscores_`` and ``**asterisks**``. This "
+"formatting standard comes from Markdown_ and is supported by "
+"novelWriter. It also uses Markdown formatting for defining document "
+"headings, which is how you distinguish between chapters and scenes."
+msgstr ""
+"Bien entendu, vous avez probablement besoin d'une sorte de mise en forme "
+"minimale pour votre texte. Au minimum, vous avez besoin d'une mise en "
+"valeur. La plupart des gens sont familiers avec l'ajout d'emphase en "
+"utilisant ``_underscores_`` et ``**asterisks**``. Ce standard de "
+"formatage vient de Markdown_ et est supporté par novelWriter. Il utilise "
+"également le formatage Markdown pour définir les titres du document, ce "
+"qui permet de faire la distinction entre les chapitres et les scènes."
+
+#: ../../source/usage/introduction.rst:27
+msgid ""
+"For those special cases where you need more complex formatting, a set of "
+"shortcodes are available. To make these codes easier to use, a dropdown "
+"button bar is available in the editor panel with standard format "
+"buttons. So don't worry. You don't have to learn any of these codes."
+msgstr ""
+"Pour les cas particuliers où vous avez besoin d'un formatage plus "
+"complexe, un ensemble de shortcodes est disponible. Pour faciliter "
+"l'utilisation de ces codes, une barre de boutons déroulante est "
+"disponible dans le panneau de l'éditeur avec des boutons de formatage "
+"standard. Ne vous inquiétez donc pas. Vous n'avez pas besoin d'apprendre "
+"ces codes."
+
+#: ../../source/usage/introduction.rst:33
+msgid "Adding Meta Data"
+msgstr "Ajout de métadonnées"
+
+#: ../../source/usage/introduction.rst:35
+msgid ""
+"In addition to the body text of your story, novelWriter allows you to "
+"enter some additional meta data into your text documents to indicate "
+"things like which characters are present in a chapter or scene, whose "
+"point of view we're seeing, what location the events take place in, and "
+"so on."
+msgstr ""
+"Outre le corps du texte de votre histoire, novelWriter vous permet de "
+"saisir des métadonnées supplémentaires dans vos documents texte afin "
+"d'indiquer les personnages présents dans un chapitre ou une scène, le "
+"point de vue de chacun, le lieu où se déroulent les événements, etc."
+
+#: ../../source/usage/introduction.rst:39
+msgid ""
+"Since the editor is plain text, this is done on special lines of text "
+"starting with an ``@`` character. The editor will show an auto-complete "
+"menu to help you write these lines. We will talk more about this later."
+msgstr ""
+"Comme l'éditeur est en texte brut, cela se fait sur des lignes de texte "
+"spéciales commençant par le caractère ``@``. L'éditeur affichera un menu "
+"d'auto-complétion pour vous aider à écrire ces lignes. Nous en "
+"reparlerons plus tard."
+
+#: ../../source/usage/introduction.rst:43
+msgid ""
+"You can also add your own author's comments in your text, without these "
+"comments becoming a part of the story itself. A comment line starts with "
+"a ``%`` character. There are different types of comments, and an auto-"
+"complete menu can help you here too. More about this later as well."
+msgstr ""
+"Vous pouvez également ajouter vos propres commentaires d'auteur dans "
+"votre texte, sans que ces commentaires fassent partie de l'histoire elle-"
+"même. Une ligne de commentaire commence par le caractère ``%``. Il "
+"existe différents types de commentaires, et un menu d'auto-complétion "
+"peut vous aider ici aussi. Nous y reviendrons plus tard."
+
+#: ../../source/usage/introduction.rst:47
+msgid "Limitations"
+msgstr "Restrictions"
+
+#: ../../source/usage/introduction.rst:49
+msgid ""
+"Please keep in mind that novelWriter is designed for writing fiction, so "
+"the formatting features available are limited to those relevant for this "
+"purpose. It is *not* suitable for technical writing. It is also *not* a "
+"full-featured Markdown editor."
+msgstr ""
+"Gardez à l'esprit que novelWriter est conçu pour l'écriture de fictions, "
+"et que les fonctions de formatage disponibles sont donc limitées à "
+"celles qui sont pertinentes à cette fin. Il n'est *pas* adapté à la "
+"rédaction technique. Ce n'est pas non plus un éditeur Markdown complet."
+
+#: ../../source/usage/introduction.rst:53
+msgid ""
+"In addition, novelWriter is not intended as a tool for organising "
+"research for writing, and therefore lacks formatting features you may "
+"need for this purpose. The notes feature in is mainly intended for "
+"character profiles and plot outlines. It is recommended to use a proper "
+"note-taking tool for research. This is anyway more practical as you may "
+"use the same research for multiple projects."
+msgstr ""
+"En outre, novelWriter n'est pas conçu comme un outil d'organisation de "
+"la recherche en vue de l'écriture, et ne dispose donc pas des fonctions "
+"de formatage dont vous pourriez avoir besoin à cette fin. La fonction de "
+"notes est principalement destinée aux profils de personnages et aux "
+"grandes lignes de l'intrigue. Il est recommandé d'utiliser un outil de "
+"prise de notes approprié pour la recherche. C'est de toute façon plus "
+"pratique, car vous pouvez utiliser la même recherche pour plusieurs "
+"projets."

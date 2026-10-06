@@ -1,0 +1,219 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 10:44+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/usage/basic_formatting.rst:5
+msgid "Basic Formatting"
+msgstr "Mise en forme de base"
+
+#: ../../source/usage/basic_formatting.rst:9
+msgid ""
+"The basic text formatting syntax of novelWriter is based on Markdown_. "
+"It is only a subset of the Markdown syntax though. Lists, images, and "
+"links are not supported."
+msgstr ""
+"La syntaxe de formatage de texte de base de novelWriter est basée sur "
+"Markdown_. Il ne s'agit toutefois que d'un sous-ensemble de la syntaxe "
+"Markdown. Les listes, les images et les liens ne sont pas pris en charge."
+
+#: ../../source/usage/basic_formatting.rst:12
+msgid ""
+"That said, URLs in the text should automatically be highlighted and "
+"become clickable. However, only URLs starting with \"http\" or \"https\" "
+"are recognised. In the editor, you must hold down the :kbd:`Ctrl` key "
+"when clicking a URL to follow it."
+msgstr ""
+"Cela dit, les URL dans le texte devraient automatiquement être mis en "
+"évidence et devenir cliquables. Cependant, seules les URL commençant par "
+"« http » ou « https » sont reconnues. Dans l'éditeur, vous devez "
+"maintenir la touche :kbd:`Ctrl` enfoncée lorsque vous cliquez sur une "
+"URL pour la suivre."
+
+#: ../../source/usage/basic_formatting.rst:20
+msgid "Text Paragraphs"
+msgstr "Paragraphes du texte"
+
+#: ../../source/usage/basic_formatting.rst:22
+msgid ""
+"A text paragraph is indicated by a blank line. That is, you need two "
+"line breaks to separate two fragments of text into two paragraphs. "
+"Single line breaks are treated as line breaks within a paragraph."
+msgstr ""
+"Un paragraphe de texte est indiqué par une ligne blanche. En d'autres "
+"termes, il faut deux sauts de ligne pour séparer deux fragments de texte "
+"en deux paragraphes. Les sauts de ligne simples sont traités comme des "
+"sauts de ligne à l'intérieur d'un paragraphe."
+
+#: ../../source/usage/basic_formatting.rst:26
+msgid ""
+"It is important that you actually follow this rule. You should not, for "
+"instance, mimic indented paragraphs manually in the editor. This, and a "
+"lot of other formatting options that can be applied to text paragraphs "
+"in the :ref:`Manuscript Tool <docs_ui_manuscript>` depend on paragraphs "
+"being separated by blank lines."
+msgstr ""
+"Il est important de respecter cette règle. Vous ne devez pas, par "
+"exemple, imiter les paragraphes indentés manuellement dans l'éditeur. "
+"Ceci, ainsi que beaucoup d'autres options de formatage qui peuvent être "
+"appliquées aux paragraphes de texte dans l'outil :ref:`Manuscript Tool "
+"<docs_ui_manuscript>`, dépendent du fait que les paragraphes sont "
+"séparés par des lignes vides."
+
+#: ../../source/usage/basic_formatting.rst:31
+msgid ":bdg-success:`Correct`"
+msgstr ":bdg-success:`Correct`"
+
+#: ../../source/usage/basic_formatting.rst:41
+msgid ":bdg-danger:`Incorrect`"
+msgstr ":bdg-danger:`Incorrect`"
+
+#: ../../source/usage/basic_formatting.rst:50
+msgid ""
+"If you do as shown in the \"Incorrect\" example, novelWriter will "
+"understand this as a single paragraph with two lines."
+msgstr ""
+"Si vous procédez comme dans l'exemple « Incorrect », novelWriter "
+"comprendra qu'il s'agit d'un seul paragraphe de deux lignes."
+
+#: ../../source/usage/basic_formatting.rst:57
+msgid "Text Emphasis with Markdown"
+msgstr "Mise en valeur du texte avec Markdown"
+
+#: ../../source/usage/basic_formatting.rst:59
+msgid ""
+"A minimal set of Markdown text emphasis styles are supported for text "
+"paragraphs."
+msgstr ""
+"Un ensemble minimal de styles d'accentuation de texte Markdown est pris "
+"en charge pour les paragraphes de texte."
+
+#: ../../source/usage/basic_formatting.rst:61
+msgid "``_text_``"
+msgstr "``_texte_``"
+
+#: ../../source/usage/basic_formatting.rst:62
+msgid "The text is rendered as emphasised text (italicised)."
+msgstr "Le texte est rendu en italique."
+
+#: ../../source/usage/basic_formatting.rst:64
+msgid "``**text**``"
+msgstr "``**texte**``"
+
+#: ../../source/usage/basic_formatting.rst:65
+msgid "The text is rendered as strongly emphasised text (bold)."
+msgstr "Le texte est rendu en gras."
+
+#: ../../source/usage/basic_formatting.rst:67
+msgid "``~~text~~``"
+msgstr "``~~texte~~``"
+
+#: ../../source/usage/basic_formatting.rst:68
+msgid "Strike through text."
+msgstr "Barrer le texte."
+
+#: ../../source/usage/basic_formatting.rst:70
+msgid ""
+"In Markdown guides it is often recommended to differentiate between "
+"strong emphasis and emphasis by using ``**`` for strong and ``_`` for "
+"emphasis, although Markdown generally also supports ``__`` for strong "
+"and ``*`` for emphasis. However, since the differentiation makes the "
+"highlighting and conversion significantly simpler and faster, in "
+"novelWriter this is a rule, not just a recommendation."
+msgstr ""
+"Dans les guides Markdown, il est souvent recommandé de différencier le "
+"gras de l'italique en utilisant ``**`` pour le gras et ``_`` pour "
+"l'italique, bien que Markdown supporte également ``__`` pour le gras et "
+"``*`` pour l'italique. Cependant, puisque la différenciation rend la "
+"mise en évidence et la conversion significativement plus simple et plus "
+"rapide, dans novelWriter il s'agit d'une règle et non d'une simple "
+"recommandation."
+
+#: ../../source/usage/basic_formatting.rst:76
+msgid "In addition, the following rules apply:"
+msgstr "En outre, les règles suivantes s'appliquent :"
+
+#: ../../source/usage/basic_formatting.rst:78
+msgid ""
+"The emphasis and strike through formatting tags do not allow spaces "
+"between the words and the tag itself. That is, ``**text**`` is valid, "
+"``**text **`` is not."
+msgstr ""
+"Les balises de mise en valeur et de biffage n'autorisent pas les espaces "
+"entre les mots et la balise elle-même. Autrement dit, ``**texte**`` est "
+"valide, ``**texte **`` ne l'est pas."
+
+#: ../../source/usage/basic_formatting.rst:80
+msgid ""
+"More generally, the delimiters must be on the outer edge of words. That "
+"is, ``some **text in bold** here`` is valid, ``some** text in bold** "
+"here`` is not."
+msgstr ""
+"Plus généralement, les délimiteurs doivent se trouver aux bords des "
+"mots. Autrement dit, « certains **textes en gras** ici » sont valides, « "
+"certains** textes en gras** ici » ne le sont pas."
+
+#: ../../source/usage/basic_formatting.rst:82
+msgid ""
+"If using both ``**`` and ``_`` to wrap the same text, the underscore "
+"must be the **inner** wrapper. This is due to the underscore also being "
+"a valid word character, so if they are on the outside, they violate rule "
+"2."
+msgstr ""
+"Si vous utilisez à la fois ``**`` et ``_`` pour envelopper le même "
+"texte, le trait de soulignement doit être à **l'intérieure**. Ceci est "
+"dû au fait que le trait de soulignement est également un caractère "
+"verbal valide, donc s'il est à l'extérieur, il viole la règle 2."
+
+#: ../../source/usage/basic_formatting.rst:85
+msgid ""
+"Text emphasis does not span past line breaks. If you need to add "
+"emphasis to multiple lines or paragraphs, you must apply it to each of "
+"them in turn."
+msgstr ""
+"L'accentuation du texte ne s'étend pas au-delà des sauts de ligne. Si "
+"vous devez ajouter une emphase à plusieurs lignes ou paragraphes, vous "
+"devez l'appliquer à chacun d'entre eux à tour de rôle."
+
+#: ../../source/usage/basic_formatting.rst:87
+msgid ""
+"Text emphasis can only be used in comments and paragraphs. Headings and "
+"meta data tags don't allow for formatting, and any formatting markup "
+"will be displayed as-is."
+msgstr ""
+"Cette mise en valeur du texte ne peut être utilisée que dans les "
+"commentaires et les paragraphes. Les titres et les balises de "
+"métadonnées ne permettent pas la mise en forme, et toute marque de mise "
+"en forme sera affichée telle quelle."
+
+#: ../../source/usage/basic_formatting.rst:92
+msgid ""
+"novelWriter supports standard escape syntax for the emphasis markup "
+"characters in case the editor misunderstands your intended usage of "
+"them. That is, ``\\*``, ``\\_`` and ``\\~`` will generate a plain ``*``, "
+"``_`` and ``~``, respectively, without interpreting them as part of the "
+"markup."
+msgstr ""
+"novelWriter supporte la syntaxe d'échappement standard pour les "
+"caractères d'accentuation au cas où l'éditeur ne comprendrait pas "
+"l'usage que vous voulez en faire. C'est-à-dire que ``\\*``, ``\\_`` et "
+"``\\~`` généreront respectivement un ``*``, ``_`` et ``~``, sans les "
+"interpréter comme faisant partie du balisage."

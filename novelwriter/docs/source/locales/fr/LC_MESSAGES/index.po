@@ -1,0 +1,120 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-27 20:56+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/index.rst:32
+msgid "More Documents"
+msgstr "Plus d'informations"
+
+#: ../../source/index.rst:38
+msgid "Getting Started"
+msgstr "Pour commencer"
+
+#: ../../source/index.rst:53
+msgid "The User Interface"
+msgstr "Interface utilisateur"
+
+#: ../../source/index.rst:64
+msgid "Other Features"
+msgstr "Autres fonctionnalités"
+
+#: ../../source/index.rst:72
+msgid "In-Depth Topics"
+msgstr "En détail"
+
+#: ../../source/index.rst:82
+msgid "Technical Topics"
+msgstr "Rubriques techniques"
+
+#: ../../source/index.rst:3
+msgid "User Guide"
+msgstr "Guide d'utilisation"
+
+#: ../../source/index.rst:5
+msgid "**Release Version:** |release|"
+msgstr "**Version :** |release|"
+
+#: ../../source/index.rst:6
+msgid "**Updated:** |today|"
+msgstr "**Mise à jour :** |today|"
+
+#: ../../source/index.rst:8
+msgid ""
+"novelWriter is an open source plain text editor designed for writing "
+"novels assembled from individual text documents. It uses a minimal "
+"formatting syntax inspired by Markdown, and adds a meta data syntax for "
+"comments, synopsis, and cross-referencing. It is designed to be a simple "
+"text editor that allows for easy organisation of text and notes, using "
+"human readable text files as storage for robustness."
+msgstr ""
+"novelWriter est un éditeur de texte brut open source conçu pour écrire "
+"des romans assemblés à partir de documents texte individuels. Il utilise "
+"une syntaxe de formatage minimale inspirée de Markdown, et ajoute une "
+"syntaxe de métadonnées pour les commentaires, les synopsis et les "
+"références croisées. Il est conçu pour être un éditeur de texte simple "
+"qui permet d'organiser facilement le texte et les notes, en utilisant des "
+"fichiers texte lisibles par l'homme comme stockage pour plus de "
+"robustesse."
+
+#: ../../source/index.rst:19
+msgid "**Useful Links**"
+msgstr "**Liens utiles**"
+
+#: ../../source/index.rst:21
+msgid "Website: https://novelwriter.io"
+msgstr "Site web : https://novelwriter.io"
+
+#: ../../source/index.rst:22
+msgid "Documentation: https://docs.novelwriter.io"
+msgstr "Documentation: https://docs.novelwriter.io"
+
+#: ../../source/index.rst:23
+msgid "Public Releases: https://releases.novelwriter.io"
+msgstr "Public Releases: https://releases.novelwriter.io"
+
+#: ../../source/index.rst:24
+msgid "Internationalisation: https://crowdin.com/project/novelwriter"
+msgstr "Internationalisation: https://crowdin.com/project/novelwriter"
+
+#: ../../source/index.rst:25
+msgid "Source Code: https://github.com/saga-soft/novelWriter"
+msgstr "Code source : https://github.com/saga-soft/novelWriter"
+
+#: ../../source/index.rst:26
+msgid "Source Releases: https://github.com/saga-soft/novelWriter/releases"
+msgstr "Source Releases: https://github.com/saga-soft/novelWriter/releases"
+
+#: ../../source/index.rst:27
+msgid "Issue Tracker: https://github.com/saga-soft/novelWriter/issues"
+msgstr "Issue Tracker: https://github.com/saga-soft/novelWriter/issues"
+
+#: ../../source/index.rst:28
+msgid "Feature Discussions: https://github.com/saga-soft/novelWriter/discussions"
+msgstr "Feature Discussions: https://github.com/saga-soft/novelWriter/discussions"
+
+#: ../../source/index.rst:29
+msgid "PyPi Project: https://pypi.org/project/novelWriter"
+msgstr "PyPi Project: https://pypi.org/project/novelWriter"
+
+#: ../../source/index.rst:30
+msgid "Social Media: https://fosstodon.org/@novelwriter"
+msgstr "Social Media: https://fosstodon.org/@novelwriter"

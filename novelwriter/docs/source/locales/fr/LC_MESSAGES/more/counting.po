@@ -1,0 +1,321 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 23:00+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/more/counting.rst:5
+msgid "Word and Text Counts"
+msgstr "Décompte des mots et des textes"
+
+#: ../../source/more/counting.rst:7
+msgid ""
+"This is an overview of how words and other counts of your text are performed. "
+"The counting rules should be relatively standard, and are comparable to Libre "
+"Office Writer rules."
+msgstr ""
+"Il s'agit d'une vue d'ensemble de la manière dont les mots et autres comptages "
+"de votre texte sont effectués. Les règles de comptage devraient être "
+"relativement standard, et sont comparables aux règles de Libre Office Writer."
+
+#: ../../source/more/counting.rst:10
+msgid ""
+"The counts provided in the app on the raw text are meant to be approximate. For "
+"more accurate counts, you need to build your manuscript in the **Manuscript "
+"Tool** and check the counts on the generated preview."
+msgstr ""
+"Les décomptes fournis dans l'application sur le texte brut sont approximatifs. "
+"Pour des décomptes plus précis, vous devez compiler votre manuscrit avec "
+"**Compiler le manuscrit** et vérifier les décomptes sur l'aperçu généré."
+
+#: ../../source/more/counting.rst:16
+msgid "Text Word Counts and Stats"
+msgstr "Décompte des mots du texte et statistiques"
+
+#: ../../source/more/counting.rst:18
+msgid ""
+"These are the rules for the main counts available for for each document in a "
+"project."
+msgstr ""
+"Il s'agit des règles relatives aux principaux décomptes disponibles pour chaque "
+"document d'un projet."
+
+#: ../../source/more/counting.rst:20
+msgid "For all counts, the following rules apply."
+msgstr "Pour tous les décomptes, les règles suivantes s'appliquent."
+
+#: ../../source/more/counting.rst:22 ../../source/more/counting.rst:56
+msgid "Short (–) and long (—) dashes are considered word separators."
+msgstr ""
+"Les tirets demi-cadratin (–) et cadratin (—) sont considérés comme des "
+"séparateurs de mots."
+
+#: ../../source/more/counting.rst:23
+msgid "Any line starting with ``%`` or ``@`` is ignored."
+msgstr "Toute ligne commençant par ``%`` ou ``@`` est ignorée."
+
+#: ../../source/more/counting.rst:24
+msgid "Trailing white spaces are ignored, including line breaks."
+msgstr ""
+"Les espaces blancs de fin de ligne sont ignorés, y compris les sauts de ligne."
+
+#: ../../source/more/counting.rst:25
+msgid "Leading ``>`` and trailing ``<`` are ignored with any spaces next to them."
+msgstr ""
+"Les ``>`` de début et les ``<`` de fin sont ignorés, de même que les espaces "
+"qui les accompagnent."
+
+#: ../../source/more/counting.rst:26
+msgid ""
+"Valid shortcodes and other commands wrapped in brackets ``[]`` are ignored."
+msgstr ""
+"Les shortcodes valides et les autres commandes entre crochets ``[]`` sont "
+"ignorés."
+
+#: ../../source/more/counting.rst:27
+msgid "In-line Markdown syntax in text paragraphs is treated as part of the text."
+msgstr ""
+"La syntaxe Markdown en ligne dans les paragraphes de texte est traitée comme "
+"faisant partie du texte."
+
+#: ../../source/more/counting.rst:29
+msgid ""
+"After the above preparation of the text, the following counts are available."
+msgstr "Après la préparation du texte, les chiffres suivants sont disponibles."
+
+#: ../../source/more/counting.rst:31
+msgid "**Character Count**"
+msgstr "**Décompte des caractères**"
+
+#: ../../source/more/counting.rst:32
+msgid ""
+"The character count is the sum of characters per line, including leading and in-"
+"text white space characters, but excluding trailing white space characters. "
+"Shortcodes in the text are not included, but Markdown codes are. Only headings "
+"and text are counted."
+msgstr ""
+"Le nombre de caractères est la somme des caractères par ligne, y compris les "
+"caractères d'en-tête et les caractères d'espacement dans le texte, mais pas les "
+"caractères d'espacement de fin. Les Shortcodes dans le texte ne sont pas "
+"inclus, mais les codes Markdown le sont. Seuls les en-têtes et le texte sont "
+"pris en compte."
+
+#: ../../source/more/counting.rst:36
+msgid "**Word Count**"
+msgstr "**Décompte des mots**"
+
+#: ../../source/more/counting.rst:37
+msgid ""
+"The words count is the sum of blocks of continuous character per line separated "
+"by any number of white space characters or dashes. Only headings and text are "
+"counted."
+msgstr ""
+"Le nombre de mots est la somme des blocs de caractères continus par ligne, "
+"séparés par un nombre quelconque de caractères d'espacement ou de tirets. Seuls "
+"les titres et le texte sont comptés."
+
+#: ../../source/more/counting.rst:40
+msgid "**Paragraph Count**"
+msgstr "**Décompte des paragraphes**"
+
+#: ../../source/more/counting.rst:41
+msgid ""
+"The paragraph count is the number of text blocks separated by one or more empty "
+"line. A line consisting only of white spaces is considered empty."
+msgstr ""
+"Le nombre de paragraphes est le nombre de blocs de texte séparés par une ou "
+"plusieurs lignes vides. Une ligne constituée uniquement d'espaces blancs est "
+"considérée comme vide."
+
+#: ../../source/more/counting.rst:46
+msgid "Manuscript Counts"
+msgstr "Décompte du manuscrit"
+
+#: ../../source/more/counting.rst:48
+msgid ""
+"These are the rules for the counts available for a manuscript in the "
+"**Manuscript Tool**. The rules have been tuned to agree with LibreOffice "
+"Writer, but will vary slightly depending on the content of your text. "
+"LibreOffice Writer also counts the text in the page header, which the "
+"**Manuscript Tool** does not."
+msgstr ""
+"Voici les règles pour les décomptes disponibles pour un manuscrit dans l'outil "
+"**Outil Manuscrit**. Les règles ont été ajustées pour correspondre à "
+"LibreOffice Writer, mais varieront légèrement en fonction du contenu de votre "
+"texte. LibreOffice Writer compte également le texte dans l'en-tête de la page, "
+"ce que ne fait pas l'outil **Outil Manuscrit**."
+
+#: ../../source/more/counting.rst:53
+msgid ""
+"The content of each line is counted after all formatting has been processed, so "
+"the result will be more accurate than the counts for text documents elsewhere "
+"in the app. The following rules apply:"
+msgstr ""
+"Le contenu de chaque ligne est compté après le traitement de toutes les mises "
+"en forme, de sorte que le résultat sera plus précis que les décomptes pour les "
+"documents textuels dans d'autres parties de l'application. Les règles suivantes "
+"s'appliquent :"
+
+#: ../../source/more/counting.rst:57
+msgid ""
+"Leading and trailing white spaces are generally included, but paragraph breaks "
+"are not."
+msgstr ""
+"Les espaces blancs de début et de fin sont généralement inclus, mais les sauts "
+"de paragraphe ne le sont pas."
+
+#: ../../source/more/counting.rst:58
+msgid "Hard line breaks within paragraph are considered white space characters."
+msgstr ""
+"Les retours à la ligne dans un paragraphe sont considérés comme des caractères "
+"d'espacement."
+
+#: ../../source/more/counting.rst:59
+msgid ""
+"All formatting codes are ignored, including shortcodes, commands and Markdown."
+msgstr ""
+"Tous les codes de formatage sont ignorés, y compris les shortcodes, les "
+"commandes et Markdown."
+
+#: ../../source/more/counting.rst:60
+msgid "Scene and section separators are counted."
+msgstr "Les séparateurs de scène et de section sont pris en compte."
+
+#: ../../source/more/counting.rst:61
+msgid "Comments and meta data lines are counted after they are formatted."
+msgstr ""
+"Les lignes de commentaires et de métadonnées sont comptées après leur mise en "
+"forme."
+
+#: ../../source/more/counting.rst:62
+msgid "Headers are counted after they are formatted with custom formats."
+msgstr ""
+"Les en-têtes sont comptés après avoir été formatés avec des formats "
+"personnalisés."
+
+#: ../../source/more/counting.rst:64
+msgid "The following counts are available:"
+msgstr "Les décomptes suivants sont disponibles :"
+
+#: ../../source/more/counting.rst:66
+msgid "**Headings**"
+msgstr "**En-têtes**"
+
+#: ../../source/more/counting.rst:67
+msgid "The number of headings in the manuscript."
+msgstr "Le nombre d'entêtes dans le manuscrit."
+
+#: ../../source/more/counting.rst:69
+msgid "**Paragraphs**"
+msgstr "**Paragraphes**"
+
+#: ../../source/more/counting.rst:70
+msgid "The number of body text paragraphs in the manuscript."
+msgstr "Le nombre de paragraphes dans le manuscrit."
+
+#: ../../source/more/counting.rst:72
+msgid "**Words**"
+msgstr "**Mots**"
+
+#: ../../source/more/counting.rst:73
+msgid ""
+"The number of words in the manuscript, including any comments and meta data "
+"text."
+msgstr ""
+"Le nombre de mots du manuscrit, y compris les commentaires et les métadonnées."
+
+#: ../../source/more/counting.rst:75
+msgid "**Words in Text**"
+msgstr "**Mots dans le texte**"
+
+#: ../../source/more/counting.rst:76
+msgid "The number of words in body text paragraphs, excluding all other text."
+msgstr "Nombre de mots dans les paragraphes, à l'exclusion de tout autre texte."
+
+#: ../../source/more/counting.rst:78
+msgid "**Words in Headings**"
+msgstr "**Mots dans les entêtes**"
+
+#: ../../source/more/counting.rst:79
+msgid ""
+"The number of words in headings, including inserted formatting like chapter "
+"numbers, etc."
+msgstr ""
+"Le nombre de mots dans les entêtes, y compris le formatage inséré comme les "
+"numéros de chapitre, etc."
+
+#: ../../source/more/counting.rst:81
+msgid "**Characters**"
+msgstr "**Caractères**"
+
+#: ../../source/more/counting.rst:82
+msgid ""
+"The number of characters in all lines, including any comments and meta data "
+"text. Paragraph breaks are not counted, but in-paragraph hard line breaks are."
+msgstr ""
+"Le nombre de caractères de toutes les lignes, y compris les commentaires et le "
+"texte des métadonnées. Les sauts de paragraphe ne sont pas comptés, mais les "
+"sauts de ligne dans les paragraphes le sont."
+
+#: ../../source/more/counting.rst:85
+msgid "**Character in Text**"
+msgstr "**Caractères dans le texte**"
+
+#: ../../source/more/counting.rst:86
+msgid ""
+"The number of characters in body text paragraphs. Paragraph breaks are not "
+"counted, but in-paragraph hard line breaks are."
+msgstr ""
+"Nombre de caractères dans les paragraphes. Les sauts de paragraphe ne sont pas "
+"comptés, mais les sauts de ligne dans les paragraphes le sont."
+
+#: ../../source/more/counting.rst:89
+msgid "**Characters in Headings**"
+msgstr "**Caractères dans les entêtes**"
+
+#: ../../source/more/counting.rst:90
+msgid "The number of characters in headings."
+msgstr "Le nombre de caractères dans les en-têtes."
+
+#: ../../source/more/counting.rst:92
+msgid "**Character in Text, No Spaces**"
+msgstr "**Caractères dans le texte, sans les espaces**"
+
+#: ../../source/more/counting.rst:93
+msgid ""
+"The number of characters in body text paragraphs considered part of a word or "
+"punctuation. That is, white space characters are not counted."
+msgstr ""
+"Le nombre de caractères dans les paragraphes considérés comme faisant partie "
+"d'un mot ou d'une ponctuation. En d'autres termes, les caractères d'espacement "
+"ne sont pas pris en compte."
+
+#: ../../source/more/counting.rst:96
+msgid "**Character in Headings, No Spaces**"
+msgstr "**Caractères dans les en-têtes, sans les espaces**"
+
+#: ../../source/more/counting.rst:97
+msgid ""
+"The number of characters in headings considered part of a word or punctuation. "
+"That is, white space characters are not counted."
+msgstr ""
+"Le nombre de caractères dans les en-têtes considérés comme faisant partie d'un "
+"mot ou de la ponctuation. En d'autres termes, les caractères d'espacement ne "
+"sont pas pris en compte."

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<office:document-meta xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" office:version="1.3">
+  <office:meta>
+    <meta:creation-date>2023-05-29T19:48:33</meta:creation-date>
+    <meta:generator>novelWriter/2.0.7</meta:generator>
+    <meta:initial-creator>Jane Smith</meta:initial-creator>
+    <meta:editing-cycles>1234</meta:editing-cycles>
+    <meta:editing-duration>P42DT12H34M56S</meta:editing-duration>
+    <dc:title>Test Project</dc:title>
+    <dc:date>2023-05-29T19:48:33</dc:date>
+    <dc:creator>Jane Smith</dc:creator>
+  </office:meta>
+</office:document-meta>

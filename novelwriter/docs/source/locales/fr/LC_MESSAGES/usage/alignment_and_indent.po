@@ -1,0 +1,185 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 14:45+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/usage/alignment_and_indent.rst:5
+msgid "Alignment and Indentation"
+msgstr "Alignement et indentation"
+
+#: ../../source/usage/alignment_and_indent.rst:7
+msgid ""
+"The Markdown standard doesn't have commands for aligning text, so "
+"novelWriter adds its own syntax for this. It also has syntax for "
+"indentation, which is similar to Markdown block quotes."
+msgstr ""
+"Le standard Markdown n'a pas de commandes pour aligner le texte, donc "
+"novelWriter ajoute sa propre syntaxe pour cela. Il dispose également "
+"d'une syntaxe pour l'indentation, qui est similaire aux guillemets de "
+"bloc de Markdown."
+
+#: ../../source/usage/alignment_and_indent.rst:12
+msgid "Paragraph Alignment and Indentation"
+msgstr "Alignement et indentation des paragraphes"
+
+#: ../../source/usage/alignment_and_indent.rst:14
+msgid ""
+"All documents have the text by default aligned to the left or justified, "
+"depending on your setting in **Preferences**."
+msgstr ""
+"Le texte de tous les documents est par défaut aligné à gauche ou "
+"justifié, selon les paramètres définis dans les **Préférences**."
+
+#: ../../source/usage/alignment_and_indent.rst:17
+msgid ""
+"You can override the default text alignment on individual paragraphs by "
+"specifying alignment tags. These tags are double angle brackets. Either "
+"``>>`` or ``<<``. You put them either before or after the paragraph, and "
+"they will \"push\" the text towards the edge the brackets point towards. "
+"This should be fairly intuitive."
+msgstr ""
+"Vous pouvez remplacer l'alignement par défaut du texte sur des "
+"paragraphes individuels en spécifiant des balises d'alignement. Ces "
+"balises sont des doubles chevrons. Il peut s'agir de ``>>`` ou de "
+"``<<``. Vous les placez avant ou après le paragraphe, et elles « "
+"pousseront » le texte vers le bord vers lequel les crochets pointent. "
+"Cela devrait être assez intuitif."
+
+#: ../../source/usage/alignment_and_indent.rst:22
+msgid ""
+"Indentation uses a similar syntax. But here you use a single ``>`` or "
+"``<`` to \"push\" the text away from the edge."
+msgstr ""
+"L'indentation utilise une syntaxe similaire. Mais ici, vous utilisez un "
+"seul ``>`` ou ``<`` pour éloigner le texte du bord."
+
+#: ../../source/usage/alignment_and_indent.rst:25
+#: ../../source/usage/alignment_and_indent.rst:52
+#: ../../source/usage/alignment_and_indent.rst:69
+msgid ":bdg-info:`Example`"
+msgstr ":bdg-info:`Exemple`"
+
+#: ../../source/usage/alignment_and_indent.rst:27
+msgid "Text Alignment and Indentation"
+msgstr "Alignement et indentation du texte"
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "Syntax"
+msgstr "Syntaxe"
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "``>> Right aligned text``"
+msgstr "``>> Texte aligné à droite``"
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "The text paragraph is right-aligned."
+msgstr "Le paragraphe est aligné à droite."
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "``Left aligned text <<``"
+msgstr "``Texte aligné à gauche <<``"
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "The text paragraph is left-aligned."
+msgstr "Le paragraphe est aligné à gauche."
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "``>> Centred text <<``"
+msgstr "``>> Texte centré <<``"
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "The text paragraph is centred."
+msgstr "Le paragraphe est centré."
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "``> Left indented text``"
+msgstr "``> Texte en retrait à gauche``"
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "The text has an increased left margin."
+msgstr "Le texte a une marge gauche plus importante."
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "``Right indented text <``"
+msgstr "``Texte en retrait à droite <``"
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "The text has an increased right margin."
+msgstr "Le texte a une marge droite plus importante."
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "``> Left/right indented text <``"
+msgstr "``> Texte indenté gauche/droite <```"
+
+#: ../../source/usage/alignment_and_indent.rst:1
+msgid "The text has both margins increased."
+msgstr "Les deux marges du texte ont été augmentées."
+
+#: ../../source/usage/alignment_and_indent.rst:41
+msgid ""
+"The text editor will not show the alignment and indentation live. But "
+"the viewer will show them when you open the document there. It will of "
+"course also be reflected in the document generated from the **Manuscript "
+"Build** tool as long as the format supports paragraph alignment."
+msgstr ""
+"L'éditeur de texte n'affiche pas l'alignement et l'indentation en "
+"direct. Mais l'afficheur les affichera lorsque vous y ouvrirez le "
+"document. Ils seront bien sûr également reflétés dans le document généré "
+"par l'outil de compilation de manuscrits, à condition que le format "
+"prenne en charge l'alignement des paragraphes."
+
+#: ../../source/usage/alignment_and_indent.rst:47
+msgid "Alignment with Line Breaks"
+msgstr "Alignement avec les sauts de ligne"
+
+#: ../../source/usage/alignment_and_indent.rst:49
+msgid ""
+"If you have line breaks in the paragraph, the markers for all the lines "
+"are combined and used for the entire paragraph. For the following text, "
+"all lines will be centred:"
+msgstr ""
+"Si le paragraphe comporte des retours à la ligne, les marqueurs de "
+"toutes les lignes sont combinés et utilisés pour l'ensemble du "
+"paragraphe. Pour le texte suivant, toutes les lignes seront centrées :"
+
+#: ../../source/usage/alignment_and_indent.rst:63
+msgid "Alignment with First Line Indent"
+msgstr "Alignement sur le retrait de la première ligne"
+
+#: ../../source/usage/alignment_and_indent.rst:65
+msgid ""
+"If you have first line indent enabled in your manuscript build settings, "
+"you probably want to disable it for text in verses. Adding any alignment "
+"tags will cause the first line indent to be switched off for that "
+"paragraph."
+msgstr ""
+"Si vous avez activé le retrait de première ligne dans les paramètres de "
+"compilation de votre Manuscrit, vous voudrez probablement le désactiver "
+"pour le texte en vers. L'ajout de balises d'alignement entraînera la "
+"désactivation du retrait de première ligne pour ce paragraphe."
+
+#: ../../source/usage/alignment_and_indent.rst:71
+msgid "The following text will always be aligned against the left margin:"
+msgstr "Le texte suivant sera toujours aligné sur la marge de gauche :"

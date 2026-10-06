@@ -1,0 +1,133 @@
+[Main]
+name   = "Noctis Lux"
+mode   = "light"
+author = "Veronica Berglyd Olsen"
+credit = "Liviu Schera, and contributors"
+url    = "https://github.com/liviuschera/noctis"
+
+##
+# Noctis Lux : themes/lux.json
+##
+# colors
+# selection.background       : #169fb155 -> Palette.highlight
+# sideBar.background         : #f9f1e1   -> Palette.window
+# editor.background          : #fef8ec   -> Base.base
+# editor.foreground          : #005661   -> Base.default
+# editor.selectionBackground : #ade2eb77 -> Syntax.line, Syntax.texthighlight
+# textLink.foreground        : #00c6e0   -> Palette.link, Syntax.link
+# input.background           : #fef8ec   -> Palette.button
+# input.foreground           : #6a7a7c   -> Palette.buttontext
+# notifications.foreground   : #005661   -> Palette.tooltiptext
+# notifications.background   : #f2edde   -> Palette.tooltipbase
+##
+# tokenColors
+# COMMENT            : #8ca6a6 -> Base.faded
+# TEXT               : #004d57 -> Syntax.text, Syntax.optional
+# KEYWORD            : #ff5792 -> Base.red
+# VARIABLE           : #fa8900 -> Palette.accent
+# ANNOTATION         : #b3694d -> Syntax.note, Syntax.emphasis
+# CONSTANT           : #a88c00 -> Base.yellow
+# TAG                : #e64100 -> Base.orange
+# STRING             : #00b368 -> Syntax.headertext, Palette.accent
+# STRINGINTERPOLATED : #009456 -> Base.green
+# NUMBER             : #5842ff -> Base.purple
+# FUNCTION           : #0095a8 -> Base.cyan
+# SUPPORT            : #00bdd6 -> Syntax.replacetag
+# MISC               : #0094f0 -> Base.blue
+# INVALID            : #ff530f -> GUI.errorText 
+##
+
+[Base]
+base    = "#fef8ec"
+default = "#005661"
+faded   = "#8ca6a6"
+red     = "#ff5792"
+orange  = "#e64100"
+yellow  = "#a88c00"
+green   = "#009456"
+cyan    = "#0095a8"
+blue    = "#0094f0"
+purple  = "#5842ff"
+
+[Project]
+root     = "blue"
+folder   = "yellow"
+file     = "default"
+title    = "green"
+chapter  = "red"
+scene    = "blue"
+note     = "yellow"
+active   = "green"
+inactive = "red"
+disabled = "faded"
+
+[Icon]
+tool      = "default"
+sidebar   = "default"
+accept    = "green"
+reject    = "red"
+action    = "blue"
+option    = "orange"
+apply     = "green"
+create    = "yellow"
+destroy   = "faded"
+reset     = "green"
+add       = "green"
+change    = "green"
+remove    = "red"
+shortcode = "default"
+markdown  = "orange"
+system    = "yellow"
+info      = "blue"
+warning   = "orange"
+error     = "red"
+
+[Palette]
+window          = "#f9f1e1"
+windowText      = "default"
+base            = "base"
+alternateBase   = "base:D115"
+text            = "default"
+tooltipBase     = "#f2edde"
+tooltipText     = "#005661"
+button          = "base"
+buttonText      = "#6a7a7c"
+brightText      = "base"
+highlight       = "#169fb155"
+highlightedText = "default"
+link            = "#00c6e0"
+linkVisited     = "blue"
+accent          = "#00b368"
+
+[GUI]
+helpText     = "#fa8900"
+fadedText    = "faded"
+errorText    = "#ff530f"
+accentText   = "cyan"
+activeButton = "#00b36867"
+activeBase   = "#d8d3c8"
+searchMatch  = "orange:64"
+
+[Syntax]
+background     = "base"
+text           = "#004d57"
+line           = "#ade2eb56"
+link           = "#00c6e0"
+headerText     = "#00b368"
+headerTag      = "green:D125"
+emphasis       = "#b3694d"
+whitespace     = "#b3694d64"
+dialog         = "green"
+altDialog      = "blue"
+note           = "#b3694d"
+hidden         = "faded"
+shortcode      = "red"
+keyword        = "yellow"
+tag            = "blue"
+value          = "red:D125"
+optional       = "#004d57"
+spellCheckLine = "red"
+errorLine      = "green"
+replaceTag     = "#00bdd6"
+modifier       = "red"
+textHighlight  = "#ade2eb77"

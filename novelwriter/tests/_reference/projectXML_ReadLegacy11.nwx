@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='utf-8'?>
+<novelWriterXML appVersion="26.2rc1" hexVersion="0x260200c1" fileVersion="1.6" fileRevision="0" timeStamp="2020-06-26 21:20:24">
+  <project id="d0f3fe10-c6e6-4310-8bfd-181eb4224eed" saveCount="5" autoCount="10" editTime="1000" indexRevision="0">
+    <name>Sample Project</name>
+    <author>Jay Doh</author>
+  </project>
+  <settings>
+    <doBackup>yes</doBackup>
+    <language>None</language>
+    <spellChecking auto="yes">None</spellChecking>
+    <projectTarget date="None" last="0" mode="words">0</projectTarget>
+    <dailyTarget auto="no" last="0" date="2020-06-26">0</dailyTarget>
+    <targetSkipRoots />
+    <lastHandle>
+      <entry key="editor">None</entry>
+      <entry key="viewer">None</entry>
+      <entry key="novel">None</entry>
+      <entry key="story">None</entry>
+    </lastHandle>
+    <autoReplace>
+      <entry key="A">B</entry>
+      <entry key="B">E</entry>
+      <entry key="C">D</entry>
+    </autoReplace>
+    <status>
+      <entry key="s000000" count="0" color="#646464" shape="SQUARE">New</entry>
+      <entry key="s000001" count="0" color="#c83200" shape="SQUARE">Notes</entry>
+      <entry key="s000002" count="0" color="#b63c00" shape="SQUARE">Started</entry>
+      <entry key="s000003" count="0" color="#c18100" shape="SQUARE">1st Draft</entry>
+      <entry key="s000004" count="0" color="#c18100" shape="SQUARE">2nd Draft</entry>
+      <entry key="s000005" count="0" color="#c18100" shape="SQUARE">3rd Draft</entry>
+      <entry key="s000006" count="0" color="#3ab43a" shape="SQUARE">Finished</entry>
+    </status>
+    <importance>
+      <entry key="i000007" count="0" color="#646464" shape="SQUARE">None</entry>
+      <entry key="i000008" count="0" color="#007abc" shape="SQUARE">Minor</entry>
+      <entry key="i000009" count="0" color="#1500b4" shape="SQUARE">Major</entry>
+      <entry key="i00000a" count="0" color="#7500af" shape="SQUARE">Main</entry>
+    </importance>
+  </settings>
+  <content items="22" novelWords="0" notesWords="0" novelChars="0" notesChars="0">
+    <item handle="7031beac91f75" parent="None" root="7031beac91f75" order="0" type="ROOT" class="NOVEL">
+      <meta expanded="yes" />
+      <name status="s000002" import="i000007">Novel</name>
+    </item>
+    <item handle="53b69b83cdafc" parent="7031beac91f75" root="None" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="72" wordCount="15" paraCount="2" cursorPos="78" />
+      <name status="s000002" import="i000007" active="yes">Title Page</name>
+    </item>
+    <item handle="974e400180a99" parent="7031beac91f75" root="None" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="210" wordCount="40" paraCount="2" cursorPos="213" />
+      <name status="s000000" import="i000007" active="yes">Page</name>
+    </item>
+    <item handle="edca4be2fcaf8" parent="7031beac91f75" root="None" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="23" wordCount="5" paraCount="1" cursorPos="0" />
+      <name status="s000000" import="i000007" active="yes">Part One</name>
+    </item>
+    <item handle="e7ded148d6e4a" parent="7031beac91f75" root="None" order="3" type="FOLDER" class="NOVEL">
+      <meta expanded="yes" />
+      <name status="s000003" import="i000007">A Folder</name>
+    </item>
+    <item handle="6a2d6d5f4f401" parent="e7ded148d6e4a" root="None" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="12" wordCount="3" paraCount="0" cursorPos="215" />
+      <name status="s000001" import="i000007" active="yes">Chapter One</name>
+    </item>
+    <item handle="636b6aa9b697b" parent="e7ded148d6e4a" root="None" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="1483" wordCount="263" paraCount="8" cursorPos="1086" />
+      <name status="s000003" import="i000007" active="yes">Making a Scene</name>
+    </item>
+    <item handle="bc0cbd2a407f3" parent="e7ded148d6e4a" root="None" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="476" wordCount="93" paraCount="3" cursorPos="428" />
+      <name status="s000003" import="i000007" active="yes">Another Scene</name>
+    </item>
+    <item handle="ba8a28a246524" parent="e7ded148d6e4a" root="None" order="3" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="633" wordCount="101" paraCount="3" cursorPos="1238" />
+      <name status="s000006" import="i000007" active="yes">Interlude</name>
+    </item>
+    <item handle="96b68994dfa3d" parent="e7ded148d6e4a" root="None" order="4" type="FILE" class="NOVEL" layout="NOTE">
+      <meta expanded="no" heading="H0" charCount="1692" wordCount="313" paraCount="6" cursorPos="1721" />
+      <name status="s000004" import="i000007" active="no">A Note on Structure</name>
+    </item>
+    <item handle="88706ddc78b1b" parent="e7ded148d6e4a" root="None" order="5" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="139" wordCount="28" paraCount="1" cursorPos="343" />
+      <name status="s000003" import="i000007" active="yes">Chapter Two</name>
+    </item>
+    <item handle="ae7339df26ded" parent="e7ded148d6e4a" root="None" order="6" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="189" wordCount="37" paraCount="1" cursorPos="224" />
+      <name status="s000003" import="i000007" active="yes">We Found John!</name>
+    </item>
+    <item handle="f6622b4617424" parent="None" root="f6622b4617424" order="1" type="ROOT" class="CHARACTER">
+      <meta expanded="yes" />
+      <name status="s000000" import="i000007">Characters</name>
+    </item>
+    <item handle="f7e2d9f330615" parent="f6622b4617424" root="None" order="0" type="FOLDER" class="CHARACTER">
+      <meta expanded="yes" />
+      <name status="s000000" import="i000007">Main Characters</name>
+    </item>
+    <item handle="14298de4d9524" parent="f7e2d9f330615" root="None" order="0" type="FILE" class="CHARACTER" layout="NOTE">
+      <meta expanded="no" heading="H0" charCount="49" wordCount="9" paraCount="1" cursorPos="24" />
+      <name status="s000000" import="i000008" active="yes">John Smith</name>
+    </item>
+    <item handle="bb2c23b3c42cc" parent="f7e2d9f330615" root="None" order="1" type="FILE" class="CHARACTER" layout="NOTE">
+      <meta expanded="no" heading="H0" charCount="55" wordCount="9" paraCount="1" cursorPos="25" />
+      <name status="s000000" import="i000009" active="yes">Jane Smith</name>
+    </item>
+    <item handle="15c4492bd5107" parent="None" root="15c4492bd5107" order="2" type="ROOT" class="WORLD">
+      <meta expanded="yes" />
+      <name status="s000000" import="i000007">Locations</name>
+    </item>
+    <item handle="b3e74dbc1f584" parent="15c4492bd5107" root="None" order="0" type="FILE" class="WORLD" layout="NOTE">
+      <meta expanded="no" heading="H0" charCount="76" wordCount="15" paraCount="1" cursorPos="20" />
+      <name status="s000000" import="i00000a" active="yes">Earth</name>
+    </item>
+    <item handle="f1471bef9f2ae" parent="15c4492bd5107" root="None" order="1" type="FILE" class="WORLD" layout="NOTE">
+      <meta expanded="no" heading="H0" charCount="115" wordCount="24" paraCount="1" cursorPos="133" />
+      <name status="s000000" import="i000008" active="yes">Space</name>
+    </item>
+    <item handle="5eaea4e8cdee8" parent="15c4492bd5107" root="None" order="2" type="FILE" class="WORLD" layout="NOTE">
+      <meta expanded="no" heading="H0" charCount="28" wordCount="6" paraCount="1" cursorPos="45" />
+      <name status="s000000" import="i000009" active="yes">Mars</name>
+    </item>
+    <item handle="98acd8c76c93a" parent="None" root="98acd8c76c93a" order="3" type="ROOT" class="TRASH">
+      <meta expanded="yes" />
+      <name status="s000000" import="i000007">Trash</name>
+    </item>
+    <item handle="b8136a5a774a0" parent="98acd8c76c93a" root="None" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H0" charCount="30" wordCount="6" paraCount="1" cursorPos="36" />
+      <name status="s000000" import="i000007" active="yes">Delete Me!</name>
+    </item>
+  </content>
+</novelWriterXML>

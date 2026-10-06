@@ -1,0 +1,64 @@
+name: Part Windows X64
+
+on: workflow_call
+
+jobs:
+  buildWin-X64:
+    name: Build on Windows
+    runs-on: windows-2022
+    permissions:
+      contents: read
+    steps:
+      - name: Python Setup
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          architecture: x64
+
+      - name: Install Packages (pip)
+        run: pip install tzdata
+
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Download Assets
+        uses: actions/download-artifact@v8
+        with:
+          name: nw-assets
+          path: novelwriter/assets
+
+      - name: Build Setup Installer
+        id: build
+        run: |
+          echo "BUILD_VERSION=$(python pkgutils.py version)" >> $Env:GITHUB_OUTPUT
+          python pkgutils.py build-win-exe
+
+      - name: Upload Unsigned Artifacts
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: novelWriter-${{ steps.build.outputs.BUILD_VERSION }}-Win-Setup
+          path: dist/*.exe
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Submit Signing Request
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: "${{ secrets.SIGNPATH_API_TOKEN }}"
+          organization-id: "0471e52c-66fa-4e9a-bfb9-36167095ca3f"
+          project-slug: "novelWriter"
+          signing-policy-slug: "release-signing "
+          github-artifact-id: "${{ steps.upload-unsigned-artifact.outputs.artifact-id }}"
+          wait-for-completion: true
+          output-artifact-directory: "dist/"
+          parameters: |
+            version: "${{ steps.build.outputs.BUILD_VERSION }}"
+
+      - name: Upload Signed Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: novelWriter-${{ steps.build.outputs.BUILD_VERSION }}-Win-Setup-Signed
+          path: dist/*.exe
+          if-no-files-found: error
+          retention-days: 14

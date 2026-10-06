@@ -1,0 +1,126 @@
+[Main]
+name   = "Today Tritanopia"
+mode   = "light"
+author = "Veronica Berglyd Olsen"
+
+##
+# Colours:
+# Background   = #ffffff
+# Foreground   = #242424
+# Comment      = #606060
+#
+# Comparison: Original to Simulated Tritanopia
+# Red          = #cc0000 -> #cd003c
+# Orange       = #ff6600 -> #ff5a77
+# Yellow       = #ffcc00 -> #d38e95
+# Green        = #009933 -> #37918c
+# Aqua         = #00cccc -> #00cdc5
+# Blue         = #0066cc -> #007c75
+# Purple       = #6600cc -> #3c5351
+##
+
+[Base]
+base    = "#ffffff"
+default = "#242424"
+faded   = "#606060"
+
+# Full Colour Vision
+red     = "#cc0000"
+orange  = "#ff6600"
+yellow  = "#ffcc00"
+green   = "#009933"
+cyan    = "#00cccc"
+blue    = "#0066cc"
+purple  = "#6600cc"
+
+# Simulated Tritanopia
+# red     = #cd003c
+# orange  = #ff5a77
+# yellow  = #d38e95
+# green   = #37918c
+# cyan    = #00cdc5
+# blue    = #007c75
+# purple  = #3c5351
+
+[Project]
+root     = "green"
+folder   = "yellow"
+file     = "default"
+title    = "green"
+chapter  = "red"
+scene    = "green"
+note     = "yellow"
+active   = "green"
+inactive = "red"
+disabled = "faded"
+
+[Icon]
+tool      = "default"
+sidebar   = "default"
+accept    = "green"
+reject    = "red"
+action    = "default"
+option    = "orange"
+apply     = "green"
+create    = "yellow"
+destroy   = "faded"
+reset     = "green"
+add       = "green"
+change    = "green"
+remove    = "yellow"
+shortcode = "default"
+markdown  = "orange"
+system    = "yellow"
+info      = "cyan"
+warning   = "orange"
+error     = "red"
+
+[Palette]
+window          = "base:D105"
+windowText      = "default"
+base            = "base"
+alternateBase   = "#e0e0e0"
+text            = "default"
+tooltipBase     = "#ffffc0"
+tooltipText     = "#15150d"
+button          = "#efefef"
+buttonText      = "default"
+brightText      = "base"
+highlight       = "green:128"
+highlightedText = "base"
+link            = "green"
+linkVisited     = "green"
+accent          = "green:L150"
+
+[GUI]
+helpText     = "green:D110"
+fadedText    = "faded"
+errorText    = "red"
+accentText   = "green"
+activeButton = "green:96"
+activeBase   = "#e0e0e0"
+searchMatch  = "orange:96"
+
+[Syntax]
+background     = "base"
+text           = "default"
+line           = "default:32"
+link           = "green"
+headerText     = "green"
+headerTag      = "green:160"
+emphasis       = "orange"
+whitespace     = "yellow:64"
+dialog         = "green"
+altDialog      = "yellow:D125"
+note           = "yellow:D125"
+hidden         = "faded"
+shortcode      = "yellow:D125"
+keyword        = "red"
+tag            = "green"
+value          = "orange"
+optional       = "yellow:D125"
+spellCheckLine = "red"
+errorLine      = "yellow:D125"
+replaceTag     = "yellow:D125"
+modifier       = "red"
+textHighlight  = "yellow:96"

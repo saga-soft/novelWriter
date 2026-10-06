@@ -1,0 +1,23 @@
+name: Build MacOS
+
+on: workflow_dispatch
+
+jobs:
+  buildAssets:
+    uses: ./.github/workflows/part_assets.yml
+    permissions:
+      contents: read
+
+  buildMac-AMD64:
+    needs: buildAssets
+    uses: ./.github/workflows/part_macos_amd64.yml
+    secrets: inherit
+    permissions:
+      contents: read
+
+  buildMac-M1:
+    needs: buildAssets
+    uses: ./.github/workflows/part_macos_m1.yml
+    secrets: inherit
+    permissions:
+      contents: read

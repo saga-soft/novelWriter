@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<w:fonts xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:font w:name="Source Sans Pro">
+    <w:pitch w:val="variable" />
+  </w:font>
+</w:fonts>

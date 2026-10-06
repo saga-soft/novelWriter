@@ -1,0 +1,124 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 17:44+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/user_interface/split_and_merge.rst:5
+msgid "Split and Merge Documents"
+msgstr "Fractionner et fusionner des documents"
+
+#: ../../source/user_interface/split_and_merge.rst:7
+msgid ""
+"Under the **Transform** submenu in the context menu of an item in the "
+"project tree, you will find several options on how to change a document "
+"or folder. This includes changing between document and note, but also "
+"splitting them into multiple documents, or merging child items into a "
+"single document."
+msgstr ""
+"Dans le sous-menu **Transformation** du menu contextuel d'un élément de "
+"l'arborescence du projet, vous trouverez plusieurs options permettant de "
+"modifier un document ou un dossier. Il s'agit notamment de passer d'un "
+"document à une note, mais aussi de les diviser en plusieurs documents ou "
+"de fusionner des éléments enfants en un seul document."
+
+#: ../../source/user_interface/split_and_merge.rst:14
+msgid "Splitting Documents"
+msgstr "Découper des documents"
+
+#: ../../source/user_interface/split_and_merge.rst:18
+msgid "The **Split Document** dialog."
+msgstr "La boîte de dialogue **découper un document**."
+
+#: ../../source/user_interface/split_and_merge.rst:20
+msgid ""
+"The **Split Document by Headings** option will open a dialog that allows "
+"you to split the selected document into multiple new documents based on "
+"the headings it contains. You can select at which heading level the "
+"split is to be performed from the dropdown box. The list box will "
+"preview which headings will be split into new documents."
+msgstr ""
+"L'option **découper le document selon les titres** ouvre une boîte de "
+"dialogue qui vous permet de découper le document sélectionné en "
+"plusieurs nouveaux documents sur la base des en-têtes qu'il contient. "
+"Vous pouvez sélectionner le niveau de rubrique auquel le fractionnement "
+"doit être effectué dans la liste déroulante. La liste déroulante affiche "
+"un aperçu des rubriques qui seront scindées en nouveaux documents."
+
+#: ../../source/user_interface/split_and_merge.rst:25
+msgid ""
+"You are given the option to create a folder for these new documents, and "
+"whether or not to create a hierarchy of documents. That is, put sections "
+"under scenes, and scenes under chapters."
+msgstr ""
+"Vous avez la possibilité de créer un dossier pour ces nouveaux documents "
+"et de créer ou non une hiérarchie entre les documents. C'est-à-dire de "
+"placer les sections sous les scènes, et les scènes sous les chapitres."
+
+#: ../../source/user_interface/split_and_merge.rst:28
+msgid ""
+"The source document *is not* deleted in the process, but you have the "
+"option to let the tool move the source document to the **Trash** folder."
+msgstr ""
+"Le document source n'est pas supprimé au cours du processus, mais vous "
+"avez la possibilité de laisser l'outil déplacer le document source dans "
+"le dossier **Poubelle**."
+
+#: ../../source/user_interface/split_and_merge.rst:33
+msgid "Merging Documents"
+msgstr "Fusionner des documents"
+
+#: ../../source/user_interface/split_and_merge.rst:37
+msgid "The **Merge Documents** dialog."
+msgstr "La boîte de dialogue **Fusionner des documents**."
+
+#: ../../source/user_interface/split_and_merge.rst:39
+msgid ""
+"You have two options for merging documents that are child elements of "
+"another document. You can either **Merge Child Items into Self** and "
+"**Merge Child Items into New**. The first option will pull all content "
+"of child items and merge them into the parent document, while the second "
+"option will create a new document in the process."
+msgstr ""
+"Vous disposez de deux options pour fusionner des documents qui sont des "
+"éléments enfants d'un autre document. Vous pouvez soit **Intégrer les "
+"éléments enfants**, soit **Créer une fusion des éléments enfants**. La "
+"première option permet d'extraire tout le contenu des éléments enfants "
+"et de les fusionner dans le document parent, tandis que la seconde "
+"option crée un nouveau document au cours du processus."
+
+#: ../../source/user_interface/split_and_merge.rst:44
+msgid ""
+"When merging documents in a folder, only the latter option is possible, "
+"so only the choice **Merge Documents in Folder** is available."
+msgstr ""
+"Lors de la fusion de documents dans un dossier, seule cette dernière "
+"option est possible, de sorte que seul le choix **Fusionner les "
+"documents dans un dossier** est disponible."
+
+#: ../../source/user_interface/split_and_merge.rst:47
+msgid ""
+"In either case, the **Merge Documents** dialog will let you exclude "
+"documents you don't want to include, and it also lets you reorder them "
+"if you wish."
+msgstr ""
+"Dans les deux cas, la boîte de dialogue **Fusionner des documents** vous "
+"permet d'exclure les documents que vous ne souhaitez pas inclure et de "
+"les réorganiser si vous le souhaitez."

@@ -1,0 +1,107 @@
+[Meta]
+timeStamp = "2026-08-08 17:58:45"
+
+[Main]
+font = "Sans Serif,9,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0"
+lightTheme = "default_light"
+darkTheme = "default_dark"
+themeMode = "AUTO"
+icons = "material_rounded_normal"
+iconColTree = "theme"
+iconColDocs = false
+localisation = "en_GB"
+hideVScroll = false
+hideHScroll = false
+lastNotes = "0x0"
+nativeFont = true
+useCharCount = false
+vimMode = false
+
+[Sizes]
+mainWindow = [1200, 650]
+welcome = [800, 550]
+preferences = [700, 615]
+fontSelect = [700, 550]
+mainPane = [300, 800]
+viewPane = [500, 150]
+searchPane = [150, 500]
+storyPane = [300, 800]
+moveMainWin = true
+
+[Project]
+autoSaveProject = 60
+autoSaveDoc = 30
+emphLabels = false
+backupPath = ""
+backupOnClose = true
+backupInterval = "session"
+askBeforeBackup = true
+askBeforeExit = true
+lastAuthor = ""
+
+[Editor]
+textFont = ""
+width = 700
+margin = 40
+tabWidth = 40
+lineHeight = 1.15
+cursorWidth = 1
+lineHighlight = false
+focusWidth = 800
+hideFocusFooter = false
+justify = false
+autoSelect = true
+autoReplace = true
+repSQuotes = true
+repDQuotes = true
+repDash = true
+repDots = true
+autoScroll = true
+autoScrollPos = 30
+scrollPastEnd = true
+fmtSQuoteOpen = "‘"
+fmtSQuoteClose = "’"
+fmtDQuoteOpen = "“"
+fmtDQuoteClose = "”"
+fmtPadBefore = ""
+fmtPadAfter = ""
+fmtPadThin = false
+spellCheck = "en"
+showTabsNSpaces = false
+showLineEndings = false
+showMultiSpaces = false
+scaleHeadings = true
+singleStarBold = false
+incNotesWCount = true
+showFullPath = true
+dialogStyle = 2
+allowOpenDial = true
+dialogLine = ""
+narratorBreak = ""
+narratorDialog = ""
+altDialogOpen = ""
+altDialogClose = ""
+highlightEmph = true
+dottedModCodes = false
+stopWhenIdle = true
+userIdleTime = 300
+
+[State]
+showDetailsPanel = true
+showViewerPanel = true
+showEditToolBar = false
+showSessionTime = true
+viewComments = true
+viewSynopsis = true
+viewNotes = true
+searchAuto = false
+searchCase = false
+searchWord = false
+searchRegEx = false
+searchLoop = false
+searchNextFile = false
+searchMatchCap = false
+searchProjAuto = false
+searchProjCase = false
+searchProjWord = false
+searchProjRegEx = false

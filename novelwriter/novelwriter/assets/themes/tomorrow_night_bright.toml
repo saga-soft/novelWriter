@@ -1,0 +1,121 @@
+[Main]
+name   = "Tomorrow Night Bright"
+mode   = "dark"
+author = "Veronica Berglyd Olsen"
+credit = "Chris Kempson"
+url    = "https://github.com/chriskempson/tomorrow-theme"
+
+##
+# Theme:  Tomorrow Night Bright
+# Source: https://github.com/chriskempson/tomorrow-theme
+# Credit: Chris Kempson
+##
+# Colours:
+# Background   = #000000
+# Current Line = #2a2a2a
+# Selection    = #424242
+# Foreground   = #eaeaea
+# Comment      = #969896
+# Red          = #d54e53
+# Orange       = #e78c45
+# Yellow       = #e7c547
+# Green        = #b9ca4a
+# Aqua         = #70c0b1
+# Blue         = #7aa6da
+# Purple       = #c397d8
+##
+
+[Base]
+base    = "#000000"
+default = "#eaeaea"
+faded   = "#969896"
+red     = "#d54e53"
+orange  = "#e78c45"
+yellow  = "#e7c547"
+green   = "#b9ca4a"
+cyan    = "#70c0b1"
+blue    = "#7aa6da"
+purple  = "#c397d8"
+
+[Project]
+root     = "blue"
+folder   = "yellow"
+file     = "default"
+title    = "green"
+chapter  = "red"
+scene    = "blue"
+note     = "yellow"
+active   = "green"
+inactive = "red"
+disabled = "faded"
+
+[Icon]
+tool      = "default"
+sidebar   = "default"
+accept    = "green"
+reject    = "red"
+action    = "blue"
+option    = "orange"
+apply     = "green"
+create    = "yellow"
+destroy   = "faded"
+reset     = "green"
+add       = "green"
+change    = "green"
+remove    = "red"
+shortcode = "default"
+markdown  = "orange"
+system    = "yellow"
+info      = "blue"
+warning   = "orange"
+error     = "red"
+
+[Palette]
+window          = "#181818"
+windowText      = "default"
+base            = "base"
+alternateBase   = "#424242"
+text            = "default"
+tooltipBase     = "#ffffc0"
+tooltipText     = "#15150d"
+button          = "base"
+buttonText      = "default"
+brightText      = "base"
+highlight       = "#2c98f7"
+highlightedText = "#ffffff"
+link            = "blue"
+linkVisited     = "blue"
+accent          = "#2c98f7"
+
+[GUI]
+helpText     = "#a4a4a4"
+fadedText    = "#949494"
+errorText    = "red"
+accentText   = "blue"
+activeButton = "#2c98f757"
+activeBase   = "#424242"
+searchMatch  = "orange:128"
+
+[Syntax]
+background     = "base"
+text           = "default"
+line           = "default:48"
+link           = "blue"
+headerText     = "blue"
+headerTag      = "blue:D150"
+emphasis       = "orange"
+whitespace     = "orange:64"
+dialog         = "green"
+altDialog      = "yellow"
+note           = "#e7d696"
+hidden         = "faded"
+shortcode      = "blue"
+keyword        = "red"
+tag            = "purple"
+value          = "yellow"
+optional       = "blue"
+spellCheckLine = "red"
+errorLine      = "green"
+replaceTag     = "cyan"
+modifier       = "orange"
+textHighlight  = "yellow:96"

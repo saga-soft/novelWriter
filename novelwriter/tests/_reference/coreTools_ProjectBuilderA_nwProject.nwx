@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='utf-8'?>
+<novelWriterXML appVersion="26.2b2" hexVersion="0x260200b2" fileVersion="1.5" fileRevision="7" timeStamp="2026-08-04 17:48:52">
+  <project id="d0f3fe10-c6e6-4310-8bfd-181eb4224eed" saveCount="1" autoCount="0" editTime="0" indexRevision="17">
+    <name>Test Project A</name>
+    <author>Jane Doe</author>
+  </project>
+  <settings>
+    <doBackup>yes</doBackup>
+    <language>en_GB</language>
+    <spellChecking auto="no">None</spellChecking>
+    <projectTarget date="None" last="40" mode="words">0</projectTarget>
+    <dailyTarget auto="no" last="40" date="2026-08-04">0</dailyTarget>
+    <targetSkipRoots />
+    <lastHandle>
+      <entry key="editor">None</entry>
+      <entry key="viewer">None</entry>
+      <entry key="novel">None</entry>
+      <entry key="story">None</entry>
+    </lastHandle>
+    <autoReplace />
+    <status>
+      <entry key="s000000" count="15" color="faded" shape="STAR">New</entry>
+      <entry key="s000001" count="0" color="red" shape="TRIANGLE">Note</entry>
+      <entry key="s000002" count="0" color="yellow" shape="CIRCLE_T">Draft</entry>
+      <entry key="s000003" count="0" color="green" shape="STAR">Finished</entry>
+    </status>
+    <importance>
+      <entry key="i000004" count="7" color="purple" shape="SQUARE">New</entry>
+      <entry key="i000005" count="0" color="purple" shape="BLOCK_2">Minor</entry>
+      <entry key="i000006" count="0" color="purple" shape="BLOCK_3">Major</entry>
+      <entry key="i000007" count="0" color="purple" shape="BLOCK_4">Main</entry>
+    </importance>
+  </settings>
+  <content items="22" novelWords="40" notesWords="5" novelChars="185" notesChars="33">
+    <item handle="0000000000008" parent="None" root="0000000000008" order="0" type="ROOT" class="NOVEL">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Novel</name>
+    </item>
+    <item handle="0000000000009" parent="0000000000008" root="0000000000008" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H1" charCount="77" wordCount="16" paraCount="3" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Title Page</name>
+    </item>
+    <item handle="000000000000a" parent="0000000000008" root="0000000000008" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H2" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Chapter 1</name>
+    </item>
+    <item handle="000000000000b" parent="000000000000a" root="0000000000008" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Scene 1.1</name>
+    </item>
+    <item handle="000000000000c" parent="000000000000a" root="0000000000008" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Scene 1.2</name>
+    </item>
+    <item handle="000000000000d" parent="000000000000a" root="0000000000008" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Scene 1.3</name>
+    </item>
+    <item handle="000000000000e" parent="0000000000008" root="0000000000008" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H2" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Chapter 2</name>
+    </item>
+    <item handle="000000000000f" parent="000000000000e" root="0000000000008" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Scene 2.1</name>
+    </item>
+    <item handle="0000000000010" parent="000000000000e" root="0000000000008" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Scene 2.2</name>
+    </item>
+    <item handle="0000000000011" parent="000000000000e" root="0000000000008" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Scene 2.3</name>
+    </item>
+    <item handle="0000000000012" parent="0000000000008" root="0000000000008" order="3" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H2" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Chapter 3</name>
+    </item>
+    <item handle="0000000000013" parent="0000000000012" root="0000000000008" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Scene 3.1</name>
+    </item>
+    <item handle="0000000000014" parent="0000000000012" root="0000000000008" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Scene 3.2</name>
+    </item>
+    <item handle="0000000000015" parent="0000000000012" root="0000000000008" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Scene 3.3</name>
+    </item>
+    <item handle="0000000000016" parent="None" root="0000000000016" order="1" type="ROOT" class="PLOT">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Plot</name>
+    </item>
+    <item handle="0000000000017" parent="0000000000016" root="0000000000016" order="0" type="FILE" class="PLOT" layout="NOTE">
+      <meta expanded="no" heading="H1" charCount="9" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Main Plot</name>
+    </item>
+    <item handle="0000000000018" parent="None" root="0000000000018" order="2" type="ROOT" class="CHARACTER">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Characters</name>
+    </item>
+    <item handle="0000000000019" parent="0000000000018" root="0000000000018" order="0" type="FILE" class="CHARACTER" layout="NOTE">
+      <meta expanded="no" heading="H1" charCount="11" wordCount="1" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Protagonist</name>
+    </item>
+    <item handle="000000000001a" parent="None" root="000000000001a" order="3" type="ROOT" class="WORLD">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Locations</name>
+    </item>
+    <item handle="000000000001b" parent="000000000001a" root="000000000001a" order="0" type="FILE" class="WORLD" layout="NOTE">
+      <meta expanded="no" heading="H1" charCount="13" wordCount="2" paraCount="0" cursorPos="0" />
+      <name status="s000000" import="i000004" active="yes">Main Location</name>
+    </item>
+    <item handle="000000000001c" parent="None" root="000000000001c" order="4" type="ROOT" class="ARCHIVE">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Archive</name>
+    </item>
+    <item handle="000000000001d" parent="None" root="000000000001d" order="5" type="ROOT" class="TRASH">
+      <meta expanded="no" />
+      <name status="s000000" import="i000004">Trash</name>
+    </item>
+  </content>
+</novelWriterXML>

@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:p>
+    <w:pPr>
+      <w:pStyle w:val="Header" />
+      <w:jc w:val="right" />
+      <w:rPr />
+    </w:pPr>
+    <w:r>
+      <w:t xml:space="preserve">Page </w:t>
+    </w:r>
+    <w:r>
+      <w:fldChar w:fldCharType="begin" />
+    </w:r>
+    <w:r>
+      <w:instrText xml:space="preserve">PAGE</w:instrText>
+    </w:r>
+    <w:r>
+      <w:fldChar w:fldCharType="separate" />
+    </w:r>
+    <w:r>
+      <w:fldChar w:fldCharType="end" />
+    </w:r>
+    <w:r>
+      <w:t xml:space="preserve"> - Lorem Ipsum (lipsum.com)</w:t>
+    </w:r>
+  </w:p>
+</w:hdr>

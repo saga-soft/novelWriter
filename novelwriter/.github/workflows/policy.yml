@@ -1,0 +1,17 @@
+name: Policy Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release
+
+jobs:
+  commitPolicy:
+    name: Commit Policy
+    uses: saga-soft/automation/.github/workflows/saga-soft-policy.yml@main
+    permissions:
+      contents: read
+      pull-requests: read
+    with:
+      policy-url: https://github.com/saga-soft/novelWriter/blob/main/AI_POLICY.md

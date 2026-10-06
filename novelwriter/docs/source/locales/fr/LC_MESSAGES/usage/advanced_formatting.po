@@ -1,0 +1,392 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 16:04+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/usage/advanced_formatting.rst:5
+msgid "Advanced Formatting"
+msgstr "Mise en forme avancée"
+
+#: ../../source/usage/advanced_formatting.rst:7
+msgid ""
+"Standard Markdown formatting is somewhat limited, so novelWriter has some "
+"additional formatting codes for special use cases. These codes are all based "
+"on brackets, and some allow an additional value to be set after a colon."
+msgstr ""
+"Le formatage Markdown standard est quelque peu limité, c'est pourquoi "
+"novelWriter dispose de quelques codes de formatage supplémentaires pour des "
+"cas d'utilisation particuliers. Ces codes sont tous basés sur les crochets, et "
+"certains permettent de définir une valeur supplémentaire après les deux points."
+
+#: ../../source/usage/advanced_formatting.rst:11
+msgid "This section covers all these formatting codes."
+msgstr "Cette section couvre tous ces codes de formatage."
+
+#: ../../source/usage/advanced_formatting.rst:17
+msgid "Formatting with Shortcodes"
+msgstr "Mise en forme avec les shortcodes"
+
+#: ../../source/usage/advanced_formatting.rst:19
+msgid ""
+"For basic formatting, like emphasis, you should use the standard Markdown "
+"style formatting tags descried in :ref:`docs_usage_basics_emphasis` whenever "
+"possible."
+msgstr ""
+"Pour le formatage de base, comme la mise en valeur, vous devriez utiliser les "
+"balises de formatage standard du style Markdown décrites dans :ref:"
+"`docs_usage_basics_emphasis` chaque fois que possible."
+
+#: ../../source/usage/advanced_formatting.rst:22
+msgid ""
+"For additional formatting options, you can use shortcodes. Shortcodes is a "
+"form of in-line codes that wrap the section of text to be formatted. "
+"Shortcodes can be nested to apply multiple formats to the same piece of text."
+msgstr ""
+"Pour des options de formatage supplémentaires, vous pouvez utiliser des "
+"shortcodes. Les shortcodes sont une forme de codes en ligne qui enveloppent la "
+"section de texte à mettre en forme. Les shortcodes peuvent être imbriqués pour "
+"appliquer plusieurs formats à la même partie de texte."
+
+#: ../../source/usage/advanced_formatting.rst:26
+msgid ""
+"These shortcodes are intended for special formatting cases, or more complex "
+"cases that cannot be solved with simple Markdown-like formatting codes. "
+"Available shortcodes are listed below."
+msgstr ""
+"Ces shortcodes sont destinés à des cas de formatage spéciaux ou à des cas plus "
+"complexes qui ne peuvent pas être résolus avec de simples codes de formatage "
+"de type Markdown. Les shortcodes disponibles sont énumérés ci-dessous."
+
+#: ../../source/usage/advanced_formatting.rst:29
+msgid "Shortcodes Formats"
+msgstr "Formats des shortcodes"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Syntax"
+msgstr "Syntaxe"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[b]text[/b]``"
+msgstr "``[b]texte[/b]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Text is displayed as bold text."
+msgstr "Le texte est affiché en gras."
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[i]text[/i]``"
+msgstr "``[i]texte[/i]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Text is displayed as italicised text."
+msgstr "Le texte est affiché en italique."
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[s]text[/s]``"
+msgstr "``[s]texte[/s]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Text is displayed as strike through text."
+msgstr "Le texte est affiché sous forme de texte barré."
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[u]text[/u]``"
+msgstr "``[u]texte[/u]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Text is displayed as underlined text."
+msgstr "Le texte est affiché sous forme de texte souligné."
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[m]text[/m]``"
+msgstr "``[m]texte[/m]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Text is displayed as highlighted text."
+msgstr "Le texte est affiché en surbrillance."
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[sup]text[/sup]``"
+msgstr "``[sup]texte[/sup]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Text is displayed as superscript text."
+msgstr "Le texte est affiché en exposant."
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[sub]text[/sub]``"
+msgstr "``[sub]texte[/sub]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Text is displayed as subscript text."
+msgstr "Le texte est affiché en indice."
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[footnote:key]``"
+msgstr "``[footnote:clé]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "A reference to a :ref:`footnote comment <docs_usage_comments_footnotes>`."
+msgstr ""
+"Une référence à un :ref:`commentaire de note de bas de page "
+"<docs_usage_comments_footnotes>`."
+
+#: ../../source/usage/advanced_formatting.rst:43
+msgid ""
+"Unlike Markdown style codes, these can be used anywhere within a paragraph. "
+"Even in the middle of a word if you need to. You can also freely combine them "
+"to form more complex formatting."
+msgstr ""
+"Contrairement aux codes de style Markdown, ces codes peuvent être utilisés "
+"n'importe où dans un paragraphe. Même au milieu d'un mot si nécessaire. Vous "
+"pouvez également les combiner librement pour obtenir une mise en forme plus "
+"complexe."
+
+#: ../../source/usage/advanced_formatting.rst:46
+msgid ""
+"The shortcodes are available from the **Format** menu and in the editor "
+"toolbar, which can be activated by clicking the left-most icon button in the "
+"editor header."
+msgstr ""
+"Les shortcodes sont disponibles dans le menu **Format** et dans la barre "
+"d'outils de l'éditeur, qui peut être activée en cliquant sur l'icône la plus à "
+"gauche dans l'en-tête de l'éditeur."
+
+#: ../../source/usage/advanced_formatting.rst:51
+msgid ""
+"Shortcodes are not processed until you generate a preview or generate a "
+"manuscript document. So there is no highlighting of the text between the "
+"formatting markers. There is also no check that your markers make sense. You "
+"must ensure that you have both the opening and closing formatting markers "
+"where you want them."
+msgstr ""
+"Les shortcodes ne sont pas traités tant que vous n'avez pas généré un aperçu "
+"ou un document manuscrit. Il n'y a donc pas de mise en évidence du texte entre "
+"les marqueurs de formatage. Il n'y a pas non plus de vérification de la "
+"logique de vos marqueurs. Vous devez vous assurer que les marqueurs de "
+"formatage d'ouverture et de fermeture se trouvent à l'endroit voulu."
+
+#: ../../source/usage/advanced_formatting.rst:62
+msgid "Vertical Space and Page Breaks"
+msgstr "Espace vertical et sauts de page"
+
+#: ../../source/usage/advanced_formatting.rst:64
+msgid ""
+"You can apply page breaks to partition, chapter and scene headings for novel "
+"documents from the **Manuscript Build** tool. If you need to add a page break "
+"or additional vertical spacing in other places, there are special codes "
+"available for this purpose."
+msgstr ""
+"Vous pouvez appliquer des sauts de page aux en-têtes de partition, de chapitre "
+"et de scène pour les documents de roman à partir de l'outil **Compiler le "
+"manuscrit**. Si vous avez besoin d'ajouter un saut de page ou un espacement "
+"vertical supplémentaire à d'autres endroits, il existe des codes spéciaux à "
+"cet effet."
+
+#: ../../source/usage/advanced_formatting.rst:68
+msgid ""
+"Adding more than one line break between paragraphs will **not** increase the "
+"space between those paragraphs when generating a manuscript document. To add "
+"additional space between paragraphs, add the text ``[vspace]`` on a line of "
+"its own, and the **Manuscript Build** tool will insert a blank paragraph in "
+"its place."
+msgstr ""
+"L'ajout de plus d'un saut de ligne entre les paragraphes n'augmentera **pas** "
+"l'espace entre ces paragraphes lors de la génération d'un document manuscrit. "
+"Pour ajouter de l'espace entre les paragraphes, ajoutez le texte ``[vspace]`` "
+"sur une ligne distincte, et l'outil **Compilation du manuscrit** insérera un "
+"paragraphe vide à sa place."
+
+#: ../../source/usage/advanced_formatting.rst:73
+msgid ""
+"If you need multiple blank paragraphs just add a colon and a number to the "
+"above code. For instance, writing ``[vspace:3]`` will insert three blank "
+"paragraphs."
+msgstr ""
+"Si vous avez besoin de plusieurs paragraphes vides, il suffit d'ajouter deux "
+"points et un chiffre au code ci-dessus. Par exemple, en écrivant "
+"``[vspace:3]``, vous insérerez trois paragraphes vides."
+
+#: ../../source/usage/advanced_formatting.rst:76
+msgid ""
+"If you need to add a page break somewhere, put the text ``[new page]`` on a "
+"line by itself before the text you wish to start on a new page."
+msgstr ""
+"Si vous devez ajouter un saut de page quelque part, placez le texte ``[ new "
+"page]`` sur une ligne isolée avant le texte que vous souhaitez faire commencer "
+"sur une nouvelle page."
+
+#: ../../source/usage/advanced_formatting.rst:81
+msgid ""
+"The page break code is applied to the text that follows it. It adds a \"page "
+"break before\" mark to the text when exporting to HTML or Open Document. This "
+"means that a ``[new page]`` code which has no text following it will not "
+"result in a page break."
+msgstr ""
+"Le code de saut de page est appliqué au texte qui le suit. Il ajoute une "
+"marque de « saut de page avant » au texte lors de l'exportation vers HTML ou "
+"Open Document. Cela signifie qu'un code ``[ new page]`` qui n'est suivi "
+"d'aucun texte n'entraînera pas de saut de page."
+
+#: ../../source/usage/advanced_formatting.rst:85
+#: ../../source/usage/advanced_formatting.rst:132
+msgid ":bdg-info:`Example`"
+msgstr ":bdg-info:`Exemple`"
+
+#: ../../source/usage/advanced_formatting.rst:104
+msgid "Inserting Word Counts in the Text"
+msgstr "Insérer le nombre de mots dans le texte"
+
+#: ../../source/usage/advanced_formatting.rst:106
+msgid ""
+"The cover page of a manuscript normally has the word count stated on it. Any "
+"statistics value collected by novelWriter can be inserted into any document "
+"using a special shortcode. You can insert the code for any of the available "
+"statistics values from the **Insert** menu under **Word/Character Count**."
+msgstr ""
+"La page de couverture d'un manuscrit indique normalement le nombre de mots. "
+"Toute valeur statistique collectée par novelWriter peut être insérée dans "
+"n'importe quel document à l'aide d'un shortcode spécial. Vous pouvez insérer "
+"le code pour n'importe quelle valeur statistique disponible dans le menu "
+"**Insérer** sous **Nombre de mots/caractères**."
+
+#: ../../source/usage/advanced_formatting.rst:111
+msgid ""
+"The value inserted is the actual count for your entire manuscript, so it is "
+"not populated until you run the **Manuscript Build** tool. Until then they "
+"will show up as \"0\" in the viewer panel."
+msgstr ""
+"La valeur insérée est le nombre réel pour l'ensemble de votre manuscrit, elle "
+"n'est donc pas renseignée tant que vous n'avez pas exécuté l'outil "
+"**Compilation du manuscrit**. Jusqu'à ce moment-là, ils apparaîtront sous la "
+"forme d'un « 0 » dans le panneau de visualisation."
+
+#: ../../source/usage/advanced_formatting.rst:114
+msgid "The available codes are:"
+msgstr "Les codes disponibles sont les suivants :"
+
+#: ../../source/usage/advanced_formatting.rst:116
+msgid "Stats Shortcodes"
+msgstr "Shortcodes de statistiques"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Code"
+msgstr "Code"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:allChars]``"
+msgstr "``[field:allChars]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Characters"
+msgstr "Personnages"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:textChars]``"
+msgstr "``[field:textChars]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Characters in Text"
+msgstr "Caractères dans un texte"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:titleChars]``"
+msgstr "``[field:titleChars]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Characters in Headings"
+msgstr "Caractères dans les titres"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:paragraphCount]``"
+msgstr "``[field:paragraphCount]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Paragraphs"
+msgstr "Paragraphes"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:titleCount]``"
+msgstr "``[field:titleCount]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Headings"
+msgstr "En-têtes"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:allWordChars]``"
+msgstr "``[field:allWordChars]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Characters, No Spaces"
+msgstr "Caractères, sans les espaces"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:textWordChars]``"
+msgstr "``[field:textWordChars]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Characters in Text, No Spaces"
+msgstr "Caractères dans le texte, sans les espaces"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:titleWordChars]``"
+msgstr "``[field:titleWordChars]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Characters in Headings, No Spaces"
+msgstr "Caractères dans les titres, sans les espaces"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:allWords]``"
+msgstr "``[field:allWords]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Words"
+msgstr "Mots"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:textWords]``"
+msgstr "``[field:textWords]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Words in Text"
+msgstr "Mots dans le texte"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "``[field:titleWords]``"
+msgstr "``[field:titleWords]``"
+
+#: ../../source/usage/advanced_formatting.rst:1
+msgid "Words in Headings"
+msgstr "Mots dans les entêtes"
+
+#: ../../source/usage/advanced_formatting.rst:134
+msgid ""
+"This is an example cover page. A similar page is automatically generated when "
+"you create a new project."
+msgstr ""
+"Il s'agit d'un exemple de page de couverture. Une page similaire est "
+"automatiquement générée lorsque vous créez un nouveau projet."

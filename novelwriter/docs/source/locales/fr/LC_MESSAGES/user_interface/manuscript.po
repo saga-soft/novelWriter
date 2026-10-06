@@ -1,0 +1,687 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 21:08+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/user_interface/manuscript.rst:5
+msgid "Building the Manuscript"
+msgstr "Compiler le manuscrit"
+
+#: ../../source/user_interface/manuscript.rst:9
+msgid ""
+"You can at any time build a manuscript, an outline of your notes, or any other "
+"type of document from the text in your project. All of this is handled by the "
+"**Manuscript Build** tool. You can activate it from the sidebar, the **Tools** "
+"menu, or by pressing :kbd:`F5`."
+msgstr ""
+"Vous pouvez à tout moment compiler un manuscrit, une ébauche de vos notes ou "
+"tout autre type de document à partir du texte de votre projet. Tout cela est "
+"géré par l'outil **Compiler le manuscrit**. Vous pouvez l'activer à partir de "
+"la barre latérale, du menu **Outils**, ou en appuyant sur :kbd:`F5`."
+
+#: ../../source/user_interface/manuscript.rst:15
+msgid ""
+"The term \"Build\" in this context means to assemble or generate a single "
+"document from a selection of your project documents. You can select between "
+"multiple standard document formats."
+msgstr ""
+"Dans ce contexte, le terme « Construire » signifie assembler ou générer un "
+"document unique à partir d'une sélection de documents de votre projet. Vous "
+"pouvez choisir entre plusieurs formats de documents standard."
+
+#: ../../source/user_interface/manuscript.rst:20
+msgid ""
+"This tool is new for version 2.1. A simpler tool was used for earlier versions."
+msgstr ""
+"Cet outil est nouveau pour la version 2.1. Un outil plus simple était utilisé "
+"pour les versions précédentes."
+
+#: ../../source/user_interface/manuscript.rst:26
+msgid "The Manuscript Build Tool"
+msgstr "L'outil de compilation de manuscrit"
+
+#: ../../source/user_interface/manuscript.rst:31
+msgid "The **Manuscript Build** tool main window."
+msgstr "La fenêtre principale de l'outil **Compiler le manuscrit**."
+
+#: ../../source/user_interface/manuscript.rst:33
+msgid ""
+"The main window of the **Manuscript Build** tool contains a list of all the "
+"builds you have defined, a selection of settings, and a few buttons to "
+"generate preview, open the print dialog, or run the build to create a "
+"manuscript document."
+msgstr ""
+"La fenêtre principale de l'outil **Compiler le manuscrit** contient une liste "
+"de toutes les structures que vous avez définies, une sélection de paramètres "
+"et quelques boutons permettant de générer un aperçu, d'ouvrir la boîte de "
+"dialogue d'impression ou d'exécuter la compilation pour créer un document "
+"manuscrit."
+
+#: ../../source/user_interface/manuscript.rst:39
+msgid "Outline and Word Counts"
+msgstr "Plan et nombre de mots"
+
+#: ../../source/user_interface/manuscript.rst:44
+msgid "The **Manuscript Build** tool main window with the **Outline** visible."
+msgstr ""
+"La fenêtre principale de l'outil **Compiler le manuscrit** avec le **Plan** "
+"visible."
+
+#: ../../source/user_interface/manuscript.rst:46
+msgid ""
+"The **Outline** tab on the left lets you navigate the headings in the preview "
+"document. It will show up to scene level headings for novel documents, and "
+"level 2 headings for notes."
+msgstr ""
+"L'onglet **Plan** sur la gauche vous permet de naviguer dans les rubriques du "
+"document de prévisualisation. Il affiche les titres de niveau scène pour les "
+"documents de roman, et les titres de niveau 2 pour les notes."
+
+#: ../../source/user_interface/manuscript.rst:49
+msgid ""
+"A collapsible panel of word and character counts is also available below the "
+"preview pane. These are calculated from the text you have included in the "
+"document, and are more accurate counts than what's available in the project "
+"tree since they are counted *after formatting*."
+msgstr ""
+"Un panneau rétractable indiquant le nombre de mots et de caractères est "
+"également disponible sous le volet de prévisualisation. Ces chiffres sont "
+"calculés à partir du texte que vous avez inclus dans le document et sont plus "
+"précis que ceux disponibles dans l'arborescence du projet puisqu'ils sont "
+"comptés *après le formatage*."
+
+#: ../../source/user_interface/manuscript.rst:53
+msgid ""
+"For a detailed description on how they are counted, see :ref:"
+"`docs_more_counting`."
+msgstr ""
+"Pour une description détaillée de la façon dont ils sont comptés, voir :ref:"
+"`docs_more_counting`."
+
+#: ../../source/user_interface/manuscript.rst:59
+msgid "Build Settings"
+msgstr "Paramètres de compilation"
+
+#: ../../source/user_interface/manuscript.rst:61
+msgid ""
+"You can edit a build definition by opening it in the **Manuscript Build "
+"Settings** dialog, either by double-clicking or by selecting it and pressing "
+"the edit button in the toolbar."
+msgstr ""
+"Vous pouvez éditer une définition de compilation en l'ouvrant dans la boîte de "
+"dialogue **Paramètres de compilation du manuscrit**, soit en double-cliquant, "
+"soit en la sélectionnant et en appuyant sur le bouton d'édition dans la barre "
+"d'outils."
+
+#: ../../source/user_interface/manuscript.rst:66
+msgid ""
+"You can keep the **Manuscript Build Settings** dialog open while testing the "
+"different options, and just hit the :guilabel:`Apply` button. You can test the "
+"result of your settings change by pressing the :guilabel:`Preview` button in "
+"the main **Manuscript Build** window. When you're happy with the result, you "
+"can close the settings."
+msgstr ""
+"Vous pouvez garder la boîte de dialogue **Paramètres de compilation du "
+"manuscrit** ouverte pendant que vous testez les différentes options, et "
+"simplement cliquer sur le bouton :guilabel:`appliquer`. Vous pouvez tester le "
+"résultat de votre changement de paramètres en appuyant sur le bouton :guilabel:"
+"`Aperçu` dans la fenêtre principale **Compilation du manuscrit**. Lorsque vous "
+"êtes satisfait du résultat, vous pouvez fermer les paramètres."
+
+#: ../../source/user_interface/manuscript.rst:75
+msgid "Document Selection"
+msgstr "Sélection des documents"
+
+#: ../../source/user_interface/manuscript.rst:80
+msgid "The **Selections** page of the **Manuscript Build Settings** dialog."
+msgstr ""
+"La page **Sélection** de la boîte de dialogue **Paramètres de construction du "
+"manuscrit**."
+
+#: ../../source/user_interface/manuscript.rst:82
+msgid ""
+"The **Selections** page of the **Manuscript Build Settings** dialog allows you "
+"to fine tune which documents are included in the build. The included documents "
+"are indicated by an icon in the last column. On the right you have some filter "
+"options for selecting content of a specific type, and a set of switches for "
+"which root folders to include."
+msgstr ""
+"La page **Sélections** de la boîte de dialogue **Paramètres de compilation du "
+"manuscrit** vous permet d'affiner les documents inclus dans la compilation. "
+"Les documents inclus sont indiqués par une icône dans la dernière colonne. Sur "
+"la droite, vous disposez d'options de filtrage pour sélectionner le contenu "
+"d'un type spécifique, et d'un ensemble de commutateurs pour les dossiers "
+"racines à inclure."
+
+#: ../../source/user_interface/manuscript.rst:87
+msgid ""
+"You can override the result of these filters by marking one or more documents "
+"and selecting to explicitly include or exclude them by using the buttons below "
+"the tree view. The last button can be used to reset the override and return "
+"control to the filter settings."
+msgstr ""
+"Vous pouvez remplacer le résultat de ces filtres en marquant un ou plusieurs "
+"documents et en choisissant de les inclure ou de les exclure explicitement à "
+"l'aide des boutons situés sous l'arborescence. Le dernier bouton peut être "
+"utilisé pour réinitialiser l'annulation et redonner le contrôle aux paramètres "
+"du filtre."
+
+#: ../../source/user_interface/manuscript.rst:91
+msgid ""
+"In the figure, the orange icon and the blue icon indicates which documents are "
+"included, and the red icon indicates that a document is explicitly excluded."
+msgstr ""
+"Dans la figure, l'icône orange et l'icône bleue indiquent les documents "
+"inclus, et l'icône rouge indique qu'un document est explicitement exclu."
+
+#: ../../source/user_interface/manuscript.rst:94
+msgid ""
+"By default, inactive documents are excluded, but you can override this in the "
+"filter settings. See :ref:`docs_usage_project_active` for more details."
+msgstr ""
+"Par défaut, les documents inactifs sont exclus, mais vous pouvez modifier cela "
+"dans les paramètres du filtre. Voir :ref:`docs_usage_project_active` pour plus "
+"de détails."
+
+#: ../../source/user_interface/manuscript.rst:101
+msgid "Formatting Headings"
+msgstr "Mise en forme des en-têtes"
+
+#: ../../source/user_interface/manuscript.rst:106
+msgid "The **Headings** page of the **Manuscript Build Settings** dialog."
+msgstr ""
+"La page **En-têtes** de la boîte de dialogue **Paramètres de construction du "
+"manuscrit**."
+
+#: ../../source/user_interface/manuscript.rst:108
+msgid ""
+"The **Headings** page of the **Manuscript Build Settings** dialog allows you "
+"to set how the headings in your Novel Documents are formatted. By default, the "
+"title is just copied as-is, indicated by the ``{Title}`` format. You can "
+"change this to for instance add chapter numbers and scene numbers, or insert "
+"character names, like shown in the figure above."
+msgstr ""
+"La page **En-têtes** de la boîte de dialogue **Paramètres de compilation du "
+"manuscrit** vous permet de définir la façon dont les titres de vos documents "
+"du roman sont formatés. Par défaut, le titre est simplement copié tel quel, "
+"indiqué par le format ``{Title}``  Vous pouvez modifier ce format pour, par "
+"exemple, ajouter des numéros de chapitre et de scène, ou insérer des noms de "
+"personnages, comme indiqué dans la figure ci-dessus."
+
+#: ../../source/user_interface/manuscript.rst:113
+msgid ""
+"Clicking the edit button next to a format will copy the formatting string into "
+"the edit box where it can be modified, and where a syntax highlighter will "
+"help indicate which parts are automatically generated by the build tool. The :"
+"guilabel:`Insert` button is a dropdown list of these formats, and selecting "
+"one will insert it at the position of the cursor."
+msgstr ""
+"Cliquer sur le bouton d'édition à côté d'un format copiera la chaîne de "
+"formatage dans la boîte d'édition où elle peut être modifiée, et où un "
+"surligneur de syntaxe aidera à indiquer quelles parties sont automatiquement "
+"générées par l'outil de construction. Le bouton :guilabel:`Insérer` est une "
+"liste déroulante de ces formats, et en sélectionner un l'insérera à la "
+"position du curseur."
+
+#: ../../source/user_interface/manuscript.rst:118
+msgid ""
+"Any text you add that isn't highlighted in colours will remain in your "
+"formatted titles. ``{Title}`` will always be replaced by the text in the "
+"heading from your documents."
+msgstr ""
+"Tout texte que vous ajoutez et qui n'est pas surligné en couleur restera dans "
+"vos titres formatés. ``{Title}`` sera toujours remplacé par le texte de l'en-"
+"tête de vos documents."
+
+#: ../../source/user_interface/manuscript.rst:121
+msgid "Heading Formats"
+msgstr "Formats d'en-tête"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Code"
+msgstr "Code"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{BR}``"
+msgstr "``{BR}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Insert a line break."
+msgstr "Insérer un saut de ligne."
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{Title}``"
+msgstr "``{Title}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Insert the original title text."
+msgstr "Insérer le texte du titre original."
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{Chapter}``"
+msgstr "``{Chapter}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Insert a chapter number."
+msgstr "Insérer un numéro de chapitre."
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{Chapter:Word}``"
+msgstr "``{Chapter:Word}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Insert a chapter number as a word."
+msgstr "Insérer un numéro de chapitre sous forme de mot."
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{Chapter:URoman}``"
+msgstr "``{Chapter:URoman}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Insert a chapter number as an upper case Roman numeral."
+msgstr ""
+"Insérer un numéro de chapitre sous la forme d'un chiffre romain majuscule."
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{Chapter:LRoman}``"
+msgstr "``{Chapter:LRoman}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Insert a chapter number as an lower case Roman numeral."
+msgstr ""
+"Insérer un numéro de chapitre sous la forme d'un chiffre romain minuscule."
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{Scene}``"
+msgstr "``{Scene}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Insert a scene number within the current chapter."
+msgstr "Insérer un numéro de scène dans le chapitre en cours."
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{Scene:Abs}``"
+msgstr "``{Scene:Abs}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "Insert a scene number unique to the whole manuscript."
+msgstr "Insérer un numéro de scène unique pour l'ensemble du manuscrit."
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{Char:POV}``"
+msgstr "``{Char:POV}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid ""
+"Insert the point-of-view character's :ref:`display name "
+"<docs_usage_tags_refs_tags>`."
+msgstr ""
+"Insérer le :ref:`nom affiché <docs_usage_tags_refs_tags>` du personnage de "
+"point de vue."
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid "``{Char:Focus}``"
+msgstr "``{Char:Focus}``"
+
+#: ../../source/user_interface/manuscript.rst:1
+msgid ""
+"Insert the focus character's :ref:`display name <docs_usage_tags_refs_tags>`."
+msgstr ""
+"Insérer le :ref:`nom affiché<docs_usage_tags_refs_tags>` du personnage cible."
+
+#: ../../source/user_interface/manuscript.rst:136
+msgid ""
+"You can preview the result of these format strings by clicking :guilabel:"
+"`Apply`, and then clicking :guilabel:`Preview` in the **Manuscript Build** "
+"tool main window."
+msgstr ""
+"Vous pouvez prévisualiser le résultat de ces chaînes de formatage en cliquant "
+"sur :guilabel:`appliquer`, puis en cliquant sur :guilabel:`aperçu` dans la "
+"fenêtre principale de l'outil **Compiler le manuscrit**."
+
+#: ../../source/user_interface/manuscript.rst:143
+msgid "Automatic Numbering"
+msgstr "Numérotation automatique"
+
+#: ../../source/user_interface/manuscript.rst:145
+msgid ""
+"The headings formatter allows you to automatically insert chapter and scene "
+"numbers into your headings. The automatic chapter number counter will skip all "
+"chapter headings marked as unnumbered using the heading format described in :"
+"ref:`docs_usage_headings_levels`."
+msgstr ""
+"Le formateur de titres vous permet d'insérer automatiquement des numéros de "
+"chapitre et de scène dans vos titres. Le compteur automatique de numéros de "
+"chapitre sautera tous les titres de chapitre marqués comme non numérotés en "
+"utilisant le format de titre décrit dans :ref:`docs_usage_headings_levels`."
+
+#: ../../source/user_interface/manuscript.rst:149
+msgid ""
+"Scene numbers are mostly intended for use in a draft manuscript. You can "
+"either insert absolute scene numbers that counts every scene in the novel, or "
+"you can insert per-chapter scene numbers that reset to 1 for each new chapter."
+msgstr ""
+"Les numéros de scène sont principalement destinés à être utilisés dans un "
+"brouillon de manuscrit. Vous pouvez soit insérer des numéros de scène absolus "
+"qui comptent toutes les scènes du roman, soit des numéros de scène par "
+"chapitre qui se remettent à 1 pour chaque nouveau chapitre."
+
+#: ../../source/user_interface/manuscript.rst:153
+msgid ":bdg-info:`Example`"
+msgstr ":bdg-info:`Exemple`"
+
+#: ../../source/user_interface/manuscript.rst:155
+msgid "This will create a chapter title on the format \"Chapter 1: Title Text\":"
+msgstr ""
+"Cela créera un titre de chapitre au format « Chapitre 1 : Texte du titre » :"
+
+#: ../../source/user_interface/manuscript.rst:161
+msgid "This will create a scene title on the format \"Scene 1.1: Title Text\":"
+msgstr "Cela créera un titre de scène au format « Scene 1.1 : Texte du titre » :"
+
+#: ../../source/user_interface/manuscript.rst:169
+msgid "Scene Separators"
+msgstr "Séparateurs de scènes"
+
+#: ../../source/user_interface/manuscript.rst:171
+msgid ""
+"If you don't want any titles for your scenes (or for your sections if you have "
+"them), you can leave the formatting boxes empty. If so, an empty paragraph "
+"will be inserted between the scenes or sections instead, resulting in a gap in "
+"the text. You can also enable the :guilabel:`Hide` setting, which will ignore "
+"them completely. That is, there won't even be an extra gap inserted."
+msgstr ""
+"Si vous ne voulez pas de titres pour vos scènes (ou pour vos sections si vous "
+"en avez), vous pouvez laisser les cases de mise en forme vides. Dans ce cas, "
+"un paragraphe vide sera inséré entre les scènes ou les sections, ce qui créera "
+"un vide dans le texte. Vous pouvez également activer le paramètre :guilabel:"
+"`Caché`, qui les ignorera complètement. En d'autres termes, il n'y aura même "
+"pas d'espace supplémentaire inséré."
+
+#: ../../source/user_interface/manuscript.rst:176
+msgid ""
+"Alternatively, if you want a separator text between them, like the common ``* "
+"* *``, you can enter the desired separator text as the format. If the format "
+"is any piece of static text, it will always be treated as a separator. A "
+"static separator is only inserted between scenes, as opposed to a formatted "
+"heading which is also inserted before the first scene of a chapter."
+msgstr ""
+"Alternativement, si vous voulez un texte séparateur entre eux, comme le commun "
+"``* * *``, vous pouvez entrer le texte séparateur désiré comme format. Si le "
+"format est un morceau de texte statique, il sera toujours traité comme un "
+"séparateur. Un séparateur statique n'est inséré qu'entre les scènes, "
+"contrairement à un titre formaté qui est également inséré avant la première "
+"scène d'un chapitre."
+
+#: ../../source/user_interface/manuscript.rst:185
+msgid "Hard and Soft Scenes"
+msgstr "Scènes dures et douces"
+
+#: ../../source/user_interface/manuscript.rst:187
+msgid ""
+"If you wish to distinguish between so-called soft and hard scene breaks, you "
+"can use the alternative scene heading format in your text. You can then give "
+"these headings a different formatting in the **Headings** settings."
+msgstr ""
+"Si vous souhaitez faire la distinction entre les ruptures de scène douces et "
+"dures, vous pouvez utiliser le format alternatif de l'en-tête de scène dans "
+"votre texte. Vous pouvez ensuite donner à ces titres un format différent dans "
+"les paramètres **En-têtes**."
+
+#: ../../source/user_interface/manuscript.rst:191
+msgid ""
+"See :ref:`docs_usage_headings_levels` for more info on how to format "
+"alternative scene headings in your text."
+msgstr ""
+"Voir :ref:`docs_usage_headings_levels` pour plus d'informations sur la façon "
+"de formater des titres de scène alternatifs dans votre texte."
+
+#: ../../source/user_interface/manuscript.rst:196
+msgid "Output Settings"
+msgstr "Paramètres de sortie"
+
+#: ../../source/user_interface/manuscript.rst:198
+msgid ""
+"The **Formatting** sections of the **Manuscript Build Settings** dialog "
+"control a number of other settings for the output. This includes formatting, "
+"but also what content is included. You can for instance select to include "
+"comments, synopsis. tags and reference, and even exclude the body text itself."
+msgstr ""
+"Les sections **Formatage** de la boîte de dialogue **Paramètres de compilation "
+"du manuscrit** contrôlent un certain nombre d'autres paramètres pour la "
+"sortie. Il s'agit notamment du formatage, mais aussi du contenu inclus. Vous "
+"pouvez par exemple choisir d'inclure les commentaires, le synopsis, les "
+"étiquettes et les références, et même d'exclure le corps du texte lui-même."
+
+#: ../../source/user_interface/manuscript.rst:207
+msgid "Building Manuscript Documents"
+msgstr "Création des manuscrits"
+
+#: ../../source/user_interface/manuscript.rst:212
+msgid ""
+"The **Manuscript Build** dialog used for writing the actual manuscript "
+"documents."
+msgstr ""
+"Le dialogue **compiler le manuscrit** est utilisé pour créer les manuscrits "
+"proprement dits."
+
+#: ../../source/user_interface/manuscript.rst:214
+msgid ""
+"When you press the :guilabel:`Build` button on the **Build Manuscript** tool "
+"main window, a special file dialog opens up. This is where you pick your "
+"desired output format and where to write the file."
+msgstr ""
+"Lorsque vous appuyez sur le bouton :guilabel:`Construire` dans la fenêtre "
+"principale de l'outil **Compiler le manuscrit**, une boîte de dialogue "
+"spéciale s'ouvre. C'est là que vous choisissez le format de sortie désiré et "
+"l'endroit où écrire le fichier."
+
+#: ../../source/user_interface/manuscript.rst:218
+msgid ""
+"On the left side of the dialog is a list of all the available file formats, "
+"and on the right, a list of the documents which are included based on the "
+"build definition you selected. You can choose an output path, and set a base "
+"file name as well. The file extension will be added automatically."
+msgstr ""
+"La partie gauche de la boîte de dialogue contient une liste de tous les "
+"formats de fichiers disponibles, et la partie droite, une liste des documents "
+"qui sont inclus en fonction de la définition de la construction que vous avez "
+"sélectionnée. Vous pouvez choisir un chemin de sortie et définir un nom de "
+"fichier de base. L'extension du fichier sera ajoutée automatiquement."
+
+#: ../../source/user_interface/manuscript.rst:222
+msgid ""
+"To generate the manuscript document, press the :guilabel:`Build` button. A "
+"small progress bar will show the build progress, but for small projects it may "
+"pass very fast."
+msgstr ""
+"Pour générer le document manuscrit, appuyez sur le bouton :guilabel:"
+"`Construire`. Une petite barre de progression indique l'avancement de la "
+"construction, mais pour les petits projets, elle peut passer très vite."
+
+#: ../../source/user_interface/manuscript.rst:227
+msgid "File Formats"
+msgstr "Formats de fichiers"
+
+#: ../../source/user_interface/manuscript.rst:229
+msgid "The following document formats are supported:"
+msgstr "Les formats de documents suivants sont pris en charge :"
+
+#: ../../source/user_interface/manuscript.rst:231
+msgid "Open Document"
+msgstr "Open Document"
+
+#: ../../source/user_interface/manuscript.rst:232
+msgid ""
+"The Build tool can produce either an ``.odt`` file, or an ``.fodt`` file. The "
+"latter is just a flat version of the document format as a single XML file. "
+"Most rich text editors support the former, and only a few the latter."
+msgstr ""
+"L'outil de construction peut produire soit un fichier ``.odt``, soit un "
+"fichier ``.fodt``. Ce dernier n'est qu'une version plate du format du document "
+"sous la forme d'un fichier XML unique. La plupart des éditeurs de texte riche "
+"supportent le premier, et seulement quelques uns le second."
+
+#: ../../source/user_interface/manuscript.rst:236
+msgid "Microsoft Word Document"
+msgstr "Document Microsoft Word"
+
+#: ../../source/user_interface/manuscript.rst:237
+msgid ""
+"The Microsoft Word Document format writes a single ``.docx`` file. It uses a "
+"fairly basic format that should be compatible with most rich text editors."
+msgstr ""
+"Le format Microsoft Word Document permet d'écrire un seul fichier ``.docx``. "
+"Il utilise un format assez basique qui devrait être compatible avec la plupart "
+"des éditeurs de texte riche."
+
+#: ../../source/user_interface/manuscript.rst:240
+msgid "Portable Document Format (PDF)"
+msgstr "Format de document portable (PDF)"
+
+#: ../../source/user_interface/manuscript.rst:241
+msgid ""
+"The PDF is generated from a copy of the preview document, and should have the "
+"same formatting capabilities as the preview. It's identical to what is "
+"produced if you select the print option and print to PDF."
+msgstr ""
+"Le PDF est généré à partir d'une copie du document de prévisualisation et "
+"devrait avoir les mêmes capacités de formatage que la prévisualisation. Il est "
+"identique à celui qui est produit lorsque vous sélectionnez l'option "
+"d'impression et que vous imprimez au format PDF."
+
+#: ../../source/user_interface/manuscript.rst:245
+msgid "novelWriter HTML"
+msgstr "novelWriter HTML"
+
+#: ../../source/user_interface/manuscript.rst:246
+msgid ""
+"The HTML format writes a single ``.htm`` file with minimal style formatting. "
+"The HTML document is suitable for further processing by document conversion "
+"tools like Pandoc_, for importing in word processors, or for printing from "
+"browser."
+msgstr ""
+"Le format HTML écrit un seul fichier ``.htm`` avec un formatage de style "
+"minimal. Le document HTML peut être traité par des outils de conversion de "
+"documents tels que Pandoc_, importé dans un traitement de texte ou imprimé à "
+"partir d'un navigateur."
+
+#: ../../source/user_interface/manuscript.rst:250
+msgid "Standard/Extended Markdown"
+msgstr "Markdown standard/étendu"
+
+#: ../../source/user_interface/manuscript.rst:251
+msgid ""
+"The Markdown format comes in both Standard and Extended flavour. The *only* "
+"difference in terms of novelWriter functionality is the support for strike "
+"through text, which is not supported by the Standard flavour."
+msgstr ""
+"Le format Markdown existe en version standard et en version étendue. La "
+"*seule* différence en termes de fonctionnalité de novelWriter est la prise en "
+"charge du texte barré, qui n'est pas prise en charge par la version standard."
+
+#: ../../source/user_interface/manuscript.rst:255
+msgid "novelWriter Markup"
+msgstr "novelWriter Markup"
+
+#: ../../source/user_interface/manuscript.rst:256
+msgid ""
+"This is simply a concatenation of the project documents selected by the "
+"filters into a ``.txt`` file. The documents are stacked together in the order "
+"they appear in the project tree, with comments, tags, etc. included if they "
+"are selected. This is a useful format for exporting the project for later "
+"import back into novelWriter."
+msgstr ""
+"Il s'agit simplement d'une concaténation des documents du projet sélectionnés "
+"par les filtres dans un fichier ``.txt``. Les documents sont empilés dans "
+"l'ordre où ils apparaissent dans l'arborescence du projet, avec les "
+"commentaires, les balises, etc. inclus s'ils sont sélectionnés. C'est un "
+"format utile pour exporter le projet et le réimporter plus tard dans "
+"novelWriter."
+
+#: ../../source/user_interface/manuscript.rst:263
+msgid "Microsoft Word and PDF output options were added."
+msgstr "Les options de sortie Microsoft Word et PDF ont été ajoutées."
+
+#: ../../source/user_interface/manuscript.rst:267
+msgid "Additional Formats"
+msgstr "Formats supplémentaires"
+
+#: ../../source/user_interface/manuscript.rst:269
+msgid ""
+"In addition to the above document formats, the novelWriter HTML and Markup "
+"formats can also be wrapped in a JSON file. These files will have a meta data "
+"entry and a body entry."
+msgstr ""
+"En plus des formats de document ci-dessus, les formats HTML et Markup de "
+"novelWriter peuvent également être enveloppés dans un fichier JSON. Ces "
+"fichiers auront une entrée pour les métadonnées et une entrée pour le corps du "
+"texte."
+
+#: ../../source/user_interface/manuscript.rst:272
+msgid ""
+"The text body is saved in a two-level list. The outer list contains one entry "
+"per document, in the order they appear in the project tree. Each document is "
+"then split up into a list as well, with one entry per paragraph it contains."
+msgstr ""
+"Le corps du texte est enregistré dans une liste à deux niveaux. La liste "
+"extérieure contient une entrée par document, dans l'ordre où ils apparaissent "
+"dans l'arborescence du projet. Chaque document est ensuite divisé en une "
+"liste, avec une entrée par paragraphe qu'il contient."
+
+#: ../../source/user_interface/manuscript.rst:276
+msgid ""
+"These files are mainly intended for scripted post-processing for those who "
+"want that option. A JSON file can be imported directly into a Python dict "
+"object or a PHP array, to mentions a few options."
+msgstr ""
+"Ces fichiers sont principalement destinés au post-traitement par script pour "
+"ceux qui souhaitent cette option. Un fichier JSON peut être importé "
+"directement dans un objet dict de Python ou dans un tableau de PHP, pour ne "
+"citer que quelques options."
+
+#: ../../source/user_interface/manuscript.rst:283
+msgid "Printing"
+msgstr "Impression"
+
+#: ../../source/user_interface/manuscript.rst:285
+msgid ""
+"The :guilabel:`Print` button allows you to print the content in the preview "
+"window. You can either print to one of your system's printers, or select PDF "
+"as your output format from the printer icon on the print dialog."
+msgstr ""
+"Le bouton :guilabel:`Imprimer` vous permet d'imprimer le contenu de la fenêtre "
+"de prévisualisation. Vous pouvez soit imprimer sur l'une des imprimantes de "
+"votre système, soit sélectionner le format PDF à partir de l'icône de "
+"l'imprimante dans la boîte de dialogue d'impression."
+
+#: ../../source/user_interface/manuscript.rst:291
+msgid ""
+"The paper format should default to whatever your system default is. If you "
+"want to change it, you have to select it from the **Print Preview** dialog."
+msgstr ""
+"Le format de papier doit être défini par défaut, quel que soit le format par "
+"défaut de votre système. Si vous souhaitez le modifier, vous devez le "
+"sélectionner dans la boîte de dialogue **Aperçu avant impression**."

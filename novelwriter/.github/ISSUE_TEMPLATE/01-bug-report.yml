@@ -1,0 +1,68 @@
+name: Bug Report
+description: Report a bug or issue.
+title: "[Bug] "
+labels: ["bug", "triage"]
+type: bug
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Thank you for taking the time to fill out this bug report.
+        Note that issues without a description will not be considered.
+        Please also check if an issue already exists on this problem.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Provide a clear and concise description of what happened.
+      placeholder: Tell us what you see.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Explain what to do to reproduce the issue.
+      placeholder: Tell us what to do.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of novelWriter are you running?
+      placeholder: "e.g. 26.2"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      description: What operating system are you running?
+      placeholder: "e.g. Windows 11, macOS 26, Ubuntu 26.04"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log or Error Output
+      description: >
+        If the error dialog popped up, copy/paste the content here.
+        Or provide relevant log output from the console.
+      render: shell
+    validations:
+      required: false
+
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Upload Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+    validations:
+      required: false
+      accept: ".png,.jpg,.gif"

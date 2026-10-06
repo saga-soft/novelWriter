@@ -1,0 +1,120 @@
+[Main]
+name   = "Solarized Light"
+mode   = "light"
+author = "nullbasis and Veronica Berglyd Olsen"
+credit = "Ethan Schoonover"
+url    = "https://ethanschoonover.com/solarized/"
+
+##
+# base03:  #002b36
+# base02:  #073642
+# base01:  #586e75
+# base00:  #657b83
+# base0:   #839496
+# base1:   #93a1a1
+# base2:   #eee8d5
+# base3:   #fdf6e3
+# yellow:  #b58900
+# orange:  #cb4b16
+# red:     #dc322f
+# magenta: #d33682
+# violet:  #6c71c4
+# blue:    #268bd2
+# cyan:    #2aa198
+# green:   #859900
+##
+
+[Base]
+base    = "#fdf6e3"
+default = "#002b36"
+faded   = "#073642"
+red     = "#dc322f"
+orange  = "#cb4b16"
+yellow  = "#b58900"
+green   = "#859900"
+cyan    = "#2aa198"
+blue    = "#268bd2"
+purple  = "#6c71c4"
+
+[Project]
+root     = "cyan"
+folder   = "cyan"
+file     = "default"
+title    = "green"
+chapter  = "red"
+scene    = "blue"
+note     = "yellow"
+active   = "green"
+inactive = "red"
+disabled = "faded"
+
+[Icon]
+tool      = "default"
+sidebar   = "default"
+accept    = "green"
+reject    = "red"
+action    = "blue"
+option    = "orange"
+apply     = "green"
+create    = "yellow"
+destroy   = "faded"
+reset     = "green"
+add       = "green"
+change    = "green"
+remove    = "red"
+shortcode = "default"
+markdown  = "orange"
+system    = "yellow"
+info      = "blue"
+warning   = "orange"
+error     = "red"
+
+[Palette]
+window          = "#eee8d5"
+windowText      = "default"
+base            = "base"
+alternateBase   = "base:D115"
+text            = "default"
+tooltipBase     = "yellow:L150"
+tooltipText     = "#002b36"
+button          = "base"
+buttonText      = "default"
+brightText      = "base"
+highlight       = "cyan"
+highlightedText = "default"
+link            = "blue"
+linkVisited     = "blue"
+accent          = "cyan"
+
+[GUI]
+helpText     = "cyan"
+fadedText    = "faded"
+errorText    = "red"
+accentText   = "cyan"
+activeButton = "cyan:96"
+activeBase   = "base:D120"
+searchMatch  = "yellow:96"
+
+[Syntax]
+background     = "base"
+text           = "default"
+line           = "#eee8d5"
+link           = "blue"
+headerText     = "blue"
+headerTag      = "#657b83"
+emphasis       = "blue"
+whitespace     = "blue:64"
+dialog         = "cyan"
+altDialog      = "red"
+note           = "cyan:D125"
+hidden         = "default:L200"
+shortcode      = "blue"
+keyword        = "green"
+tag            = "yellow"
+value          = "orange"
+optional       = "cyan:D125"
+spellCheckLine = "red"
+errorLine      = "red"
+replaceTag     = "green"
+modifier       = "yellow"
+textHighlight  = "yellow:128"

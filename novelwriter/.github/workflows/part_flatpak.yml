@@ -1,0 +1,46 @@
+name: Part Flatpak
+
+on: workflow_call
+
+jobs:
+  buildLinux-Flatpak:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Install UV and Python
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          python-version: "3.14"
+          enable-cache: true
+
+      - name: Install Dependencies
+        run: |
+          uv sync --no-dev --group build
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: nw-assets
+          path: novelwriter/assets
+
+      - name: Build Flatpak
+        id: build
+        run: |
+          echo "BUILD_VERSION=$(uv run pkgutils.py version)" >> $GITHUB_OUTPUT
+          uv run --no-sync pkgutils.py build-flatpak
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: novelWriter-${{ steps.build.outputs.BUILD_VERSION }}-Linux-Flatpak
+          path: dist_flatpak/*.flatpak*
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:footnotePr>
+    <w:numFmt w:val="decimal" />
+  </w:footnotePr>
+  <w:compat>
+    <w:doNotExpandShiftReturn />
+    <w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="12" />
+  </w:compat>
+  <w:docVars>
+    <w:docVar w:name="ManuscriptTitleCount" w:val="11" />
+    <w:docVar w:name="ManuscriptParagraphCount" w:val="45" />
+    <w:docVar w:name="ManuscriptAllWords" w:val="4050" />
+    <w:docVar w:name="ManuscriptTextWords" w:val="3711" />
+    <w:docVar w:name="ManuscriptTitleWords" w:val="21" />
+    <w:docVar w:name="ManuscriptAllChars" w:val="27164" />
+    <w:docVar w:name="ManuscriptTextChars" w:val="24964" />
+    <w:docVar w:name="ManuscriptTitleChars" w:val="123" />
+    <w:docVar w:name="ManuscriptDialogChars" w:val="0" />
+    <w:docVar w:name="ManuscriptAllWordChars" w:val="23208" />
+    <w:docVar w:name="ManuscriptTextWordChars" w:val="21296" />
+    <w:docVar w:name="ManuscriptTitleWordChars" w:val="113" />
+  </w:docVars>
+</w:settings>

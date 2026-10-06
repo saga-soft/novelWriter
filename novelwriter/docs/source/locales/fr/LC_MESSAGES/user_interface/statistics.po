@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-28 21:12+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/user_interface/statistics.rst:5
+msgid "Writing Statistics"
+msgstr "Statistiques d'écriture"
+
+#: ../../source/user_interface/statistics.rst:7
+msgid ""
+"When you work on a project, a log file records when you opened it, when "
+"you closed it, and the total word counts of your novel documents and "
+"notes at the end of the session, provided that the session lasted either "
+"more than 5 minutes, or that the total word count changed. For more "
+"details about the log file itself, see :ref:`docs_technical_storage`."
+msgstr ""
+"Lorsque vous travaillez sur un projet, un fichier journal enregistre le "
+"moment où vous l'avez ouvert, le moment où vous l'avez fermé, et le "
+"nombre total de mots de vos nouveaux documents et notes à la fin de la "
+"session, à condition que la session ait duré plus de 5 minutes, ou que "
+"le nombre total de mots ait changé. Pour plus de détails sur le fichier "
+"journal lui-même, voir :ref:`docs_technical_storage`."
+
+#: ../../source/user_interface/statistics.rst:12
+msgid ""
+"A tool to view the content of the log file is available in the **Tools** "
+"menu under **Writing Statistics**. You can also launch it by pressing :"
+"kbd:`F6`, or find it on the sidebar."
+msgstr ""
+"Un outil permettant de visualiser le contenu du fichier journal est "
+"disponible dans le menu **Outils** sous **Statistiques d'écriture**. "
+"Vous pouvez également le lancer en appuyant sur :kbd:`F6`, ou le trouver "
+"dans la barre latérale."
+
+#: ../../source/user_interface/statistics.rst:15
+msgid ""
+"The tool will show a list of all your sessions, and a set of filters to "
+"apply to the data. You can also export the filtered data to a JSON file "
+"or to a CSV file that can be opened by a spreadsheet application like "
+"for instance Libre Office Calc or Excel."
+msgstr ""
+"L'outil affichera une liste de toutes vos sessions, ainsi qu'un ensemble "
+"de filtres à appliquer aux données. Vous pouvez également exporter les "
+"données filtrées vers un fichier JSON ou vers un fichier CSV qui peut "
+"être ouvert par un tableur comme par exemple Libre Office Calc ou Excel."
+
+#: ../../source/user_interface/statistics.rst:21
+msgid "Idle Time"
+msgstr "Temps d'inactivité"
+
+#: ../../source/user_interface/statistics.rst:23
+msgid ""
+"The log file stores how much of the session time was spent idle. The "
+"definition of idle here is that the novelWriter main window loses focus, "
+"or the user hasn't made any changes to the currently open document in "
+"five minutes. You can change the number of minutes in **Preferences**."
+msgstr ""
+"Le fichier journal enregistre la durée de la session passée en mode "
+"inactif. La définition de l'inactivité ici est que la fenêtre principale "
+"de novelWriter perd le focus, ou que l'utilisateur n'a pas fait de "
+"changements dans le document ouvert depuis cinq minutes. Vous pouvez "
+"modifier le nombre de minutes dans les **Préférences**."
+
+#: ../../source/user_interface/statistics.rst:29
+msgid "Session Timer"
+msgstr "Chronomètre de session"
+
+#: ../../source/user_interface/statistics.rst:31
+msgid ""
+"A session timer is by default visible in the status bar. The icon will "
+"show you a clock icon when you are active, and a pause icon when you are "
+"considered \"idle\" per the criteria mentioned above."
+msgstr ""
+"Un chronomètre de session est visible par défaut dans la barre d'état. "
+"L'icône affiche une horloge lorsque vous êtes actif et une icône de "
+"pause lorsque vous êtes considéré comme « inactif » selon les critères "
+"mentionnés ci-dessus."
+
+#: ../../source/user_interface/statistics.rst:34
+msgid ""
+"If you do not wish to see the timer, you can click on it once to hide "
+"it. The icon will still be visible. Click the icon once more to display "
+"the timer again."
+msgstr ""
+"Si vous ne souhaitez pas voir le chronomètre, vous pouvez cliquer une "
+"fois dessus pour le masquer. L'icône restera visible. Cliquez à nouveau "
+"sur l'icône pour afficher à nouveau le chronomètre."
+
+#: ../../source/user_interface/statistics.rst:39
+msgid ""
+"As of version 2.6, clicking the timer text or icon in the status bar "
+"will toggle its visibility."
+msgstr ""
+"Depuis la version 2.6, un clic sur le texte ou l'icône du minuteur dans "
+"la barre d'état permet de basculer sa visibilité."

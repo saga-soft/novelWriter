@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>NSHighResolutionCapable</key>
+    <string>True</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>English</string>
+    <key>CFBundleExecutable</key>
+    <string>novelWriter</string>
+    <key>CFBundleGetInfoString</key>
+    <string>novelWriter: A plain text editor for planning and writing novels.</string>
+    <key>CFBundleIconFile</key>
+    <string>novelwriter.icns</string>
+    <key>CFBundleIdentifier</key>
+    <string>io.novelwriter.novelWriter</string>
+    <key>CFBundleName</key>
+    <string>novelWriter</string>
+    <key>CFBundleDisplayName</key>
+    <string>novelWriter</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>{macosBundleSVers}</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleVersion</key>
+    <string>{macosBundleVers}</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>{macosBundleCopyright}</string>
+    <key>IFMajorVersion</key>
+    <integer>{macosBundleVersMajor}</integer>
+    <key>IFMinorVersion</key>
+    <integer>{macosBundleVersMinor}</integer>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeExtensions</key>
+        <array>
+          <string>nwx</string>
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>novelWriter Project</string>
+        <key>CFBundleTypeOSTypes</key>
+        <array>
+          <string>TEXT</string>
+          <string>utxt</string>
+          <string>TUTX</string>
+          <string>****</string>
+        </array>
+        <key>CFBundleTypeRole</key>
+        <string>Viewer</string>
+        <key>LSHandlerRank</key>
+        <string>Alternate</string>
+      </dict>
+    </array>
+  </dict>
+</plist>

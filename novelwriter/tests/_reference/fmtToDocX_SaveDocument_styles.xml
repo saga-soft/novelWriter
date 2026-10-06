@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='utf-8'?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault>
+      <w:rPr>
+        <w:rFonts w:ascii="Source Sans Pro" w:hAnsi="Source Sans Pro" w:cs="Source Sans Pro" />
+        <w:sz w:val="24" />
+        <w:szCs w:val="24" />
+        <w:lang w:val="en_GB" />
+      </w:rPr>
+    </w:rPrDefault>
+    <w:pPrDefault>
+      <w:pPr>
+        <w:spacing w:line="276" />
+      </w:pPr>
+    </w:pPrDefault>
+  </w:docDefaults>
+  <w:style w:type="paragraph" w:styleId="Normal" w:default="1">
+    <w:name w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="0" w:after="144" w:line="276" w:lineRule="auto" />
+      <w:jc w:val="left" />
+    </w:pPr>
+    <w:rPr>
+      <w:sz w:val="24" />
+      <w:szCs w:val="24" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="Title">
+    <w:name w:val="Title" />
+    <w:basedOn w:val="Normal" />
+    <w:next w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="360" w:after="144" w:line="276" w:lineRule="auto" />
+      <w:outlineLvl w:val="0" />
+    </w:pPr>
+    <w:rPr>
+      <w:b />
+      <w:sz w:val="60" />
+      <w:szCs w:val="60" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="Heading1">
+    <w:name w:val="Heading 1" />
+    <w:basedOn w:val="Normal" />
+    <w:next w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="360" w:after="144" w:line="276" w:lineRule="auto" />
+      <w:outlineLvl w:val="0" />
+    </w:pPr>
+    <w:rPr>
+      <w:b />
+      <w:color w:val="4271ae" />
+      <w:sz w:val="48" />
+      <w:szCs w:val="48" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="Heading2">
+    <w:name w:val="Heading 2" />
+    <w:basedOn w:val="Normal" />
+    <w:next w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="360" w:after="144" w:line="276" w:lineRule="auto" />
+      <w:outlineLvl w:val="1" />
+    </w:pPr>
+    <w:rPr>
+      <w:b />
+      <w:color w:val="4271ae" />
+      <w:sz w:val="42" />
+      <w:szCs w:val="42" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="Heading3">
+    <w:name w:val="Heading 3" />
+    <w:basedOn w:val="Normal" />
+    <w:next w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="288" w:after="144" w:line="276" w:lineRule="auto" />
+      <w:outlineLvl w:val="1" />
+    </w:pPr>
+    <w:rPr>
+      <w:b />
+      <w:color w:val="4271ae" />
+      <w:sz w:val="36" />
+      <w:szCs w:val="36" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="Heading4">
+    <w:name w:val="Heading 4" />
+    <w:basedOn w:val="Normal" />
+    <w:next w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="288" w:after="144" w:line="276" w:lineRule="auto" />
+      <w:outlineLvl w:val="1" />
+    </w:pPr>
+    <w:rPr>
+      <w:b />
+      <w:color w:val="4271ae" />
+      <w:sz w:val="30" />
+      <w:szCs w:val="30" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="Separator">
+    <w:name w:val="Separator" />
+    <w:basedOn w:val="Normal" />
+    <w:next w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="288" w:after="288" w:line="276" w:lineRule="auto" />
+      <w:jc w:val="center" />
+    </w:pPr>
+    <w:rPr>
+      <w:sz w:val="24" />
+      <w:szCs w:val="24" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="MetaText">
+    <w:name w:val="Meta Text" />
+    <w:basedOn w:val="Normal" />
+    <w:next w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="0" w:after="144" w:line="276" w:lineRule="auto" />
+    </w:pPr>
+    <w:rPr>
+      <w:sz w:val="24" />
+      <w:szCs w:val="24" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="Header">
+    <w:name w:val="Header" />
+    <w:basedOn w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="0" w:after="0" w:line="240" w:lineRule="auto" />
+      <w:jc w:val="right" />
+    </w:pPr>
+    <w:rPr>
+      <w:sz w:val="24" />
+      <w:szCs w:val="24" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="paragraph" w:styleId="FootnoteText">
+    <w:name w:val="Footnote Text" />
+    <w:basedOn w:val="Normal" />
+    <w:pPr>
+      <w:spacing w:before="0" w:after="96" w:line="276" w:lineRule="auto" />
+      <w:ind w:left="335" />
+    </w:pPr>
+    <w:rPr>
+      <w:sz w:val="19" />
+      <w:szCs w:val="19" />
+    </w:rPr>
+  </w:style>
+  <w:style w:type="character" w:styleId="InternetLink">
+    <w:name w:val="Hyperlink" />
+    <w:rPr>
+      <w:color w:val="4271ae" />
+      <w:u w:val="single" />
+    </w:rPr>
+  </w:style>
+</w:styles>

@@ -1,0 +1,117 @@
+[Main]
+name   = "Dracula"
+mode   = "dark"
+author = "Veronica Berglyd Olsen (adaptation)"
+credit = "Zeno Rocha"
+url    = "https://draculatheme.com"
+
+##
+# Colours:
+# See: https://spec.draculatheme.com/
+# Background   = 282a36 :  40,  42,  54
+# Foreground   = f8f8f2 : 248, 248, 242
+# Current Line = 44475a :  68,  71,  90
+# Comment      = 6272a4 :  98, 114, 164
+# Cyan         = 8be9fd : 139, 233, 253
+# Green        = 50fa7b :  80, 250, 123
+# Orange       = ffb86c : 255, 184, 108
+# Pink         = ff79c6 : 255, 121, 198
+# Purple       = bd93f9 : 189, 147, 249
+# Red          = ff5555 : 255,  85,  85
+# Yellow       = f1fa8c : 241, 250, 140
+##
+
+[Base]
+base    = "#282a36"
+default = "#e6e6e0"
+faded   = "#6272a4"
+red     = "#ff5555"
+orange  = "#ffb86c"
+yellow  = "#f1fa8c"
+green   = "#50fa7b"
+cyan    = "#8be9fd"
+blue    = "#93cff9"
+purple  = "#bd93f9"
+
+[Project]
+root     = "purple"
+folder   = "yellow"
+file     = "default"
+title    = "green"
+chapter  = "red"
+scene    = "cyan"
+note     = "yellow"
+active   = "green"
+inactive = "red"
+disabled = "faded"
+
+[Icon]
+tool      = "default"
+sidebar   = "default"
+accept    = "green"
+reject    = "red"
+action    = "blue"
+option    = "orange"
+apply     = "green"
+create    = "yellow"
+destroy   = "faded"
+reset     = "green"
+add       = "green"
+change    = "green"
+remove    = "red"
+shortcode = "default"
+markdown  = "orange"
+system    = "yellow"
+info      = "blue"
+warning   = "orange"
+error     = "red"
+
+[Palette]
+window          = "#44475a"
+windowText      = "#f8f8f2"
+base            = "base"
+alternateBase   = "#333645"
+text            = "#f8f8f2"
+tooltipBase     = "yellow"
+tooltipText     = "base"
+button          = "#505369"
+buttonText      = "#f8f8f2"
+brightText      = "base"
+highlight       = "#a681da"
+highlightedText = "#f8f8f2"
+link            = "cyan"
+linkVisited     = "cyan"
+accent          = "#a681da"
+
+[GUI]
+helpText     = "#ccacf9"
+fadedText    = "faded"
+errorText    = "red"
+accentText   = "#a681da"
+activeButton = "#a681da7f"
+activeBase   = "#545870"
+searchMatch  = "orange:96"
+
+[Syntax]
+background     = "base"
+text           = "#f8f8f2"
+line           = "base:L150"
+link           = "#ff79c6"
+headerText     = "purple"
+headerTag      = "purple:D150"
+emphasis       = "orange"
+whitespace     = "orange:64"
+dialog         = "green"
+altDialog      = "yellow"
+note           = "#ffcce9"
+hidden         = "faded"
+shortcode      = "cyan"
+keyword        = "#ff79c6"
+tag            = "orange"
+value          = "orange"
+optional       = "green"
+spellCheckLine = "red"
+errorLine      = "green"
+replaceTag     = "yellow"
+modifier       = "cyan"
+textHighlight  = "yellow:96"

@@ -1,0 +1,160 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-29 11:41+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/technical/tests.rst:5
+msgid "Running Tests"
+msgstr "Exécution des tests"
+
+#: ../../source/technical/tests.rst:7
+msgid ""
+"The novelWriter source code is well covered by tests. The test framework used "
+"for the development is ``pytest`` with the use of an extension for Qt."
+msgstr ""
+"Le code source de novelWriter est bien couvert par des tests. Le cadre de test "
+"utilisé pour le développement est ``pytest`` avec l'utilisation d'une extension "
+"pour Qt."
+
+#: ../../source/technical/tests.rst:12
+msgid "Dependencies"
+msgstr "Dépendances"
+
+#: ../../source/technical/tests.rst:14
+msgid "The dependencies for running the tests can be installed with:"
+msgstr ""
+"Les dépendances nécessaires à l'exécution des tests peuvent être installées "
+"avec :"
+
+#: ../../source/technical/tests.rst:20
+msgid ""
+"This will install a couple of extra packages for coverage and test management. "
+"The minimum requirement is ``pytest`` and ``pytest-qt``."
+msgstr ""
+"Cela installera quelques paquets supplémentaires pour la couverture et la "
+"gestion des tests. Le minimum requis est ``pytest`` et ``pytest-qt``."
+
+#: ../../source/technical/tests.rst:25
+msgid "Simple Test Run"
+msgstr "Test simple"
+
+#: ../../source/technical/tests.rst:27
+msgid ""
+"To run the tests, you simply need to execute the following from the root of the "
+"source folder:"
+msgstr ""
+"Pour exécuter les tests, il suffit d'exécuter ce qui suit à partir de la racine "
+"du dossier source :"
+
+#: ../../source/technical/tests.rst:33
+msgid ""
+"Since several of the tests involve opening up the novelWriter GUI, you may want "
+"to disable the GUI for the duration of the test run. Moving your mouse while "
+"the tests are running may otherwise interfere with the execution of some tests."
+msgstr ""
+"Puisque plusieurs des tests impliquent l'ouverture de l'interface graphique de "
+"novelWriter, vous pouvez désactiver l'interface graphique pour la durée de "
+"l'exécution du test. Si vous déplacez votre souris pendant que les tests sont "
+"en cours d'exécution, vous risquez d'interférer avec l'exécution de certains "
+"tests."
+
+#: ../../source/technical/tests.rst:37
+msgid ""
+"You can disable the renderring of the GUI by setting the flag "
+"``QT_QPA_PLATFORM=offscreen``:"
+msgstr ""
+"Vous pouvez désactiver le rendu de l'interface graphique en définissant le "
+"drapeau ``QT_QPA_PLATFORM=offscreen`` :"
+
+#: ../../source/technical/tests.rst:45
+msgid "Advanced Options"
+msgstr "Options avancées"
+
+#: ../../source/technical/tests.rst:47
+msgid ""
+"Adding the flag ``-v`` to the ``pytest`` command will increase verbosity of the "
+"test execution."
+msgstr ""
+"L'ajout du drapeau ``-v`` à la commande ``pytest`` augmente la verbosité de "
+"l'exécution du test."
+
+#: ../../source/technical/tests.rst:49
+msgid "You can also add coverage report generation. For instance to HTML:"
+msgstr ""
+"Vous pouvez également ajouter la génération de rapports de couverture. Par "
+"exemple en HTML :"
+
+#: ../../source/technical/tests.rst:55
+msgid "Other useful report formats are ``xml``, and ``term`` for terminal output."
+msgstr ""
+"D'autres formats de rapport utiles sont ``xml``, et ``term`` pour la sortie "
+"terminal."
+
+#: ../../source/technical/tests.rst:57
+msgid ""
+"You can also run tests per subpackage of novelWriter with the ``-m`` command. "
+"The available subpackage groups are ``base``, ``core``, and ``gui``. Consider "
+"for instance:"
+msgstr ""
+"Vous pouvez aussi lancer des tests par sous-paquet de novelWriter avec la "
+"commande ``-m``. Les groupes de sous-paquetages disponibles sont ``base``, "
+"``core``, et ``gui``. Prenons un exemple :"
+
+#: ../../source/technical/tests.rst:64
+msgid ""
+"This will only run the tests of the \"core\" package, that is, all the classes "
+"that deal with the project data of a novelWriter project. The \"gui\" tests, "
+"likewise, will run the tests for the GUI components, and the \"base\" tests "
+"cover the bits in-between."
+msgstr ""
+"Ceci n'exécutera que les tests du paquet « core », c'est-à-dire toutes les "
+"classes qui traitent les données d'un projet novelWriter. Les tests « gui », de "
+"même, exécuteront les tests des composants de l'interface graphique, et les "
+"tests « base » couvriront les éléments intermédiaires."
+
+#: ../../source/technical/tests.rst:68
+msgid ""
+"You can also filter the tests with the ``-k`` switch. The following will do the "
+"same as ``-m core``:"
+msgstr ""
+"Vous pouvez également filtrer les tests avec le commutateur ``-k``. Ce qui suit "
+"fera la même chose que ``-m core`` :"
+
+#: ../../source/technical/tests.rst:75
+msgid ""
+"All tests are named in such a way that you can filter them by adding more bits "
+"of the test names. They all start with the word \"test\". Then comes the group: "
+"\"Core\", \"Base\", \"Dlg\", \"Tool\", or \"Gui\". Finally comes the name of "
+"the class or module, which generally corresponds to a single source code file. "
+"For instance, running the following will run all tests for the document editor:"
+msgstr ""
+"Tous les tests sont nommés de manière à ce que vous puissiez les filtrer en "
+"ajoutant d'autres éléments aux noms des tests. Ils commencent tous par le mot « "
+"test ». Vient ensuite le groupe : « Core », “Base”, “Dlg”, “Tool” ou “Gui”. "
+"Enfin, vient le nom de la classe ou du module, qui correspond généralement à un "
+"seul fichier de code source. Par exemple, l'exécution de ce qui suit lancera "
+"tous les tests pour l'éditeur de documents :"
+
+#: ../../source/technical/tests.rst:84
+msgid "To run a single test, simply add the full test name to the ``-k`` switch."
+msgstr ""
+"Pour lancer un seul test, il suffit d'ajouter le nom complet du test au "
+"commutateur ``-k``."

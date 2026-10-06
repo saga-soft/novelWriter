@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.novelwriter.novelwriter</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="io.novelwriter">
+    <name>Veronica Berglyd Olsen</name>
+  </developer>
+  <name>novelWriter</name>
+  <summary>A plain text editor for planning and writing novels</summary>
+  <description>
+    <p>{description}</p>
+  </description>
+  <launchable type="desktop-id">novelwriter.desktop</launchable>
+  <url type="homepage">https://novelwriter.io</url>
+  <url type="help">https://docs.novelwriter.io</url>
+  <url type="vcs-browser">https://github.com/saga-soft/novelWriter</url>
+  <url type="bugtracker">https://github.com/saga-soft/novelWriter/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/saga-soft/novelWriter/refs/heads/main/setup/screenshot.png</image>
+    </screenshot>
+  </screenshots>
+  <provides>
+    <mediatype>application/x-novelwriter-project</mediatype>
+    <id>novelwriter.desktop</id>
+  </provides>
+  <content_rating type="oars-1.0" />
+</component>

@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en_GB">
+  <head>
+    <meta name="dtb:uid" content="urn:uuid:" />
+    <meta name="dtb:depth" content="1" />
+    <meta name="dtb:totalPageCount" content="0" />
+    <meta name="dtb:maxPageNumber" content="0" />
+  </head>
+  <docTitle>
+    <text />
+  </docTitle>
+  <docTitle>
+    <text>Jane Smith</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="chapter" id="sec_2" playOrder="1">
+      <navLabel>
+        <text>Chapter One</text>
+      </navLabel>
+      <content src="xhtml/chapter1.xhtml" />
+    </navPoint>
+    <navPoint class="chapter" id="sec_3" playOrder="2">
+      <navLabel>
+        <text>Chapter Two</text>
+      </navLabel>
+      <content src="xhtml/chapter2.xhtml" />
+    </navPoint>
+  </navMap>
+</ncx>

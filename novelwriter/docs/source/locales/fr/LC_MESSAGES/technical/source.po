@@ -1,0 +1,283 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025
+# This file is distributed under the same license as the novelWriter
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: novelWriter 2.7rc1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-27 19:59+0200\n"
+"PO-Revision-Date: 2025-05-29 11:39+0200\n"
+"Last-Translator: \n"
+"Language-Team: fr <LL@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: ../../source/technical/source.rst:5
+msgid "Running from Source"
+msgstr "Exécuter depuis la source"
+
+#: ../../source/technical/source.rst:11
+msgid ""
+"This chapter describes various ways of running novelWriter directly from "
+"the source code, and how to build the various components like the "
+"translation files and documentation."
+msgstr ""
+"Ce chapitre décrit les différentes façons d'exécuter novelWriter "
+"directement à partir du code source, et comment construire les "
+"différents composants tels que les fichiers de traduction et la "
+"documentation."
+
+#: ../../source/technical/source.rst:16
+msgid ""
+"The text below assumes the command ``python`` corresponds to a Python 3 "
+"executable. Python 2 is now deprecated, but on many systems the command "
+"``python3`` may be needed instead. Likewise, ``pip`` may need to be "
+"replaced with ``pip3``."
+msgstr ""
+"Le texte ci-dessous suppose que la commande ``python`` correspond à un "
+"exécutable Python 3. Python 2 est maintenant déprécié, mais sur de "
+"nombreux systèmes, la commande ``python3`` peut être utilisée à la "
+"place. De même, ``pip`` peut être remplacé par ``pip3``."
+
+#: ../../source/technical/source.rst:20
+msgid ""
+"Most of the custom commands for building packages of novelWriter, or "
+"building assets, are contained in the ``pkgutils.py`` script in the root "
+"of the source code. You can list the available commands by running:"
+msgstr ""
+"La plupart des commandes personnalisées pour construire des paquets de "
+"novelWriter, ou pour construire des actifs, sont contenues dans le "
+"script ``pkgutils.py`` à la racine du code source. Vous pouvez lister "
+"les commandes disponibles en lançant :"
+
+#: ../../source/technical/source.rst:32
+msgid "Dependencies"
+msgstr "Dépendances"
+
+#: ../../source/technical/source.rst:34
+msgid ""
+"novelWriter has been designed to rely on as few dependencies as "
+"possible. Only the Python wrapper for the Qt GUI libraries is required. "
+"The package for spell checking is optional, but recommended. Everything "
+"else is handled with standard Python libraries."
+msgstr ""
+"novelWriter a été conçu pour s'appuyer sur le moins de dépendances "
+"possible. Seul le wrapper Python pour les bibliothèques Qt GUI est "
+"nécessaire. Le paquetage pour la vérification orthographique est "
+"optionnel, mais recommandé. Tout le reste est géré par les bibliothèques "
+"Python standard."
+
+#: ../../source/technical/source.rst:38
+msgid ""
+"The following Python packages are needed to run all features of "
+"novelWriter:"
+msgstr ""
+"Les paquets Python suivants sont nécessaires pour exécuter toutes les "
+"fonctionnalités de novelWriter :"
+
+#: ../../source/technical/source.rst:40
+msgid "``PyQt6`` – needed for connecting with the Qt6 libraries."
+msgstr "``PyQt6`` - nécessaire pour se connecter aux bibliothèques Qt6."
+
+#: ../../source/technical/source.rst:41
+msgid "``PyEnchant`` – needed for spell checking (optional)."
+msgstr ""
+"``PyEnchant`` - nécessaire pour la vérification orthographique "
+"(optionnel)."
+
+#: ../../source/technical/source.rst:43
+msgid ""
+"If you want spell checking, you must install the ``PyEnchant`` package. "
+"The spell check library must be at least 3.0 to work with Windows. On "
+"Linux, 2.0 also works fine."
+msgstr ""
+"Si vous voulez un correcteur orthographique, vous devez installer le "
+"paquet ``PyEnchant``. La bibliothèque de vérification orthographique "
+"doit être au moins en version 3.0 pour fonctionner sous Windows. Sous "
+"Linux, la version 2.0 fonctionne également très bien."
+
+#: ../../source/technical/source.rst:46
+msgid ""
+"If you install from PyPi, these dependencies should be installed "
+"automatically. If you install from source, dependencies can still be "
+"installed from PyPi with:"
+msgstr ""
+"Si vous installez à partir de PyPi, ces dépendances devraient être "
+"installées automatiquement. Si vous installez à partir des sources, les "
+"dépendances peuvent toujours être installées à partir de PyPi avec :"
+
+#: ../../source/technical/source.rst:55
+msgid ""
+"On Linux distros, the Qt library is usually split up into multiple "
+"packages. In some cases, secondary dependencies may not be installed "
+"automatically. For novelWriter, the library files for rendering the SVG "
+"icons may be left out and needs to be installed manually. This is the "
+"case on for instance Arch Linux."
+msgstr ""
+"Sur les distributions Linux, la bibliothèque Qt est généralement divisée "
+"en plusieurs paquets. Dans certains cas, des dépendances secondaires "
+"peuvent ne pas être installées automatiquement. Pour novelWriter, les "
+"fichiers de la bibliothèque pour le rendu des icônes SVG peuvent être "
+"omis et doivent être installés manuellement. C'est le cas, par exemple, "
+"sous Arch Linux."
+
+#: ../../source/technical/source.rst:64
+msgid "Build and Install from Source"
+msgstr "Compiler et installer à partir des sources"
+
+#: ../../source/technical/source.rst:66
+msgid ""
+"If you want to install novelWriter directly from the source available on "
+"GitHub_, you must first build the package using the Python Packaging "
+"Authority's build tool. It can be installed with:"
+msgstr ""
+"Si vous souhaitez installer novelWriter directement à partir des sources "
+"disponibles sur GitHub_, vous devez d'abord construire le paquet à "
+"l'aide de l'outil de construction de la Python Packaging Authority. Il "
+"peut être installé avec :"
+
+#: ../../source/technical/source.rst:73
+msgid "On Debian-based systems the tool can also be installed with:"
+msgstr ""
+"Sur les systèmes basés sur Debian, l'outil peut également être installé "
+"avec :"
+
+#: ../../source/technical/source.rst:79
+msgid ""
+"With the tool installed, run the following command from the root of the "
+"novelWriter source code:"
+msgstr ""
+"Une fois l'outil installé, exécutez la commande suivante à partir de la "
+"racine du code source de novelWriter :"
+
+#: ../../source/technical/source.rst:85
+msgid ""
+"This should generate a ``.whl`` file in the ``dist/`` folder at your "
+"current location. The wheel file can then be installed on your system. "
+"Here with example version number 2.0.7, but yours may be different:"
+msgstr ""
+"Cela devrait générer un fichier ``.whl`` dans le dossier ``dist/`` de "
+"votre emplacement actuel. Le fichier wheel peut alors être installé sur "
+"votre système. Ici avec l'exemple de la version numéro 2.0.7, mais la "
+"vôtre peut être différente :"
+
+#: ../../source/technical/source.rst:97
+msgid "Building the Translation Files"
+msgstr "Création des fichiers de traduction"
+
+#: ../../source/technical/source.rst:99
+msgid ""
+"If you installed novelWriter from a package, the translation files "
+"should be pre-built and included. If you're running novelWriter from the "
+"source code, you will need to generate the files yourself. The files you "
+"need will be written to the ``novelwriter/assets/i18n`` folder, and will "
+"have the ``.qm`` file extension."
+msgstr ""
+"Si vous avez installé novelWriter à partir d'un paquetage, les fichiers "
+"de traduction devraient être préconstruits et inclus. Si vous exécutez "
+"novelWriter à partir du code source, vous devrez générer les fichiers "
+"vous-même. Les fichiers dont vous avez besoin seront écrits dans le "
+"dossier ``novelwriter/assets/i18n``, et auront l'extension ``.qm``."
+
+#: ../../source/technical/source.rst:104
+msgid "You can build the ``.qm`` files with:"
+msgstr "Vous pouvez construire les fichiers ``.qm`` avec :"
+
+#: ../../source/technical/source.rst:110
+msgid ""
+"This requires that the Qt Linguist tool is installed on your system. On "
+"Ubuntu and Debian, the needed package is called ``qttools5-dev-tools``."
+msgstr ""
+"Cela nécessite que l'outil Qt Linguist soit installé sur votre système. "
+"Sur Ubuntu et Debian, le paquet nécessaire s'appelle ``qttools5-dev-"
+"tools``."
+
+#: ../../source/technical/source.rst:115
+msgid ""
+"If you want to improve novelWriter with translation files for another "
+"language, or update an existing translation, instructions for how to "
+"contribute can be found in the ``README.md`` file in the ``i18n`` folder "
+"of the source code."
+msgstr ""
+"Si vous voulez améliorer novelWriter avec des fichiers de traduction "
+"pour une autre langue, ou mettre à jour une traduction existante, les "
+"instructions pour contribuer peuvent être trouvées dans le fichier "
+"``README.md`` dans le dossier ``i18n`` du code source."
+
+#: ../../source/technical/source.rst:123
+msgid "Building the Example Project"
+msgstr "Construction du projet d'exemple"
+
+#: ../../source/technical/source.rst:125
+msgid ""
+"In order to be able to create new projects from example files, you need "
+"a ``sample.zip`` file in the ``assets`` folder of the source. This file "
+"can be built from the ``pkgutils.py`` script by running:"
+msgstr ""
+"Afin de pouvoir créer de nouveaux projets à partir des fichiers "
+"d'exemple, vous avez besoin d'un fichier ``sample.zip`` dans le dossier "
+"``assets`` de la source. Ce fichier peut être construit à partir du "
+"script ``pkgutils.py`` en exécutant :"
+
+#: ../../source/technical/source.rst:137
+msgid "Building the Documentation"
+msgstr "Élaboration de la documentation"
+
+#: ../../source/technical/source.rst:139
+msgid ""
+"A local copy of this documentation can be generated as HTML. This "
+"requires installing some Python packages from PyPi:"
+msgstr ""
+"Une copie locale de cette documentation peut être générée au format "
+"HTML. Cela nécessite l'installation de certains paquets Python à partir "
+"de PyPi :"
+
+#: ../../source/technical/source.rst:146
+msgid ""
+"The documentation can then be built from the root folder in the source "
+"code by running:"
+msgstr ""
+"La documentation peut ensuite être créée à partir du dossier racine du "
+"code source en lançant le programme :"
+
+#: ../../source/technical/source.rst:152
+msgid ""
+"If successful, the documentation should be available in the ``docs/build/"
+"html`` folder and you can open the ``index.html`` file in your browser."
+msgstr ""
+"En cas de succès, la documentation devrait être disponible dans le "
+"dossier `docs/build/html` et vous pouvez ouvrir le fichier `index.html` "
+"dans votre navigateur."
+
+#: ../../source/technical/source.rst:155
+msgid ""
+"You can also build a PDF manual from the documentation using the "
+"``pkgutils.py`` script:"
+msgstr ""
+"Vous pouvez également créer un manuel PDF à partir de la documentation "
+"en utilisant le script ``pkgutils.py`` :"
+
+#: ../../source/technical/source.rst:161
+msgid ""
+"This will build the English documentation as a PDF using LaTeX. The file "
+"will then be copied into the assets folder and made available in the "
+"**Help** menu in novelWriter. Replace ``en`` with ``all`` to build for "
+"all languages. The Sphinx build system has a few extra dependencies when "
+"building the PDF. Please check the `Sphinx Docs`_ for more details."
+msgstr ""
+"Cela permettra de créer la documentation anglaise au format PDF en "
+"utilisant LaTeX. Le fichier sera ensuite copié dans le dossier assets et "
+"rendu disponible dans le menu **Aide** de novelWriter. Remplacez ``en`` "
+"par ``all`` pour construire pour toutes les langues. Le système de "
+"construction Sphinx a quelques dépendances supplémentaires lors de la "
+"construction du PDF. Veuillez consulter la `Docs Sphinx`_ pour plus de "
+"détails."

@@ -1,0 +1,305 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - release
+  pull_request:
+    branches:
+      - main
+      - release
+
+jobs:
+  testLinux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+          - "3.15"
+      fail-fast: false
+    name: Linux Python ${{ matrix.python-version }}
+    permissions:
+      contents: read
+    env:
+      COVERAGE_FILE: .coverage.py${{ matrix.python-version }}
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Install System Packages
+        run: |
+          sudo apt update
+          sudo apt install qttools5-dev-tools
+
+      - name: Install UV and Python
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      - name: Install Dependencies
+        run: |
+          uv sync --no-dev --group test
+
+      - name: Build Assets
+        run: |
+          uv run --no-sync pkgutils.py qtlrelease
+          uv run --no-sync pkgutils.py sample
+
+      - name: Run Tests
+        run: |
+          export QT_QPA_PLATFORM=offscreen
+          uv run --no-sync coverage run -m pytest -v --timeout=60
+          uv run --no-sync coverage report --skip-covered --show-missing
+
+      - name: Upload Coverage Data
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-data-py${{ matrix.python-version }}
+          path: ${{ env.COVERAGE_FILE }}
+          include-hidden-files: true
+          retention-days: 1
+
+  testMac:
+    runs-on: macos-latest
+    name: MacOS Python 3.14
+    permissions:
+      contents: read
+    env:
+      COVERAGE_FILE: .coverage.mac
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Install System Packages
+        run: |
+          brew install enchant
+
+      - name: Install UV and Python
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          python-version: "3.14"
+          enable-cache: true
+
+      - name: Install Dependencies
+        run: |
+          uv sync --no-dev --group test
+
+      - name: Build Assets
+        run: |
+          uv run --no-sync pkgutils.py sample
+
+      - name: Run Tests
+        run: |
+          export QT_QPA_PLATFORM=offscreen
+          uv run --no-sync coverage run -m pytest -v --timeout=60
+          uv run --no-sync coverage report --skip-covered --show-missing
+
+      - name: Upload Coverage Data
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-data-mac
+          path: ${{ env.COVERAGE_FILE }}
+          include-hidden-files: true
+          retention-days: 1
+
+  testWin:
+    runs-on: windows-latest
+    name: Windows Python 3.14
+    permissions:
+      contents: read
+    env:
+      COVERAGE_FILE: .coverage.win
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Install UV and Python
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          python-version: "3.14"
+          enable-cache: true
+
+      - name: Install Dependencies
+        run: |
+          uv sync --no-dev --group test
+
+      - name: Build Assets
+        run: |
+          uv run --no-sync pkgutils.py sample
+
+      - name: Run Tests
+        run: |
+          uv run --no-sync coverage run -m pytest -v --timeout=60
+          uv run --no-sync coverage report --skip-covered --show-missing
+
+      - name: Upload Coverage Data
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-data-win
+          path: ${{ env.COVERAGE_FILE }}
+          include-hidden-files: true
+          retention-days: 1
+
+  coverageReport:
+    name: PR Coverage Report
+    needs:
+      - testLinux
+      - testMac
+      - testWin
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Download Coverage Data
+        uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-data-*
+          merge-multiple: true
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v10.2.0
+
+      - name: Combine Coverage Data
+        run: |
+          uvx coverage combine
+          uvx coverage report --skip-covered
+
+      - name: Build Comment Body
+        run: |
+          {
+            echo '<!-- coverage-report -->'
+            echo '### Coverage Report (Linux, macOS, Windows)'
+            echo
+            uvx coverage report --skip-covered --show-missing --format=markdown --precision=3
+            echo
+            echo "**Total: $(uvx coverage report --format=total --precision=3)%**"
+          } > coverage-comment.md
+
+      - name: Post PR Comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          comment_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate --jq '.[] | select(.body | startswith("<!-- coverage-report -->")) | .id' | head -n1)
+          if [ -n "$comment_id" ]; then
+            gh api --method PATCH "repos/$REPO/issues/comments/$comment_id" -F body=@coverage-comment.md
+          else
+            gh pr comment "$PR_NUMBER" --body-file coverage-comment.md
+          fi
+
+  coverageSummary:
+    name: Action Coverage Report
+    needs:
+      - testLinux
+      - testMac
+      - testWin
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Download Coverage Data
+        uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-data-*
+          merge-multiple: true
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v10.2.0
+
+      - name: Combine Coverage Data
+        run: |
+          uvx coverage combine
+          uvx coverage report --skip-covered
+
+      - name: Write Coverage Summary
+        run: |
+          {
+            echo '### Coverage Report (Linux, macOS, Windows)'
+            echo
+            uvx coverage report --skip-covered --show-missing --format=markdown --precision=3
+            echo
+            echo "**Total: $(uvx coverage report --format=total --precision=3)%**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  testUbuntu24:
+    name: Ubuntu 24.04 & Sys Packages
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Install System Packages
+        run: |
+          sudo apt update
+          sudo apt install \
+            python3-pyqt6 \
+            python3-pyqt6.qtsvg \
+            python3-pytest \
+            python3-pytestqt \
+            python3-enchant \
+            python3-pytest-timeout \
+            qt6-image-formats-plugins
+
+      - name: Build Assets
+        run: |
+          python3 pkgutils.py sample
+
+      - name: Run Tests
+        run: |
+          export QT_QPA_PLATFORM=offscreen
+          python3 -m pytest -v --timeout=60
+
+  testFedoraLatest:
+    name: Fedora 44 & Sys Packages
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:44
+    permissions:
+      contents: read
+    steps:
+      - name: Install System Packages
+        run: |
+          dnf -y update
+          dnf -y install \
+            git \
+            python3-enchant \
+            python3-pyqt6 \
+            python3-pytest \
+            python3-pytest-qt \
+            python3-pytest-timeout \
+            qt6-linguist \
+            qt6-qtimageformats
+
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Run Build Commands
+        run: |
+          python pkgutils.py qtlrelease
+          python pkgutils.py sample
+
+      - name: Run Tests
+        run: |
+          export QT_QPA_PLATFORM=offscreen
+          python3 -m pytest -v --timeout=60

@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='utf-8'?>
+<novelWriterXML appVersion="2.0-rc1" hexVersion="0x020000c1" fileVersion="1.4" timeStamp="2022-10-15 12:12:59">
+  <project>
+    <name>Sample Project</name>
+    <title>Sample Project</title>
+    <author>Jane Smith</author>
+    <author>Jay Doh</author>
+    <saveCount>5</saveCount>
+    <autoCount>10</autoCount>
+    <editTime>1000</editTime>
+  </project>
+  <settings>
+    <doBackup>True</doBackup>
+    <language>en_GB</language>
+    <spellCheck>True</spellCheck>
+    <spellLang>en_GB</spellLang>
+    <lastEdited>636b6aa9b697b</lastEdited>
+    <lastViewed>636b6aa9b697b</lastViewed>
+    <lastNovel>7031beac91f75</lastNovel>
+    <lastOutline>7031beac91f75</lastOutline>
+    <lastWordCount>1363</lastWordCount>
+    <novelWordCount>954</novelWordCount>
+    <notesWordCount>409</notesWordCount>
+    <autoReplace>
+      <entry key="A">B</entry>
+      <entry key="B">E</entry>
+      <entry key="C">D</entry>
+    </autoReplace>
+    <titleFormat>
+      <title>%title%</title>
+      <chapter>Chapter %chw%: %title%</chapter>
+      <unnumbered>%title%</unnumbered>
+      <scene>Scene %ch%.%sc%: %title%</scene>
+      <section></section>
+    </titleFormat>
+    <status>
+      <entry key="sf12341" count="4" red="100" green="100" blue="100">New</entry>
+      <entry key="sf24ce6" count="2" red="200" green="50" blue="0">Notes</entry>
+      <entry key="sc24b8f" count="3" red="182" green="60" blue="0">Started</entry>
+      <entry key="s90e6c9" count="7" red="193" green="129" blue="0">1st Draft</entry>
+      <entry key="sd51c5b" count="0" red="193" green="129" blue="0">2nd Draft</entry>
+      <entry key="s8ae72a" count="0" red="193" green="129" blue="0">3rd Draft</entry>
+      <entry key="s78ea90" count="1" red="58" green="180" blue="58">Finished</entry>
+    </status>
+    <importance>
+      <entry key="ia857f0" count="5" red="100" green="100" blue="100">None</entry>
+      <entry key="icfb3a5" count="2" red="0" green="122" blue="188">Minor</entry>
+      <entry key="i2d7a54" count="2" red="21" green="0" blue="180">Major</entry>
+      <entry key="i56be10" count="1" red="117" green="0" blue="175">Main</entry>
+    </importance>
+  </settings>
+  <content count="27">
+    <item handle="7031beac91f75" parent="None" root="7031beac91f75" order="0" type="ROOT" class="NOVEL">
+      <meta expanded="True"/>
+      <name status="sc24b8f" import="ia857f0">Novel</name>
+    </item>
+    <item handle="53b69b83cdafc" parent="7031beac91f75" root="7031beac91f75" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="False" charCount="93" wordCount="19" paraCount="2" cursorPos="119"/>
+      <name status="sc24b8f" import="ia857f0" exported="True">Title Page</name>
+    </item>
+    <item handle="974e400180a99" parent="7031beac91f75" root="7031beac91f75" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="False" charCount="251" wordCount="50" paraCount="2" cursorPos="277"/>
+      <name status="sf12341" import="ia857f0" exported="True">Page</name>
+    </item>
+    <item handle="edca4be2fcaf8" parent="7031beac91f75" root="7031beac91f75" order="2" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="False" charCount="26" wordCount="6" paraCount="1" cursorPos="36"/>
+      <name status="s90e6c9" import="ia857f0" exported="True">Part One</name>
+    </item>
+    <item handle="6a2d6d5f4f401" parent="7031beac91f75" root="7031beac91f75" order="3" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="True" charCount="95" wordCount="18" paraCount="1" cursorPos="291"/>
+      <name status="sf24ce6" import="ia857f0" exported="True">Chapter One</name>
+    </item>
+    <item handle="636b6aa9b697b" parent="6a2d6d5f4f401" root="7031beac91f75" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="False" charCount="2687" wordCount="479" paraCount="14" cursorPos="67"/>
+      <name status="s90e6c9" import="ia857f0" exported="True">Making a Scene</name>
+    </item>
+    <item handle="bc0cbd2a407f3" parent="6a2d6d5f4f401" root="7031beac91f75" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="False" charCount="548" wordCount="108" paraCount="3" cursorPos="465"/>
+      <name status="s90e6c9" import="ia857f0" exported="True">Another Scene</name>
+    </item>
+    <item handle="ba8a28a246524" parent="7031beac91f75" root="7031beac91f75" order="4" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="False" charCount="617" wordCount="101" paraCount="3" cursorPos="310"/>
+      <name status="s78ea90" import="ia857f0" exported="True">Interlude</name>
+    </item>
+    <item handle="96b68994dfa3d" parent="7031beac91f75" root="7031beac91f75" order="5" type="FILE" class="NOVEL" layout="NOTE">
+      <meta expanded="False" charCount="1909" wordCount="346" paraCount="7" cursorPos="0"/>
+      <name status="sf24ce6" import="ia857f0" exported="False">A Note on Structure</name>
+    </item>
+    <item handle="88706ddc78b1b" parent="7031beac91f75" root="7031beac91f75" order="6" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="True" charCount="139" wordCount="28" paraCount="1" cursorPos="188"/>
+      <name status="s90e6c9" import="ia857f0" exported="True">Chapter Two</name>
+    </item>
+    <item handle="ae7339df26ded" parent="88706ddc78b1b" root="7031beac91f75" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="False" charCount="189" wordCount="37" paraCount="1" cursorPos="0"/>
+      <name status="s90e6c9" import="ia857f0" exported="True">We Found John!</name>
+    </item>
+    <item handle="e5e47ebf63b1c" parent="None" root="e5e47ebf63b1c" order="1" type="ROOT" class="NOVEL">
+      <meta expanded="True"/>
+      <name status="sf12341" import="ia857f0">Sequel</name>
+    </item>
+    <item handle="bacb7059e3083" parent="e5e47ebf63b1c" root="e5e47ebf63b1c" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="False" charCount="27" wordCount="5" paraCount="1" cursorPos="100"/>
+      <name status="sc24b8f" import="ia857f0" exported="True">Title Page</name>
+    </item>
+    <item handle="a520879ca0b45" parent="e5e47ebf63b1c" root="e5e47ebf63b1c" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
+      <meta expanded="False" charCount="299" wordCount="55" paraCount="2" cursorPos="104"/>
+      <name status="s90e6c9" import="ia857f0" exported="True">Chapter One</name>
+    </item>
+    <item handle="f6622b4617424" parent="None" root="f6622b4617424" order="2" type="ROOT" class="CHARACTER">
+      <meta expanded="True"/>
+      <name status="sf12341" import="ia857f0">Characters</name>
+    </item>
+    <item handle="f7e2d9f330615" parent="f6622b4617424" root="f6622b4617424" order="0" type="FOLDER" class="CHARACTER">
+      <meta expanded="True"/>
+      <name status="sf12341" import="ia857f0">Main Characters</name>
+    </item>
+    <item handle="14298de4d9524" parent="f7e2d9f330615" root="f6622b4617424" order="0" type="FILE" class="CHARACTER" layout="NOTE">
+      <meta expanded="False" charCount="49" wordCount="9" paraCount="1" cursorPos="24"/>
+      <name status="sf12341" import="icfb3a5" exported="True">John Smith</name>
+    </item>
+    <item handle="bb2c23b3c42cc" parent="f7e2d9f330615" root="f6622b4617424" order="1" type="FILE" class="CHARACTER" layout="NOTE">
+      <meta expanded="False" charCount="55" wordCount="9" paraCount="1" cursorPos="25"/>
+      <name status="sf12341" import="i2d7a54" exported="True">Jane Smith</name>
+    </item>
+    <item handle="15c4492bd5107" parent="None" root="15c4492bd5107" order="3" type="ROOT" class="WORLD">
+      <meta expanded="True"/>
+      <name status="sf12341" import="ia857f0">Locations</name>
+    </item>
+    <item handle="b3e74dbc1f584" parent="15c4492bd5107" root="15c4492bd5107" order="0" type="FILE" class="WORLD" layout="NOTE">
+      <meta expanded="False" charCount="76" wordCount="15" paraCount="1" cursorPos="20"/>
+      <name status="sf12341" import="i56be10" exported="True">Earth</name>
+    </item>
+    <item handle="f1471bef9f2ae" parent="15c4492bd5107" root="15c4492bd5107" order="1" type="FILE" class="WORLD" layout="NOTE">
+      <meta expanded="False" charCount="115" wordCount="24" paraCount="1" cursorPos="133"/>
+      <name status="sf12341" import="icfb3a5" exported="True">Space</name>
+    </item>
+    <item handle="5eaea4e8cdee8" parent="15c4492bd5107" root="15c4492bd5107" order="2" type="FILE" class="WORLD" layout="NOTE">
+      <meta expanded="False" charCount="28" wordCount="6" paraCount="1" cursorPos="45"/>
+      <name status="sf12341" import="i2d7a54" exported="True">Mars</name>
+    </item>
+    <item handle="6827118336ac1" parent="None" root="6827118336ac1" order="4" type="ROOT" class="ARCHIVE">
+      <meta expanded="True"/>
+      <name status="sf12341" import="ia857f0">Archive</name>
+    </item>
+    <item handle="ae9bf3c3ea159" parent="6827118336ac1" root="6827118336ac1" order="0" type="FOLDER" class="ARCHIVE">
+      <meta expanded="True"/>
+      <name status="sf12341" import="ia857f0">Scenes</name>
+    </item>
+    <item handle="8a5deb88c0e97" parent="ae9bf3c3ea159" root="6827118336ac1" order="0" type="FILE" class="ARCHIVE" layout="DOCUMENT">
+      <meta expanded="False" charCount="232" wordCount="42" paraCount="1" cursorPos="239"/>
+      <name status="s90e6c9" import="ia857f0" exported="True">Old File</name>
+    </item>
+    <item handle="98acd8c76c93a" parent="None" root="98acd8c76c93a" order="5" type="ROOT" class="TRASH">
+      <meta expanded="True"/>
+      <name status="sf12341" import="ia857f0">Trash</name>
+    </item>
+    <item handle="b8136a5a774a0" parent="98acd8c76c93a" root="98acd8c76c93a" order="0" type="FILE" class="TRASH" layout="DOCUMENT">
+      <meta expanded="False" charCount="30" wordCount="6" paraCount="1" cursorPos="36"/>
+      <name status="sf12341" import="ia857f0" exported="True">Delete Me!</name>
+    </item>
+  </content>
+</novelWriterXML>

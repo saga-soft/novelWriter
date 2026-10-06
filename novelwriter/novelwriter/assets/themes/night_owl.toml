@@ -1,0 +1,121 @@
+[Main]
+name   = "Night Owl"
+mode   = "dark"
+author = "Veronica Berglyd Olsen"
+credit = "Sarah Drasner"
+url    = "https://github.com/sdras/night-owl-vscode-theme"
+
+##
+# Theme:  Night Owl
+# Source: https://github.com/sdras/night-owl-vscode-theme
+# Credit: Sarah Drasner
+##
+# Colours:
+# Background   = #011627
+# Current Line = #434652
+# Selection    = #32374d
+# Foreground   = #d6deeb
+# Comment      = #637777
+# Red          = #f78c6c
+# Orange       = #ecc48d
+# Yellow       = #ffeb95
+# Green        = #addb67
+# Aqua         = #7fdbca
+# Blue         = #82aaff
+# Purple       = #c792ea
+##
+
+[Base]
+base    = "#011627"
+default = "#d6deeb"
+faded   = "#637777"
+red     = "#f78c6c"
+orange  = "#ecc48d"
+yellow  = "#ffeb95"
+green   = "#addb67"
+cyan    = "#7fdbca"
+blue    = "#82aaff"
+purple  = "#c792ea"
+
+[Icon]
+tool      = "default"
+sidebar   = "default"
+accept    = "green"
+reject    = "red"
+action    = "blue"
+option    = "orange"
+apply     = "green"
+create    = "yellow"
+destroy   = "faded"
+reset     = "green"
+add       = "green"
+change    = "green"
+remove    = "red"
+shortcode = "default"
+markdown  = "orange"
+system    = "yellow"
+info      = "blue"
+warning   = "orange"
+error     = "red"
+
+[Project]
+root     = "blue"
+folder   = "yellow"
+file     = "default"
+title    = "green"
+chapter  = "red"
+scene    = "blue"
+note     = "yellow"
+active   = "green"
+inactive = "red"
+disabled = "faded"
+
+[Palette]
+window          = "base:L140"
+windowText      = "default"
+base            = "base"
+alternateBase   = "#32374d"
+text            = "default"
+tooltipBase     = "#ffffc0"
+tooltipText     = "#15150d"
+button          = "base"
+buttonText      = "default"
+brightText      = "base"
+highlight       = "#2c98f7"
+highlightedText = "#ffffff"
+link            = "blue"
+linkVisited     = "blue"
+accent          = "#2c98f7"
+
+[GUI]
+helpText     = "blue"
+fadedText    = "faded"
+errorText    = "red"
+accentText   = "blue"
+activeButton = "#2c98f766"
+activeBase   = "#4a5858"
+searchMatch  = "orange:128"
+
+[Syntax]
+background     = "base"
+text           = "default"
+line           = "default:48"
+link           = "blue"
+headerText     = "blue"
+headerTag      = "blue:160"
+emphasis       = "orange"
+whitespace     = "orange:64"
+dialog         = "green"
+altDialog      = "yellow"
+note           = "yellow:L115"
+hidden         = "faded"
+shortcode      = "blue"
+keyword        = "red"
+tag            = "purple"
+value          = "orange"
+optional       = "blue"
+spellCheckLine = "red"
+errorLine      = "green"
+replaceTag     = "cyan"
+modifier       = "green"
+textHighlight  = "yellow:96"
