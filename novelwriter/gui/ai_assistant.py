@@ -280,7 +280,7 @@ class AiAssistantDock(QWidget):
                 if msg["role"] == "user":
                     self.chatBrowser.append(f"<br><b>You:</b> {msg['content']}")
                 else:
-                    self.chatBrowser.append(f"<br><b>{role} says:</b> {msg['content']}")
+                    self.chatBrowser.append(f"<br><b>{msg.get("agent", role)} says:</b> {msg["content"]}" )
             self.chatBrowser.append("<br>")
             self.statusLabel.setText("Chat loaded.")
 
@@ -441,7 +441,7 @@ class AiAssistantDock(QWidget):
         tps = self.completion_tokens / elapsed if elapsed > 0 else 0
         self.statusLabel.setText(f"Finished. (Prompt: ~{self.prompt_tokens} | Output: ~{self.completion_tokens} | Speed: {tps:.1f} t/s)")
         self.chatBrowser.append("<br>")
-        self.message_history.append({"role": "assistant", "content": self.current_response})
+        self.message_history.append({"role": "assistant", "agent": self.roleCombo.currentText(), "content": self.current_response})
         
         chat_mgr.save_chat(self.current_chat_id, self.current_chat_title, self.roleCombo.currentText(), self.message_history)
         self.refreshChatsList()
@@ -460,7 +460,7 @@ class AiAssistantDock(QWidget):
         self.statusLabel.setText(f"Cancelled. (Prompt: ~{self.prompt_tokens} | Output: ~{self.completion_tokens})")
         self.chatBrowser.append("<br><i>[Generation Cancelled]</i><br>")
         if self.current_response:
-            self.message_history.append({"role": "assistant", "content": self.current_response})
+            self.message_history.append({"role": "assistant", "agent": self.roleCombo.currentText(), "content": self.current_response})
             chat_mgr.save_chat(self.current_chat_id, self.current_chat_title, self.roleCombo.currentText(), self.message_history)
             self.refreshChatsList()
 
