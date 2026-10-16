@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.12'",
@@ -25,6 +25,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a6/f8/d9c74d0daf3f742840fd818d69cfae176fa332022fd44e3469487d5a9420/alabaster-1.0.0.tar.gz", hash = "sha256:c00dca57bca26fa62a6d7d0a9fcce65f3e026e9bfe33e9c538fd3fbb2144fd9e", size = 24210, upload-time = "2024-07-26T18:15:03.762Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7e/b3/6b4067be973ae96ba0d615946e314c5ae35f9f993eca561b356540bb0c2b/alabaster-1.0.0-py3-none-any.whl", hash = "sha256:fc6786402dc3fcb2de3cabd5fe455a2db534b371124f1f21de8731783dec828b", size = 13929, upload-time = "2024-07-26T18:15:02.05Z" },
+]
+
+[[package]]
+name = "altgraph"
+version = "0.17.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7e/f8/97fdf103f38fed6792a1601dbc16cc8aac56e7459a9fff08c812d8ae177a/altgraph-0.17.5.tar.gz", hash = "sha256:c87b395dd12fabde9c99573a9749d67da8d29ef9de0125c7f536699b4a9bc9e7", size = 48428, upload-time = "2025-11-21T20:35:50.583Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a9/ba/000a1996d4308bc65120167c21241a3b205464a2e0b58deda26ae8ac21d1/altgraph-0.17.5-py2.py3-none-any.whl", hash = "sha256:f3a22400bce1b0c701683820ac4f3b159cd301acab067c51c653e06961600597", size = 21228, upload-time = "2025-11-21T20:35:49.444Z" },
 ]
 
 [[package]]
@@ -386,6 +395,18 @@ wheels = [
 ]
 
 [[package]]
+name = "macholib"
+version = "1.16.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "altgraph" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/10/2f/97589876ea967487978071c9042518d28b958d87b17dceb7cdc1d881f963/macholib-1.16.4.tar.gz", hash = "sha256:f408c93ab2e995cd2c46e34fe328b130404be143469e41bc366c807448979362", size = 59427, upload-time = "2025-11-22T08:28:38.373Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c7/d1/a9f36f8ecdf0fb7c9b1e78c8d7af12b8c8754e74851ac7b94a8305540fc7/macholib-1.16.4-py2.py3-none-any.whl", hash = "sha256:da1a3fa8266e30f0ce7e97c6a54eefaae8edd1e5f86f3eb8b95457cae90265ea", size = 38117, upload-time = "2025-11-22T08:28:36.939Z" },
+]
+
+[[package]]
 name = "markupsafe"
 version = "3.0.4"
 source = { registry = "https://pypi.org/simple" }
@@ -533,6 +554,7 @@ dependencies = [
 
 [package.dev-dependencies]
 build = [
+    { name = "pyinstaller", marker = "sys_platform == 'darwin'" },
     { name = "pyyaml" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
@@ -540,6 +562,7 @@ dev = [
     { name = "coverage" },
     { name = "docutils" },
     { name = "pygments" },
+    { name = "pyinstaller", marker = "sys_platform == 'darwin'" },
     { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-qt" },
@@ -587,6 +610,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 build = [
+    { name = "pyinstaller", marker = "sys_platform == 'darwin'" },
     { name = "pyyaml" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
@@ -594,6 +618,7 @@ dev = [
     { name = "coverage", specifier = ">=7.16.0" },
     { name = "docutils", specifier = ">=0.17.1" },
     { name = "pygments", specifier = ">=2.7" },
+    { name = "pyinstaller", marker = "sys_platform == 'darwin'" },
     { name = "pyright" },
     { name = "pytest", specifier = ">=6.0.0" },
     { name = "pytest-qt" },
@@ -689,6 +714,34 @@ wheels = [
 ]
 
 [[package]]
+name = "pyinstaller"
+version = "6.22.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "altgraph" },
+    { name = "macholib" },
+    { name = "packaging" },
+    { name = "pyinstaller-hooks-contrib" },
+    { name = "setuptools" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/63/41/f90302845945abd4ed647933ff5ee7c6ac93983187be67f897b6cb613331/pyinstaller-6.22.3.tar.gz", hash = "sha256:05eb2f5615503e72939a7224d68b4aff572c6b0438ee4a17d0a4b481f399362d", size = 4437180, upload-time = "2026-09-12T21:54:09.669Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ec/af/898f70947e27f8e65d55183c780e77112e023c0b4a6fba6255d4d563a27d/pyinstaller-6.22.3-py3-none-macosx_10_13_universal2.whl", hash = "sha256:052f4a1cd4f81092ccb7a18fe8ebc9ecf832a5917317e39fb3775af4e959b253", size = 1071847, upload-time = "2026-09-12T21:53:01.711Z" },
+]
+
+[[package]]
+name = "pyinstaller-hooks-contrib"
+version = "2026.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c9/3b/fab1a12a21bf9223af012e5dd002b7d4265683d21d9fabbd0ccb347316e4/pyinstaller_hooks_contrib-2026.8.tar.gz", hash = "sha256:4d825786ad7a9b7dbcc52d612748a34562fe273461bcfd88f4d549c594bbf8f9", size = 176955, upload-time = "2026-09-30T07:53:52.56Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8f/f1/3eee0263b487e571aed9204257b45bc2a0b6fec34d0a1adade4d8d8a968c/pyinstaller_hooks_contrib-2026.8-py3-none-any.whl", hash = "sha256:6d21d65323ea4467753afc21f52d7d0e69416ae8101dd88269bf273ad48db084", size = 462145, upload-time = "2026-09-30T07:53:51.167Z" },
+]
+
+[[package]]
 name = "pyobjc-core"
 version = "12.2.2"
 source = { registry = "https://pypi.org/simple" }
@@ -779,6 +832,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/1f/f9/023daa2a633cde62b2f7452e62d53273a8b23c3ce5dc31d7ecdc6b797897/pyqt6_sip-13.13.0-cp314-cp314-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:70199e2b37ac83a4799df2a2a2ec8358e1d20dfdf011f2baec17a8867c34fe12", size = 323559, upload-time = "2026-10-04T12:26:41.919Z" },
     { url = "https://files.pythonhosted.org/packages/08/0b/1c8ebeb9184c9f017173ae952e89f5191571c680f3e18875217a1c00860b/pyqt6_sip-13.13.0-cp314-cp314-win_amd64.whl", hash = "sha256:26ee16a9b53aa7c8271a19154c35ab2e17514dbae85ac9a770ba40feac347be2", size = 55130, upload-time = "2026-10-04T12:26:44.552Z" },
     { url = "https://files.pythonhosted.org/packages/35/b9/9bdfa5222e42aba61205847721d1b4c53145ffcb740952272a4fbe33289f/pyqt6_sip-13.13.0-cp314-cp314-win_arm64.whl", hash = "sha256:88e3bbc1a6bb1632ead7b15f77769f09b9a581eb77eb41a6862c32396f47b4a4", size = 49706, upload-time = "2026-10-04T12:26:45.471Z" },
+    { url = "https://files.pythonhosted.org/packages/91/8c/a68a45e2a651795c9b5bcd95eec4ef9cb945c35af238f7ef0369a39a7e72/pyqt6_sip-13.13.0-cp315-cp315-macosx_10_15_universal2.whl", hash = "sha256:e3b47eaab721871177148f4771a8b2259de5356e30cbcf04e88acfe55b57f257", size = 113961, upload-time = "2026-10-10T14:50:58.283Z" },
+    { url = "https://files.pythonhosted.org/packages/f8/20/eebfef3e76175553f5049f2dd54d3e2e940b116ddb61d1ecdec12b93eb3a/pyqt6_sip-13.13.0-cp315-cp315-manylinux1_x86_64.manylinux_2_5_x86_64.whl", hash = "sha256:f856e077035bd0316e26396fa70100b6ff13405d017464bbb501ae73070f3dce", size = 304973, upload-time = "2026-10-10T14:51:01.158Z" },
+    { url = "https://files.pythonhosted.org/packages/09/44/a944b91a94c9745cfce05174d4a2dab4faa67b03b23c160948505993b1b0/pyqt6_sip-13.13.0-cp315-cp315-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:78fd781938d09797db6d0b23ac070a91d567c9170581dba3ca87630abb69055b", size = 327367, upload-time = "2026-10-10T14:50:59.831Z" },
+    { url = "https://files.pythonhosted.org/packages/2e/b3/939df28667fd61f4d04abb7adab93f034fd4f62a7d3e0dac82ea58268532/pyqt6_sip-13.13.0-cp315-cp315-win_amd64.whl", hash = "sha256:67b37ae7d238462a89908b1c3e3a4bc9551fc9b8d3e8be05ff3314b7a24a3e53", size = 55311, upload-time = "2026-10-10T14:51:02.736Z" },
+    { url = "https://files.pythonhosted.org/packages/89/48/a640f06a065655cc0286fc16a7fed8b09bfe3a8291e4223d483e834d0c05/pyqt6_sip-13.13.0-cp315-cp315-win_arm64.whl", hash = "sha256:a1cd42fdbb191d3ee0a0c8858348e18ddb5ea4bbc009af34da4a536db1f92e63", size = 49744, upload-time = "2026-10-10T14:51:04.017Z" },
 ]
 
 [[package]]
@@ -938,6 +996,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/78/fa/0f9c2020dc316c53d983be011720b8157cc052b97e3f4dfa7db6d0f880a6/ruff-0.16.10-py3-none-win32.whl", hash = "sha256:2a12e01cb9156c10c466f63b46eaae5ecea28dfbd21b5836353ae498e7d1349a", size = 10139176, upload-time = "2026-10-01T18:03:13.267Z" },
     { url = "https://files.pythonhosted.org/packages/99/29/cfb0df9448d4d4ad48c2de029ada9ebd71baa6da983a6c77ee6c6cd0fe82/ruff-0.16.10-py3-none-win_amd64.whl", hash = "sha256:97f2015c92aa97105b0eab19eb5d224884399281cfc5da86a92db4ab5e7fb2ca", size = 10584734, upload-time = "2026-10-01T18:03:16.006Z" },
     { url = "https://files.pythonhosted.org/packages/fc/05/c16957eb287c3fc062e032619a25868d93d408a844b725bcf514f7a378ff/ruff-0.16.10-py3-none-win_arm64.whl", hash = "sha256:25a65fe998c4e6861ec079ada5826a2fc605e6cbccbe9dcd7fac1f54e791621b", size = 10366440, upload-time = "2026-10-01T18:03:19.04Z" },
+]
+
+[[package]]
+name = "setuptools"
+version = "84.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz", hash = "sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73", size = 1168449, upload-time = "2026-08-08T18:27:58.365Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl", hash = "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670", size = 818216, upload-time = "2026-08-08T18:27:56.719Z" },
 ]
 
 [[package]]

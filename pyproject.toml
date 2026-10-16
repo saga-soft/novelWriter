@@ -37,7 +37,7 @@ dev = [
     { include-group = "test" },
     { include-group = "lint" },
 ]
-build = ["pyyaml", "tzdata; sys_platform == 'win32'"]
+build = ["pyyaml", "tzdata; sys_platform == 'win32'", "pyinstaller; sys_platform == 'darwin'"]
 docs = [
     "docutils>=0.17.1",
     "pygments>=2.7",
