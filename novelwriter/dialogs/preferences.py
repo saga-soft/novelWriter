@@ -607,7 +607,7 @@ class GuiPreferences(NDialog):
         self.spellLanguage = NComboBox(self)
         self.spellLanguage.setMinimumWidth(200)
 
-        if CONFIG.hasEnchant:
+        if CONFIG.hasSpellCheck:
             for tag, language in SHARED.spelling.listDictionaries():
                 self.spellLanguage.addItem(language, tag)
         else:

@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from novelwriter.core.project import NWProject
-    from novelwriter.core.spellcheck import SpellEnchant
+    from novelwriter.core.spellcheck import SpellChecker
     from novelwriter.core.status import T_StatusKind
     from novelwriter.gui.theme import GuiTheme
     from novelwriter.guimain import GuiMain
@@ -139,7 +139,7 @@ class SharedData(QObject):
         return self._project
 
     @property
-    def spelling(self) -> SpellEnchant:
+    def spelling(self) -> SpellChecker:
         """Return the active NWProject instance."""
         if self._spelling is None:
             raise RuntimeError("SharedData class not fully initialised")
@@ -477,15 +477,16 @@ class SharedData(QObject):
 
     def _resetProject(self) -> None:
         """Create a new project and spell checking instance."""
+        from novelwriter import CONFIG
         from novelwriter.core.project import NWProject
-        from novelwriter.core.spellcheck import SpellEnchant
+        from novelwriter.core.spellcheck import SpellApple, SpellEnchant
 
         if isinstance(self._project, NWProject):
             self._project.clear()
             del self._project
             del self._spelling
         self._project = NWProject()
-        self._spelling = SpellEnchant(self._project)
+        self._spelling = SpellApple(self._project) if CONFIG.osDarwin else SpellEnchant(self._project)
         self.updateSpellCheckLanguage()
         self._focusMode = False
 

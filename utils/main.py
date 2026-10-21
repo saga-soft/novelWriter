@@ -23,7 +23,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import argparse
-import datetime
 import shutil
 import sys
 
@@ -32,6 +31,7 @@ import utils.build_appimage
 import utils.build_binary
 import utils.build_debian
 import utils.build_flatpak
+import utils.build_macos
 import utils.build_pypi
 import utils.build_windows
 import utils.docs
@@ -39,14 +39,10 @@ import utils.icon_themes
 
 from utils.common import (
     ROOT_DIR,
-    SETUP_DIR,
     extractReqs,
     extractVersion,
     isStableVersion,
     log,
-    readFile,
-    stripVersion,
-    writeFile,
 )
 
 OS_LINUX = sys.platform.startswith("linux")
@@ -73,6 +69,7 @@ def cleanBuildDirs(args: argparse.Namespace) -> None:
     folders = [
         ROOT_DIR / ".flatpak-builder",
         ROOT_DIR / "build_bin",
+        ROOT_DIR / "build_macos",
         ROOT_DIR / "build",
         ROOT_DIR / "dist_appimage",
         ROOT_DIR / "dist_bin",
@@ -80,6 +77,7 @@ def cleanBuildDirs(args: argparse.Namespace) -> None:
         ROOT_DIR / "dist_doc",
         ROOT_DIR / "dist_flathub",
         ROOT_DIR / "dist_flatpak",
+        ROOT_DIR / "dist_macos",
         ROOT_DIR / "dist_pypi",
         ROOT_DIR / "dist_upload",
         ROOT_DIR / "dist",
@@ -97,27 +95,6 @@ def cleanBuildDirs(args: argparse.Namespace) -> None:
             log(f"[cy]Missing:[e] {folder}")
 
     log("")
-
-
-def genMacOSPlist(args: argparse.Namespace) -> None:
-    """Set necessary values for .plist file for MacOS build."""
-    outDir = SETUP_DIR / "macos"
-    numVers = stripVersion(extractVersion()[0])
-    copyrightYear = datetime.datetime.now().year
-
-    # These keys are no longer used but are present for compatibility
-    pkgVersMaj, pkgVersMin = numVers.split(".")[:2]
-
-    plistXML = readFile(outDir / "Info.plist.template").format(
-        macosBundleSVers=numVers,
-        macosBundleVers=numVers,
-        macosBundleVersMajor=pkgVersMaj,
-        macosBundleVersMinor=pkgVersMin,
-        macosBundleCopyright=f"Copyright {copyrightYear}, Veronica Berglyd Olsen",
-    )
-
-    log(f"[b]Writing Info.plist to {outDir}/Info.plist[e]")
-    writeFile(outDir / "Info.plist", plistXML)
 
 
 def genReqFiles(args: argparse.Namespace) -> None:
@@ -246,13 +223,16 @@ def main() -> None:
     cmdBuildBinary = parsers.add_parser("build-bin", help="Build a standalone binary package.")
     cmdBuildBinary.set_defaults(func=utils.build_binary.main)
 
+    # Build MacOS App Bundle
+    cmdBuildMac = parsers.add_parser(
+        "build-mac", help="Build a macOS application bundle. Add --identity to sign with a Developer ID."
+    )
+    cmdBuildMac.add_argument("--identity", help="Codesign identity. Defaults to ad-hoc signing.")
+    cmdBuildMac.set_defaults(func=utils.build_macos.main)
+
     # Build Clean
     cmdBuildClean = parsers.add_parser("build-clean", help="Recursively delete all build folders.")
     cmdBuildClean.set_defaults(func=cleanBuildDirs)
-
-    # Generate MacOS PList File
-    cmdGenMacOSPlist = parsers.add_parser("gen-plist", help="Generate an Info.plist for use in a MacOS Bundle.")
-    cmdGenMacOSPlist.set_defaults(func=genMacOSPlist)
 
     # Generate Requirement File
     cmdGenReq = parsers.add_parser("gen-req", help="Generate a requirements.txt file for pip.")

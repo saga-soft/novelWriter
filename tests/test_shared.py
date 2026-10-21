@@ -35,6 +35,7 @@ from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG
 from novelwriter.core.project import NWProject
+from novelwriter.core.spellcheck import SpellApple, SpellEnchant
 from novelwriter.shared import SharedData, _GuiAlert
 
 from tests.helpers import buildTestProject
@@ -72,6 +73,15 @@ def testSharedData_Init():
     assert shared.hasProject is False
     assert shared.projectIdleTime == 0.0
     assert shared.projectLock is None
+
+    # The spell checker matches the platform
+    CONFIG.osDarwin = True
+    shared._resetProject()
+    assert isinstance(shared.spelling, SpellApple)
+
+    CONFIG.osDarwin = False
+    shared._resetProject()
+    assert isinstance(shared.spelling, SpellEnchant)
 
 
 @pytest.mark.base
