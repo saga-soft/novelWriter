@@ -171,10 +171,11 @@ def testOutlineModel_Columns(nwGUI: GuiMain, prjLipsum: Path):
     assert model.headerData(OutlineModel.C_COLUMNS + 2, horizontal, QtDisplayRole) == "Refs"
     commented = model.node(model.index(1, 0))
     assert isinstance(commented, OutlineNode)
-    synopsis, goal = commented.entries(0)
+    synopsis, goal, key = commented.entries(0)
     assert synopsis[:3] == ("synopsis", "Synopsis", "")
     assert synopsis[3].startswith("Lorem ipsum dolor sit amet")
-    assert goal == ("story.goal", "Story Structure (Goal)", "Goal", "Find\u2028the key")
+    assert goal == ("story.goal", "Story Structure (Goal)", "Goal", "Find")
+    assert key == ("story.goal", "Story Structure (Goal)", "Goal", "the key")
     assert commented.entries(1) == [("note.consistency", "Note (Consistency)", "Consistency", "Check")]
     assert commented.entries(2) == [("@pov", "Point of View", "", "Bod")]
     assert commented.entries(3) == []
@@ -185,10 +186,17 @@ def testOutlineModel_Columns(nwGUI: GuiMain, prjLipsum: Path):
     text = model.data(model.index(1, OutlineModel.C_COLUMNS), access)
     assert isinstance(text, str)
     assert text.startswith("Synopsis: Lorem ipsum dolor sit amet")
-    assert text.endswith(", Story Structure (Goal): Find the key")
+    assert text.endswith(", Story Structure (Goal): Find, Story Structure (Goal): the key")
     assert model.data(model.index(1, OutlineModel.C_COLUMNS + 1), access) == "Note (Consistency): Check"
     assert model.data(model.index(1, OutlineModel.C_COLUMNS + 2), access) == "Point of View: Bod"
     assert model.data(QModelIndex(), access) is None
+
+    # Repeated comments can be joined into one entry
+    model.buildOutline(index, None, {2}, columns=columns, joinComments=True)
+    commented = model.node(model.index(1, 0))
+    assert isinstance(commented, OutlineNode)
+    assert commented.entries(0)[1] == ("story.goal", "Story Structure (Goal)", "Goal", "Find the key")
+    assert commented.entries(1) == [("note.consistency", "Note (Consistency)", "Consistency", "Check")]
 
     # Entries without labels, and status and progress
     commented._entries[0] = [("@pov", "", "", "Bod")]

@@ -31,7 +31,7 @@ from PyQt6.QtGui import QColor, QIcon
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import formatPercent
-from novelwriter.constants import nwLabels, nwStyles, nwUnicode, trConst, trLabel, trUnit
+from novelwriter.constants import nwLabels, nwStyles, trConst, trLabel, trUnit
 from novelwriter.enum import nwStdLabel, nwStdUnit
 from novelwriter.story.storysettings import COMMENT_SYNOPSIS
 from novelwriter.types import QtAccessibleTextRole, QtDisplayRole, QtTransparent
@@ -80,6 +80,7 @@ class OutlineNode:
         "_entries",
         "_handle",
         "_heading",
+        "_join",
         "_key",
         "_level",
         "_lists",
@@ -100,12 +101,14 @@ class OutlineNode:
         tr: _TrCache,
         style: NodeStyle,
         columns: list[tuple[str, ...]] | None = None,
+        join: bool = False,
     ) -> None:
         self._handle = handle
         self._key = key
         self._heading: IndexHeading | None = heading
         self._tr: _TrCache = tr
         self._columns = columns or []
+        self._join = join
 
         # Parsed Data
         self._level = 0
@@ -196,7 +199,7 @@ class OutlineNode:
     def accessibleEntries(self, column: int) -> str:
         """Return the entries of a column as plain text, with full labels."""
         entries = (f"{label}: {text}" if label else text for _, label, _, text in self.entries(column))
-        return ", ".join(entries).replace(nwUnicode.U_LSEP, " ")
+        return ", ".join(entries)
 
     ##
     #  Data Maintenance
@@ -245,7 +248,8 @@ class OutlineNode:
                 for key in keys:
                     label, short, text = lookup.get(key, ("", "", ""))
                     if text:
-                        entries.append((key, label, short, nwUnicode.U_LSEP.join(t for t in text.split("\n") if t)))
+                        parts = [text.replace("\n\n", " ")] if self._join else text.split("\n\n")
+                        entries.extend((key, label, short, p) for p in parts)
                 self._entries.append(entries)
 
     ##
@@ -366,15 +370,18 @@ class OutlineModel(QAbstractTableModel):
         showStatus: bool = False,
         inactiveParts: bool = False,
         subCounts: bool = False,
+        joinComments: bool = False,
     ) -> None:
         """Rebuild the outline for the given heading levels and columns.
         If count per page is set, the page and progress of each heading
         is added, with partitions and chapters starting on a new page.
         Inactive partitions are not counted. Sub counts add the counts
-        of the following lower level headings to each heading.
+        of the following lower level headings to each heading. Repeated
+        comments are joined into one entry if join comments is set.
         """
         tree = SHARED.project.tree
         self.beginResetModel()
+
         columns = columns or []
         keys = [k for _, k in columns]
         labels = self._labels._replace(
@@ -385,6 +392,7 @@ class OutlineModel(QAbstractTableModel):
         nodes: list[OutlineNode] = []
         progress: list[tuple[OutlineNode, int, int]] = []
         scopes: list[tuple[int, OutlineNode | None]] = []
+
         count = 0
         pages = 0
         start = 0
@@ -394,19 +402,22 @@ class OutlineModel(QAbstractTableModel):
             active = bool(item and item.isActive)
             if not (active or level == 1):
                 continue
+
             if active and countPerPage > 0 and level <= 2:
                 span = math.ceil((count - start) / countPerPage)
                 pages += span + span % 2 if clearDouble else span
                 start = count
+
             node = None
             if level in levels and not (level == 1 and hItem.modified):
                 style = self._styles.get(level, BLANK_STYLE)
-                node = OutlineNode(tHandle, sTitle, hItem, labels, style, keys)
+                node = OutlineNode(tHandle, sTitle, hItem, labels, style, keys, joinComments)
                 nodes.append(node)
                 if showStatus and item:
                     node.setStatus(*item.getImportStatus())
                 if active and countPerPage > 0:
                     progress.append((node, pages + 1 + (count - start) // countPerPage, count))
+
             if active and subCounts:
                 while scopes and scopes[-1][0] >= level:
                     scopes.pop()
@@ -414,6 +425,7 @@ class OutlineModel(QAbstractTableModel):
                     if parent:
                         parent.addCounts(hItem.charCount, hItem.wordCount)
                 scopes.append((level, node))
+
             if active:
                 count += hItem.charCount if useChars else hItem.wordCount
 
@@ -423,4 +435,5 @@ class OutlineModel(QAbstractTableModel):
 
         self._nodes = nodes
         self._headers = self._fixed + [name for name, _ in columns]
+
         self.endResetModel()
