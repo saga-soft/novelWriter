@@ -229,6 +229,7 @@ class GuiOutlineViewSettings(GuiStorySettingsBase):
         self.showStatus = NSwitch(self, height=iPx)
         self.commentIcons = NSwitch(self, height=iPx)
         self.referenceIcons = NSwitch(self, height=iPx)
+        self.joinComments = NSwitch(self, height=iPx)
 
         self.form.addRow(settings.getLabel("outline.syntaxColors"), self.syntaxColors)
         self.form.addRow(settings.getLabel("outline.rowLines"), self.rowLines, unit=trUnit(nwStdUnit.LINES))
@@ -236,6 +237,7 @@ class GuiOutlineViewSettings(GuiStorySettingsBase):
         self.form.addRow(settings.getLabel("outline.showStatus"), self.showStatus)
         self.form.addRow(settings.getLabel("outline.commentIcons"), self.commentIcons)
         self.form.addRow(settings.getLabel("outline.referenceIcons"), self.referenceIcons)
+        self.form.addRow(settings.getLabel("outline.joinComments"), self.joinComments)
 
         # Documents
         # =========
@@ -289,6 +291,7 @@ class GuiOutlineViewSettings(GuiStorySettingsBase):
         self.subCounts.setChecked(settings.getBool("outline.subCounts"))
         self.commentIcons.setChecked(settings.getBool("outline.commentIcons"))
         self.referenceIcons.setChecked(settings.getBool("outline.referenceIcons"))
+        self.joinComments.setChecked(settings.getBool("outline.joinComments"))
         self.showStatus.setChecked(settings.getBool("outline.showStatus"))
 
         # Documents
@@ -321,6 +324,7 @@ class GuiOutlineViewSettings(GuiStorySettingsBase):
         settings.setValue("outline.subCounts", self.subCounts.isChecked())
         settings.setValue("outline.commentIcons", self.commentIcons.isChecked())
         settings.setValue("outline.referenceIcons", self.referenceIcons.isChecked())
+        settings.setValue("outline.joinComments", self.joinComments.isChecked())
         settings.setValue("outline.showStatus", self.showStatus.isChecked())
 
         # Documents
@@ -721,6 +725,7 @@ class GuiStoryOutlineTree(NTreeView):
                 settings.getBool("outline.showStatus"),
                 settings.getBool("outline.inactiveParts"),
                 settings.getBool("outline.subCounts"),
+                settings.getBool("outline.joinComments"),
             )
             if columnIDs != self._columnIDs:
                 self._columnIDs = columnIDs
