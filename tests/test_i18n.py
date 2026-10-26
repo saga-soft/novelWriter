@@ -87,7 +87,8 @@ def testGuiI18n_Localisation(
     showDialog(nwGUI.showProjectWordListDialog, GuiWordList)
     showDialog(nwGUI.showWritingStatsDialog, GuiWritingStats)
     showDialog(nwGUI.showAboutNWDialog, GuiAbout)
-    showDialog(nwGUI.showDictionariesDialog, GuiDictionaries)
+    if not CONFIG.osDarwin:
+        showDialog(nwGUI.showDictionariesDialog, GuiDictionaries)
 
     qtbot.wait(20)
     nwGUI.closeMain()

@@ -24,9 +24,10 @@ from __future__ import annotations
 import json
 import logging
 
+from abc import ABC, abstractmethod
 from pathlib import Path
 from threading import Lock
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from novelwriter import CONFIG
 from novelwriter.common import languageName
@@ -43,29 +44,23 @@ logger = logging.getLogger(__name__)
 MAX_CACHE_SIZE = 100_000
 
 
-class SpellEnchant:
-    """Core: Enchant Spell Checking Wrapper.
+class SpellChecker(ABC):
+    """Core: Spell Checking Base Class."""
 
-    This is a wrapper class for Enchant to keep the API consistent
-    between spell check tools.
-    """
-
-    __slots__ = ("_broker", "_cache", "_enchant", "_language", "_lock", "_project", "_requested", "_userDict")
+    __slots__ = ("_cache", "_language", "_lock", "_project", "_requested", "_userDict")
 
     def __init__(self, project: NWProject) -> None:
         self._project = project
-        self._enchant = FakeEnchant()
         self._userDict = UserDictionary(project)
         self._cache: dict[str, bool] = {}
         self._lock = Lock()
         self._language = None
         self._requested = None
-        self._broker = None
-        logger.debug("Ready: SpellEnchant")
+        logger.debug("Ready: SpellChecker")
 
     def __del__(self) -> None:  # pragma: no cover
         """Class destructor."""
-        logger.debug("Delete: SpellEnchant")
+        logger.debug("Delete: SpellChecker")
 
     ##
     #  Properties
@@ -87,62 +82,52 @@ class SpellEnchant:
 
     def setLanguage(self, language: str | None) -> None:
         """Load a dictionary for the language specified in the config.
-        If that fails, we load a mock dictionary so that lookups don't
+        If that fails, lookups accept all words so that they don't
         crash.
 
-        Note:
-        * Enchant will allow loading an empty string as a tag, but this
-          will fail later on. See issue #1096.
-        * The whole swap is locked so that a worker thread never sees a
-          partially loaded dictionary.
-
+        Note: The whole swap is locked so that a worker thread never
+        sees a partially loaded dictionary.
         """
         with self._lock:
-            self._enchant = FakeEnchant()
-            self._broker = None
             self._language = None
             self._requested = language or None
             self._cache.clear()
 
             try:
-                import enchant
-
-                if language and enchant.dict_exists(language):
-                    self._broker = enchant.Broker()
-                    self._enchant = self._broker.request_dict(language)
-                    self._language = language
-                    logger.debug("Enchant spell checking for language '%s' loaded", language)
-                else:
-                    logger.warning("Enchant found no dictionary for language '%s'", language)
-
+                loaded = self._loadLanguage(language)
             except Exception:
-                logger.error("Failed to load enchant spell checking for language '%s'", language)
+                logger.error("Failed to load spell checking for language '%s'", language)
+                loaded = False
 
-            if self._enchant is None:
-                self._enchant = FakeEnchant()
-            else:
-                self._userDict.load()
-                for word in self._userDict:
-                    self._enchant.add_to_session(word)
+            if loaded:
+                self._language = language
+
+            self._userDict.load()
+            for word in self._userDict:
+                try:
+                    self._addSessionWord(word)
+                except Exception:
+                    logger.error("Failed to add word to spell checking session")
+                    break
 
     ##
     #  Methods
     ##
 
     def checkWord(self, word: str) -> bool:
-        """Forward check to pyenchant.
+        """Check the spelling of a word.
 
         Note:
         * The results are cached, since the same words tend to be
           checked over and over again.
-        * The enchant call is locked as the library is not guaranteed thread safe, but
-          cache hits are lock-free.
+        * The backend call is locked as the library is not guaranteed
+          thread safe, but cache hits are lock-free.
 
         """
         if (result := self._cache.get(word)) is None:
             with self._lock:
                 try:
-                    result = bool(self._enchant.check(word))
+                    result = bool(self._checkWord(word))
                 except Exception:
                     result = True
             if len(self._cache) >= MAX_CACHE_SIZE:
@@ -151,10 +136,10 @@ class SpellEnchant:
         return result
 
     def suggestWords(self, word: str) -> list[str]:
-        """Ask pyenchant for suggestions."""
+        """Ask the backend for suggestions."""
         with self._lock:
             try:
-                return self._enchant.suggest(word)
+                return self._suggestWords(word)
             except Exception:
                 return []
 
@@ -163,7 +148,7 @@ class SpellEnchant:
         if word := word.strip():
             with self._lock:
                 try:
-                    self._enchant.add_to_session(word)
+                    self._addSessionWord(word)
                 except Exception:
                     return
             self._cache[word] = True
@@ -174,26 +159,190 @@ class SpellEnchant:
     def listDictionaries(self) -> list[tuple[str, str]]:
         """List available dictionaries."""
         lang = []
-        try:
-            import enchant
-
-            tags = [x for x, _ in enchant.list_dicts()]
-            lang = [(x, f"{languageName(x)} [{x}]") for x in set(tags)]
-        except Exception:
-            logger.error("Failed to list languages for enchant spell checking")
+        with self._lock:
+            try:
+                lang = [(x, f"{languageName(x)} [{x}]") for x in set(self._listLanguages())]
+            except Exception:
+                logger.error("Failed to list languages for spell checking")
         return sorted(lang, key=lambda x: x[1])
 
     def describeDict(self) -> tuple[str, str]:
         """Describe the currently loaded dictionary."""
         try:
-            tag = self._enchant.tag
-            name = self._enchant.provider.name  # type: ignore
+            tag, name = self._describeDict()
         except Exception:
             logger.error("Failed to extract information about the dictionary")
             logException()
             tag = ""
             name = ""
         return tag, name
+
+    ##
+    #  Backend Hooks
+    ##
+
+    @abstractmethod
+    def _loadLanguage(self, language: str | None) -> bool:
+        """Load a language dictionary, and return True on success."""
+
+    @abstractmethod
+    def _checkWord(self, word: str) -> bool:
+        """Return True if the word is spelled correctly."""
+
+    @abstractmethod
+    def _suggestWords(self, word: str) -> list[str]:
+        """Return spelling suggestions for a word."""
+
+    @abstractmethod
+    def _addSessionWord(self, word: str) -> None:
+        """Accept a word for the rest of the session."""
+
+    @abstractmethod
+    def _listLanguages(self) -> list[str]:
+        """Return the tags of all available languages."""
+
+    @abstractmethod
+    def _describeDict(self) -> tuple[str, str]:
+        """Return the tag and provider name of the loaded dictionary."""
+
+
+class SpellEnchant(SpellChecker):
+    """Core: Enchant Spell Checking Wrapper.
+
+    This is a wrapper class for Enchant to keep the API consistent
+    between spell check tools.
+    """
+
+    __slots__ = ("_broker", "_enchant")
+
+    def __init__(self, project: NWProject) -> None:
+        super().__init__(project)
+        self._enchant = FakeEnchant()
+        self._broker = None
+
+    def _loadLanguage(self, language: str | None) -> bool:
+        """Load an Enchant dictionary, or fall back to a mock one.
+
+        Note: Enchant will allow loading an empty string as a tag, but
+        this will fail later on. See issue #1096.
+        """
+        self._enchant = FakeEnchant()
+        self._broker = None
+
+        import enchant
+
+        if language and enchant.dict_exists(language):
+            self._broker = enchant.Broker()
+            if (spell := self._broker.request_dict(language)) is not None:
+                self._enchant = spell
+                logger.debug("Enchant spell checking for language '%s' loaded", language)
+                return True
+
+        logger.warning("Enchant found no dictionary for language '%s'", language)
+        return False
+
+    def _checkWord(self, word: str) -> bool:
+        """Forward check to pyenchant."""
+        return self._enchant.check(word)
+
+    def _suggestWords(self, word: str) -> list[str]:
+        """Ask pyenchant for suggestions."""
+        return self._enchant.suggest(word)
+
+    def _addSessionWord(self, word: str) -> None:
+        """Add a word to the pyenchant session."""
+        self._enchant.add_to_session(word)
+
+    def _listLanguages(self) -> list[str]:
+        """List the languages known to pyenchant."""
+        import enchant
+
+        return [x for x, _ in enchant.list_dicts()]
+
+    def _describeDict(self) -> tuple[str, str]:
+        """Describe the loaded pyenchant dictionary."""
+        return self._enchant.tag, self._enchant.provider.name  # type: ignore
+
+
+class SpellApple(SpellChecker):
+    """Core: macOS Spell Checking Wrapper.
+
+    This is a wrapper class for the system NSSpellChecker. Words added
+    by the user are ignored in a spell document owned by this instance.
+    """
+
+    __slots__ = ("_checker", "_document")
+
+    def __init__(self, project: NWProject) -> None:
+        super().__init__(project)
+        self._checker: Any = None
+        self._document = 0
+
+    def __del__(self) -> None:  # pragma: no cover
+        """Class destructor."""
+        self._closeDocument()
+        super().__del__()
+
+    def _loadLanguage(self, language: str | None) -> bool:
+        """Select a system language, and open a new spell document."""
+        from AppKit import NSSpellChecker  # type: ignore
+
+        self._closeDocument()
+        self._checker = NSSpellChecker.sharedSpellChecker()
+        self._checker.setAutomaticallyIdentifiesLanguages_(False)
+        self._document = NSSpellChecker.uniqueSpellDocumentTag()
+
+        if language and self._checker.setLanguage_(language):
+            logger.debug("Apple spell checking for language '%s' loaded", language)
+            return True
+
+        logger.warning("Apple spell checking found no language '%s'", language)
+        return False
+
+    def _checkWord(self, word: str) -> bool:
+        """Forward check to NSSpellChecker."""
+        from Foundation import NSNotFound  # type: ignore
+
+        if self._language is None:
+            return True
+        result, _ = self._checker.checkSpellingOfString_startingAt_language_wrap_inSpellDocumentWithTag_wordCount_(
+            word, 0, self._language, False, self._document, None
+        )
+        return result.location == NSNotFound
+
+    def _suggestWords(self, word: str) -> list[str]:
+        """Ask NSSpellChecker for suggestions."""
+        from Foundation import NSMakeRange  # type: ignore
+
+        if self._language is None:
+            return []
+        guesses = self._checker.guessesForWordRange_inString_language_inSpellDocumentWithTag_(
+            NSMakeRange(0, len(word)), word, self._language, self._document
+        )
+        return [str(x) for x in guesses or []]
+
+    def _addSessionWord(self, word: str) -> None:
+        """Ignore a word in the spell document."""
+        if self._checker is not None:
+            self._checker.ignoreWord_inSpellDocumentWithTag_(word, self._document)
+
+    def _listLanguages(self) -> list[str]:
+        """List the languages known to NSSpellChecker."""
+        from AppKit import NSSpellChecker  # type: ignore
+
+        return [str(x) for x in NSSpellChecker.sharedSpellChecker().availableLanguages()]
+
+    def _describeDict(self) -> tuple[str, str]:
+        """Describe the selected NSSpellChecker language."""
+        if self._language is None:
+            return "", ""
+        return self._language, "AppleSpell"
+
+    def _closeDocument(self) -> None:
+        """Close the spell document holding the session words."""
+        if self._checker is not None and self._document:
+            self._checker.closeSpellDocumentWithTag_(self._document)
+        self._document = 0
 
 
 class FakeEnchant:

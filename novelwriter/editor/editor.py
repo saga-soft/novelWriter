@@ -984,7 +984,7 @@ class GuiDocEditor(QTextEdit):
         if SHARED.spelling.spellLanguage is None:
             state = False
 
-        if state and not CONFIG.hasEnchant:
+        if state and not CONFIG.hasSpellCheck:
             SHARED.info(self.tr("Spell checking requires the package PyEnchant. It does not appear to be installed."))
             state = False
 
