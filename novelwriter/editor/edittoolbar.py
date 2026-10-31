@@ -179,6 +179,7 @@ class GuiDocToolBar(QWidget):
             self.tbItalicMD.refreshTheme()
             self.tbStrikeMD.refreshTheme()
             self.tbMarkMD.refreshTheme()
+            self.tbLinkMD.refreshTheme()
             self.tbBold.refreshTheme()
             self.tbItalic.refreshTheme()
             self.tbStrike.refreshTheme()
@@ -186,6 +187,11 @@ class GuiDocToolBar(QWidget):
             self.tbMark.refreshTheme()
             self.tbSuperscript.refreshTheme()
             self.tbSubscript.refreshTheme()
+            self.tbListU.refreshTheme()
+            self.tbListO.refreshTheme()
+            self.tbAlignLeft.refreshTheme()
+            self.tbAlignCenter.refreshTheme()
+            self.tbAlignRight.refreshTheme()
 
     ##
     #  Private Slots

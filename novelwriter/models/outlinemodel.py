@@ -288,20 +288,9 @@ class OutlineModel(QAbstractTableModel):
             sLevels={k: trConst(v) for k, v in nwStyles.T_LABEL.items()},
         )
 
-        # Colours
-        theme = SHARED.theme
         self._styles: dict[int, NodeStyle] = {}
-        for key in nwStyles.H_LEVEL.values():
-            color = theme.getStructureColor(key)
-            border = QColor(color)
-            border.setAlphaF(0.7)
-            background = QColor(color)
-            background.setAlphaF(0.1)
-            highlight = QColor(color)
-            highlight.setAlphaF(0.2)
-            self._styles[key] = NodeStyle(border, background, highlight)
-
         self._nodes: list[OutlineNode] = []
+        self.updateTheme()
 
     def __del__(self) -> None:  # pragma: no cover
         """Class destructor."""
@@ -350,6 +339,19 @@ class OutlineModel(QAbstractTableModel):
     ##
     #  Methods
     ##
+
+    def updateTheme(self) -> None:
+        """Refresh the level colours from the theme."""
+        theme = SHARED.theme
+        for key in nwStyles.H_LEVEL.values():
+            color = theme.getStructureColor(key)
+            border = QColor(color)
+            border.setAlphaF(0.7)
+            background = QColor(color)
+            background.setAlphaF(0.1)
+            highlight = QColor(color)
+            highlight.setAlphaF(0.2)
+            self._styles[key] = NodeStyle(border, background, highlight)
 
     def clear(self) -> None:
         """Clear the outline."""

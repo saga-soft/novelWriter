@@ -205,12 +205,14 @@ class GuiStoryView(QWidget):
         self.copyView.refreshTheme()
         self.editView.refreshTheme()
         self.tabMain.refreshTheme()
+        self.highlightValue.updateStyle()
         if self._views is not None:
             self._refreshTagList(force=True)
         for view in self._iterViews():
             view.updateTheme()
         for dialog in self._iterSettingsDialogs():
             dialog.updateTheme()
+        self._refreshCurrentView()
 
     def initSettings(self) -> None:
         """Apply changes to the preferences."""

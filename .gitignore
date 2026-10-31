@@ -62,6 +62,7 @@ __pycache__
 # IDE
 .vscode
 .ruff_cache
+.nvimlog
 
 # No AI files
 AGENTS.md

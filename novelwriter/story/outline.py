@@ -671,6 +671,8 @@ class GuiStoryOutlineTree(NTreeView):
         """Update theme elements."""
         self._disableNativeHighlight()
         self._delegate.updateTheme()
+        self._model.updateTheme()
+        self._built = False
         if viewport := self.viewport():  # pragma: no branch
             viewport.update()
 
