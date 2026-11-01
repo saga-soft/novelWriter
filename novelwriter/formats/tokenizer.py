@@ -24,6 +24,7 @@ from __future__ import annotations
 import logging
 
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from typing import TYPE_CHECKING, NamedTuple
 
 from PyQt6.QtCore import QLocale
@@ -31,7 +32,17 @@ from PyQt6.QtGui import QColor, QFont
 
 from novelwriter import CONFIG
 from novelwriter.common import checkInt, fontMatcher, numberToRoman
-from novelwriter.constants import nwHeadFmt, nwKeyWords, nwLabels, nwShortcode, nwStats, nwStyles, nwUnicode, trConst
+from novelwriter.constants import (
+    nwHeadFmt,
+    nwKeyWords,
+    nwLabels,
+    nwProblems,
+    nwShortcode,
+    nwStats,
+    nwStyles,
+    nwUnicode,
+    trConst,
+)
 from novelwriter.enum import nwComment, nwItemLayout
 from novelwriter.formats.shared import BlockFmt, BlockTyp, T_Block, T_Formats, T_Note, TextDocumentTheme, TextFmt
 from novelwriter.text.formats import processComment
@@ -45,6 +56,8 @@ if TYPE_CHECKING:
     from novelwriter.core.project import NWProject
 
 logger = logging.getLogger(__name__)
+
+T_Marks = list[tuple[int, int, TextFmt, str]]
 
 
 class ComStyle(NamedTuple):
@@ -160,13 +173,15 @@ class Tokenizer(ABC):
         "_marginSep",
         "_marginText",
         "_marginTitle",
-        "_missingKeys",
         "_noIndent",
         "_noSep",
         "_noTokens",
         "_outline",
         "_pages",
         "_partStyle",
+        "_problemAnchors",
+        "_problemCount",
+        "_problems",
         "_project",
         "_raw",
         "_replaceLookup",
@@ -206,6 +221,8 @@ class Tokenizer(ABC):
         self._statusFmt: T_Formats = []  # The format of the status label
         self._replaceLookup: dict[str, str] = {}  # The auto-replace lookup table
         self._replaceNoCase = False  # Whether auto-replace ignores case
+        self._problemAnchors = False  # Whether to add anchors to text problems
+        self._problemCount = 0  # The number of problem anchors added
 
         # Blocks and Meta Data (Per Document)
         self._blocks: list[T_Block] = []
@@ -216,7 +233,7 @@ class Tokenizer(ABC):
         self._pages: list[str] = []
         self._counts: dict[str, int] = {}
         self._outline: dict[str, str] = {}
-        self._missingKeys: list[tuple[str, str]] = []
+        self._problems: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
 
         # User Settings
         self._dLocale = CONFIG.locale  # The document locale
@@ -347,17 +364,22 @@ class Tokenizer(ABC):
 
     @property
     def textStats(self) -> dict[str, int]:
-        """The collected stats about the text."""
+        """Return the collected stats about the text."""
         return self._counts
 
     @property
+    def textProblems(self) -> dict[str, list[tuple[str, str, str]]]:
+        """Return the discovered problems in the text."""
+        return self._problems
+
+    @property
     def textOutline(self) -> dict[str, str]:
-        """The generated outline of the text."""
+        """Return the generated outline of the text."""
         return self._outline
 
     @property
     def errData(self) -> list[str]:
-        """The error data."""
+        """Return the error data."""
         return self._errData
 
     ##
@@ -545,6 +567,10 @@ class Tokenizer(ABC):
     def setKeepLineBreaks(self, state: bool) -> None:
         """Keep line breaks in paragraphs."""
         self._keepBreaks = state
+
+    def setProblemAnchors(self, state: bool) -> None:
+        """Add anchors to text blocks with problems."""
+        self._problemAnchors = state
 
     def setAnchorsEnabled(self, state: bool) -> None:
         """Enable or disable anchors."""
@@ -740,7 +766,7 @@ class Tokenizer(ABC):
                 if cStyle not in self._doComments:
                     continue
 
-                cText = self._formatAutoReplace(cText, nHead)
+                cText, pMarks = self._formatAutoReplace(cText, nHead)
 
                 if doJustify and not tStyle & BlockFmt.ALIGNED:
                     tStyle |= BlockFmt.JUSTIFY
@@ -753,11 +779,11 @@ class Tokenizer(ABC):
                     nwComment.NOTE,
                 ):
                     bStyle = COMMENT_STYLE[cStyle]
-                    tLine, tFmt = self._formatComment(bStyle, cKey, cText)
+                    tLine, tFmt = self._formatComment(bStyle, cKey, cText, pMarks)
                     tBlocks.append((COMMENT_TYPE[cStyle], "", tLine, tFmt, tStyle))
 
                 elif cStyle == nwComment.FOOTNOTE:
-                    tLine, tFmt = self._extractFormats(cText, skip=TextFmt.FNOTE)
+                    tLine, tFmt = self._extractFormats(cText, skip=TextFmt.FNOTE, marks=pMarks)
                     self._footnotes[f"{tHandle}:{cKey}"] = (tLine, tFmt)
 
                 else:  # pragma: no cover
@@ -786,10 +812,12 @@ class Tokenizer(ABC):
                 isPlain = aLine.startswith("# ")
 
                 nHead += 1
-                tText = self._formatAutoReplace(aLine[2:].strip(), nHead)
+                tText = aLine[2:].strip()
                 tType = BlockTyp.HEAD1 if isPlain else BlockTyp.TITLE
                 sHide = self._hidePart if isPlain else False
                 sText = ""
+                if not (isNovel and sHide):
+                    tText, _ = self._formatAutoReplace(tText, nHead, True)
                 if not (isPlain or (isNovel and sHide)):
                     tStyle |= self._titleStyle
                 if isNovel:
@@ -823,11 +851,13 @@ class Tokenizer(ABC):
                 isPlain = aLine.startswith("## ")
 
                 nHead += 1
-                tText = self._formatAutoReplace(aLine[3:].strip(), nHead)
+                tText = aLine[3:].strip()
                 tType = BlockTyp.HEAD2
                 sHide = self._hideChapter if isPlain else self._hideUnNum
                 tFormat = self._fmtChapter if isPlain else self._fmtUnNum
                 sText = ""
+                if not (isNovel and sHide):
+                    tText, _ = self._formatAutoReplace(tText, nHead, True)
                 if isNovel:
                     tType = BlockTyp.HEAD1  # Promote
                     if isPlain:
@@ -860,11 +890,13 @@ class Tokenizer(ABC):
                 isPlain = aLine.startswith("### ")
 
                 nHead += 1
-                tText = self._formatAutoReplace(aLine[4:].strip(), nHead)
+                tText = aLine[4:].strip()
                 tType = BlockTyp.HEAD3
                 sHide = self._hideScene if isPlain else self._hideHScene
                 tFormat = self._fmtScene if isPlain else self._fmtHScene
                 sText = ""
+                if not (isNovel and sHide):
+                    tText, _ = self._formatAutoReplace(tText, nHead, True)
                 if isNovel:
                     tType = BlockTyp.HEAD2  # Promote
                     self._hFormatter.incScene()
@@ -902,9 +934,11 @@ class Tokenizer(ABC):
                 # paragraph (skip). For notes, the heading is unchanged.
 
                 nHead += 1
-                tText = self._formatAutoReplace(aLine[5:].strip(), nHead)
+                tText = aLine[5:].strip()
                 tType = BlockTyp.HEAD4
                 tFormat = self._fmtSection
+                if not (isNovel and self._hideSection):
+                    tText, _ = self._formatAutoReplace(tText, nHead, True)
                 if isNovel:
                     tType = BlockTyp.HEAD3  # Promote
                     if self._hideSection:
@@ -977,8 +1011,8 @@ class Tokenizer(ABC):
                     tStyle |= BlockFmt.IND_R
 
                 # Process formats
-                bLine = self._formatAutoReplace(bLine, nHead)
-                tLine, tFmt = self._extractFormats(bLine, hDialog=hDialog)
+                bLine, pMarks = self._formatAutoReplace(bLine, nHead)
+                tLine, tFmt = self._extractFormats(bLine, hDialog=hDialog, marks=pMarks)
                 tBlocks.append((tType, "", tLine, tFmt, tStyle))
 
         # If we have content, turn off the first page flag
@@ -1247,29 +1281,60 @@ class Tokenizer(ABC):
         """Return a localised integer."""
         return self._dLocale.toString(value)
 
-    def _formatAutoReplace(self, text: str, nHead: int) -> str:
-        """Apply the auto-replace lookup table and record missing keys."""
+    def _formatAutoReplace(self, text: str, nHead: int, isHead: bool = False) -> tuple[str, T_Marks]:
+        """Apply the auto-replace lookup table and record missing keys.
+        Returns the new text and any problem markers for it.
+        """
         if not (self._replaceLookup and "<" in text):
-            return text
+            return text, []
 
         lookup = self._replaceLookup
         noCase = self._replaceNoCase
-        missing = self._missingKeys
-        tKey = f"{self._handle or ''}:T{nHead:04d}"
+        missing: list[tuple[str, int, int]] = []
+        shift = 0
 
         def replace(match: re.Match) -> str:
+            nonlocal shift
             key = match.group(1)
             if (value := lookup.get(key.lower() if noCase else key)) is not None:
+                shift += len(value) - len(match.group(0))
                 return value
-            missing.append((key, tKey))
+            pos = match.start(0) + shift
+            missing.append((key, pos, pos + len(match.group(0))))
             return match.group(0)
 
-        return REGEX_PATTERNS.autoReplace.sub(replace, text)
+        text = REGEX_PATTERNS.autoReplace.sub(replace, text)
+        if not missing:
+            return text, []
 
-    def _formatComment(self, style: ComStyle, key: str, text: str) -> tuple[str, T_Formats]:
+        tKey = f"{self._handle or ''}:T{nHead:04d}"
+        anchor = ""
+        marks: T_Marks = []
+        if self._problemAnchors:
+            if isHead:  # Headings already have an anchor
+                anchor = tKey
+            else:
+                anchor = f"problem_{self._problemCount}"
+                self._problemCount += 1
+                marks.append((0, 0, TextFmt.ANM_B, anchor))
+                for _, pos, end in missing:
+                    marks.append((pos, 0, TextFmt.ERR_B, ""))
+                    marks.append((end, 0, TextFmt.ERR_E, ""))
+                marks.append((len(text), 0, TextFmt.ANM_E, ""))
+
+        self._problems[nwProblems.MISSING_AUTO_KEYS].extend((key, tKey, anchor) for key, _, _ in missing)
+        return text, marks
+
+    def _formatComment(
+        self,
+        style: ComStyle,
+        key: str,
+        text: str,
+        marks: T_Marks | None = None,
+    ) -> tuple[str, T_Formats]:
         """Apply formatting to comments and notes."""
         rFmt = []
-        tTxt, tFmt = self._extractFormats(text)
+        tTxt, tFmt = self._extractFormats(text, marks=marks)
         tFmt.insert(0, (0, TextFmt.COL_B, style.textClass))
         tFmt.append((len(tTxt), TextFmt.COL_E, ""))
         term = f" ({key.title()})" if key else ""
@@ -1338,12 +1403,19 @@ class Tokenizer(ABC):
 
         return tag, "".join(txt), fmt
 
-    def _extractFormats(self, text: str, skip: TextFmt = TextFmt.NONE, hDialog: bool = False) -> tuple[str, T_Formats]:
+    def _extractFormats(
+        self,
+        text: str,
+        skip: TextFmt = TextFmt.NONE,
+        hDialog: bool = False,
+        marks: T_Marks | None = None,
+    ) -> tuple[str, T_Formats]:
         """Extract format markers from a text paragraph. In order to
         also process dialogue highlighting, the hDialog flag must be set
-        to True. See issues #2011 and #2013.
+        to True. See issues #2011 and #2013. Additional markers can be
+        passed in with positions relative to the input text.
         """
-        temp: list[tuple[int, int, TextFmt, str]] = []
+        temp: T_Marks = list(marks) if marks else []
 
         # Match Markdown
         for regEx, fmts in self._rxMarkdown:

@@ -329,6 +329,12 @@ class nwStats:
     ]
 
 
+class nwProblems:
+    """Text problems."""
+
+    MISSING_AUTO_KEYS = "missingAutoKeys"
+
+
 class nwLabels:
     """Various Common GUI Labels."""
 
@@ -436,6 +442,9 @@ class nwLabels:
     STATS_DISPLAY: ClassVar[dict[str, str]] = {
         nwStats.CHARS: QT_TRANSLATE_NOOP("Stats", "Characters: {0} ({1})"),
         nwStats.WORDS: QT_TRANSLATE_NOOP("Stats", "Words: {0} ({1})"),
+    }
+    PROBLEM_NAME: ClassVar[dict[str, str]] = {
+        nwProblems.MISSING_AUTO_KEYS: QT_TRANSLATE_NOOP("Constant", "Missing Auto-Replace Keys"),
     }
     UNIT_LABELS: ClassVar[dict[nwStdUnit, str]] = {
         nwStdUnit.CHARS: QT_TRANSLATE_NOOP("Units", "characters"),

@@ -58,7 +58,7 @@ from PyQt6.QtWidgets import (
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import formatInt, formatPercent, fuzzyTime
-from novelwriter.constants import nwHeadFmt, nwLabels, nwStats, nwUnicode, trStats
+from novelwriter.constants import nwHeadFmt, nwLabels, nwProblems, nwStats, nwUnicode, trConst, trStats
 from novelwriter.enum import nwStandardButton
 from novelwriter.extensions.modified import NFlatIconButton, NToolDialog
 from novelwriter.extensions.progressbars import NProgressCircle
@@ -170,10 +170,14 @@ class GuiManuscript(NToolDialog):
         self.buildStats = _StatisticsWidget(self)
         self.buildStats.setExpandedState(SHARED.project.options.getList("GuiManuscript", "statsExpanded", []))
 
+        self.buildProblems = _ProblemsWidget(self)
+
         self.detailsTabs = NTabWidget(self)
         self.detailsTabs.addTab(self.buildDetails, self.tr("Details"))
         self.detailsTabs.addTab(self.buildOutline, self.tr("Outline"))
         self.detailsTabs.addTab(self.buildStats, self.tr("Statistics"))
+        self.detailsTabs.addTab(self.buildProblems, self.tr("Problems"))
+        self.detailsTabs.setTabVisible(self.detailsTabs.indexOf(self.buildProblems), False)
 
         self.buildSplit = QSplitter(Qt.Orientation.Vertical, self)
         self.buildSplit.addWidget(self.buildList)
@@ -266,6 +270,7 @@ class GuiManuscript(NToolDialog):
 
         # Signals
         self.buildOutline.outlineEntryClicked.connect(self.docPreview.navigateTo)
+        self.buildProblems.problemEntryClicked.connect(self.docPreview.navigateTo)
 
         logger.debug("Ready: GuiManuscript")
 
@@ -417,6 +422,17 @@ class GuiManuscript(NToolDialog):
 
             self.buildOutline.updateOutline(buildObj.textOutline)
             self.buildStats.updateStats(buildObj.textStats, withDialog)
+            self.buildProblems.updateProblems(buildObj.textProblems)
+
+            pIndex = self.detailsTabs.indexOf(self.buildProblems)
+            hasProblems = self.buildProblems.hasProblems()
+            if hasProblems and not self.detailsTabs.isTabVisible(pIndex):
+                self.detailsTabs.setTabVisible(pIndex, True)
+                self.detailsTabs.setCurrentIndex(pIndex)
+            elif not hasProblems:
+                self.detailsTabs.setTabVisible(pIndex, False)
+            self.docPreview.setProblemCount(self.buildProblems.problemCount())
+
             self._updateCountsLabel(buildObj.textStats, withDialog)
 
             logger.debug("Build completed in %.3f ms", 1000 * (time() - start))
@@ -890,6 +906,77 @@ class _StatisticsWidget(QWidget):
             header.setSectionResizeMode(1, QtHeaderToContents)
 
 
+class _ProblemsWidget(QWidget):
+    """The text problems of the manuscript."""
+
+    D_ANCHOR = QtUserRole
+
+    problemEntryClicked = pyqtSignal(str)
+
+    def __init__(self, parent: QWidget) -> None:
+        super().__init__(parent=parent)
+
+        # Tree Widget
+        self.listView = QTreeWidget(self)
+        self.listView.setHeaderHidden(True)
+        self.listView.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
+        self.listView.setIndentation(SHARED.theme.baseIconHeight)
+        self.listView.setFrameStyle(QFrame.Shape.NoFrame)
+        self.listView.itemClicked.connect(self._onItemClick)
+
+        # Assemble
+        self.outerBox = QVBoxLayout()
+        self.outerBox.addWidget(self.listView)
+        self.outerBox.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(self.outerBox)
+
+    def hasProblems(self) -> bool:
+        """Return True if any problems are listed."""
+        return self.listView.topLevelItemCount() > 0
+
+    def problemCount(self) -> int:
+        """Return the number of problems listed."""
+        count = 0
+        for i in range(self.listView.topLevelItemCount()):
+            if item := self.listView.topLevelItem(i):  # pragma: no branch
+                count += item.childCount()
+        return count
+
+    def updateProblems(self, data: dict[str, list[tuple[str, str, str]]]) -> None:
+        """Update the problems list from a Tokenizer problems dict."""
+        self.listView.clear()
+        if entries := data.get(nwProblems.MISSING_AUTO_KEYS):
+            labels = []
+            for key, tKey, anchor in entries:
+                if tItem := SHARED.project.tree[tKey.partition(":")[0]]:
+                    labels.append((self.tr("<{0}> in {1}").format(key, tItem.itemName), anchor or tKey))
+                else:
+                    labels.append((f"<{key}>", anchor or tKey))
+            self._addCategory(nwProblems.MISSING_AUTO_KEYS, labels)
+
+    ##
+    #  Private Slots
+    ##
+
+    @pyqtSlot("QTreeWidgetItem*", int)
+    def _onItemClick(self, item: QTreeWidgetItem, column: int) -> None:
+        """Process tree item click."""
+        if anchor := item.data(0, self.D_ANCHOR):
+            self.problemEntryClicked.emit(str(anchor))
+
+    ##
+    #  Internal Functions
+    ##
+
+    def _addCategory(self, key: str, entries: list[tuple[str, str]]) -> None:
+        """Add a problem category with its entries."""
+        parent = QTreeWidgetItem(self.listView, [f"{trConst(nwLabels.PROBLEM_NAME[key])} ({len(entries):n})"])
+        for label, anchor in entries:
+            item = QTreeWidgetItem(parent, [label])
+            item.setData(0, self.D_ANCHOR, anchor)
+        parent.setExpanded(True)
+
+
 class _PreviewWidget(QTextBrowser):
     """The manuscript preview widget."""
 
@@ -898,6 +985,7 @@ class _PreviewWidget(QTextBrowser):
 
         self._docTime = 0
         self._buildName = ""
+        self._problems = 0
         self._scrollPos = 0
 
         # Document Setup
@@ -957,6 +1045,11 @@ class _PreviewWidget(QTextBrowser):
     def setBuildName(self, name: str) -> None:
         """Set the build name for the document label."""
         self._buildName = name
+        self._updateBuildAge()
+
+    def setProblemCount(self, count: int) -> None:
+        """Set the problem count for the document label."""
+        self._problems = count
         self._updateBuildAge()
 
     def setTextFont(self, font: QFont) -> None:
@@ -1069,13 +1162,14 @@ class _PreviewWidget(QTextBrowser):
     def _updateBuildAge(self) -> None:
         """Update the build time and the fuzzy age."""
         if self._buildName and self._docTime > 0:
-            self.ageLabel.setText(
-                "<b>{0}</b><br>{1}: {2}".format(
-                    self._buildName,
-                    self.tr("Built"),
-                    fuzzyTime(int(time()) - self._docTime),
-                )
+            text = "<b>{0}</b><br>{1}: {2}".format(
+                self._buildName,
+                self.tr("Built"),
+                fuzzyTime(int(time()) - self._docTime),
             )
+            if self._problems:
+                text += ", {0}: {1}".format(self.tr("Problems"), formatInt(self._problems))
+            self.ageLabel.setText(text)
         else:
             self.ageLabel.setText("<b>{0}</b>".format(self.tr("No Preview")))
 

@@ -125,6 +125,7 @@ class DocumentBuilder:
         filtered = self._setupBuild(makeObj)
         makeObj.initDocument()
         makeObj.setShowNewPage(newPage)
+        makeObj.setProblemAnchors(True)
         self._outline = True
         yield from self._iterBuild(makeObj, filtered)
         makeObj.closeDocument()

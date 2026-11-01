@@ -390,14 +390,14 @@ class ToQTextDocument(Tokenizer):
 
             elif tType == BlockTyp.SEP:
                 newBlock(cursor, bFmt)
-                cursor.insertText(tText, self._charFmt)
+                cursor.insertText(tText, self._genAnchorFmt(tMeta))
 
             elif tType == BlockTyp.HRULE:
                 self._insertHorizontalRule(cursor)
 
             elif tType == BlockTyp.SKIP:
                 newBlock(cursor, bFmt)
-                cursor.insertText(nwUnicode.U_NBSP, self._charFmt)
+                cursor.insertText(nwUnicode.U_NBSP, self._genAnchorFmt(tMeta))
 
             else:  # pragma: no cover
                 pass
@@ -472,6 +472,8 @@ class ToQTextDocument(Tokenizer):
         cFmt = QTextCharFormat(dFmt)
         temp = text.replace("\n", nwUnicode.U_LSEP)
         start = 0
+        marked = False
+        error = False
         primary: QColor | None = None
         for pos, fmt, data in tFmt:
             # Insert buffer with previous format
@@ -495,9 +497,11 @@ class ToQTextDocument(Tokenizer):
             elif fmt == TextFmt.U_E:
                 cFmt.setFontUnderline(self._dUnderline)
             elif fmt == TextFmt.M_B:
-                cFmt.setBackground(self._theme.highlight)
+                marked = True
+                cFmt.setBackground(self._theme.error if error else self._theme.highlight)
             elif fmt == TextFmt.M_E:
-                cFmt.setBackground(QtTransparent)
+                marked = False
+                cFmt.setBackground(self._theme.error if error else QtTransparent)
             elif fmt == TextFmt.SUP_B:
                 cFmt.setVerticalAlignment(QtVAlignSuper)
             elif fmt == TextFmt.SUP_E:
@@ -552,6 +556,12 @@ class ToQTextDocument(Tokenizer):
             elif fmt == TextFmt.FIELD and (field := data.partition(":")[2]):
                 self._usedFields.append((cursor.position(), field))
                 cursor.insertText("0", cFmt)
+            elif fmt == TextFmt.ERR_B:
+                error = True
+                cFmt.setBackground(self._theme.error)
+            elif fmt == TextFmt.ERR_E:
+                error = False
+                cFmt.setBackground(self._theme.highlight if marked else QtTransparent)
 
             # Move pos for next pass
             start = pos
@@ -595,6 +605,15 @@ class ToQTextDocument(Tokenizer):
         bFmt.setProperty(QTextBlockFormat.Property.BackgroundBrush, QBrush(self._theme.text))
 
         newBlock(cursor, bFmt)
+
+    def _genAnchorFmt(self, key: str) -> QTextCharFormat:
+        """Return the default character format with an anchor, if set."""
+        if key and self._useAnchors:
+            cFmt = QTextCharFormat(self._charFmt)
+            cFmt.setAnchorNames([key])
+            cFmt.setAnchor(True)
+            return cFmt
+        return self._charFmt
 
     def _genHeadStyle(self, hType: BlockTyp, hKey: str, rFmt: QTextBlockFormat) -> T_TextStyle:
         """Generate a heading style set."""
