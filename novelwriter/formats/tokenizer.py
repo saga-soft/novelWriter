@@ -22,7 +22,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import logging
-import re
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, NamedTuple
@@ -39,6 +38,8 @@ from novelwriter.text.formats import processComment
 from novelwriter.text.patterns import REGEX_PATTERNS, DialogParser
 
 if TYPE_CHECKING:
+    import re
+
     from pathlib import Path
 
     from novelwriter.core.project import NWProject
@@ -159,6 +160,7 @@ class Tokenizer(ABC):
         "_marginSep",
         "_marginText",
         "_marginTitle",
+        "_missingKeys",
         "_noIndent",
         "_noSep",
         "_noTokens",
@@ -167,6 +169,8 @@ class Tokenizer(ABC):
         "_partStyle",
         "_project",
         "_raw",
+        "_replaceLookup",
+        "_replaceNoCase",
         "_rxAltDialog",
         "_rxMarkdown",
         "_sceneStyle",
@@ -200,6 +204,8 @@ class Tokenizer(ABC):
         self._noTokens = False  # Disable tokenization if they're not needed
         self._statusText = ""  # The item status of the current document
         self._statusFmt: T_Formats = []  # The format of the status label
+        self._replaceLookup: dict[str, str] = {}  # The auto-replace lookup table
+        self._replaceNoCase = False  # Whether auto-replace ignores case
 
         # Blocks and Meta Data (Per Document)
         self._blocks: list[T_Block] = []
@@ -210,6 +216,7 @@ class Tokenizer(ABC):
         self._pages: list[str] = []
         self._counts: dict[str, int] = {}
         self._outline: dict[str, str] = {}
+        self._missingKeys: list[tuple[str, str]] = []
 
         # User Settings
         self._dLocale = CONFIG.locale  # The document locale
@@ -570,6 +577,13 @@ class Tokenizer(ABC):
         self._classes["keyword"] = self._theme.keyword
         self._classes["optional"] = self._theme.optional
 
+        data = self._project.data
+        self._replaceNoCase = data.autoReplaceIgnoreCase
+        if self._replaceNoCase:
+            self._replaceLookup = {k.lower(): v for k, v in data.autoReplace.items()}
+        else:
+            self._replaceLookup = data.autoReplace.copy()
+
     def setBreakNext(self) -> None:
         """Set a page break for next block."""
         self._breakNext = True
@@ -623,14 +637,6 @@ class Tokenizer(ABC):
                     (len(self._statusText), TextFmt.COL_E, ""),
                     (len(self._statusText), TextFmt.B_E, ""),
                 ]
-
-    def doPreProcessing(self) -> None:
-        """Run pre-processing jobs before the text is tokenized."""
-        # Process the user's auto-replace dictionary
-        if entry := self._project.data.autoReplace:
-            replace = {f"<{k}>": v for k, v in entry.items()}
-            rxRep = re.compile("|".join([re.escape(k) for k in replace]), flags=re.DOTALL)
-            self._text = rxRep.sub(lambda x: replace[x.group(0)], self._text)
 
     def tokenizeText(self) -> None:
         """Scan the text for either lines starting with specific
@@ -734,6 +740,8 @@ class Tokenizer(ABC):
                 if cStyle not in self._doComments:
                     continue
 
+                cText = self._formatAutoReplace(cText, nHead)
+
                 if doJustify and not tStyle & BlockFmt.ALIGNED:
                     tStyle |= BlockFmt.JUSTIFY
 
@@ -778,7 +786,7 @@ class Tokenizer(ABC):
                 isPlain = aLine.startswith("# ")
 
                 nHead += 1
-                tText = aLine[2:].strip()
+                tText = self._formatAutoReplace(aLine[2:].strip(), nHead)
                 tType = BlockTyp.HEAD1 if isPlain else BlockTyp.TITLE
                 sHide = self._hidePart if isPlain else False
                 sText = ""
@@ -815,7 +823,7 @@ class Tokenizer(ABC):
                 isPlain = aLine.startswith("## ")
 
                 nHead += 1
-                tText = aLine[3:].strip()
+                tText = self._formatAutoReplace(aLine[3:].strip(), nHead)
                 tType = BlockTyp.HEAD2
                 sHide = self._hideChapter if isPlain else self._hideUnNum
                 tFormat = self._fmtChapter if isPlain else self._fmtUnNum
@@ -852,7 +860,7 @@ class Tokenizer(ABC):
                 isPlain = aLine.startswith("### ")
 
                 nHead += 1
-                tText = aLine[4:].strip()
+                tText = self._formatAutoReplace(aLine[4:].strip(), nHead)
                 tType = BlockTyp.HEAD3
                 sHide = self._hideScene if isPlain else self._hideHScene
                 tFormat = self._fmtScene if isPlain else self._fmtHScene
@@ -894,7 +902,7 @@ class Tokenizer(ABC):
                 # paragraph (skip). For notes, the heading is unchanged.
 
                 nHead += 1
-                tText = aLine[5:].strip()
+                tText = self._formatAutoReplace(aLine[5:].strip(), nHead)
                 tType = BlockTyp.HEAD4
                 tFormat = self._fmtSection
                 if isNovel:
@@ -969,6 +977,7 @@ class Tokenizer(ABC):
                     tStyle |= BlockFmt.IND_R
 
                 # Process formats
+                bLine = self._formatAutoReplace(bLine, nHead)
                 tLine, tFmt = self._extractFormats(bLine, hDialog=hDialog)
                 tBlocks.append((tType, "", tLine, tFmt, tStyle))
 
@@ -1237,6 +1246,25 @@ class Tokenizer(ABC):
     def _formatInt(self, value: int) -> str:
         """Return a localised integer."""
         return self._dLocale.toString(value)
+
+    def _formatAutoReplace(self, text: str, nHead: int) -> str:
+        """Apply the auto-replace lookup table and record missing keys."""
+        if not (self._replaceLookup and "<" in text):
+            return text
+
+        lookup = self._replaceLookup
+        noCase = self._replaceNoCase
+        missing = self._missingKeys
+        tKey = f"{self._handle or ''}:T{nHead:04d}"
+
+        def replace(match: re.Match) -> str:
+            key = match.group(1)
+            if (value := lookup.get(key.lower() if noCase else key)) is not None:
+                return value
+            missing.append((key, tKey))
+            return match.group(0)
+
+        return REGEX_PATTERNS.autoReplace.sub(replace, text)
 
     def _formatComment(self, style: ComStyle, key: str, text: str) -> tuple[str, T_Formats]:
         """Apply formatting to comments and notes."""

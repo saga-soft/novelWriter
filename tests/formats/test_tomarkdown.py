@@ -366,7 +366,6 @@ def testToMarkdown_Save(mockGUI: MockGuiMain, fncPath: Path):
 
     for i in range(len(docText)):
         md._text = docText[i]
-        md.doPreProcessing()
         md.tokenizeText()
         md.doConvert()
 

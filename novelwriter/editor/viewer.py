@@ -304,7 +304,6 @@ class GuiDocViewer(QTextBrowser):
         # See issue #298
         try:
             qDoc.setText(tHandle)
-            qDoc.doPreProcessing()
             qDoc.tokenizeText()
             qDoc.doConvert()
             qDoc.closeDocument()

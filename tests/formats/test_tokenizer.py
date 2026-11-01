@@ -231,7 +231,6 @@ def testTokenizer_TextOps(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain,
         "#### Replace\n\n"
         "Also, replace <A> and <B>.\n\n"
     )
-    docTextR = docText.replace("<A>", "this").replace("<B>", "that")
 
     nDoc = project.storage.getDocument(C.hSceneDoc)
     assert nDoc.writeDocument(docText)
@@ -324,9 +323,15 @@ def testTokenizer_TextOps(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain,
     assert tokens._statusText == ""
     assert tokens._statusFmt == []
 
-    # Pre Processing
-    tokens.doPreProcessing()
-    assert tokens._text == docTextR
+    # Auto-Replace Lookup
+    tokens.initDocument()
+    assert tokens._replaceLookup == {"A": "this", "B": "that"}
+    assert tokens._replaceNoCase is False
+
+    project.data.setAutoReplace({"A": "this", "B": "that"}, True)
+    tokens.initDocument()
+    assert tokens._replaceLookup == {"a": "this", "b": "that"}
+    assert tokens._replaceNoCase is True
 
 
 @pytest.mark.core
@@ -1918,6 +1923,65 @@ def testTokenizer_LineBreak(mockGUI: MockGuiMain):
     tokens._text = "Hello\nWorld"
     tokens.tokenizeText()
     assert tokens._blocks == [(BlockTyp.TEXT, "", "Hello World", [], BlockFmt.NONE)]
+
+
+@pytest.mark.core
+def testTokenizer_AutoReplace(mockGUI: MockGuiMain):
+    """Test auto-replace of keys in the Tokenizer class."""
+    project = NWProject()
+    tokens = BareTokenizer(project)
+    tokens._handle = TMH
+    tokens.setCommentType(nwComment.PLAIN, True)
+
+    text = (
+        "Before <A>\n\n"
+        "# Head <A>\n\n"
+        "## Head <A>\n\n"
+        "### Head <X>\n\n"
+        "#### Head <A>\n\n"
+        "* Item <A>\n"
+        "#. Item <b>\n\n"
+        "Text <A> and <B> and <Y>\n\n"
+        "% Comment <A>\n\n"
+    )
+
+    # Without a lookup table, nothing is processed
+    tokens._text = text
+    tokens.initDocument()
+    tokens.tokenizeText()
+    assert tokens._blocks[0] == (BlockTyp.TEXT, "", "Before <A>", [], BlockFmt.NONE)
+    assert tokens._missingKeys == []
+
+    # Replace in headings, text, lists and comments
+    project.data.setAutoReplace({"A": "this", "B": "that"}, False)
+    tokens._text = text
+    tokens.initDocument()
+    tokens.tokenizeText()
+    assert [b[2] for b in tokens._blocks] == [
+        "Before this",
+        "Head this",
+        "Head this",
+        "Head <X>",
+        "Head this",
+        "Item this",
+        "Item <b>",
+        "Text this and that and <Y>",
+        "Comment: Comment this",
+    ]
+    assert tokens._missingKeys == [
+        ("X", f"{TMH}:T0003"),
+        ("b", f"{TMH}:T0004"),
+        ("Y", f"{TMH}:T0004"),
+    ]
+
+    # Ignore case
+    project.data.setAutoReplace({"A": "this", "B": "that"}, True)
+    tokens._missingKeys.clear()
+    tokens._text = "Text <a> and <B> and <c>\n"
+    tokens.initDocument()
+    tokens.tokenizeText()
+    assert tokens._blocks == [(BlockTyp.TEXT, "", "Text this and that and <c>", [], BlockFmt.NONE)]
+    assert tokens._missingKeys == [("c", f"{TMH}:T0000")]
 
 
 @pytest.mark.core
