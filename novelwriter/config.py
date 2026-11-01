@@ -57,6 +57,7 @@ from novelwriter.common import (
     formatTimeStamp,
     joinLines,
     languageName,
+    minmax,
     processDialogSymbols,
     safeExists,
     safeIsDir,
@@ -64,7 +65,7 @@ from novelwriter.common import (
     simplified,
     uniqueCompact,
 )
-from novelwriter.constants import nwFiles, nwQuotes, nwUnicode, trStats
+from novelwriter.constants import nwConst, nwFiles, nwQuotes, nwUnicode, trStats
 from novelwriter.enum import nwTheme
 from novelwriter.error import formatException, logException
 from novelwriter.formats.configparser import NConfigParser
@@ -630,6 +631,11 @@ class Config:
                 font = QFontDatabase.systemFont(QFontDatabase.SystemFont.GeneralFont)
             self.textFont = fontMatcher(font)
             logger.debug("Text font set to: %s", describeFont(self.textFont))
+
+        # Copy to avoid changing the font passed in, and skip pixel sized fonts
+        if (size := self.textFont.pointSizeF()) > 0.0:
+            self.textFont = QFont(self.textFont)
+            self.textFont.setPointSizeF(minmax(size, nwConst.ZOOM_MIN_SIZE, nwConst.ZOOM_MAX_SIZE))
 
     def setPrimaryCount(self, useCharCount: bool) -> None:
         """Set the primary count unit. This also updates the unit label."""

@@ -27,19 +27,28 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from PyQt6.QtCore import QEvent, QMimeData, QPointF, Qt, QUrl
-from PyQt6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragMoveEvent, QDropEvent, QMouseEvent, QTextCursor
+from PyQt6.QtCore import QEvent, QMimeData, QPoint, QPointF, Qt, QUrl
+from PyQt6.QtGui import (
+    QAction,
+    QDesktopServices,
+    QDragEnterEvent,
+    QDragMoveEvent,
+    QDropEvent,
+    QMouseEvent,
+    QTextCursor,
+    QWheelEvent,
+)
 from PyQt6.QtWidgets import QApplication, QMenu, QTextBrowser
 from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import decodeMimeHandles
-from novelwriter.constants import nwUnicode
+from novelwriter.constants import nwConst, nwUnicode
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwChange, nwDocAction
 from novelwriter.formats.toqdoc import ToQTextDocument
 from novelwriter.guimain import GuiMain
-from novelwriter.types import QtModNone, QtMouseLeft, QtMouseMiddle, QtSelectBlock, QtSelectWord
+from novelwriter.types import QtModCtrl, QtModNone, QtMouseLeft, QtMouseMiddle, QtSelectBlock, QtSelectWord
 
 from tests.helpers import C, MockRnd, buildTestProject
 from tests.mocked import causeException
@@ -260,6 +269,90 @@ def testGuiDocViewer_Zoom(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd:
     qtbot.mouseClick(docFooter.zoomLabel, QtMouseLeft)
     assert docViewer.font().pointSizeF() == basePt
     assert docFooter.zoomLabel.text().startswith(f"{basePt:n}")
+
+    # Zooming rebuilds the document at the new font size
+    qDoc = docViewer.document()
+    assert docViewer.docAction(nwDocAction.ZOOM_IN) is True
+    assert docViewer.document() is not qDoc
+    assert docViewer.document().defaultFont().pointSizeF() == basePt + 1  # type: ignore
+
+    # The zoom is kept when loading a new document
+    nwGUI.docPanes.viewDocument(C.hSceneDoc)
+    assert docViewer.font().pointSizeF() == basePt + 1
+    assert docViewer.document().defaultFont().pointSizeF() == basePt + 1  # type: ignore
+    assert CONFIG.textFont.pointSizeF() == basePt
+    assert docViewer.docAction(nwDocAction.ZOOM_RESET) is True
+    assert docViewer.document().defaultFont().pointSizeF() == basePt  # type: ignore
+
+    # Zoom with Ctrl+Scroll wheel rebuilds the document after a delay
+    position = QPointF(10, 10)
+    zoomInEvent = QWheelEvent(
+        position,
+        position,
+        QPoint(0, 0),
+        QPoint(0, 240),
+        Qt.MouseButton.NoButton,
+        QtModCtrl,
+        Qt.ScrollPhase.NoScrollPhase,
+        False,
+    )
+    qDoc = docViewer.document()
+    docViewer.wheelEvent(zoomInEvent)
+    assert docViewer.font().pointSizeF() == basePt + 2
+    assert docViewer.document() is qDoc
+    assert docViewer._timerZoom.isActive()
+    qtbot.waitUntil(lambda: docViewer.document() is not qDoc)
+    assert docViewer.document().defaultFont().pointSizeF() == basePt + 2  # type: ignore
+
+    # A no-op Ctrl+Scroll does nothing
+    noopEvent = QWheelEvent(
+        position,
+        position,
+        QPoint(0, 0),
+        QPoint(0, 0),
+        Qt.MouseButton.NoButton,
+        QtModCtrl,
+        Qt.ScrollPhase.NoScrollPhase,
+        False,
+    )
+    docViewer.wheelEvent(noopEvent)
+    assert docViewer.font().pointSizeF() == basePt + 2
+    assert not docViewer._timerZoom.isActive()
+
+    # A regular scroll does not zoom
+    scrollEvent = QWheelEvent(
+        position,
+        position,
+        QPoint(0, 0),
+        QPoint(0, 120),
+        Qt.MouseButton.NoButton,
+        QtModNone,
+        Qt.ScrollPhase.NoScrollPhase,
+        False,
+    )
+    docViewer.wheelEvent(scrollEvent)
+    assert docViewer.font().pointSizeF() == basePt + 2
+
+    # High resolution wheel steps add up to whole points in both directions
+    for dy, size in ((-40, 2), (-40, 2), (-40, 1), (40, 1), (40, 1), (40, 2)):
+        hiResEvent = QWheelEvent(
+            position,
+            position,
+            QPoint(0, 0),
+            QPoint(0, dy),
+            Qt.MouseButton.NoButton,
+            QtModCtrl,
+            Qt.ScrollPhase.NoScrollPhase,
+            False,
+        )
+        docViewer.wheelEvent(hiResEvent)
+        assert docViewer.font().pointSizeF() == basePt + size
+
+    # Zoom is capped at the minimum and maximum size
+    docViewer.zoomOut(100)
+    assert docViewer.font().pointSizeF() == nwConst.ZOOM_MIN_SIZE
+    docViewer.zoomIn(100)
+    assert docViewer.font().pointSizeF() == nwConst.ZOOM_MAX_SIZE
 
 
 @pytest.mark.gui

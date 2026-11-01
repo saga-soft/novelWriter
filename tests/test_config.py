@@ -32,11 +32,11 @@ from shutil import copyfile
 import pytest
 
 from PyQt6.QtCore import QRect, Qt
-from PyQt6.QtGui import QFontDatabase
+from PyQt6.QtGui import QFont, QFontDatabase
 
 from novelwriter import CONFIG
 from novelwriter.config import MOVED_CONFIGS, Config, RecentPaths, RecentProjects
-from novelwriter.constants import nwFiles
+from novelwriter.constants import nwConst, nwFiles
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwTheme
 from novelwriter.formats.configparser import NConfigParser
@@ -353,6 +353,26 @@ def testConfig_Fonts(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
         mp.setattr(QFontDatabase, "families", lambda *a: ["Helvetica"])
         conf.setTextFont(None)
         assert conf.textFont.family() == "Helvetica"
+
+    # Text font size is capped to the zoom range, without changing the font passed in
+    font = QFont(conf.textFont)
+    font.setPointSizeF(2.0)
+    conf.setTextFont(font)
+    assert conf.textFont.pointSizeF() == nwConst.ZOOM_MIN_SIZE
+    assert font.pointSizeF() == 2.0
+
+    font.setPointSizeF(100.0)
+    conf.setTextFont(font.toString())
+    assert conf.textFont.pointSizeF() == nwConst.ZOOM_MAX_SIZE
+
+    font.setPointSizeF(12.0)
+    conf.setTextFont(font)
+    assert conf.textFont.pointSizeF() == 12.0
+
+    # Pixel sized fonts are left as is
+    font.setPixelSize(4)
+    conf.setTextFont(font)
+    assert conf.textFont.pixelSize() == 4
 
 
 @pytest.mark.base

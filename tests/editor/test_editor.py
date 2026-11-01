@@ -1652,6 +1652,27 @@ def testGuiDocEditor_Zoom(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd:
     docEditor.wheelEvent(scrollEvent)
     assert docEditor.font().pointSizeF() == basePt
 
+    # High resolution wheel steps add up to whole points in both directions
+    for dy, size in ((-40, 0), (-40, 0), (-40, -1), (40, -1), (40, -1), (40, 0)):
+        hiResEvent = QWheelEvent(
+            position,
+            position,
+            QPoint(0, 0),
+            QPoint(0, dy),
+            Qt.MouseButton.NoButton,
+            QtModCtrl,
+            Qt.ScrollPhase.NoScrollPhase,
+            False,
+        )
+        docEditor.wheelEvent(hiResEvent)
+        assert docEditor.font().pointSizeF() == basePt + size
+
+    # Zoom is capped at the minimum and maximum size
+    docEditor.zoomOut(100)
+    assert docEditor.font().pointSizeF() == nwConst.ZOOM_MIN_SIZE
+    docEditor.zoomIn(100)
+    assert docEditor.font().pointSizeF() == nwConst.ZOOM_MAX_SIZE
+
 
 @pytest.mark.gui
 def testGuiDocEditor_Navigation(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, ipsumText: list[str], mockRnd: MockRnd):

@@ -46,6 +46,8 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Generator
     from types import MethodType
 
+    from novelwriter.types import T_Num
+
 logger = logging.getLogger(__name__)
 
 _Type = TypeVar("_Type")
@@ -201,9 +203,9 @@ def hexToInt(value: Any, default: int = 0) -> int:
     return default
 
 
-def minmax(value: int, minVal: int, maxVal: int) -> int:
-    """Check that an value is between min and max value (inclusive)."""
-    return min(maxVal, max(minVal, value))
+def minmax(value: T_Num, minimum: T_Num, maximum: T_Num) -> T_Num:
+    """Check that a value is between min and max value (inclusive)."""
+    return min(maximum, max(minimum, value))
 
 
 def checkIntTuple(value: int, valid: tuple | list | set, default: int) -> int:
