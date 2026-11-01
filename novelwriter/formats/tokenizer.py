@@ -180,6 +180,7 @@ class Tokenizer(ABC):
         "_skipKeywords",
         "_statusFmt",
         "_statusText",
+        "_tabSize",
         "_text",
         "_textFont",
         "_theme",
@@ -220,6 +221,7 @@ class Tokenizer(ABC):
         self._firstIndent = False  # Enable first line indent
         self._firstWidth = 1.40  # First line indent in units of em
         self._indentFirst = False  # Indent first paragraph
+        self._tabSize = 3.0  # Tab stop distance in units of em
         self._doJustify = False  # Justify text
         self._justifyOnBreak = True  # Justify text on manual line breaks
         self._doBodyText = True  # Include body text
@@ -439,6 +441,10 @@ class Tokenizer(ABC):
         self._firstIndent = state
         self._firstWidth = indent
         self._indentFirst = first
+
+    def setTabSize(self, size: float) -> None:
+        """Set the tab stop distance in units of em."""
+        self._tabSize = size
 
     def setJustify(self, enabled: bool, onBreak: bool) -> None:
         """Enable or disable text justification."""

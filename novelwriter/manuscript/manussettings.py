@@ -49,8 +49,8 @@ from PyQt6.QtWidgets import (
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import describeFont, fontMatcher, languageName, processLangCode, qtAddAction, qtLambda
-from novelwriter.constants import nwHeadFmt, nwKeyWords, nwLabels, nwStyles, nwUnicode, trConst
-from novelwriter.enum import nwStandardButton, nwToolButton
+from novelwriter.constants import nwHeadFmt, nwKeyWords, nwLabels, nwStyles, nwUnicode, trConst, trUnit
+from novelwriter.enum import nwStandardButton, nwStdUnit, nwToolButton
 from novelwriter.extensions.configlayout import NColorLabel, NFixedPage, NScrollableForm, NScrollablePage
 from novelwriter.extensions.modified import (
     NComboBox,
@@ -1060,6 +1060,8 @@ class _FormattingTab(NScrollableForm):
         iPx = SHARED.theme.baseIconHeight
         iSz = SHARED.theme.baseIconSize
 
+        trEm = trUnit(nwStdUnit.EM)
+
         # Text Content
         # ============
 
@@ -1128,7 +1130,12 @@ class _FormattingTab(NScrollableForm):
         # Line Height
         self.lineHeight = NDoubleSpinBox(self, minVal=0.75, maxVal=3.0, step=0.05, prec=2)
         self.lineHeight.setFixedNumbersWidth(4)
-        self.addRow(self._build.getLabel("format.lineHeight"), self.lineHeight, unit="em")
+        self.addRow(self._build.getLabel("format.lineHeight"), self.lineHeight, unit=trEm)
+
+        # Tab Size
+        self.tabSize = NDoubleSpinBox(self, minVal=0.0, maxVal=12.0, step=0.1, prec=2)
+        self.tabSize.setFixedNumbersWidth(5)
+        self.addRow(self._build.getLabel("format.tabSize"), self.tabSize, unit=trEm)
 
         # Text Options
         self.justifyText = NSwitch(self, height=iPx)
@@ -1178,7 +1185,7 @@ class _FormattingTab(NScrollableForm):
         self.indentWidth.setFixedNumbersWidth(4)
 
         self.addRow(self._build.getLabel("format.firstLineIndent"), self.firstIndent)
-        self.addRow(self._build.getLabel("format.firstIndentWidth"), self.indentWidth, unit="em")
+        self.addRow(self._build.getLabel("format.firstIndentWidth"), self.indentWidth, unit=trEm)
         self.addRow(self._build.getLabel("format.indentFirstPar"), self.indentFirstPar)
 
         # Size & Margins
@@ -1594,6 +1601,7 @@ class _FormattingTab(NScrollableForm):
         self.textFont.setCursorPosition(0)
 
         self.lineHeight.setValue(self._build.getFloat("format.lineHeight"))
+        self.tabSize.setValue(self._build.getFloat("format.tabSize"))
         self.justifyText.setChecked(self._build.getBool("format.justifyText"))
         self.justifyOnBreak.setChecked(self._build.getBool("format.justifyOnBreak"))
         self.stripUnicode.setChecked(self._build.getBool("format.stripUnicode"))
@@ -1705,6 +1713,7 @@ class _FormattingTab(NScrollableForm):
         # Text Format
         self._build.setValue("format.textFont", self._textFont.toString())
         self._build.setValue("format.lineHeight", self.lineHeight.value())
+        self._build.setValue("format.tabSize", self.tabSize.value())
 
         self._build.setValue("format.justifyText", self.justifyText.isChecked())
         self._build.setValue("format.justifyOnBreak", self.justifyOnBreak.isChecked())

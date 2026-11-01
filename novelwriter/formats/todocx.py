@@ -1212,10 +1212,13 @@ class ToDocX(Tokenizer):
             contentType=f"{WORD_BASE}.settings+xml",
         )
 
+        # Schema order is mirrorMargins, defaultTabStop, evenAndOddHeaders
         if self._doublePages:
             xmlSubElem(xRoot, _wTag("mirrorMargins"))
-            if evenHeaders:
-                xmlSubElem(xRoot, _wTag("evenAndOddHeaders"))
+        tabStop = str(int(20.0 * self._tabSize * self._fontSize))
+        xmlSubElem(xRoot, _wTag("defaultTabStop"), attrib={W_VAL: tabStop})
+        if self._doublePages and evenHeaders:
+            xmlSubElem(xRoot, _wTag("evenAndOddHeaders"))
 
         xSet = xmlSubElem(xRoot, _wTag("footnotePr"))
         xmlSubElem(xSet, _wTag("numFmt"), attrib={W_VAL: "decimal"})

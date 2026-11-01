@@ -86,6 +86,7 @@ SETTINGS_TEMPLATE: dict[str, tuple[type, T_BuildValue]] = {
 
     "format.textFont":         (str, CONFIG.textFont.toString()),
     "format.lineHeight":       (float, 1.15),
+    "format.tabSize":          (float, 3.0),
     "format.justifyText":      (bool, False),
     "format.justifyOnBreak":   (bool, True),
     "format.stripUnicode":     (bool, False),
@@ -165,6 +166,7 @@ SETTINGS_LABELS = {
     "format.grpFormat":        QT_TRANSLATE_NOOP("Builds", "Text Format"),
     "format.textFont":         QT_TRANSLATE_NOOP("Builds", "Text font"),
     "format.lineHeight":       QT_TRANSLATE_NOOP("Builds", "Line height"),
+    "format.tabSize":          QT_TRANSLATE_NOOP("Builds", "Tab size"),
     "format.justifyText":      QT_TRANSLATE_NOOP("Builds", "Justify text margins"),
     "format.justifyOnBreak":   QT_TRANSLATE_NOOP("Builds", "Justify text on manual line breaks"),
     "format.stripUnicode":     QT_TRANSLATE_NOOP("Builds", "Replace Unicode characters"),

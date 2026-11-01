@@ -290,6 +290,7 @@ class DocumentBuilder:
             self._build.getFloat("format.firstIndentWidth"),
             self._build.getBool("format.indentFirstPar"),
         )
+        bldObj.setTabSize(self._build.getFloat("format.tabSize"))
         bldObj.setHeadingStyles(
             self._build.getBool("format.colorHeadings"),
             self._build.getBool("format.boldHeadings"),
