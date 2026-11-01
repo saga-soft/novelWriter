@@ -1358,6 +1358,23 @@ class _FormattingTab(NScrollableForm):
             button=self.btnTextProps,
         )
 
+        # List
+        self.listMarginT = NDoubleSpinBox(self, minVal=0.0, maxVal=10.0, step=0.1)
+        self.listMarginT.setFixedNumbersWidth(4)
+        self.listMarginB = NDoubleSpinBox(self, minVal=0.0, maxVal=10.0, step=0.1)
+        self.listMarginB.setFixedNumbersWidth(4)
+        self.btnListProps = SHARED.theme.getIconButton(nwToolButton.REVERT, self)
+        self.btnListProps.clicked.connect(self._resetListProps)
+
+        self.pixTTT = QLabel(self)
+        self.pixTTB = QLabel(self)
+
+        self.addRow(
+            self._build.getLabel("format.listMargin"),
+            [self.pixTTT, self.listMarginT, iSp, self.pixTTB, self.listMarginB],
+            button=self.btnListProps,
+        )
+
         # Separator
         self.sepMarginT = NDoubleSpinBox(self, minVal=0.0, maxVal=10.0, step=0.1)
         self.sepMarginT.setFixedNumbersWidth(4)
@@ -1645,6 +1662,8 @@ class _FormattingTab(NScrollableForm):
         self.h4MarginB.setValue(self._build.getFloat("format.h4MarginB"))
         self.textMarginT.setValue(self._build.getFloat("format.textMarginT"))
         self.textMarginB.setValue(self._build.getFloat("format.textMarginB"))
+        self.listMarginT.setValue(self._build.getFloat("format.listMarginT"))
+        self.listMarginB.setValue(self._build.getFloat("format.listMarginB"))
         self.sepMarginT.setValue(self._build.getFloat("format.sepMarginT"))
         self.sepMarginB.setValue(self._build.getFloat("format.sepMarginB"))
         self.lineForMargin.setChecked(self._build.getBool("format.lineForMargin"))
@@ -1752,6 +1771,8 @@ class _FormattingTab(NScrollableForm):
         self._build.setValue("format.h4MarginB", self.h4MarginB.value())
         self._build.setValue("format.textMarginT", self.textMarginT.value())
         self._build.setValue("format.textMarginB", self.textMarginB.value())
+        self._build.setValue("format.listMarginT", self.listMarginT.value())
+        self._build.setValue("format.listMarginB", self.listMarginB.value())
         self._build.setValue("format.sepMarginT", self.sepMarginT.value())
         self._build.setValue("format.sepMarginB", self.sepMarginB.value())
         self._build.setValue("format.lineForMargin", self.lineForMargin.isChecked())
@@ -1943,13 +1964,19 @@ class _FormattingTab(NScrollableForm):
 
     @pyqtSlot()
     def _resetTextProps(self) -> None:
-        """Reset the text size and margins to default."""
+        """Reset the text margins to default."""
         self.textMarginT.setValue(nwStyles.T_MARGIN["TT"][0])
         self.textMarginB.setValue(nwStyles.T_MARGIN["TT"][1])
 
     @pyqtSlot()
+    def _resetListProps(self) -> None:
+        """Reset the list margins to default."""
+        self.listMarginT.setValue(nwStyles.T_MARGIN["LI"][0])
+        self.listMarginB.setValue(nwStyles.T_MARGIN["LI"][1])
+
+    @pyqtSlot()
     def _resetSepProps(self) -> None:
-        """Reset the separator size and margins to default."""
+        """Reset the separator margins to default."""
         self.sepMarginT.setValue(nwStyles.T_MARGIN["SP"][0])
         self.sepMarginB.setValue(nwStyles.T_MARGIN["SP"][1])
 
