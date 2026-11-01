@@ -26,6 +26,7 @@ import logging
 import sys
 import tomllib
 
+from importlib import import_module
 from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING, Final
@@ -170,7 +171,7 @@ class Config:
         "guiFont",
         "guiForceRTL",
         "guiLocale",
-        "hasEnchant",
+        "hasSpellCheck",
         "hideFocusFooter",
         "hideHScroll",
         "hideVScroll",
@@ -480,7 +481,7 @@ class Config:
         self._parseBuildMeta()
 
         # Packages
-        self.hasEnchant = False  # The pyenchant package
+        self.hasSpellCheck = False  # The spell check backend package
 
     ##
     #  Properties
@@ -1144,14 +1145,15 @@ class Config:
 
     def _checkOptionalPackages(self) -> None:
         """Check optional packages used by some features."""
+        package = "AppKit" if self.osDarwin else "enchant"
         try:
-            import enchant  # noqa: F401
+            import_module(package)
         except ImportError:
-            self.hasEnchant = False
-            logger.debug("Checking package 'pyenchant': Missing")
+            self.hasSpellCheck = False
+            logger.debug("Checking package '%s': Missing", package)
         else:
-            self.hasEnchant = True
-            logger.debug("Checking package 'pyenchant': OK")
+            self.hasSpellCheck = True
+            logger.debug("Checking package '%s': OK", package)
 
     def _prepareFont(self, font: QFont, kind: str) -> None:
         """Check Unicode availability in font. This also initialises any

@@ -408,14 +408,15 @@ def testConfig_Internal(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
     assert conf._packList(["A", 1, 2.0, None, False]) == "A, 1, 2.0, None, False"
 
     # Function _checkOptionalPackages
-    # (Assumes enchant package exists and is importable)
+    # (Assumes the platform spell check package is importable)
     conf._checkOptionalPackages()
-    assert conf.hasEnchant is True
+    assert conf.hasSpellCheck is True
 
     with monkeypatch.context() as mp:
+        mp.setitem(sys.modules, "AppKit", None)
         mp.setitem(sys.modules, "enchant", None)
         conf._checkOptionalPackages()
-        assert conf.hasEnchant is False
+        assert conf.hasSpellCheck is False
 
 
 @pytest.mark.base

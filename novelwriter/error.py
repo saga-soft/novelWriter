@@ -141,11 +141,16 @@ class ErrorMessage(QDialog):
             kernelVersion = "Unknown"
 
         try:
-            import enchant
+            if CONFIG.osDarwin:
+                import objc  # type: ignore
 
-            enchantVersion = enchant.__version__
+                spellCheck = f"AppleSpell (PyObjC {objc.__version__})"  # type: ignore
+            else:
+                import enchant
+
+                spellCheck = f"Enchant {enchant.__version__}"
         except Exception:
-            enchantVersion = "Unknown"
+            spellCheck = "Unknown"
 
         try:
             trace = "\n".join(format_tb(exTrace))
@@ -156,7 +161,7 @@ class ErrorMessage(QDialog):
                 f"Host OS: {sys.platform} ({kernelVersion})\n"
                 f"Python: {sys.version.split()[0]} ({sys.hexversion:#x})\n"
                 f"Qt: {QT_VERSION_STR}, PyQt: {PYQT_VERSION_STR}\n"
-                f"Enchant: {enchantVersion}\n\n"
+                f"Spell Check: {spellCheck}\n\n"
                 f"{exType.__name__}:\n{exValue!s}\n\n"
                 f"Traceback:\n{trace}\n"
             )

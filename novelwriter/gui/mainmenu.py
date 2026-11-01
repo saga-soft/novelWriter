@@ -910,7 +910,7 @@ class GuiMainMenu(QMenuBar):
         self.aEditWordList.triggered.connect(self.mainGui.showProjectWordListDialog)
 
         # Tools > Add Dictionaries
-        if CONFIG.osWindows or CONFIG.isDebug:
+        if CONFIG.osWindows or (CONFIG.isDebug and not CONFIG.osDarwin):
             self.aAddDicts = qtAddAction(self.toolsMenu, self.tr("Add Dictionaries"))
             self.aAddDicts.triggered.connect(self.mainGui.showDictionariesDialog)
 
