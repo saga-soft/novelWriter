@@ -40,7 +40,7 @@
       <style:text-properties style:font-name="Arial" fo:font-family="Arial" fo:font-size="12pt" fo:font-weight="normal" />
     </style:style>
     <style:style style:name="First_20_line_20_indent" style:family="paragraph" style:display-name="First line indent" style:parent-style-name="Text_20_body" style:class="text">
-      <style:paragraph-properties fo:text-indent="0.593cm" />
+      <style:paragraph-properties fo:text-indent="0.847cm" />
     </style:style>
     <style:style style:name="Text_20_Meta" style:family="paragraph" style:display-name="Text Meta" style:parent-style-name="Standard" style:class="text">
       <style:paragraph-properties fo:margin-top="0.000cm" fo:margin-bottom="0.254cm" fo:line-height="150%" />

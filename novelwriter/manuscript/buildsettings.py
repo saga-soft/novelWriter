@@ -98,7 +98,7 @@ SETTINGS_TEMPLATE: dict[str, tuple[type, T_BuildValue]] = {
     "format.upperHeadings":    (bool, False),
     "format.showStatus":       (bool, False),
     "format.firstLineIndent":  (bool, False),
-    "format.firstIndentWidth": (float, 1.4),
+    "format.firstIndentWidth": (float, 2.0),
     "format.indentFirstPar":   (bool, False),
     "format.titleSize":        (float, nwStyles.H_SIZES[0]),
     "format.h1Size":           (float, nwStyles.H_SIZES[1]),
