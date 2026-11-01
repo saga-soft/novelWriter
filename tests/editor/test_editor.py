@@ -1174,6 +1174,30 @@ def testGuiDocEditor_UpdateSyntaxColors(
 
 
 @pytest.mark.gui
+def testGuiDocEditor_UpdateReplaceKeys(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
+    """Test that auto-replace key changes refresh the highlighter."""
+    buildTestProject(NWProject(), projPath)
+    nwGUI.openProject(projPath)
+    docEditor = nwGUI.docEditor
+    syntax = docEditor._qDocument.syntaxHighlighter
+
+    # No document open, nothing is updated
+    nwGUI.docPanes.closeDocument()
+    SHARED.project.data.setAutoReplace({"Name": "Bob"})
+    docEditor.updateReplaceKeys()
+    assert syntax._replaceKeys == frozenset()
+
+    # Opening a document loads the keys
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
+    assert syntax._replaceKeys == frozenset({"Name"})
+
+    # Changed keys are picked up
+    SHARED.project.data.setAutoReplace({"Name": "Bob", "Place": "Here"})
+    docEditor.updateReplaceKeys()
+    assert syntax._replaceKeys == frozenset({"Name", "Place"})
+
+
+@pytest.mark.gui
 def testGuiDocEditor_Actions(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, ipsumText: list[str], mockRnd: MockRnd):
     """Test the document actions. This is not an extensive test of the
     action features, just that the actions are actually called. The

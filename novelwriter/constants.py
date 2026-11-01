@@ -102,6 +102,7 @@ class nwRegEx:
     FMT_LN = r"(?<!\\)(\[)([^\[\]]+)(?<!\\)(\]\()([^\s()]+)(?<!\\)(\))"
     FMT_SC = r"(?i)(?<!\\)(\[(?:b|/b|i|/i|s|/s|u|/u|m|/m|sup|/sup|sub|/sub|br)\])"
     FMT_SV = r"(?i)(?<!\\)(\[(?:footnote|field):)(.+?)(?<!\\)(\])"
+    AUTO_REP = r"<([^\s<>]+)>"
 
 
 class nwShortcode:

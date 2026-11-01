@@ -63,6 +63,7 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         "_isInactive",
         "_isNovel",
         "_minRules",
+        "_replaceKeys",
         "_tHandle",
         "_txtRules",
     )
@@ -75,6 +76,7 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         self._tHandle = None
         self._isNovel = False
         self._isInactive = False
+        self._replaceKeys: frozenset[str] = frozenset()
 
         self._hStyles: dict[str, QTextCharFormat] = {}
         self._minRules: list[tuple[re.Pattern, dict[int, QTextCharFormat]]] = []
@@ -248,15 +250,6 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         self._minRules.append((rxRule, hlRule))
         self._txtRules.append((rxRule, hlRule))
 
-        # Auto-Replace Tags
-        rxRule = re.compile(r"<(\S+?)>")
-        hlRule = {
-            0: self._hStyles["replace"],
-        }
-        self._minRules.append((rxRule, hlRule))
-        self._txtRules.append((rxRule, hlRule))
-        self._cmnRules.append((rxRule, hlRule))
-
     ##
     #  Setters
     ##
@@ -269,7 +262,16 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         if item := SHARED.project.tree[tHandle]:
             self._isNovel = item.isDocumentLayout()
             self._isInactive = item.isInactiveClass()
+        self.updateReplaceKeys()
         logger.debug("Syntax highlighter enabled for item '%s'", tHandle)
+
+    def updateReplaceKeys(self) -> bool:
+        """Update the auto-replace keys, and return True if changed."""
+        keys = frozenset(SHARED.project.data.autoReplace)
+        if keys != self._replaceKeys:
+            self._replaceKeys = keys
+            return True
+        return False
 
     ##
     #  Methods
@@ -486,6 +488,24 @@ class GuiDocHighlighter(QSyntaxHighlighter):
                                 if not cFmt.property(QtTextUserProperty):
                                     cFmt.merge(hFmt)
                                     self.setFormat(x, 1, cFmt)
+
+            if self._replaceKeys and "<" in text:
+                hFmt = self._hStyles["replace"]
+                keys = self._replaceKeys
+                matches = [r for r in REGEX_PATTERNS.autoReplace.finditer(text, offset) if r.group(1) in keys]
+                if utf16Map:
+                    for res in matches:
+                        for x in range(res.start(0), res.end(0)):
+                            m = utf16Map[x]
+                            cFmt = self.format(m)
+                            cFmt.merge(hFmt)
+                            self.setFormat(m, utf16Map[x + 1] - m, cFmt)
+                else:
+                    for res in matches:
+                        for x in range(res.start(0), res.end(0)):
+                            cFmt = self.format(x)
+                            cFmt.merge(hFmt)
+                            self.setFormat(x, 1, cFmt)
 
         data = self.currentBlockUserData()
         if not isinstance(data, TextBlockData):

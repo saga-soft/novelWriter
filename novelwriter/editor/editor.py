@@ -603,6 +603,11 @@ class GuiDocEditor(QTextEdit):
                 selection.format = self._formatErrFormat
         self._applyExtraSelections()
 
+    def updateReplaceKeys(self) -> None:
+        """Rehighlight the document if the auto-replace keys changed."""
+        if self._docHandle and self._qDocument.syntaxHighlighter.updateReplaceKeys():
+            self._qDocument.syntaxHighlighter.rehighlight()
+
     def initEditor(self) -> None:
         """Initialise or re-initialise the editor with the user's
         settings. This function is both called when the editor is
