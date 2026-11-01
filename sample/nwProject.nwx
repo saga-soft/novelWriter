@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<novelWriterXML appVersion="26.3b1" hexVersion="0x260300b1" fileVersion="1.6" fileRevision="0" timeStamp="2026-11-01 16:58:33">
-  <project id="e2be99af-f9bf-4403-857a-c3d1ac25abea" saveCount="2433" autoCount="437" editTime="112772" indexRevision="239">
+<novelWriterXML appVersion="26.3b1" hexVersion="0x260300b1" fileVersion="1.6" fileRevision="1" timeStamp="2026-11-01 18:00:41">
+  <project id="e2be99af-f9bf-4403-857a-c3d1ac25abea" saveCount="2441" autoCount="437" editTime="112928" indexRevision="240">
     <name>Sample Project</name>
     <author>Jane Smith</author>
   </project>
@@ -19,7 +19,7 @@
       <entry key="novel">7031beac91f75</entry>
       <entry key="story">7031beac91f75</entry>
     </lastHandle>
-    <autoReplace>
+    <autoReplace ignoreCase="no">
       <entry key="A">B</entry>
       <entry key="B">E</entry>
       <entry key="C">D</entry>
@@ -48,7 +48,7 @@
       <name status="sc24b8f" import="ia857f0">Novel</name>
     </item>
     <item handle="53b69b83cdafc" parent="7031beac91f75" root="7031beac91f75" order="0" type="FILE" class="NOVEL" layout="DOCUMENT">
-      <meta expanded="no" heading="H1" charCount="283" wordCount="50" paraCount="5" cursorPos="413" />
+      <meta expanded="no" heading="H1" charCount="283" wordCount="50" paraCount="5" cursorPos="79" />
       <name status="sc24b8f" import="ia857f0" active="yes">Title Page</name>
     </item>
     <item handle="974e400180a99" parent="7031beac91f75" root="7031beac91f75" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
@@ -68,7 +68,7 @@
       <name status="s90e6c9" import="ia857f0" active="yes">Making a Scene</name>
     </item>
     <item handle="bc0cbd2a407f3" parent="6a2d6d5f4f401" root="7031beac91f75" order="1" type="FILE" class="NOVEL" layout="DOCUMENT">
-      <meta expanded="no" heading="H3" charCount="548" wordCount="108" paraCount="3" cursorPos="650" />
+      <meta expanded="no" heading="H3" charCount="548" wordCount="108" paraCount="3" cursorPos="18" />
       <name status="s90e6c9" import="ia857f0" active="yes">Another Scene</name>
     </item>
     <item handle="ba8a28a246524" parent="7031beac91f75" root="7031beac91f75" order="4" type="FILE" class="NOVEL" layout="DOCUMENT">
