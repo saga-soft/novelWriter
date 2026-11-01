@@ -441,6 +441,7 @@ class nwLabels:
         nwStdUnit.LINES: QT_TRANSLATE_NOOP("Units", "lines"),
         nwStdUnit.PIXELS: QT_TRANSLATE_NOOP("Units", "px"),
         nwStdUnit.POINTS: QT_TRANSLATE_NOOP("Units", "pt"),
+        nwStdUnit.EM: QT_TRANSLATE_NOOP("Units", "em"),
         nwStdUnit.SECONDS: QT_TRANSLATE_NOOP("Units", "seconds"),
         nwStdUnit.MINUTES: QT_TRANSLATE_NOOP("Units", "minutes"),
     }

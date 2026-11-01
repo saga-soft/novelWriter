@@ -631,7 +631,6 @@ class GuiDocEditor(QTextEdit):
         self._applyTextOptions()
 
         # Refresh sizes
-        self.setTabStopDistance(CONFIG.tabWidth)
         self.setCursorWidth(CONFIG.cursorWidth)
         self._spellSelections.clear()
         self._formatSelections.clear()
@@ -3065,6 +3064,7 @@ class GuiDocEditor(QTextEdit):
     def _applyTextOptions(self) -> None:
         """Set the document text options from the user settings."""
         options = QTextOption()
+        options.setTabStopDistance(CONFIG.tabSize * self.font().pointSizeF() * 96.0 / 72.0)
         if CONFIG.doJustify:
             options.setAlignment(QtAlignJustify)
         if CONFIG.editShowTabsNSpaces:
@@ -3115,6 +3115,7 @@ class GuiDocEditor(QTextEdit):
         font = self.font()
         font.setPointSizeF(min(max(pointSize, nwConst.ZOOM_MIN_SIZE), nwConst.ZOOM_MAX_SIZE))
         self.setFont(font)
+        self._applyTextOptions()
 
     def _hideHoverCard(self) -> None:
         """Stop the hover timer and hide the hover card, if visible."""

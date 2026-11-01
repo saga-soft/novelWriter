@@ -907,7 +907,6 @@ class _PreviewWidget(QTextBrowser):
         self.setPalette(dPalette)
 
         self.setMinimumWidth(40 * SHARED.theme.textNWidth)
-        self.setTabStopDistance(CONFIG.tabWidth)
         self.setOpenExternalLinks(False)
         self.setOpenLinks(False)
 
@@ -998,7 +997,6 @@ class _PreviewWidget(QTextBrowser):
 
         document.setDocumentMargin(CONFIG.textMargin)
         self.setDocument(document)
-        self.setTabStopDistance(CONFIG.tabWidth)
 
         self._docTime = int(time())
         self._updateBuildAge()

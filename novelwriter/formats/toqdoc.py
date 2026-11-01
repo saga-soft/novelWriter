@@ -122,6 +122,7 @@ class ToQTextDocument(Tokenizer):
         "_printer",
         "_sHead",
         "_tIndent",
+        "_tabSize",
         "_usedFields",
         "_usedNotes",
     )
@@ -154,6 +155,7 @@ class ToQTextDocument(Tokenizer):
         self._pageSize = QPageSize(QPageSize.PageSizeId.A4)
         self._pageMargins = QMarginsF(20.0, 20.0, 20.0, 20.0)
         self._fixedHeadings = False
+        self._tabSize = 2.0
 
         self._mHead: dict[BlockTyp, tuple[float, float]] = {}
         self._sHead: dict[BlockTyp, float] = {}
@@ -204,6 +206,10 @@ class ToQTextDocument(Tokenizer):
     def setFixedHeadings(self, state: bool) -> None:
         """Use fixed heading sizes rather than scaling with the text font."""
         self._fixedHeadings = state
+
+    def setTabSize(self, size: float) -> None:
+        """Set the tab stop distance in units of em."""
+        self._tabSize = size
 
     ##
     #  Class Methods
@@ -289,6 +295,10 @@ class ToQTextDocument(Tokenizer):
         self._tIndent = mPx * self._firstWidth
 
         self._document.setIndentWidth(self._mIndent)
+
+        option = self._document.defaultTextOption()
+        option.setTabStopDistance(mPx * self._tabSize)
+        self._document.setDefaultTextOption(option)
 
         # Text Formats
         self._blockFmt.setTopMargin(self._mText[0])

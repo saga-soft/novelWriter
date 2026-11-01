@@ -235,9 +235,6 @@ class GuiDocViewer(QTextBrowser):
 
         self.initViewport()
 
-        # Refresh the tab stops
-        self.setTabStopDistance(CONFIG.tabWidth)
-
         # If we have a document open, we should reload it in case the font changed
         self.reloadText()
 
@@ -289,7 +286,8 @@ class GuiDocViewer(QTextBrowser):
         qDoc.setTextFont(font)
         qDoc.setFixedHeadings(True)
         qDoc.setLineHeight(CONFIG.lineHeight)
-        qDoc.setFirstLineIndent(CONFIG.viewFirstLineIndent, 1.4, False)
+        qDoc.setFirstLineIndent(CONFIG.viewFirstLineIndent, CONFIG.tabSize, False)
+        qDoc.setTabSize(CONFIG.tabSize)
         qDoc.setTheme(self._docTheme)
         qDoc.initDocument()
         qDoc.setKeywords(True)
@@ -321,7 +319,6 @@ class GuiDocViewer(QTextBrowser):
 
         self.setDocumentTitle(tHandle)
         self.setDocument(qDoc.document)
-        self.setTabStopDistance(CONFIG.tabWidth)
 
         if self._docHandle == tHandle and vBar:
             # This is a refresh, so we set the scrollbar back to where it was

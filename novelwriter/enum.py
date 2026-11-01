@@ -300,8 +300,9 @@ class nwStdUnit(Enum):
     LINES = 2
     PIXELS = 3
     POINTS = 4
-    SECONDS = 5
-    MINUTES = 6
+    EM = 5
+    SECONDS = 6
+    MINUTES = 7
 
 
 class nwProjectKind(StrEnum):
