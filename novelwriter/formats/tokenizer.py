@@ -596,6 +596,7 @@ class Tokenizer(ABC):
                 title = f"{notes}: {title}"
 
             self._blocks = [(BlockTyp.TITLE, f"{self._handle}:T0001", title, [], style)]
+            self._noIndent = not self._indentFirst
             if self._keepRaw:
                 self._raw.append(f"#! {title}\n\n")
 
@@ -1084,9 +1085,9 @@ class Tokenizer(ABC):
                         sBlocks.append((pType, pLines[0][1], pTxt, tFmt, cStyle))
                         addEmptyLine = lineMargins and (pType not in LIST_BLOCKS or bool(cStyle & BlockFmt.LIST_E))
 
-                    # Reset buffer and make sure text indent is on for next pass
+                    # Reset buffer and set text indent for next pass
                     pLines = []
-                    self._noIndent = False
+                    self._noIndent = pType in LIST_BLOCKS and not indentFirst
 
             elif addEmptyLine and cBlock[0] in HEADING_BLOCKS:
                 # Move the page break to the empty line before the heading
