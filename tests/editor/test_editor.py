@@ -1673,6 +1673,10 @@ def testGuiDocEditor_Zoom(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd:
     docEditor.zoomIn(100)
     assert docEditor.font().pointSizeF() == nwConst.ZOOM_MAX_SIZE
 
+    # Tab stops follow the zoomed font size
+    tabStop = docEditor._qDocument.defaultTextOption().tabStopDistance()
+    assert tabStop == CONFIG.tabSize * nwConst.ZOOM_MAX_SIZE * 96.0 / 72.0
+
 
 @pytest.mark.gui
 def testGuiDocEditor_Navigation(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, ipsumText: list[str], mockRnd: MockRnd):

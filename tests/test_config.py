@@ -688,7 +688,7 @@ def testConfig_ConvertOldConfig(fncPath: Path, tstPaths: TstPaths):
     assert conf.autoSaveDoc == 30
     assert conf.backupInterval == "session"
     assert conf.textWidth == 700
-    assert conf.tabWidth == 40
+    assert conf.tabSize == 2.0
     assert conf.dialogStyle == 2
     assert conf.spellLanguage == "en"
     assert conf.userIdleTime == 300

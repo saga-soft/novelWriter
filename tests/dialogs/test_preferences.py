@@ -284,14 +284,14 @@ def testGuiPreferences_Settings(
     prefs.focusWidth.stepDown()
     prefs.doJustify.setChecked(True)
     prefs.textMargin.stepUp()
-    prefs.tabWidth.stepUp()
+    prefs.tabSize.stepUp()
     prefs.lineHeight.stepUp()
 
     assert CONFIG.textWidth == 700
     assert CONFIG.focusWidth == 800
     assert CONFIG.doJustify is False
     assert CONFIG.textMargin == 40
-    assert CONFIG.tabWidth == 40
+    assert CONFIG.tabSize == 2.0
     assert CONFIG.lineHeight == 1.15
 
     # Text Editing
@@ -477,7 +477,7 @@ def testGuiPreferences_Settings(
     assert CONFIG.focusWidth == 790
     assert CONFIG.doJustify is True
     assert CONFIG.textMargin == 41
-    assert CONFIG.tabWidth == 41
+    assert CONFIG.tabSize == 2.1
     assert CONFIG.lineHeight == 1.2
 
     # Text Editing

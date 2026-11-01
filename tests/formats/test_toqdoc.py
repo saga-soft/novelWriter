@@ -370,10 +370,15 @@ def testToQTextDocument_TextBlockFormats(mockGUI: MockGuiMain):
     project = NWProject()
     doc = ToQTextDocument(project)
     doc.setFirstLineIndent(True, 2.0, False)
+    doc.setTabSize(3.0)
     doc.initDocument()
 
     doc._isNovel = True
     doc._isFirst = True
+
+    # Tab stops are in units of em
+    tabStop = doc.document.defaultTextOption().tabStopDistance()
+    assert tabStop == 3.0 * doc._textFont.pointSizeF() * 96.0 / 72.0
 
     # Alignment & Indent
     # ==================
