@@ -1669,13 +1669,13 @@ def testGuiDocEditor_Zoom(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd:
 
     # Zoom is capped at the minimum and maximum size
     docEditor.zoomOut(100)
-    assert docEditor.font().pointSizeF() == nwConst.ZOOM_MIN_SIZE
+    assert docEditor.font().pointSizeF() == nwConst.TEXT_FONT_MIN_SIZE
     docEditor.zoomIn(100)
-    assert docEditor.font().pointSizeF() == nwConst.ZOOM_MAX_SIZE
+    assert docEditor.font().pointSizeF() == nwConst.TEXT_FONT_MAX_SIZE
 
     # Tab stops follow the zoomed font size
     tabStop = docEditor._qDocument.defaultTextOption().tabStopDistance()
-    assert tabStop == CONFIG.tabSize * nwConst.ZOOM_MAX_SIZE * 96.0 / 72.0
+    assert tabStop == CONFIG.tabSize * nwConst.TEXT_FONT_MAX_SIZE * 96.0 / 72.0
 
 
 @pytest.mark.gui

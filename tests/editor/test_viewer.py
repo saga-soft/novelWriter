@@ -350,9 +350,9 @@ def testGuiDocViewer_Zoom(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd:
 
     # Zoom is capped at the minimum and maximum size
     docViewer.zoomOut(100)
-    assert docViewer.font().pointSizeF() == nwConst.ZOOM_MIN_SIZE
+    assert docViewer.font().pointSizeF() == nwConst.TEXT_FONT_MIN_SIZE
     docViewer.zoomIn(100)
-    assert docViewer.font().pointSizeF() == nwConst.ZOOM_MAX_SIZE
+    assert docViewer.font().pointSizeF() == nwConst.TEXT_FONT_MAX_SIZE
 
 
 @pytest.mark.gui

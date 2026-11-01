@@ -3113,7 +3113,7 @@ class GuiDocEditor(QTextEdit):
     def _setZoom(self, pointSize: float) -> None:
         """Set the editor's font size within the zoom range."""
         font = self.font()
-        font.setPointSizeF(min(max(pointSize, nwConst.ZOOM_MIN_SIZE), nwConst.ZOOM_MAX_SIZE))
+        font.setPointSizeF(minmax(pointSize, nwConst.TEXT_FONT_MIN_SIZE, nwConst.TEXT_FONT_MAX_SIZE))
         self.setFont(font)
         self._applyTextOptions()
 

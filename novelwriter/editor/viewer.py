@@ -42,7 +42,7 @@ from PyQt6.QtGui import (
 from PyQt6.QtWidgets import QApplication, QFrame, QMenu, QTextBrowser, QWidget
 
 from novelwriter import CONFIG, SHARED
-from novelwriter.common import decodeMimeHandles, qtAddAction, qtLambda
+from novelwriter.common import decodeMimeHandles, minmax, qtAddAction, qtLambda
 from novelwriter.constants import nwConst, nwStyles, nwUnicode
 from novelwriter.editor.footer import GuiDocViewFooter
 from novelwriter.editor.header import GuiDocViewHeader
@@ -636,7 +636,7 @@ class GuiDocViewer(QTextBrowser):
     def _setZoom(self, pointSize: float, delay: bool = False) -> None:
         """Set the font size and rebuild the document."""
         font = self.font()
-        font.setPointSizeF(min(max(pointSize, nwConst.ZOOM_MIN_SIZE), nwConst.ZOOM_MAX_SIZE))
+        font.setPointSizeF(minmax(pointSize, nwConst.TEXT_FONT_MIN_SIZE, nwConst.TEXT_FONT_MAX_SIZE))
         self.setFont(font)
         if delay:
             self._timerZoom.start()

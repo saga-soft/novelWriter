@@ -84,8 +84,8 @@ class nwConst:
     MAX_SEARCH_RESULT = 1000
     CHECK_PASS_CHUNK = 100  # Chunk size for spell and format checking
     BIG_DOC_LIMIT = 500000  # Doc size above which the initial cursor move is queued
-    ZOOM_MIN_SIZE = 6.0  # Smallest text font size in points
-    ZOOM_MAX_SIZE = 72.0  # Largest text font size in points
+    TEXT_FONT_MIN_SIZE = 6.0  # Smallest text font size in points
+    TEXT_FONT_MAX_SIZE = 72.0  # Largest text font size in points
 
 
 class nwRegEx:

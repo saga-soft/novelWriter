@@ -635,7 +635,7 @@ class Config:
         # Copy to avoid changing the font passed in, and skip pixel sized fonts
         if (size := self.textFont.pointSizeF()) > 0.0:
             self.textFont = QFont(self.textFont)
-            self.textFont.setPointSizeF(minmax(size, nwConst.ZOOM_MIN_SIZE, nwConst.ZOOM_MAX_SIZE))
+            self.textFont.setPointSizeF(minmax(size, nwConst.TEXT_FONT_MIN_SIZE, nwConst.TEXT_FONT_MAX_SIZE))
 
     def setPrimaryCount(self, useCharCount: bool) -> None:
         """Set the primary count unit. This also updates the unit label."""

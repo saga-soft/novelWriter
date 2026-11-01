@@ -358,12 +358,12 @@ def testConfig_Fonts(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
     font = QFont(conf.textFont)
     font.setPointSizeF(2.0)
     conf.setTextFont(font)
-    assert conf.textFont.pointSizeF() == nwConst.ZOOM_MIN_SIZE
+    assert conf.textFont.pointSizeF() == nwConst.TEXT_FONT_MIN_SIZE
     assert font.pointSizeF() == 2.0
 
     font.setPointSizeF(100.0)
     conf.setTextFont(font.toString())
-    assert conf.textFont.pointSizeF() == nwConst.ZOOM_MAX_SIZE
+    assert conf.textFont.pointSizeF() == nwConst.TEXT_FONT_MAX_SIZE
 
     font.setPointSizeF(12.0)
     conf.setTextFont(font)
