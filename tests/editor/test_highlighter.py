@@ -772,6 +772,22 @@ def testGuiDocHighlighter_AutoReplace(syntax: GuiDocHighlighter):
     assert pieces == [(0, 3, 6, "<Name>")]
     assert formats[0].foreground().color().getRgb() == colRep
 
+    # Case sensitive
+    doc.setPlainText("Hi <Name> <name> <NAME>\n")
+    syntax.rehighlight()
+    pieces, _ = getFragments(syntax)
+    assert pieces == [(0, 3, 6, "<Name>")]
+
+    # Ignore case, toggling the flag alone counts as a change
+    SHARED.project.data.setAutoReplace({"Name": "Bob"}, True)
+    assert syntax.updateReplaceKeys() is True
+    assert syntax.updateReplaceKeys() is False
+    assert syntax._replaceKeys == frozenset({"name"})
+
+    syntax.rehighlight()
+    pieces, _ = getFragments(syntax)
+    assert pieces == [(0, 3, 6, "<Name>"), (0, 10, 6, "<name>"), (0, 17, 6, "<NAME>")]
+
 
 @pytest.mark.gui
 def testGuiDocHighlighter_UnknownCommand(syntax: GuiDocHighlighter):

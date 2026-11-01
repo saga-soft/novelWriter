@@ -64,6 +64,7 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         "_isNovel",
         "_minRules",
         "_replaceKeys",
+        "_replaceNoCase",
         "_tHandle",
         "_txtRules",
     )
@@ -77,6 +78,7 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         self._isNovel = False
         self._isInactive = False
         self._replaceKeys: frozenset[str] = frozenset()
+        self._replaceNoCase = False
 
         self._hStyles: dict[str, QTextCharFormat] = {}
         self._minRules: list[tuple[re.Pattern, dict[int, QTextCharFormat]]] = []
@@ -267,9 +269,14 @@ class GuiDocHighlighter(QSyntaxHighlighter):
 
     def updateReplaceKeys(self) -> bool:
         """Update the auto-replace keys, and return True if changed."""
-        keys = frozenset(SHARED.project.data.autoReplace)
-        if keys != self._replaceKeys:
+        noCase = SHARED.project.data.autoReplaceIgnoreCase
+        if noCase:
+            keys = frozenset(k.lower() for k in SHARED.project.data.autoReplace)
+        else:
+            keys = frozenset(SHARED.project.data.autoReplace)
+        if keys != self._replaceKeys or noCase != self._replaceNoCase:
             self._replaceKeys = keys
+            self._replaceNoCase = noCase
             return True
         return False
 
@@ -492,7 +499,12 @@ class GuiDocHighlighter(QSyntaxHighlighter):
             if self._replaceKeys and "<" in text:
                 hFmt = self._hStyles["replace"]
                 keys = self._replaceKeys
-                matches = [r for r in REGEX_PATTERNS.autoReplace.finditer(text, offset) if r.group(1) in keys]
+                rxFind = REGEX_PATTERNS.autoReplace.finditer(text, offset)
+                if self._replaceNoCase:
+                    matches = [r for r in rxFind if r.group(1).lower() in keys]
+                else:
+                    matches = [r for r in rxFind if r.group(1) in keys]
+
                 if utf16Map:
                     for res in matches:
                         for x in range(res.start(0), res.end(0)):
