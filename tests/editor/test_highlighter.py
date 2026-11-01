@@ -733,6 +733,63 @@ def testGuiDocHighlighter_MaxBlockLength(monkeypatch: pytest.MonkeyPatch, syntax
 
 
 @pytest.mark.gui
+def testGuiDocHighlighter_AutoReplace(syntax: GuiDocHighlighter):
+    """Test highlighting of auto-replace keys."""
+    doc = syntax.document()
+    assert doc is not None
+
+    colRep = SHARED.theme.syntaxTheme.repTag.getRgb()
+
+    # No keys defined, nothing is highlighted
+    syntax.setHandle(T_HANDLE)
+    assert syntax._replaceKeys == frozenset()
+    doc.setPlainText("Hi <Name> and <Other>\n")
+    syntax.rehighlight()
+    pieces, _ = getFragments(syntax)
+    assert pieces == []
+
+    # Only defined keys are highlighted
+    SHARED.project.data.setAutoReplace({"Name": "Bob"}, False)
+    assert syntax.updateReplaceKeys() is True
+    assert syntax.updateReplaceKeys() is False
+    assert syntax._replaceKeys == frozenset({"Name"})
+
+    doc.setPlainText("Hi <Name> and <Other> <3\n% Note <Name>\n")
+    syntax.rehighlight()
+    pieces, formats = getFragments(syntax)
+    assert pieces == [
+        (0, 3, 6, "<Name>"),
+        (1, 0, 7, "% Note "),
+        (1, 7, 6, "<Name>"),
+    ]
+    assert formats[0].foreground().color().getRgb() == colRep
+    assert formats[2].foreground().color().getRgb() == colRep
+
+    # Unicode > 0xFFFF
+    doc.setPlainText("\U0001f601 <Name> \U0001f601\n")
+    syntax.rehighlight()
+    pieces, formats = getFragments(syntax)
+    assert pieces == [(0, 3, 6, "<Name>")]
+    assert formats[0].foreground().color().getRgb() == colRep
+
+    # Case sensitive
+    doc.setPlainText("Hi <Name> <name> <NAME>\n")
+    syntax.rehighlight()
+    pieces, _ = getFragments(syntax)
+    assert pieces == [(0, 3, 6, "<Name>")]
+
+    # Ignore case, toggling the flag alone counts as a change
+    SHARED.project.data.setAutoReplace({"Name": "Bob"}, True)
+    assert syntax.updateReplaceKeys() is True
+    assert syntax.updateReplaceKeys() is False
+    assert syntax._replaceKeys == frozenset({"name"})
+
+    syntax.rehighlight()
+    pieces, _ = getFragments(syntax)
+    assert pieces == [(0, 3, 6, "<Name>"), (0, 10, 6, "<name>"), (0, 17, 6, "<NAME>")]
+
+
+@pytest.mark.gui
 def testGuiDocHighlighter_UnknownCommand(syntax: GuiDocHighlighter):
     """An unrecognised bracketed command falls back to plain rules."""
     doc = syntax.document()

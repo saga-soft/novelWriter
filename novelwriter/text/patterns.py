@@ -45,6 +45,7 @@ class RegExPatterns:
     _rxLink = re.compile(nwRegEx.FMT_LN)
     _rxSCPlain = re.compile(nwRegEx.FMT_SC)
     _rxSCValue = re.compile(nwRegEx.FMT_SV)
+    _rxAutoRep = re.compile(nwRegEx.AUTO_REP)
 
     @property
     def url(self) -> re.Pattern:
@@ -95,6 +96,11 @@ class RegExPatterns:
     def shortcodeValue(self) -> re.Pattern:
         """Plain shortcode style."""
         return self._rxSCValue
+
+    @property
+    def autoReplace(self) -> re.Pattern:
+        """Auto-replace key."""
+        return self._rxAutoRep
 
     @property
     def dialogStyle(self) -> re.Pattern | None:

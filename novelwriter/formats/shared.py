@@ -63,6 +63,7 @@ class TextDocumentTheme:
     optional: QColor = QColor(66, 113, 174)
     dialog: QColor = QColor(66, 113, 174)
     altdialog: QColor = QColor(129, 55, 9)
+    error: QColor = QColor(255, 160, 160)
 
 
 # Enums
@@ -103,6 +104,8 @@ class TextFmt(IntEnum):
     FNOTE = 23  # Footnote marker
     FIELD = 24  # Data field
     STRIP = 25  # Strip the format code
+    ERR_B = 26  # Begin error marker
+    ERR_E = 27  # End error marker
 
 
 class BlockTyp(IntEnum):

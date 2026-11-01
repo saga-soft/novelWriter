@@ -472,6 +472,8 @@ class ToQTextDocument(Tokenizer):
         cFmt = QTextCharFormat(dFmt)
         temp = text.replace("\n", nwUnicode.U_LSEP)
         start = 0
+        marked = False
+        error = False
         primary: QColor | None = None
         for pos, fmt, data in tFmt:
             # Insert buffer with previous format
@@ -495,9 +497,11 @@ class ToQTextDocument(Tokenizer):
             elif fmt == TextFmt.U_E:
                 cFmt.setFontUnderline(self._dUnderline)
             elif fmt == TextFmt.M_B:
-                cFmt.setBackground(self._theme.highlight)
+                marked = True
+                cFmt.setBackground(self._theme.error if error else self._theme.highlight)
             elif fmt == TextFmt.M_E:
-                cFmt.setBackground(QtTransparent)
+                marked = False
+                cFmt.setBackground(self._theme.error if error else QtTransparent)
             elif fmt == TextFmt.SUP_B:
                 cFmt.setVerticalAlignment(QtVAlignSuper)
             elif fmt == TextFmt.SUP_E:
@@ -552,6 +556,12 @@ class ToQTextDocument(Tokenizer):
             elif fmt == TextFmt.FIELD and (field := data.partition(":")[2]):
                 self._usedFields.append((cursor.position(), field))
                 cursor.insertText("0", cFmt)
+            elif fmt == TextFmt.ERR_B:
+                error = True
+                cFmt.setBackground(self._theme.error)
+            elif fmt == TextFmt.ERR_E:
+                error = False
+                cFmt.setBackground(self._theme.highlight if marked else QtTransparent)
 
             # Move pos for next pass
             start = pos

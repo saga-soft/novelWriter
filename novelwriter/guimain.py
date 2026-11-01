@@ -797,6 +797,7 @@ class GuiMain(QMainWindow):
         """Refresh data dependent on project settings."""
         logger.debug("Applying new project settings")
         SHARED.updateSpellCheckLanguage()
+        self.docEditor.updateReplaceKeys()
         self.docViewer.reloadText()
         self.itemDetails.refreshDetails()
         self.mainMenu.setSelectedProjectSpellCheckLanguage()

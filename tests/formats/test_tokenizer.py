@@ -28,7 +28,7 @@ import pytest
 from PyQt6.QtGui import QFont
 
 from novelwriter import CONFIG
-from novelwriter.constants import nwHeadFmt, nwStyles
+from novelwriter.constants import nwHeadFmt, nwProblems, nwStyles
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwComment
 from novelwriter.formats.shared import BlockFmt, BlockTyp, TextFmt, stripEscape
@@ -231,12 +231,11 @@ def testTokenizer_TextOps(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain,
         "#### Replace\n\n"
         "Also, replace <A> and <B>.\n\n"
     )
-    docTextR = docText.replace("<A>", "this").replace("<B>", "that")
 
     nDoc = project.storage.getDocument(C.hSceneDoc)
     assert nDoc.writeDocument(docText)
 
-    project.data.setAutoReplace({"A": "this", "B": "that"})
+    project.data.setAutoReplace({"A": "this", "B": "that"}, False)
 
     assert project.saveProject()
 
@@ -324,9 +323,15 @@ def testTokenizer_TextOps(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain,
     assert tokens._statusText == ""
     assert tokens._statusFmt == []
 
-    # Pre Processing
-    tokens.doPreProcessing()
-    assert tokens._text == docTextR
+    # Auto-Replace Lookup
+    tokens.initDocument()
+    assert tokens._replaceLookup == {"A": "this", "B": "that"}
+    assert tokens._replaceNoCase is False
+
+    project.data.setAutoReplace({"A": "this", "B": "that"}, True)
+    tokens.initDocument()
+    assert tokens._replaceLookup == {"a": "this", "b": "that"}
+    assert tokens._replaceNoCase is True
 
 
 @pytest.mark.core
@@ -1918,6 +1923,174 @@ def testTokenizer_LineBreak(mockGUI: MockGuiMain):
     tokens._text = "Hello\nWorld"
     tokens.tokenizeText()
     assert tokens._blocks == [(BlockTyp.TEXT, "", "Hello World", [], BlockFmt.NONE)]
+
+
+@pytest.mark.core
+def testTokenizer_AutoReplace(mockGUI: MockGuiMain):
+    """Test auto-replace of keys in the Tokenizer class."""
+    project = NWProject()
+    tokens = BareTokenizer(project)
+    tokens._handle = TMH
+    tokens.setCommentType(nwComment.PLAIN, True)
+
+    text = (
+        "Before <A>\n\n"
+        "# Head <A>\n\n"
+        "## Head <A>\n\n"
+        "### Head <X>\n\n"
+        "#### Head <A>\n\n"
+        "* Item <A>\n"
+        "#. Item <b>\n\n"
+        "Text <A> and <B> and <Y>\n\n"
+        "% Comment <A>\n\n"
+    )
+
+    # Without a lookup table, nothing is processed
+    tokens._text = text
+    tokens.initDocument()
+    tokens.tokenizeText()
+    assert tokens._blocks[0] == (BlockTyp.TEXT, "", "Before <A>", [], BlockFmt.NONE)
+    assert tokens.textProblems == {}
+
+    # No problem entry is added when all keys are found
+    project.data.setAutoReplace({"A": "this", "B": "that"}, False)
+    tokens._text = "Text <A> and <B>\n"
+    tokens.initDocument()
+    tokens.tokenizeText()
+    assert tokens._blocks == [(BlockTyp.TEXT, "", "Text this and that", [], BlockFmt.NONE)]
+    assert tokens.textProblems == {}
+
+    # Replace in headings, text, lists and comments
+    tokens._text = text
+    tokens.initDocument()
+    tokens.tokenizeText()
+    assert [b[2] for b in tokens._blocks] == [
+        "Before this",
+        "Head this",
+        "Head this",
+        "Head <X>",
+        "Head this",
+        "Item this",
+        "Item <b>",
+        "Text this and that and <Y>",
+        "Comment: Comment this",
+    ]
+    assert tokens.textProblems == {
+        nwProblems.MISSING_AUTO_KEYS: [
+            ("X", f"{TMH}:T0003", ""),
+            ("b", f"{TMH}:T0004", ""),
+            ("Y", f"{TMH}:T0004", ""),
+        ]
+    }
+    assert all(b[3] == [] for b in tokens._blocks[:-1])
+
+    # Ignore case
+    project.data.setAutoReplace({"A": "this", "B": "that"}, True)
+    tokens._problems.clear()
+    tokens._text = "Text <a> and <B> and <c>\n"
+    tokens.initDocument()
+    tokens.tokenizeText()
+    assert tokens._blocks == [(BlockTyp.TEXT, "", "Text this and that and <c>", [], BlockFmt.NONE)]
+    assert tokens.textProblems == {nwProblems.MISSING_AUTO_KEYS: [("c", f"{TMH}:T0000", "")]}
+
+    # Problem anchors are added to text, lists and comments, and headings use their own
+    tokens.setProblemAnchors(True)
+    tokens._problems.clear()
+    tokens._text = "### Head <x>\n\nText <x> and <y>\n\n* Item <z>\n\n% Comment <z>\n\n"
+    tokens.tokenizeText()
+    assert tokens.textProblems == {
+        nwProblems.MISSING_AUTO_KEYS: [
+            ("x", f"{TMH}:T0001", f"{TMH}:T0001"),
+            ("x", f"{TMH}:T0001", "problem_0"),
+            ("y", f"{TMH}:T0001", "problem_0"),
+            ("z", f"{TMH}:T0001", "problem_1"),
+            ("z", f"{TMH}:T0001", "problem_2"),
+        ]
+    }
+    assert tokens._blocks[0] == (BlockTyp.HEAD3, f"{TMH}:T0001", "Head <x>", [], BlockFmt.NONE)
+    assert tokens._blocks[1] == (
+        BlockTyp.TEXT,
+        "",
+        "Text <x> and <y>",
+        [
+            (0, TextFmt.ANM_B, "problem_0"),
+            (5, TextFmt.ERR_B, ""),
+            (8, TextFmt.ERR_E, ""),
+            (13, TextFmt.ERR_B, ""),
+            (16, TextFmt.ANM_E, ""),
+            (16, TextFmt.ERR_E, ""),
+        ],
+        BlockFmt.NONE,
+    )
+    assert tokens._blocks[2][3] == [
+        (0, TextFmt.ANM_B, "problem_1"),
+        (5, TextFmt.ERR_B, ""),
+        (8, TextFmt.ANM_E, ""),
+        (8, TextFmt.ERR_E, ""),
+    ]
+    assert tokens._blocks[3][2] == "Comment: Comment <z>"
+    assert (9, TextFmt.ANM_B, "problem_2") in tokens._blocks[3][3]
+    assert (17, TextFmt.ERR_B, "") in tokens._blocks[3][3]
+    assert (20, TextFmt.ERR_E, "") in tokens._blocks[3][3]
+    assert (20, TextFmt.ANM_E, "") in tokens._blocks[3][3]
+
+    # Markers follow replaced keys and stripped markup
+    tokens._text = "Text <A> and **<y>**\n\n"
+    tokens.tokenizeText()
+    assert tokens._blocks[0][2] == "Text this and <y>"
+    assert tokens._blocks[0][3] == [
+        (0, TextFmt.ANM_B, "problem_3"),
+        (14, TextFmt.B_B, ""),
+        (14, TextFmt.ERR_B, ""),
+        (17, TextFmt.B_E, ""),
+        (17, TextFmt.ERR_E, ""),
+        (17, TextFmt.ANM_E, ""),
+    ]
+
+    # Footnotes get them too
+    tokens.setCommentType(nwComment.FOOTNOTE, True)
+    tokens._text = "%Footnote.abc: Note <w>\n"
+    tokens.tokenizeText()
+    assert tokens._footnotes[f"{TMH}:abc"] == (
+        "Note <w>",
+        [
+            (0, TextFmt.ANM_B, "problem_4"),
+            (5, TextFmt.ERR_B, ""),
+            (8, TextFmt.ANM_E, ""),
+            (8, TextFmt.ERR_E, ""),
+        ],
+    )
+
+    # Hidden headings in novel documents are skipped
+    text = "# P <p>\n\n## C <q>\n\n### S <r>\n\n#### X <s>\n\n"
+    tokens._isNovel = True
+    tokens._problems.clear()
+    tokens.setPartitionFormat(nwHeadFmt.TITLE, True)
+    tokens.setChapterFormat(nwHeadFmt.TITLE, True)
+    tokens.setSceneFormat(nwHeadFmt.TITLE, True)
+    tokens.setSectionFormat(nwHeadFmt.TITLE, True)
+    tokens._text = text
+    tokens.tokenizeText()
+    assert tokens.textProblems == {}
+
+    # So are headings where the format doesn't show the title, but not the main title
+    tokens.setPartitionFormat("Part", False)
+    tokens.setChapterFormat(nwHeadFmt.CH_NUM, False)
+    tokens.setSceneFormat("* * *", False)
+    tokens.setSectionFormat("", False)
+    tokens._text = f"#! T <t>\n\n{text}"
+    tokens.tokenizeText()
+    assert [k for k, _, _ in tokens.textProblems[nwProblems.MISSING_AUTO_KEYS]] == ["t"]
+
+    # But not visible ones
+    tokens._problems.clear()
+    tokens.setPartitionFormat(nwHeadFmt.TITLE, False)
+    tokens.setChapterFormat(nwHeadFmt.TITLE, False)
+    tokens.setSceneFormat(nwHeadFmt.TITLE, False)
+    tokens.setSectionFormat(nwHeadFmt.TITLE, False)
+    tokens._text = text
+    tokens.tokenizeText()
+    assert [k for k, _, _ in tokens.textProblems[nwProblems.MISSING_AUTO_KEYS]] == ["p", "q", "r", "s"]
 
 
 @pytest.mark.core

@@ -603,7 +603,7 @@ def testNWProject_Methods(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain,
 
     # Auto Replace
     project.setProjectChanged(False)
-    project.data.setAutoReplace({"A": "B", "C": "D"})
+    project.data.setAutoReplace({"A": "B", "C": "D"}, False)
     assert project.data.autoReplace == {"A": "B", "C": "D"}
     assert project.projChanged
 

@@ -131,7 +131,7 @@ def testGuiProjectSettings_SettingsPage(
     project.data.setLanguage("en", False)
     project.data.setSpellLang("en")
     project.data.setAuthor("Jane Smith")
-    project.data.setAutoReplace({"A": "B", "C": "D"})
+    project.data.setAutoReplace({"A": "B", "C": "D"}, False)
 
     # Create Dialog
     projSettings = GuiProjectSettings(nwGUI, GuiProjectSettings.PAGE_SETTINGS)
@@ -558,7 +558,7 @@ def testGuiProjectSettings_Replace(
 
     # Set some values
     project = SHARED.project
-    project.data.setAutoReplace({"A": "B", "C": "D"})
+    project.data.setAutoReplace({"A": "B", "C": "D"}, False)
 
     # Create Dialog
     projSettings = GuiProjectSettings(nwGUI, GuiProjectSettings.PAGE_REPLACE)
@@ -632,6 +632,24 @@ def testGuiProjectSettings_Replace(
     # Check Project
     projSettings._doSave()
     assert project.data.autoReplace == {"A": "B", "C": "D", "This": "With This Stuff"}
+    assert project.data.autoReplaceIgnoreCase is False
+
+    # Toggling ignore case alone is saved
+    projSettings = GuiProjectSettings(nwGUI, GuiProjectSettings.PAGE_REPLACE)
+    qtbot.addWidget(projSettings)
+    replace = projSettings.replacePage
+    assert replace.swtIgnoreCase.isChecked() is False
+    assert replace.changed is False
+    replace.swtIgnoreCase.setChecked(True)
+    assert replace.changed is True
+    projSettings._doSave()
+    assert project.data.autoReplace == {"A": "B", "C": "D", "This": "With This Stuff"}
+    assert project.data.autoReplaceIgnoreCase is True
+
+    # The saved state is loaded
+    projSettings = GuiProjectSettings(nwGUI, GuiProjectSettings.PAGE_REPLACE)
+    qtbot.addWidget(projSettings)
+    assert projSettings.replacePage.swtIgnoreCase.isChecked() is True
 
     # qtbot.stop()
 

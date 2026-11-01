@@ -230,9 +230,11 @@ class GuiProjectSettings(NDialog):
             logger.debug("Updating importance labels")
             project.updateStatus("i", self.importPage.getNewList())
 
+        autoReplaceIgnoreCase = self.replacePage.swtIgnoreCase.isChecked()
+
         if self.replacePage.changed:
             logger.debug("Updating auto-replace settings")
-            project.data.setAutoReplace(self.replacePage.getNewList())
+            project.data.setAutoReplace(self.replacePage.getNewList(), autoReplaceIgnoreCase)
 
         self.newProjectSettingsReady.emit()
         self.close()
@@ -839,6 +841,7 @@ class _ReplacePage(NFixedPage):
         self._changed = False
 
         wCol0 = SHARED.project.options.getInt("GuiProjectSettings", "replaceColW", 130)
+        iPx = SHARED.theme.baseIconHeight
 
         # Title
         self.pageTitle = NColorLabel(
@@ -872,6 +875,14 @@ class _ReplacePage(NFixedPage):
         self.delButton = SHARED.theme.getFlatButton(nwToolButton.REMOVE, self)
         self.delButton.clicked.connect(self._onEntryDeleted)
 
+        # Settings
+        self.swtIgnoreCase = NSwitch(self, height=iPx)
+        self.swtIgnoreCase.setChecked(SHARED.project.data.autoReplaceIgnoreCase)
+        self.swtIgnoreCase.toggled.connect(self._onIgnoreCaseToggled)
+
+        self.lblIgnoreCase = QLabel(self.tr("Ignore case for keywords"), self)
+        self.lblIgnoreCase.setBuddy(self.swtIgnoreCase)
+
         # Edit Form
         self.editKey = QLineEdit(self)
         self.editKey.setPlaceholderText(self.tr("Select item to edit"))
@@ -890,6 +901,12 @@ class _ReplacePage(NFixedPage):
         self.listControls.addWidget(self.delButton)
         self.listControls.addStretch(1)
 
+        self.optsBox = QHBoxLayout()
+        self.optsBox.addWidget(self.lblIgnoreCase)
+        self.optsBox.addWidget(self.swtIgnoreCase)
+        self.optsBox.setSpacing(12)
+        self.optsBox.addStretch(1)
+
         self.editBox = QHBoxLayout()
         self.editBox.addWidget(self.editKey, 4)
         self.editBox.addWidget(self.editValue, 5)
@@ -897,6 +914,7 @@ class _ReplacePage(NFixedPage):
         self.mainBox = QVBoxLayout()
         self.mainBox.addWidget(self.listBox, 1)
         self.mainBox.addLayout(self.editBox, 0)
+        self.mainBox.addLayout(self.optsBox, 0)
 
         self.innerBox = QHBoxLayout()
         self.innerBox.addLayout(self.mainBox)
@@ -946,6 +964,11 @@ class _ReplacePage(NFixedPage):
         if item := self._getSelectedItem():
             item.setText(self.C_REPL, text)
             self._changed = True
+
+    @pyqtSlot(bool)
+    def _onIgnoreCaseToggled(self, state: bool) -> None:
+        """Mark the settings as changed."""
+        self._changed = True
 
     @pyqtSlot()
     def _onSelectionChanged(self) -> None:

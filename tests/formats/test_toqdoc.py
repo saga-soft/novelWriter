@@ -779,3 +779,32 @@ def testToQTextDocument_Fields(mockGUI: MockGuiMain):
 
     block = doc.document.findBlockByNumber(0)
     assert block.text() == "Word Count: 4, Unknown: 0"
+
+
+@pytest.mark.core
+def testToQTextDocument_Problems(mockGUI: MockGuiMain):
+    """Test problem markers in the ToQTextDocument class."""
+    project = NWProject()
+    project.data.setAutoReplace({"A": "B"}, False)
+    doc = ToQTextDocument(project)
+    doc.setProblemAnchors(True)
+    doc.initDocument()
+    doc._text = "==a <x> b== c <==y==> d\n"
+    doc.tokenizeText()
+    doc.doConvert()
+
+    block = doc.document.findBlockByNumber(0)
+    assert block.text() == "a <x> b c <y> d"
+    assert charFmtInBlock(block, 1).anchorNames() == ["problem_0"]
+
+    # Missing keys have an error background, and restore the highlight after
+    assert charFmtInBlock(block, 1).background() == THEME.highlight
+    assert charFmtInBlock(block, 3).background() == THEME.error
+    assert charFmtInBlock(block, 6).background() == THEME.highlight
+    assert charFmtInBlock(block, 8).background() == QtTransparent
+
+    # A highlight inside the key doesn't override the error
+    assert charFmtInBlock(block, 11).background() == THEME.error
+    assert charFmtInBlock(block, 12).background() == THEME.error
+    assert charFmtInBlock(block, 13).background() == THEME.error
+    assert charFmtInBlock(block, 14).background() == QtTransparent
