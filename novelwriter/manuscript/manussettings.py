@@ -1133,7 +1133,7 @@ class _FormattingTab(NScrollableForm):
         self.addRow(self._build.getLabel("format.lineHeight"), self.lineHeight, unit=trEm)
 
         # Tab Size
-        self.tabSize = NDoubleSpinBox(self, minVal=0.0, maxVal=12.0, step=0.1, prec=2)
+        self.tabSize = NDoubleSpinBox(self, minVal=0.0, maxVal=19.9, step=0.1, prec=2)
         self.tabSize.setFixedNumbersWidth(5)
         self.addRow(self._build.getLabel("format.tabSize"), self.tabSize, unit=trEm)
 
@@ -1181,8 +1181,8 @@ class _FormattingTab(NScrollableForm):
         self.firstIndent = NSwitch(self, height=iPx)
         self.indentFirstPar = NSwitch(self, height=iPx)
 
-        self.indentWidth = NDoubleSpinBox(self, minVal=0.1, maxVal=9.9, step=0.1, prec=1)
-        self.indentWidth.setFixedNumbersWidth(4)
+        self.indentWidth = NDoubleSpinBox(self, minVal=0.1, maxVal=19.9, step=0.1, prec=2)
+        self.indentWidth.setFixedNumbersWidth(5)
 
         self.addRow(self._build.getLabel("format.firstLineIndent"), self.firstIndent)
         self.addRow(self._build.getLabel("format.firstIndentWidth"), self.indentWidth, unit=trEm)

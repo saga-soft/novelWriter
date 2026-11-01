@@ -594,7 +594,7 @@ class GuiPreferences(NDialog):
         )
 
         # Tab Size
-        self.tabSize = NDoubleSpinBox(self, minVal=0.0, maxVal=12.0, step=0.1, prec=2)
+        self.tabSize = NDoubleSpinBox(self, minVal=0.0, maxVal=19.9, step=0.1, prec=2)
         self.tabSize.setFixedNumbersWidth(5)
         self.tabSize.setValue(CONFIG.tabSize)
         self.mainForm.addRow(
