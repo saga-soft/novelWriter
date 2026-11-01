@@ -117,6 +117,8 @@ SETTINGS_TEMPLATE: dict[str, tuple[type, T_BuildValue]] = {
     "format.h4MarginB":        (float, nwStyles.T_MARGIN["H4"][1]),
     "format.textMarginT":      (float, nwStyles.T_MARGIN["TT"][0]),
     "format.textMarginB":      (float, nwStyles.T_MARGIN["TT"][1]),
+    "format.listMarginT":      (float, nwStyles.T_MARGIN["LI"][0]),
+    "format.listMarginB":      (float, nwStyles.T_MARGIN["LI"][1]),
     "format.sepMarginT":       (float, nwStyles.T_MARGIN["SP"][0]),
     "format.sepMarginB":       (float, nwStyles.T_MARGIN["SP"][1]),
     "format.lineForMargin":    (bool, False),
@@ -192,6 +194,7 @@ SETTINGS_LABELS = {
     "format.h3Margin":         QT_TRANSLATE_NOOP("Builds", "Heading 3 and Section"),
     "format.h4Margin":         QT_TRANSLATE_NOOP("Builds", "Heading 4"),
     "format.textMargin":       QT_TRANSLATE_NOOP("Builds", "Text paragraph"),
+    "format.listMargin":       QT_TRANSLATE_NOOP("Builds", "List"),
     "format.sepMargin":        QT_TRANSLATE_NOOP("Builds", "Scene separator"),
     "format.lineForMargin":    QT_TRANSLATE_NOOP("Builds", "Add empty lines instead of margins"),
 

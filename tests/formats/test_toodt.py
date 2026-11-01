@@ -751,8 +751,8 @@ def testToOdt_ConvertParagraphs(mockGUI: MockGuiMain):
         "<office:text>"
         '<text:list text:style-name="List_20_Bullet">'
         '<text:list-item><text:p text:style-name="P9">One</text:p></text:list-item>'
-        '<text:list-item><text:p text:style-name="P9">Two<text:line-break />more</text:p></text:list-item>'
-        '<text:list-item><text:p text:style-name="P10">Three</text:p></text:list-item>'
+        '<text:list-item><text:p text:style-name="P10">Two<text:line-break />more</text:p></text:list-item>'
+        '<text:list-item><text:p text:style-name="P11">Three</text:p></text:list-item>'
         "</text:list>"
         '<text:list text:style-name="List_20_Bullet">'
         '<text:list-item><text:p text:style-name="List">Four</text:p></text:list-item>'
@@ -760,17 +760,19 @@ def testToOdt_ConvertParagraphs(mockGUI: MockGuiMain):
         '<text:p text:style-name="Text_20_body">Text</text:p>'
         '<text:list text:style-name="Numbering_20_123">'
         '<text:list-item><text:p text:style-name="P9">Five</text:p></text:list-item>'
-        '<text:list-item><text:p text:style-name="P10">Six</text:p></text:list-item>'
+        '<text:list-item><text:p text:style-name="P11">Six</text:p></text:list-item>'
         "</text:list>"
         '<text:list text:style-name="List_20_Bullet">'
         '<text:list-item><text:p text:style-name="List">Seven</text:p></text:list-item>'
         "</text:list>"
         "</office:text>"
     )
-    assert getStyle("P9")._pAttr["margin-top"] == ["fo", "0.000cm"]  # type: ignore
+    assert getStyle("P9")._pAttr["margin-top"] == ["fo", odt._emToCm(odt._marginList[0])]  # type: ignore
     assert getStyle("P9")._pAttr["margin-bottom"] == ["fo", "0.000cm"]  # type: ignore
     assert getStyle("P10")._pAttr["margin-top"] == ["fo", "0.000cm"]  # type: ignore
-    assert getStyle("P10")._pAttr["margin-bottom"] == ["fo", odt._emToCm(odt._marginText[1])]  # type: ignore
+    assert getStyle("P10")._pAttr["margin-bottom"] == ["fo", "0.000cm"]  # type: ignore
+    assert getStyle("P11")._pAttr["margin-top"] == ["fo", "0.000cm"]  # type: ignore
+    assert getStyle("P11")._pAttr["margin-bottom"] == ["fo", odt._emToCm(odt._marginList[1])]  # type: ignore
 
     # Footnotes
     odt._text = (

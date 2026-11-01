@@ -293,6 +293,8 @@ class ToHtml(Tokenizer):
         mbH4 = self._marginHead4[1]
         mtTT = self._marginText[0]
         mbTT = self._marginText[1]
+        mtLI = self._marginList[0]
+        mbLI = self._marginList[1]
         mtSP = self._marginSep[0]
         mbSP = self._marginSep[1]
 
@@ -365,8 +367,8 @@ class ToHtml(Tokenizer):
                 "margin-bottom": f"{mbH4:.2f}em",
             },
             "ul, ol": {
-                "margin-top": f"{mtTT:.2f}em",
-                "margin-bottom": f"{mbTT:.2f}em",
+                "margin-top": f"{mtLI:.2f}em",
+                "margin-bottom": f"{mbLI:.2f}em",
             },
             "li": {
                 "text-align": defaultAlign,

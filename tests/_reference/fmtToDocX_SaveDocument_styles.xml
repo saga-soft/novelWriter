@@ -104,7 +104,7 @@
     <w:name w:val="List Paragraph" />
     <w:basedOn w:val="Normal" />
     <w:pPr>
-      <w:spacing w:before="0" w:after="144" w:line="276" w:lineRule="auto" />
+      <w:spacing w:before="144" w:after="144" w:line="276" w:lineRule="auto" />
     </w:pPr>
     <w:rPr>
       <w:sz w:val="24" />

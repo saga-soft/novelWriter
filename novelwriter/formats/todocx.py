@@ -702,8 +702,8 @@ class ToDocX(Tokenizer):
                 styleId=S_LIST,
                 size=fSz,
                 basedOn=S_NORM,
-                before=fSz * self._marginText[0],
-                after=fSz * self._marginText[1],
+                before=fSz * self._marginList[0],
+                after=fSz * self._marginList[1],
                 line=fSz * self._lineHeight,
             )
         )

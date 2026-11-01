@@ -161,6 +161,7 @@ class nwStyles:
         "H3": (1.20, 0.60),  # Heading 3 margins (top, bottom)
         "H4": (1.20, 0.60),  # Heading 4 margins (top, bottom)
         "TT": (0.00, 0.60),  # Text margins (top, bottom)
+        "LI": (0.60, 0.60),  # List margins (top, bottom)
         "SP": (1.20, 1.20),  # Separator margins (top, bottom)
         "MT": (0.00, 0.60),  # Meta margins (top, bottom)
         "FT": (1.40, 0.40),  # Footnote margins (left, bottom)
