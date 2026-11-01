@@ -21,7 +21,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, TypeVar
 
 from PyQt6.QtCore import QAbstractAnimation, Qt
 from PyQt6.QtGui import (
@@ -40,6 +40,7 @@ from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QHeaderView, QSizePolicy,
 # Custom Types
 
 T_MsgSeverity = Literal["info", "warning", "error"]
+T_Num = TypeVar("T_Num", int, float)
 
 # Alignment Flags
 

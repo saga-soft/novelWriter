@@ -84,6 +84,8 @@ class nwConst:
     MAX_SEARCH_RESULT = 1000
     CHECK_PASS_CHUNK = 100  # Chunk size for spell and format checking
     BIG_DOC_LIMIT = 500000  # Doc size above which the initial cursor move is queued
+    TEXT_FONT_MIN_SIZE = 6.0  # Smallest text font size in points
+    TEXT_FONT_MAX_SIZE = 72.0  # Largest text font size in points
 
 
 class nwRegEx:
@@ -439,6 +441,7 @@ class nwLabels:
         nwStdUnit.LINES: QT_TRANSLATE_NOOP("Units", "lines"),
         nwStdUnit.PIXELS: QT_TRANSLATE_NOOP("Units", "px"),
         nwStdUnit.POINTS: QT_TRANSLATE_NOOP("Units", "pt"),
+        nwStdUnit.EM: QT_TRANSLATE_NOOP("Units", "em"),
         nwStdUnit.SECONDS: QT_TRANSLATE_NOOP("Units", "seconds"),
         nwStdUnit.MINUTES: QT_TRANSLATE_NOOP("Units", "minutes"),
     }

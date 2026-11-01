@@ -248,6 +248,7 @@ class GuiDocEditor(QTextEdit):
         "_trViewTag",
         "_vim",
         "_vpMargin",
+        "_wheelDelta",
         "_zoomIn",
         "_zoomOut",
         "_zoomReset",
@@ -291,6 +292,7 @@ class GuiDocEditor(QTextEdit):
         self._docChanged = False  # Flag for changed status of document
         self._docHandle = None  # The handle of the open document
         self._vpMargin = 0  # The editor viewport margin, set during init
+        self._wheelDelta = 0  # Accumulated Ctrl+Scroll wheel delta
 
         # Document Variables
         self._lastEdit = 0.0  # Timestamp of last edit
@@ -629,7 +631,6 @@ class GuiDocEditor(QTextEdit):
         self._applyTextOptions()
 
         # Refresh sizes
-        self.setTabStopDistance(CONFIG.tabWidth)
         self.setCursorWidth(CONFIG.cursorWidth)
         self._spellSelections.clear()
         self._formatSelections.clear()
@@ -1402,11 +1403,11 @@ class GuiDocEditor(QTextEdit):
         """Zoom the editor font with Ctrl+Scroll wheel."""
         self._hideHoverCard()
         if event.modifiers() & QtModCtrl == QtModCtrl:
-            delta = event.angleDelta().y() // 120
-            if delta > 0:
-                self.zoomIn(delta)
-            elif delta < 0:
-                self.zoomOut(-delta)
+            # High resolution wheels send fractions of a 120 unit step
+            self._wheelDelta += event.angleDelta().y()
+            if steps := int(self._wheelDelta / 120):
+                self._wheelDelta -= 120 * steps
+                self._setZoom(self.font().pointSizeF() + steps)
             event.accept()
             return
         super().wheelEvent(event)
@@ -1536,11 +1537,19 @@ class GuiDocEditor(QTextEdit):
         self.spellCheckDocument()
 
     @pyqtSlot()
+    def zoomIn(self, steps: int = 1) -> None:
+        """Increase the editor's font size."""
+        self._setZoom(self.font().pointSizeF() + steps)
+
+    @pyqtSlot()
+    def zoomOut(self, steps: int = 1) -> None:
+        """Decrease the editor's font size."""
+        self._setZoom(self.font().pointSizeF() - steps)
+
+    @pyqtSlot()
     def zoomReset(self) -> None:
         """Reset the editor's font size to the user's configured size."""
-        font = fontMatcher(CONFIG.textFont)
-        self.setFont(font)
-        self._qDocument.setDefaultFont(font)
+        self._setZoom(CONFIG.textFont.pointSizeF())
 
     ##
     #  Private Slots
@@ -3055,6 +3064,7 @@ class GuiDocEditor(QTextEdit):
     def _applyTextOptions(self) -> None:
         """Set the document text options from the user settings."""
         options = QTextOption()
+        options.setTabStopDistance(CONFIG.tabSize * self.font().pointSizeF() * 96.0 / 72.0)
         if CONFIG.doJustify:
             options.setAlignment(QtAlignJustify)
         if CONFIG.editShowTabsNSpaces:
@@ -3099,6 +3109,13 @@ class GuiDocEditor(QTextEdit):
             event.accept()
         else:
             super().keyPressEvent(event)
+
+    def _setZoom(self, pointSize: float) -> None:
+        """Set the editor's font size within the zoom range."""
+        font = self.font()
+        font.setPointSizeF(minmax(pointSize, nwConst.TEXT_FONT_MIN_SIZE, nwConst.TEXT_FONT_MAX_SIZE))
+        self.setFont(font)
+        self._applyTextOptions()
 
     def _hideHoverCard(self) -> None:
         """Stop the hover timer and hide the hover card, if visible."""

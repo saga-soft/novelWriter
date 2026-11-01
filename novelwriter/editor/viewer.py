@@ -32,15 +32,17 @@ from PyQt6.QtGui import (
     QDragEnterEvent,
     QDragMoveEvent,
     QDropEvent,
+    QFont,
     QMouseEvent,
     QPalette,
     QResizeEvent,
     QTextCursor,
+    QWheelEvent,
 )
 from PyQt6.QtWidgets import QApplication, QFrame, QMenu, QTextBrowser, QWidget
 
 from novelwriter import CONFIG, SHARED
-from novelwriter.common import decodeMimeHandles, fontMatcher, qtAddAction, qtLambda
+from novelwriter.common import decodeMimeHandles, minmax, qtAddAction, qtLambda
 from novelwriter.constants import nwConst, nwStyles, nwUnicode
 from novelwriter.editor.footer import GuiDocViewFooter
 from novelwriter.editor.header import GuiDocViewHeader
@@ -53,6 +55,7 @@ from novelwriter.formats.shared import TextDocumentTheme
 from novelwriter.formats.toqdoc import ToQTextDocument
 from novelwriter.types import (
     QtKeepAnchor,
+    QtModCtrl,
     QtMoveAnchor,
     QtScrollAlwaysOff,
     QtScrollAsNeeded,
@@ -83,6 +86,7 @@ class GuiDocViewer(QTextBrowser):
         # Internal Variables
         self._docHandle = None
         self._docTheme = TextDocumentTheme()
+        self._wheelDelta = 0
 
         # Settings
         self.setMinimumWidth(300)
@@ -121,6 +125,12 @@ class GuiDocViewer(QTextBrowser):
         self._timerHover.timeout.connect(self._showHoverCard)
         self._timerHover.setSingleShot(True)
         self._timerHover.setInterval(250)
+
+        # Rebuild the document after the last Ctrl+Scroll zoom step
+        self._timerZoom = QTimer(self)
+        self._timerZoom.timeout.connect(self.reloadText)
+        self._timerZoom.setSingleShot(True)
+        self._timerZoom.setInterval(250)
 
         if viewport := self.viewport():  # pragma: no branch
             viewport.setMouseTracking(True)
@@ -225,9 +235,6 @@ class GuiDocViewer(QTextBrowser):
 
         self.initViewport()
 
-        # Refresh the tab stops
-        self.setTabStopDistance(CONFIG.tabWidth)
-
         # If we have a document open, we should reload it in case the font changed
         self.reloadText()
 
@@ -255,9 +262,10 @@ class GuiDocViewer(QTextBrowser):
 
     def loadText(self, tHandle: str, updateHistory: bool = True) -> bool:
         """Load text into the viewer from an item handle."""
+        self._timerZoom.stop()
         self._timerHover.stop()
         self._hoverCard.hide()
-        if not SHARED.project.tree.checkType(tHandle, nwItemType.FILE):
+        if not ((nwItem := SHARED.project.tree[tHandle]) and nwItem.itemType == nwItemType.FILE):
             logger.warning("Item not found")
             self.documentLoaded.emit("")
             return False
@@ -268,14 +276,20 @@ class GuiDocViewer(QTextBrowser):
         vBar = self.verticalScrollBar()
         sPos = vBar.value() if vBar else 0
 
+        font = QFont(CONFIG.textFont)
+        font.setPointSizeF(self.font().pointSizeF())
+
+        indentFirst = CONFIG.viewFirstLineIndent if nwItem.isDocumentLayout() else False
+
         qDoc = ToQTextDocument(SHARED.project)
         qDoc.setLanguage(None, SHARED.project.data.isRTL)
         qDoc.setJustify(CONFIG.doJustify, False)
         qDoc.setDialogHighlight(True)
-        qDoc.setTextFont(CONFIG.textFont)
+        qDoc.setTextFont(font)
         qDoc.setFixedHeadings(True)
         qDoc.setLineHeight(CONFIG.lineHeight)
-        qDoc.setFirstLineIndent(CONFIG.viewFirstLineIndent, 1.4, False)
+        qDoc.setFirstLineIndent(indentFirst, CONFIG.tabSize, False)
+        qDoc.setTabSize(CONFIG.tabSize)
         qDoc.setTheme(self._docTheme)
         qDoc.initDocument()
         qDoc.setKeywords(True)
@@ -307,7 +321,6 @@ class GuiDocViewer(QTextBrowser):
 
         self.setDocumentTitle(tHandle)
         self.setDocument(qDoc.document)
-        self.setTabStopDistance(CONFIG.tabWidth)
 
         if self._docHandle == tHandle and vBar:
             # This is a refresh, so we set the scrollbar back to where it was
@@ -417,12 +430,19 @@ class GuiDocViewer(QTextBrowser):
             self.setSource(QUrl(anchor))
 
     @pyqtSlot()
+    def zoomIn(self, steps: int = 1) -> None:
+        """Increase the font size and rebuild the document."""
+        self._setZoom(self.font().pointSizeF() + steps)
+
+    @pyqtSlot()
+    def zoomOut(self, steps: int = 1) -> None:
+        """Decrease the font size and rebuild the document."""
+        self._setZoom(self.font().pointSizeF() - steps)
+
+    @pyqtSlot()
     def zoomReset(self) -> None:
-        """Reset the editor's font size to the user's configured size."""
-        if document := self.document():  # pragma: no branch
-            font = fontMatcher(CONFIG.textFont)
-            self.setFont(font)
-            document.setDefaultFont(font)
+        """Reset the font size to the user's configured size."""
+        self._setZoom(CONFIG.textFont.pointSizeF())
 
     @pyqtSlot(list, list)
     def updateChangedTags(self, updated: list[str], deleted: list[str]) -> None:
@@ -534,6 +554,18 @@ class GuiDocViewer(QTextBrowser):
         if event.type() == QEvent.Type.FontChange:
             self.docFooter.updateZoom(self.font().pointSizeF())
 
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        """Zoom the viewer font with Ctrl+Scroll wheel."""
+        if event.modifiers() & QtModCtrl == QtModCtrl:
+            # High resolution wheels send fractions of a 120 unit step
+            self._wheelDelta += event.angleDelta().y()
+            if steps := int(self._wheelDelta / 120):
+                self._wheelDelta -= 120 * steps
+                self._setZoom(self.font().pointSizeF() + steps, delay=True)
+            event.accept()
+            return
+        super().wheelEvent(event)
+
     def leaveEvent(self, event: QEvent) -> None:
         """Request that the hover card be hidden when the mouse leaves
         the viewer. The hide is delayed rather than immediate, so the
@@ -600,3 +632,13 @@ class GuiDocViewer(QTextBrowser):
         """Handle text selection at a given location."""
         self.setTextCursor(self.cursorForPosition(pos))
         self._makeSelection(selType)
+
+    def _setZoom(self, pointSize: float, delay: bool = False) -> None:
+        """Set the font size and rebuild the document."""
+        font = self.font()
+        font.setPointSizeF(minmax(pointSize, nwConst.TEXT_FONT_MIN_SIZE, nwConst.TEXT_FONT_MAX_SIZE))
+        self.setFont(font)
+        if delay:
+            self._timerZoom.start()
+        else:
+            self.reloadText()

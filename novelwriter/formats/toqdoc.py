@@ -290,6 +290,10 @@ class ToQTextDocument(Tokenizer):
 
         self._document.setIndentWidth(self._mIndent)
 
+        option = self._document.defaultTextOption()
+        option.setTabStopDistance(mPx * self._tabSize)
+        self._document.setDefaultTextOption(option)
+
         # Text Formats
         self._blockFmt.setTopMargin(self._mText[0])
         self._blockFmt.setBottomMargin(self._mText[1])

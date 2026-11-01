@@ -57,6 +57,7 @@ from novelwriter.common import (
     formatTimeStamp,
     joinLines,
     languageName,
+    minmax,
     processDialogSymbols,
     safeExists,
     safeIsDir,
@@ -64,7 +65,7 @@ from novelwriter.common import (
     simplified,
     uniqueCompact,
 )
-from novelwriter.constants import nwFiles, nwQuotes, nwUnicode, trStats
+from novelwriter.constants import nwConst, nwFiles, nwQuotes, nwUnicode, trStats
 from novelwriter.enum import nwTheme
 from novelwriter.error import formatException, logException
 from novelwriter.formats.configparser import NConfigParser
@@ -226,7 +227,7 @@ class Config:
         "spellLanguage",
         "stopWhenIdle",
         "storyPanePos",
-        "tabWidth",
+        "tabSize",
         "textFont",
         "textMargin",
         "textWidth",
@@ -353,12 +354,12 @@ class Config:
         self.askBeforeExit = True  # Flag for asking before exiting the app
         self.forceUnixLineEndings = False  # Always use LF line endings, never CRLF
 
-        # Text Editor Settings
+        # Text Document Settings
         self.textFont = QFont()  # Editor font
         self.textWidth = 700  # Editor text width
         self.textMargin = 40  # Editor/viewer text margin
-        self.tabWidth = 40  # Editor tabulator width
-        self.lineHeight = 1.15  # Editor line height
+        self.tabSize = 2.0  # Text tab size in em
+        self.lineHeight = 1.15  # Text line height
         self.cursorWidth = 1  # Editor cursor width
         self.lineHighlight = False  # Highlight current line in editor
 
@@ -631,6 +632,11 @@ class Config:
             self.textFont = fontMatcher(font)
             logger.debug("Text font set to: %s", describeFont(self.textFont))
 
+        # Copy to avoid changing the font passed in, and skip pixel sized fonts
+        if (size := self.textFont.pointSizeF()) > 0.0:
+            self.textFont = QFont(self.textFont)
+            self.textFont.setPointSizeF(minmax(size, nwConst.TEXT_FONT_MIN_SIZE, nwConst.TEXT_FONT_MAX_SIZE))
+
     def setPrimaryCount(self, useCharCount: bool) -> None:
         """Set the primary count unit. This also updates the unit label."""
         self.useCharCount = useCharCount
@@ -885,7 +891,7 @@ class Config:
         self.setTextFont(parser.getStr(sec, "textFont", ""))
         self.textWidth = parser.getInt(sec, "width", self.textWidth)
         self.textMargin = parser.getInt(sec, "margin", self.textMargin)
-        self.tabWidth = parser.getInt(sec, "tabWidth", self.tabWidth)
+        self.tabSize = parser.getFloat(sec, "tabSize", self.tabSize)
         self.lineHeight = parser.getFloat(sec, "lineHeight", self.lineHeight)
         self.cursorWidth = parser.getInt(sec, "cursorWidth", self.cursorWidth)
         self.lineHighlight = parser.getBool(sec, "lineHighlight", self.lineHighlight)
@@ -1035,7 +1041,7 @@ class Config:
             "textFont": self.textFont,
             "width": self.textWidth,
             "margin": self.textMargin,
-            "tabWidth": self.tabWidth,
+            "tabSize": self.tabSize,
             "lineHeight": self.lineHeight,
             "cursorWidth": self.cursorWidth,
             "lineHighlight": self.lineHighlight,

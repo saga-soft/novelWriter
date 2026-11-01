@@ -871,7 +871,7 @@ class ToOdt(Tokenizer):
             _mkTag("style", "paragraph-properties"),
             attrib={
                 _mkTag("style", "line-break"): "strict",
-                _mkTag("style", "tab-stop-distance"): "1.251cm",
+                _mkTag("style", "tab-stop-distance"): self._emToCm(self._tabSize),
                 _mkTag("style", "writing-mode"): "page",
             },
         )

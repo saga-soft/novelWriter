@@ -170,6 +170,7 @@ class GuiPreferences(NDialog):
         self._textFont = CONFIG.textFont
 
         trPx = trUnit(nwStdUnit.PIXELS)
+        trEm = trUnit(nwStdUnit.EM)
         trSec = trUnit(nwStdUnit.SECONDS)
         trMin = trUnit(nwStdUnit.MINUTES)
 
@@ -592,15 +593,15 @@ class GuiPreferences(NDialog):
             unit=trPx,
         )
 
-        # Tab Width
-        self.tabWidth = NSpinBox(self, minVal=0, maxVal=200)
-        self.tabWidth.setFixedNumbersWidth(3)
-        self.tabWidth.setValue(CONFIG.tabWidth)
+        # Tab Size
+        self.tabSize = NDoubleSpinBox(self, minVal=0.0, maxVal=19.9, step=0.1, prec=2)
+        self.tabSize.setFixedNumbersWidth(5)
+        self.tabSize.setValue(CONFIG.tabSize)
         self.mainForm.addRow(
-            self.tr("Tab width"),
-            self.tabWidth,
+            self.tr("Tab size"),
+            self.tabSize,
             self.tr("The width of a tab key press in the editor and viewer."),
-            unit=trPx,
+            unit=trEm,
         )
 
         # Line Height
@@ -611,7 +612,7 @@ class GuiPreferences(NDialog):
             self.tr("Line height"),
             self.lineHeight,
             self.tr("The relative line height in the editor and viewer."),
-            unit=self.tr("em"),
+            unit=trEm,
         )
 
         # Text Editing
@@ -1267,14 +1268,14 @@ class GuiPreferences(NDialog):
         focusWidth = self.focusWidth.value()
         doJustify = self.doJustify.isChecked()
         textMargin = self.textMargin.value()
-        tabWidth = self.tabWidth.value()
+        tabSize = self.tabSize.value()
         lineHeight = self.lineHeight.value()
 
         initEditor |= CONFIG.doJustify != doJustify
-        initEditor |= CONFIG.tabWidth != tabWidth
+        initEditor |= CONFIG.tabSize != tabSize
         initEditor |= CONFIG.lineHeight != lineHeight
         initViewer |= CONFIG.doJustify != doJustify
-        initViewer |= CONFIG.tabWidth != tabWidth
+        initViewer |= CONFIG.tabSize != tabSize
         initViewer |= CONFIG.lineHeight != lineHeight
         initViewport |= CONFIG.textWidth != textWidth
         initViewport |= CONFIG.focusWidth != focusWidth
@@ -1284,7 +1285,7 @@ class GuiPreferences(NDialog):
         CONFIG.focusWidth = focusWidth
         CONFIG.doJustify = doJustify
         CONFIG.textMargin = textMargin
-        CONFIG.tabWidth = tabWidth
+        CONFIG.tabSize = tabSize
         CONFIG.lineHeight = lineHeight
 
         # Text Editing
