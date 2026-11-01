@@ -327,6 +327,10 @@ class DocumentBuilder:
             self._build.getFloat("format.textMarginT"),
             self._build.getFloat("format.textMarginB"),
         )
+        bldObj.setListProperties(
+            self._build.getFloat("format.listMarginT"),
+            self._build.getFloat("format.listMarginB"),
+        )
         bldObj.setSeparatorProperties(
             self._build.getFloat("format.sepMarginT"),
             self._build.getFloat("format.sepMarginB"),

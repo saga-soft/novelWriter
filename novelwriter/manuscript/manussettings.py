@@ -1366,12 +1366,12 @@ class _FormattingTab(NScrollableForm):
         self.btnListProps = SHARED.theme.getIconButton(nwToolButton.REVERT, self)
         self.btnListProps.clicked.connect(self._resetListProps)
 
-        self.pixTTT = QLabel(self)
-        self.pixTTB = QLabel(self)
+        self.pixLIT = QLabel(self)
+        self.pixLIB = QLabel(self)
 
         self.addRow(
             self._build.getLabel("format.listMargin"),
-            [self.pixTTT, self.listMarginT, iSp, self.pixTTB, self.listMarginB],
+            [self.pixLIT, self.listMarginT, iSp, self.pixLIB, self.listMarginB],
             button=self.btnListProps,
         )
 
@@ -1580,6 +1580,8 @@ class _FormattingTab(NScrollableForm):
         self.pixH4B.setPixmap(bMargin)
         self.pixTTT.setPixmap(tMargin)
         self.pixTTB.setPixmap(bMargin)
+        self.pixLIT.setPixmap(tMargin)
+        self.pixLIB.setPixmap(bMargin)
         self.pixSPT.setPixmap(tMargin)
         self.pixSPB.setPixmap(bMargin)
         self.pixPMT.setPixmap(tMargin)

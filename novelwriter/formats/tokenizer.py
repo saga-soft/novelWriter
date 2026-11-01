@@ -154,6 +154,7 @@ class Tokenizer(ABC):
         "_marginHead2",
         "_marginHead3",
         "_marginHead4",
+        "_marginList",
         "_marginMeta",
         "_marginSep",
         "_marginText",
@@ -248,6 +249,7 @@ class Tokenizer(ABC):
         self._marginHead3 = nwStyles.T_MARGIN["H3"]
         self._marginHead4 = nwStyles.T_MARGIN["H4"]
         self._marginText = nwStyles.T_MARGIN["TT"]
+        self._marginList = nwStyles.T_MARGIN["LI"]
         self._marginMeta = nwStyles.T_MARGIN["MT"]
         self._marginFoot = nwStyles.T_MARGIN["FT"]
         self._marginSep = nwStyles.T_MARGIN["SP"]
@@ -484,6 +486,10 @@ class Tokenizer(ABC):
         """Set the upper and lower text margin."""
         self._marginText = (upper, lower)
 
+    def setListProperties(self, upper: float, lower: float) -> None:
+        """Set the upper and lower list margin."""
+        self._marginList = (upper, lower)
+
     def setMetaProperties(self, upper: float, lower: float) -> None:
         """Set the upper and lower meta text margin."""
         self._marginMeta = (upper, lower)
@@ -501,6 +507,7 @@ class Tokenizer(ABC):
         self._marginHead3 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H3"]
         self._marginHead4 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H4"]
         self._marginText = (0.0, 0.0) if value else nwStyles.T_MARGIN["TT"]
+        self._marginList = (0.0, 0.0) if value else nwStyles.T_MARGIN["LI"]
         self._marginMeta = (0.0, 0.0) if value else nwStyles.T_MARGIN["MT"]
         self._marginFoot = (0.0, 0.0) if value else nwStyles.T_MARGIN["FT"]
         self._marginSep = (0.0, 0.0) if value else nwStyles.T_MARGIN["SP"]

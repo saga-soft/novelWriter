@@ -113,6 +113,7 @@ class ToQTextDocument(Tokenizer):
         "_listFmtU",
         "_mHead",
         "_mIndent",
+        "_mList",
         "_mMeta",
         "_mSep",
         "_mText",
@@ -160,6 +161,7 @@ class ToQTextDocument(Tokenizer):
         self._fHead: dict[BlockTyp, int] = {}
         self._iHead: dict[BlockTyp, int] = {}
         self._mText: tuple[float, float] = (1.0, 1.0)
+        self._mList: tuple[float, float] = (1.0, 1.0)
         self._mMeta: tuple[float, float] = (1.0, 1.0)
         self._mSep: tuple[float, float] = (1.0, 1.0)
         self._mIndent = 1.0
@@ -282,6 +284,7 @@ class ToQTextDocument(Tokenizer):
         }
 
         self._mText = (fPx * self._marginText[0], fPx * self._marginText[1])
+        self._mList = (fPx * self._marginList[0], fPx * self._marginList[1])
         self._mMeta = (fPx * self._marginMeta[0], fPx * self._marginMeta[1])
         self._mSep = (fPx * self._marginSep[0], fPx * self._marginSep[1])
 
@@ -327,6 +330,9 @@ class ToQTextDocument(Tokenizer):
             if tType in META_BLOCKS:
                 bFmt.setTopMargin(self._mMeta[0])
                 bFmt.setBottomMargin(self._mMeta[1])
+            elif tType in LIST_BLOCKS:
+                bFmt.setTopMargin(self._mList[0])
+                bFmt.setBottomMargin(self._mList[1])
             elif tType == BlockTyp.SEP:
                 bFmt.setTopMargin(self._mSep[0])
                 bFmt.setBottomMargin(self._mSep[1])
