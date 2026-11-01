@@ -265,7 +265,7 @@ class GuiDocViewer(QTextBrowser):
         self._timerZoom.stop()
         self._timerHover.stop()
         self._hoverCard.hide()
-        if not SHARED.project.tree.checkType(tHandle, nwItemType.FILE):
+        if not ((nwItem := SHARED.project.tree[tHandle]) and nwItem.itemType == nwItemType.FILE):
             logger.warning("Item not found")
             self.documentLoaded.emit("")
             return False
@@ -279,6 +279,8 @@ class GuiDocViewer(QTextBrowser):
         font = QFont(CONFIG.textFont)
         font.setPointSizeF(self.font().pointSizeF())
 
+        indentFirst = CONFIG.viewFirstLineIndent if nwItem.isDocumentLayout() else False
+
         qDoc = ToQTextDocument(SHARED.project)
         qDoc.setLanguage(None, SHARED.project.data.isRTL)
         qDoc.setJustify(CONFIG.doJustify, False)
@@ -286,7 +288,7 @@ class GuiDocViewer(QTextBrowser):
         qDoc.setTextFont(font)
         qDoc.setFixedHeadings(True)
         qDoc.setLineHeight(CONFIG.lineHeight)
-        qDoc.setFirstLineIndent(CONFIG.viewFirstLineIndent, CONFIG.tabSize, False)
+        qDoc.setFirstLineIndent(indentFirst, CONFIG.tabSize, False)
         qDoc.setTabSize(CONFIG.tabSize)
         qDoc.setTheme(self._docTheme)
         qDoc.initDocument()

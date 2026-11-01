@@ -351,7 +351,7 @@ class GuiDocViewFooter(GuiDocFooterBase):
         self.aShowNotes.setChecked(CONFIG.viewNotes)
         self.aShowNotes.toggled.connect(self._doToggleNotes)
 
-        self.aUseIndent = qtAddAction(self.optsMenu, self.tr("Enable First Line Indent"))
+        self.aUseIndent = qtAddAction(self.optsMenu, self.tr("Enable First Line Indent for Novel Documents"))
         self.aUseIndent.setCheckable(True)
         self.aUseIndent.setChecked(CONFIG.viewFirstLineIndent)
         self.aUseIndent.toggled.connect(self._doToggleFirstLineIndent)
