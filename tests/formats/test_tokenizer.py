@@ -236,7 +236,7 @@ def testTokenizer_TextOps(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain,
     nDoc = project.storage.getDocument(C.hSceneDoc)
     assert nDoc.writeDocument(docText)
 
-    project.data.setAutoReplace({"A": "this", "B": "that"})
+    project.data.setAutoReplace({"A": "this", "B": "that"}, False)
 
     assert project.saveProject()
 

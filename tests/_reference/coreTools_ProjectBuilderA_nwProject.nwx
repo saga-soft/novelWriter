@@ -17,7 +17,7 @@
       <entry key="novel">None</entry>
       <entry key="story">None</entry>
     </lastHandle>
-    <autoReplace />
+    <autoReplace ignoreCase="no" />
     <status>
       <entry key="s000000" count="15" color="faded" shape="STAR">New</entry>
       <entry key="s000001" count="0" color="red" shape="TRIANGLE">Note</entry>

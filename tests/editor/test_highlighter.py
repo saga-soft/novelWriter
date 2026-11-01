@@ -749,7 +749,7 @@ def testGuiDocHighlighter_AutoReplace(syntax: GuiDocHighlighter):
     assert pieces == []
 
     # Only defined keys are highlighted
-    SHARED.project.data.setAutoReplace({"Name": "Bob"})
+    SHARED.project.data.setAutoReplace({"Name": "Bob"}, False)
     assert syntax.updateReplaceKeys() is True
     assert syntax.updateReplaceKeys() is False
     assert syntax._replaceKeys == frozenset({"Name"})

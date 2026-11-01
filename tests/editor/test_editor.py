@@ -1183,7 +1183,7 @@ def testGuiDocEditor_UpdateReplaceKeys(qtbot: QtBot, nwGUI: GuiMain, projPath: P
 
     # No document open, nothing is updated
     nwGUI.docPanes.closeDocument()
-    SHARED.project.data.setAutoReplace({"Name": "Bob"})
+    SHARED.project.data.setAutoReplace({"Name": "Bob"}, False)
     docEditor.updateReplaceKeys()
     assert syntax._replaceKeys == frozenset()
 
@@ -1192,7 +1192,7 @@ def testGuiDocEditor_UpdateReplaceKeys(qtbot: QtBot, nwGUI: GuiMain, projPath: P
     assert syntax._replaceKeys == frozenset({"Name"})
 
     # Changed keys are picked up
-    SHARED.project.data.setAutoReplace({"Name": "Bob", "Place": "Here"})
+    SHARED.project.data.setAutoReplace({"Name": "Bob", "Place": "Here"}, False)
     docEditor.updateReplaceKeys()
     assert syntax._replaceKeys == frozenset({"Name", "Place"})
 
