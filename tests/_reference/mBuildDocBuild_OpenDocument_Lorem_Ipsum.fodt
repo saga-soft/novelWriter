@@ -50,7 +50,9 @@
       <style:paragraph-properties fo:margin-top="0.635cm" fo:margin-bottom="0.254cm" fo:text-align="center" />
       <style:text-properties style:font-name="Arial" fo:font-family="Arial" fo:font-size="30pt" fo:font-weight="bold" />
     </style:style>
-    <style:style style:name="List" style:family="paragraph" style:display-name="List" style:parent-style-name="Text_20_body" style:class="list" />
+    <style:style style:name="List" style:family="paragraph" style:display-name="List" style:parent-style-name="Text_20_body" style:class="list">
+      <style:paragraph-properties fo:margin-top="0.254cm" fo:margin-bottom="0.254cm" />
+    </style:style>
     <style:style style:name="Separator" style:family="paragraph" style:display-name="Separator" style:parent-style-name="Standard" style:next-style-name="Text_20_body" style:class="text">
       <style:paragraph-properties fo:margin-top="0.508cm" fo:margin-bottom="0.508cm" fo:line-height="150%" fo:text-align="center" />
       <style:text-properties style:font-name="Arial" fo:font-family="Arial" fo:font-size="12pt" fo:font-weight="normal" />

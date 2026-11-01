@@ -460,8 +460,11 @@ class ToOdt(Tokenizer):
                     mTop, mBtm = self._marginMeta
                 elif tType in LIST_BLOCKS:
                     mTop, mBtm = self._marginList
-                else:
+                else:  # pragma: no cover
+                    # The tokenizer currently only sets these flags on meta and list blocks,
+                    # so this part isn't reachable but may be in the future
                     mTop, mBtm = self._marginText
+
                 oStyle.setMarginTop("0.000cm" if tStyle & BlockFmt.Z_TOP else self._emToCm(mTop))
                 oStyle.setMarginBottom("0.000cm" if tStyle & BlockFmt.Z_BTM else self._emToCm(mBtm))
 

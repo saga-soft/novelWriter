@@ -99,6 +99,7 @@ def testTokenizer_Setters(mockGUI: MockGuiMain):
     assert tokens._marginHead4 == nwStyles.T_MARGIN["H4"]
     assert tokens._marginSep == nwStyles.T_MARGIN["SP"]
     assert tokens._marginText == nwStyles.T_MARGIN["TT"]
+    assert tokens._marginList == nwStyles.T_MARGIN["LI"]
     assert tokens._marginMeta == nwStyles.T_MARGIN["MT"]
     assert tokens._sizeTitle == nwStyles.H_SIZES[0]
     assert tokens._sizeHead1 == nwStyles.H_SIZES[1]
@@ -137,6 +138,7 @@ def testTokenizer_Setters(mockGUI: MockGuiMain):
     tokens.setHead3Properties(2.0, 2.0, 5.0)
     tokens.setHead4Properties(2.0, 2.0, 4.0)
     tokens.setTextProperties(2.0, 2.0)
+    tokens.setListProperties(2.0, 2.0)
     tokens.setMetaProperties(2.0, 2.0)
     tokens.setSeparatorProperties(2.0, 2.0)
     tokens.setLinkHeadings(True)
@@ -164,6 +166,7 @@ def testTokenizer_Setters(mockGUI: MockGuiMain):
     assert tokens._marginHead3 == (2.0, 2.0)
     assert tokens._marginHead4 == (2.0, 2.0)
     assert tokens._marginText == (2.0, 2.0)
+    assert tokens._marginList == (2.0, 2.0)
     assert tokens._marginMeta == (2.0, 2.0)
     assert tokens._marginSep == (2.0, 2.0)
     assert tokens._sizeTitle == 8.0
@@ -244,6 +247,7 @@ def testTokenizer_TextOps(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain,
     assert len(tokens._blocks) == 0
 
     # First Page
+    assert tokens._noIndent is False
     tokens.addRootHeading(C.hPlotRoot)
     assert tokens._raw[-1] == "#! Notes: Plot\n\n"
     assert tokens._blocks[-1] == (
@@ -253,6 +257,7 @@ def testTokenizer_TextOps(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain,
         [],
         BlockFmt.CENTRE,
     )
+    assert tokens._noIndent is True
 
     # Not First Page
     tokens.addRootHeading(C.hPlotRoot)
@@ -1649,13 +1654,22 @@ def testTokenizer_Lists(mockGUI: MockGuiMain):
         ),
     ]
 
-    # No first line indent on items, but justify applies
+    # No first line indent on items or the paragraph after, but justify applies
     tokens.setFirstLineIndent(True, 1.0, False)
     tokens.setJustify(True, False)
-    tokens._text = "Text\n\n* One\n\nText\n"
+    tokens._text = "* One\n\nText\n\nText\n"
     tokens.tokenizeText()
     assert tokens._blocks == [
+        (BlockTyp.LIST_U, "", "One", [], BlockFmt.LIST_S | BlockFmt.LIST_E | BlockFmt.JUSTIFY),
+        (BlockTyp.TEXT, "", "Text", [], BlockFmt.JUSTIFY),
         (BlockTyp.TEXT, "", "Text", [], BlockFmt.IND_T | BlockFmt.JUSTIFY),
+    ]
+
+    # Indent after list if the first paragraph is indented
+    tokens.setFirstLineIndent(True, 1.0, True)
+    tokens._text = "* One\n\nText\n"
+    tokens.tokenizeText()
+    assert tokens._blocks == [
         (BlockTyp.LIST_U, "", "One", [], BlockFmt.LIST_S | BlockFmt.LIST_E | BlockFmt.JUSTIFY),
         (BlockTyp.TEXT, "", "Text", [], BlockFmt.IND_T | BlockFmt.JUSTIFY),
     ]
@@ -1741,7 +1755,7 @@ def testTokenizer_Lists(mockGUI: MockGuiMain):
     assert tokens._blocks == [
         (BlockTyp.TEXT, "", "Text", [], BlockFmt.IND_T),
         (BlockTyp.LIST_O, "", "One", [], BlockFmt.LIST_S | BlockFmt.LIST_E),
-        (BlockTyp.TEXT, "", "Text", [], BlockFmt.IND_T),
+        (BlockTyp.TEXT, "", "Text", [], BlockFmt.NONE),
     ]
     tokens.setFirstLineIndent(False, 1.0, False)
 

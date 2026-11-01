@@ -541,10 +541,10 @@ def testToQTextDocument_Lists(mockGUI: MockGuiMain):
     assert bOne.charFormat() == doc._charFmt
 
     # Margins are zero between items
-    assert bOne.blockFormat().topMargin() == doc._mText[0]
+    assert bOne.blockFormat().topMargin() == doc._mList[0]
     assert bOne.blockFormat().bottomMargin() == 0.0
     assert bTwo.blockFormat().topMargin() == 0.0
-    assert bTwo.blockFormat().bottomMargin() == doc._mText[1]
+    assert bTwo.blockFormat().bottomMargin() == doc._mList[1]
 
     # A blank line starts a new list
     bThree = blocks["Three"]
