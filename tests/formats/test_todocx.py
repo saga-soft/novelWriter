@@ -950,7 +950,8 @@ def testToDocX_DoublePages(mockGUI: MockGuiMain):
     # Even and odd headers are enabled
     xSett = doc._files["settings.xml"].xml
     assert xSett[0].tag == _wTag("mirrorMargins")
-    assert xSett[1].tag == _wTag("evenAndOddHeaders")
+    assert xSett[1].tag == _wTag("defaultTabStop")
+    assert xSett[2].tag == _wTag("evenAndOddHeaders")
 
     # Single pages have no even page header
     doc.setPageLayout(210.0, 297.0, 20.0, 20.0, 20.0, 20.0, 10.0, False)

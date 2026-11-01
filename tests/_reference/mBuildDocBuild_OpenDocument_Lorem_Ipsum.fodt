@@ -21,7 +21,7 @@
   </office:font-face-decls>
   <office:styles>
     <style:default-style style:family="paragraph">
-      <style:paragraph-properties style:line-break="strict" style:tab-stop-distance="1.251cm" style:writing-mode="page" />
+      <style:paragraph-properties style:line-break="strict" style:tab-stop-distance="1.270cm" style:writing-mode="page" />
       <style:text-properties style:font-name="Arial" fo:font-family="Arial" fo:font-weight="normal" fo:font-style="normal" fo:font-size="12pt" fo:language="en" fo:country="GB" />
     </style:default-style>
     <style:style style:name="Standard" style:family="paragraph" style:class="text">
