@@ -2073,7 +2073,17 @@ def testTokenizer_AutoReplace(mockGUI: MockGuiMain):
     tokens.tokenizeText()
     assert tokens.textProblems == {}
 
+    # So are headings where the format doesn't show the title, but not the main title
+    tokens.setPartitionFormat("Part", False)
+    tokens.setChapterFormat(nwHeadFmt.CH_NUM, False)
+    tokens.setSceneFormat("* * *", False)
+    tokens.setSectionFormat("", False)
+    tokens._text = f"#! T <t>\n\n{text}"
+    tokens.tokenizeText()
+    assert [k for k, _, _ in tokens.textProblems[nwProblems.MISSING_AUTO_KEYS]] == ["t"]
+
     # But not visible ones
+    tokens._problems.clear()
     tokens.setPartitionFormat(nwHeadFmt.TITLE, False)
     tokens.setChapterFormat(nwHeadFmt.TITLE, False)
     tokens.setSceneFormat(nwHeadFmt.TITLE, False)

@@ -390,14 +390,14 @@ class ToQTextDocument(Tokenizer):
 
             elif tType == BlockTyp.SEP:
                 newBlock(cursor, bFmt)
-                cursor.insertText(tText, self._genAnchorFmt(tMeta))
+                cursor.insertText(tText, self._charFmt)
 
             elif tType == BlockTyp.HRULE:
                 self._insertHorizontalRule(cursor)
 
             elif tType == BlockTyp.SKIP:
                 newBlock(cursor, bFmt)
-                cursor.insertText(nwUnicode.U_NBSP, self._genAnchorFmt(tMeta))
+                cursor.insertText(nwUnicode.U_NBSP, self._charFmt)
 
             else:  # pragma: no cover
                 pass
@@ -605,15 +605,6 @@ class ToQTextDocument(Tokenizer):
         bFmt.setProperty(QTextBlockFormat.Property.BackgroundBrush, QBrush(self._theme.text))
 
         newBlock(cursor, bFmt)
-
-    def _genAnchorFmt(self, key: str) -> QTextCharFormat:
-        """Return the default character format with an anchor, if set."""
-        if key and self._useAnchors:
-            cFmt = QTextCharFormat(self._charFmt)
-            cFmt.setAnchorNames([key])
-            cFmt.setAnchor(True)
-            return cFmt
-        return self._charFmt
 
     def _genHeadStyle(self, hType: BlockTyp, hKey: str, rFmt: QTextBlockFormat) -> T_TextStyle:
         """Generate a heading style set."""

@@ -209,23 +209,6 @@ def testToQTextDocument_SeparatorSkip(mockGUI: MockGuiMain):
     block = doc.document.findBlockByNumber(6)
     assert block.text() == "Text 3"
 
-    # Separators and skips from headings have anchors
-    assert charFmtInBlock(doc.document.findBlockByNumber(3), 1).anchorNames() == [":T0004"]
-    assert charFmtInBlock(doc.document.findBlockByNumber(5), 1).anchorNames() == [":T0005"]
-
-    # But not without anchors enabled
-    doc = ToQTextDocument(project)
-    doc.setAnchorsEnabled(False)
-    doc.initDocument()
-    doc._isNovel = True
-    doc._text = "### Scene 1\nText 1\n### Scene 2\nText 2\n"
-    doc.setSceneFormat("* * *", False)
-    doc.tokenizeText()
-    doc.doConvert()
-    block = doc.document.findBlockByNumber(1)
-    assert block.text() == "* * *"
-    assert charFmtInBlock(block, 1).anchorNames() == []
-
 
 @pytest.mark.core
 def testToQTextDocument_HorizontalRule(mockGUI: MockGuiMain):

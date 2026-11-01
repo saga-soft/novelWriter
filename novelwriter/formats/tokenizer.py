@@ -816,7 +816,7 @@ class Tokenizer(ABC):
                 tType = BlockTyp.HEAD1 if isPlain else BlockTyp.TITLE
                 sHide = self._hidePart if isPlain else False
                 sText = ""
-                if not (isNovel and sHide):
+                if not (isNovel and isPlain and (sHide or nwHeadFmt.TITLE not in self._fmtPart)):
                     tText, _ = self._formatAutoReplace(tText, nHead, True)
                 if not (isPlain or (isNovel and sHide)):
                     tStyle |= self._titleStyle
@@ -856,7 +856,7 @@ class Tokenizer(ABC):
                 sHide = self._hideChapter if isPlain else self._hideUnNum
                 tFormat = self._fmtChapter if isPlain else self._fmtUnNum
                 sText = ""
-                if not (isNovel and sHide):
+                if not (isNovel and (sHide or nwHeadFmt.TITLE not in tFormat)):
                     tText, _ = self._formatAutoReplace(tText, nHead, True)
                 if isNovel:
                     tType = BlockTyp.HEAD1  # Promote
@@ -895,7 +895,7 @@ class Tokenizer(ABC):
                 sHide = self._hideScene if isPlain else self._hideHScene
                 tFormat = self._fmtScene if isPlain else self._fmtHScene
                 sText = ""
-                if not (isNovel and sHide):
+                if not (isNovel and (sHide or nwHeadFmt.TITLE not in tFormat)):
                     tText, _ = self._formatAutoReplace(tText, nHead, True)
                 if isNovel:
                     tType = BlockTyp.HEAD2  # Promote
@@ -937,7 +937,7 @@ class Tokenizer(ABC):
                 tText = aLine[5:].strip()
                 tType = BlockTyp.HEAD4
                 tFormat = self._fmtSection
-                if not (isNovel and self._hideSection):
+                if not (isNovel and (self._hideSection or nwHeadFmt.TITLE not in tFormat)):
                     tText, _ = self._formatAutoReplace(tText, nHead, True)
                 if isNovel:
                     tType = BlockTyp.HEAD3  # Promote
