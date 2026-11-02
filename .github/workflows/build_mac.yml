@@ -1,9 +1,6 @@
 name: Build MacOS
 
 on:
-  push:
-    branches:
-      - feat/package-main-macos
   workflow_dispatch:
     inputs:
       configuration:
