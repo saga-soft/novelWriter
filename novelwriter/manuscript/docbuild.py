@@ -348,6 +348,9 @@ class DocumentBuilder:
         bldObj.setCommentType(nwComment.STORY, self._build.getBool("text.includeStory"))
         bldObj.setCommentType(nwComment.NOTE, self._build.getBool("text.includeNotes"))
 
+        if isinstance(bldObj, ToEPub):
+            bldObj.setNestedToC(self._build.getBool("epub.nestedToc"))
+
         if isinstance(bldObj, ToHtml):
             bldObj.setStyles(self._build.getBool("html.addStyles"))
             bldObj.setReplaceUnicode(self._build.getBool("format.stripUnicode"))
