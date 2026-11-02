@@ -424,13 +424,9 @@ class GuiManuscript(NToolDialog):
             self.buildStats.updateStats(buildObj.textStats, withDialog)
             self.buildProblems.updateProblems(buildObj.textProblems)
 
-            pIndex = self.detailsTabs.indexOf(self.buildProblems)
-            hasProblems = self.buildProblems.hasProblems()
-            if hasProblems and not self.detailsTabs.isTabVisible(pIndex):
-                self.detailsTabs.setTabVisible(pIndex, True)
-                self.detailsTabs.setCurrentIndex(pIndex)
-            elif not hasProblems:
-                self.detailsTabs.setTabVisible(pIndex, False)
+            self.detailsTabs.setTabVisible(
+                self.detailsTabs.indexOf(self.buildProblems), self.buildProblems.hasProblems()
+            )
             self.docPreview.setProblemCount(self.buildProblems.problemCount())
 
             self._updateCountsLabel(buildObj.textStats, withDialog)

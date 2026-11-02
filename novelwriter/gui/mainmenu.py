@@ -525,6 +525,14 @@ class GuiMainMenu(QMenuBar):
         self.aInsThinNBSpace.triggered.connect(qtWeakLambda(self._emitDocInsertText, nwUnicode.U_THNBSP))
         self.mainGui.addAction(self.aInsThinNBSpace)
 
+        # Insert > En Space
+        self.aInsEnSpace = qtAddAction(self.mInsSpace, self.tr("En Space"))
+        self.aInsEnSpace.triggered.connect(qtWeakLambda(self._emitDocInsertText, nwUnicode.U_ENSP))
+
+        # Insert > Em Space
+        self.aInsEmSpace = qtAddAction(self.mInsSpace, self.tr("Em Space"))
+        self.aInsEmSpace.triggered.connect(qtWeakLambda(self._emitDocInsertText, nwUnicode.U_EMSP))
+
         # Insert > Symbols
         self.mInsSymbol = qtAddMenu(self.insMenu, self.tr("Other Symbols"))
 
