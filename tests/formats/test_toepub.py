@@ -623,6 +623,83 @@ def testToEPub_ConvertDirect(mockGUI: MockGuiMain):
 
 
 @pytest.mark.core
+def testToEPub_NavPage(mockGUI: MockGuiMain):
+    """Test the nav page table of contents."""
+    project = NWProject()
+
+    def build(*docs: tuple[bool, str]) -> ToEPub:
+        epub = ToEPub(project)
+        epub.initDocument()
+        epub.setPartitionFormat(nwHeadFmt.TITLE)
+        epub.setChapterFormat(nwHeadFmt.TITLE)
+        for isNovel, text in docs:
+            epub._isNovel = isNovel
+            epub._text = text
+            epub.tokenizeText()
+            epub.doConvert()
+        epub.closeDocument()
+        return epub
+
+    def navList(epub: ToEPub) -> str:
+        text = epub._generateNavPage()
+        return text[text.index('<ol epub:type="list">') + 22 : text.index("</nav>") - 6]
+
+    # No parts
+    epub = build((True, "## Chapter One\n\n## Chapter Two\n\n"))
+    epub.setNestedToC(True)
+    assert navList(epub) == (
+        '<li><a href="xhtml/chapter1.xhtml#sec_1">Chapter One</a></li>\n'
+        '<li><a href="xhtml/chapter2.xhtml#sec_2">Chapter Two</a></li>\n'
+    )
+
+    # With parts, ending inside a part
+    text = (
+        "## Prologue\n\n# Part One\n\n## Chapter One\n\n## Chapter Two\n\n"
+        "# Part Two\n\n# Part Three\n\n## Chapter Three\n\n"
+    )
+    epub = build((True, text))
+    assert navList(epub) == (
+        '<li><a href="xhtml/chapter1.xhtml#sec_1">Prologue</a></li>\n'
+        '<li><a href="xhtml/part1.xhtml#sec_2">Part One</a></li>\n'
+        '<li><a href="xhtml/chapter2.xhtml#sec_3">Chapter One</a></li>\n'
+        '<li><a href="xhtml/chapter3.xhtml#sec_4">Chapter Two</a></li>\n'
+        '<li><a href="xhtml/part2.xhtml#sec_5">Part Two</a></li>\n'
+        '<li><a href="xhtml/part3.xhtml#sec_6">Part Three</a></li>\n'
+        '<li><a href="xhtml/chapter4.xhtml#sec_7">Chapter Three</a></li>\n'
+    )
+
+    epub.setNestedToC(True)
+    assert navList(epub) == (
+        '<li><a href="xhtml/chapter1.xhtml#sec_1">Prologue</a></li>\n'
+        '<li><a href="xhtml/part1.xhtml#sec_2">Part One</a>\n'
+        "<ol>\n"
+        '<li><a href="xhtml/chapter2.xhtml#sec_3">Chapter One</a></li>\n'
+        '<li><a href="xhtml/chapter3.xhtml#sec_4">Chapter Two</a></li>\n'
+        "</ol>\n"
+        "</li>\n"
+        '<li><a href="xhtml/part2.xhtml#sec_5">Part Two</a>\n'
+        "</li>\n"
+        '<li><a href="xhtml/part3.xhtml#sec_6">Part Three</a>\n'
+        "<ol>\n"
+        '<li><a href="xhtml/chapter4.xhtml#sec_7">Chapter Three</a></li>\n'
+        "</ol>\n"
+        "</li>\n"
+    )
+
+    # Notes after a part are not nested
+    epub = build((True, "# Part One\n\n## Chapter One\n\n"), (False, "#! Notes\n\n"))
+    epub.setNestedToC(True)
+    assert navList(epub) == (
+        '<li><a href="xhtml/part1.xhtml#sec_1">Part One</a>\n'
+        "<ol>\n"
+        '<li><a href="xhtml/chapter1.xhtml#sec_2">Chapter One</a></li>\n'
+        "</ol>\n"
+        "</li>\n"
+        '<li><a href="xhtml/notes1.xhtml#sec_3">Notes</a></li>\n'
+    )
+
+
+@pytest.mark.core
 def testToEPub_Save(mockGUI: MockGuiMain, fncPath: Path, tstPaths: TstPaths, ipsumText: list[str]):
     """Test the save method of the ToEPub class."""
     project = NWProject()
