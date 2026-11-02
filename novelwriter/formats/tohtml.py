@@ -81,13 +81,12 @@ class ToHtml(Tokenizer):
     Extend the Tokenizer class to write HTML output.
     """
 
-    __slots__ = ("_brTag", "_cssStyles", "_nestedToc", "_trMap", "_usedFields", "_usedNotes")
+    __slots__ = ("_brTag", "_cssStyles", "_trMap", "_usedFields", "_usedNotes")
 
     def __init__(self, project: NWProject) -> None:
         super().__init__(project)
         self._trMap = {}
         self._cssStyles = True
-        self._nestedToc = False
         self._usedNotes: dict[str, int] = {}
         self._usedFields: list[tuple[int, str]] = []
         self._brTag = "<br>"
@@ -114,10 +113,6 @@ class ToHtml(Tokenizer):
         if doReplace:
             # Extend to all relevant Unicode characters
             self._trMap.update(str.maketrans(nwHtmlUnicode.U_TO_H))
-
-    def setNestedToC(self, value: bool) -> None:
-        """Set a nested table of contents."""
-        self._nestedToc = value
 
     ##
     #  Class Methods

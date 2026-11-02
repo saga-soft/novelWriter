@@ -87,7 +87,7 @@ class ToEPub(ToHtml):
     Extend the ToHtml class to write EPub output.
     """
 
-    __slots__ = ("_isFront", "_nextFnIndex", "_section", "_sections")
+    __slots__ = ("_isFront", "_nestedToc", "_nextFnIndex", "_section", "_sections")
 
     def __init__(self, project: NWProject) -> None:
         super().__init__(project)
@@ -97,6 +97,7 @@ class ToEPub(ToHtml):
         self._brTag = "<br />"
         self._nextFnIndex = 1
         self._useAnchors = False
+        self._nestedToc = False
 
     ##
     #  Setters
@@ -105,6 +106,10 @@ class ToEPub(ToHtml):
     def setReplaceUnicode(self, doReplace: bool) -> None:
         """Set translation map. Replace Unicode is ignored for EPub."""
         self._trMap = str.maketrans({"&": "&amp;"})
+
+    def setNestedToC(self, value: bool) -> None:
+        """Set a nested table of contents."""
+        self._nestedToc = value
 
     ##
     #  Class Methods
