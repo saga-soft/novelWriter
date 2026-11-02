@@ -87,7 +87,7 @@ class ToEPub(ToHtml):
     Extend the ToHtml class to write EPub output.
     """
 
-    __slots__ = ("_isFront", "_nextFnIndex", "_section", "_sections")
+    __slots__ = ("_isFront", "_nestedToc", "_nextFnIndex", "_section", "_sections")
 
     def __init__(self, project: NWProject) -> None:
         super().__init__(project)
@@ -97,17 +97,19 @@ class ToEPub(ToHtml):
         self._brTag = "<br />"
         self._nextFnIndex = 1
         self._useAnchors = False
+        self._nestedToc = False
 
     ##
     #  Setters
     ##
 
     def setReplaceUnicode(self, doReplace: bool) -> None:
-        """Set translation map.
-
-        Replace Unicode is ignored for EPub.
-        """
+        """Set translation map. Replace Unicode is ignored for EPub."""
         self._trMap = str.maketrans({"&": "&amp;"})
+
+    def setNestedToC(self, value: bool) -> None:
+        """Set a nested table of contents."""
+        self._nestedToc = value
 
     ##
     #  Class Methods
@@ -382,15 +384,42 @@ class ToEPub(ToHtml):
         xHtml.append("</header>")
         xHtml.append('<nav epub:type="toc" role="doc-toc" aria-labelledby="toc">')
         xHtml.append('<ol epub:type="list">')
-        xHtml.extend(
-            f'<li><a href="xhtml/{section.name}.xhtml#{section.sectionID}">{title}</a></li>'
-            for section in self._sections
-            if (title := section.title) and section.epubType != EPubType.COVER
-        )
+
+        nested = self._nestedToc and any(s.epubType == EPubType.PART for s in self._sections)
+        inPart = False
+        inList = False
+        for section in self._sections:
+            if not (title := section.title) or section.epubType == EPubType.COVER:
+                continue
+            link = f'<a href="xhtml/{section.name}.xhtml#{section.sectionID}">{title}</a>'
+            if inPart and section.epubType == EPubType.CHAPTER:
+                if not inList:
+                    # A nested list must not be empty, so open it on first child
+                    xHtml.append("<ol>")
+                    inList = True
+                xHtml.append(f"<li>{link}</li>")
+                continue
+            if inList:
+                xHtml.append("</ol>")
+                inList = False
+            if inPart:
+                xHtml.append("</li>")
+                inPart = False
+            if nested and section.epubType == EPubType.PART:
+                xHtml.append(f"<li>{link}")
+                inPart = True
+            else:
+                xHtml.append(f"<li>{link}</li>")
+        if inList:
+            xHtml.append("</ol>")
+        if inPart:
+            xHtml.append("</li>")
+
         xHtml.append("</ol>")
         xHtml.append("</nav>")
         xHtml.append("</body>")
         xHtml.append("</html>")
+
         return "\n".join(xHtml)
 
     def _generateStyleSheet(self) -> str:
