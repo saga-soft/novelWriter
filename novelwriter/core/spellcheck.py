@@ -278,11 +278,6 @@ class SpellApple(SpellChecker):
         self._checker: Any = None
         self._document = 0
 
-    def __del__(self) -> None:  # pragma: no cover
-        """Class destructor."""
-        self._closeDocument()
-        super().__del__()
-
     def _loadLanguage(self, language: str | None) -> bool:
         """Select a system language, and open a new spell document."""
         from AppKit import NSSpellChecker  # type: ignore
@@ -317,7 +312,7 @@ class SpellApple(SpellChecker):
         if self._language is None:
             return []
         guesses = self._checker.guessesForWordRange_inString_language_inSpellDocumentWithTag_(
-            NSMakeRange(0, len(word)), word, self._language, self._document
+            NSMakeRange(0, len(word.encode("utf-16-le")) // 2), word, self._language, self._document
         )
         return [str(x) for x in guesses or []]
 

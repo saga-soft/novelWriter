@@ -43,14 +43,14 @@ MIN_MACOS = "15.0"
 
 def main(args: argparse.Namespace) -> None:
     """Build a macOS application bundle with PyInstaller."""
+    if sys.platform != "darwin":
+        log("[cr]ERROR:[e] Command 'build-mac' can only be used on macOS")
+        sys.exit(1)
+
     try:
         import PyInstaller.__main__  # type: ignore
     except ImportError:
         log("[cr]ERROR:[e] Package 'pyinstaller' is missing. Run 'uv sync --group build'.")
-        sys.exit(1)
-
-    if sys.platform != "darwin":
-        log("[cr]ERROR:[e] Command 'build-mac' can only be used on macOS")
         sys.exit(1)
 
     log("")

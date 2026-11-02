@@ -224,9 +224,7 @@ def main() -> None:
     cmdBuildBinary.set_defaults(func=utils.build_binary.main)
 
     # Build MacOS App Bundle
-    cmdBuildMac = parsers.add_parser(
-        "build-mac", help="Build a macOS application bundle. Add --identity to sign with a Developer ID."
-    )
+    cmdBuildMac = parsers.add_parser("build-mac", help="Build a macOS app bundle.")
     cmdBuildMac.add_argument("--identity", help="Codesign identity. Defaults to ad-hoc signing.")
     cmdBuildMac.set_defaults(func=utils.build_macos.main)
 

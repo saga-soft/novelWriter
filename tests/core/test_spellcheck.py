@@ -300,6 +300,8 @@ class MockNSSpellChecker:
     def __init__(self) -> None:
         self._words = {"hello", "world"}
         self._ignored: dict[int, set[str]] = {}
+        self.closed: list[int] = []
+        self.ranges: list[tuple[int, int]] = []
 
     def setAutomaticallyIdentifiesLanguages_(self, state: bool) -> None:
         """Mock language detection toggle."""
@@ -324,6 +326,7 @@ class MockNSSpellChecker:
         self, wordRange: SimpleNamespace, word: str, language: str, tag: int
     ) -> list[str]:
         """Mock spelling suggestions."""
+        self.ranges.append((wordRange.location, wordRange.length))
         return ["hello"] if word == "helo" else []
 
     def ignoreWord_inSpellDocumentWithTag_(self, word: str, tag: int) -> None:
@@ -332,6 +335,7 @@ class MockNSSpellChecker:
 
     def closeSpellDocumentWithTag_(self, tag: int) -> None:
         """Mock closing a spell document."""
+        self.closed.append(tag)
         self._ignored.pop(tag, None)
 
 
@@ -375,6 +379,11 @@ def testSpellApple_Main(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, f
         spChk.addWord("zpqxyq", save=False)
         spChk.setLanguage(tag)
 
+        # Region tags stored by Enchant-based builds are accepted
+        spChk.setLanguage("en_US")
+        assert spChk.spellLanguage == "en_US"
+        assert spChk.describeDict() == ("en_US", "AppleSpell")
+
     # The rest of the test uses a mock NSSpellChecker
     mockAppleModules(monkeypatch)
 
@@ -405,6 +414,13 @@ def testSpellApple_Main(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, f
     assert spChk.checkWord("helo") is False
     assert spChk.checkWord("wrld") is False
     assert "hello" in spChk.suggestWords("helo")
+    assert spChk._checker.ranges[-1] == (0, 4)
+
+    # Suggestion ranges are measured in UTF-16 code units
+    spChk.suggestWords("na\U0001d4d0ve")
+    assert spChk._checker.ranges[-1] == (0, 6)
+    spChk.suggestWords("\U0001f600helo")
+    assert spChk._checker.ranges[-1] == (0, 6)
 
     # Add a word to the session and the user dictionary
     assert spChk.checkWord("zpqxyq") is False
@@ -413,8 +429,14 @@ def testSpellApple_Main(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, f
     assert "zpqxyq" in spChk._userDict
 
     # Words from the user dictionary are restored on language change
+    oldTag = spChk._document
     spChk.setLanguage("en")
     assert spChk.checkWord("zpqxyq") is True
+
+    # Loading a language closes the previous spell document
+    assert spChk._document != oldTag
+    assert spChk._checker.closed[-1] == oldTag
+    assert oldTag not in spChk._checker._ignored
 
     # A new instance loads the user dictionary into its own session
     other = SpellApple(project)

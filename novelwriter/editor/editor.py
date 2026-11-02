@@ -991,7 +991,11 @@ class GuiDocEditor(QTextEdit):
             state = False
 
         if state and not CONFIG.hasSpellCheck:
-            SHARED.info(self.tr("Spell checking requires the package PyEnchant. It does not appear to be installed."))
+            if CONFIG.osDarwin:
+                message = self.tr("Spell checking requires the package PyObjC. It does not appear to be installed.")
+            else:
+                message = self.tr("Spell checking requires the package PyEnchant. It does not appear to be installed.")
+            SHARED.info(message)
             state = False
 
         SHARED.project.data.setSpellCheck(state)
