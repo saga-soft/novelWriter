@@ -175,7 +175,7 @@ class GuiMain(QMainWindow):
         self.mainBox = QHBoxLayout()
         self.mainBox.addWidget(self.sideBar)
         self.mainBox.addWidget(self.mainStack)
-        self.mainBox.setContentsMargins(0, 0, 0, 0)
+        self.mainBox.setContentsMargins(0, 0, 4, 0)
         self.mainBox.setSpacing(0)
 
         self.outerBox = QVBoxLayout()
@@ -707,7 +707,7 @@ class GuiMain(QMainWindow):
         cursorVisible = self.docEditor.cursorIsVisible()
         isVisible = not focusMode
         self.treePane.setVisible(isVisible and not self._treePaneHidden)
-        self.mainStatus.setVisible(isVisible)
+        self.mainStatus.setFocusMode(focusMode)
         self.mainMenu.setVisible(isVisible)
         self.sideBar.setVisible(isVisible)
         self.docPanes.setFocusMode(focusMode)
@@ -797,6 +797,7 @@ class GuiMain(QMainWindow):
         """Refresh data dependent on project settings."""
         logger.debug("Applying new project settings")
         SHARED.updateSpellCheckLanguage()
+        self.docEditor.updateReplaceKeys()
         self.docViewer.reloadText()
         self.itemDetails.refreshDetails()
         self.mainMenu.setSelectedProjectSpellCheckLanguage()

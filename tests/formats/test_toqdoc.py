@@ -370,10 +370,15 @@ def testToQTextDocument_TextBlockFormats(mockGUI: MockGuiMain):
     project = NWProject()
     doc = ToQTextDocument(project)
     doc.setFirstLineIndent(True, 2.0, False)
+    doc.setTabSize(3.0)
     doc.initDocument()
 
     doc._isNovel = True
     doc._isFirst = True
+
+    # Tab stops are in units of em
+    tabStop = doc.document.defaultTextOption().tabStopDistance()
+    assert tabStop == 3.0 * doc._textFont.pointSizeF() * 96.0 / 72.0
 
     # Alignment & Indent
     # ==================
@@ -536,10 +541,10 @@ def testToQTextDocument_Lists(mockGUI: MockGuiMain):
     assert bOne.charFormat() == doc._charFmt
 
     # Margins are zero between items
-    assert bOne.blockFormat().topMargin() == doc._mText[0]
+    assert bOne.blockFormat().topMargin() == doc._mList[0]
     assert bOne.blockFormat().bottomMargin() == 0.0
     assert bTwo.blockFormat().topMargin() == 0.0
-    assert bTwo.blockFormat().bottomMargin() == doc._mText[1]
+    assert bTwo.blockFormat().bottomMargin() == doc._mList[1]
 
     # A blank line starts a new list
     bThree = blocks["Three"]
@@ -774,3 +779,32 @@ def testToQTextDocument_Fields(mockGUI: MockGuiMain):
 
     block = doc.document.findBlockByNumber(0)
     assert block.text() == "Word Count: 4, Unknown: 0"
+
+
+@pytest.mark.core
+def testToQTextDocument_Problems(mockGUI: MockGuiMain):
+    """Test problem markers in the ToQTextDocument class."""
+    project = NWProject()
+    project.data.setAutoReplace({"A": "B"}, False)
+    doc = ToQTextDocument(project)
+    doc.setProblemAnchors(True)
+    doc.initDocument()
+    doc._text = "==a <x> b== c <==y==> d\n"
+    doc.tokenizeText()
+    doc.doConvert()
+
+    block = doc.document.findBlockByNumber(0)
+    assert block.text() == "a <x> b c <y> d"
+    assert charFmtInBlock(block, 1).anchorNames() == ["problem_0"]
+
+    # Missing keys have an error background, and restore the highlight after
+    assert charFmtInBlock(block, 1).background() == THEME.highlight
+    assert charFmtInBlock(block, 3).background() == THEME.error
+    assert charFmtInBlock(block, 6).background() == THEME.highlight
+    assert charFmtInBlock(block, 8).background() == QtTransparent
+
+    # A highlight inside the key doesn't override the error
+    assert charFmtInBlock(block, 11).background() == THEME.error
+    assert charFmtInBlock(block, 12).background() == THEME.error
+    assert charFmtInBlock(block, 13).background() == THEME.error
+    assert charFmtInBlock(block, 14).background() == QtTransparent

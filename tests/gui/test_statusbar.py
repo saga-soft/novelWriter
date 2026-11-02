@@ -172,6 +172,50 @@ def testGuiStatusBar_Main(
         status._resetDailyProgress()
     assert SHARED.project.data.dailyProgress == 0
 
+    # Focus Mode hides the statusbar by default
+    status.setFocusMode(True)
+    assert status.isVisible() is False
+    status.setFocusMode(False)
+    assert status.isVisible() is True
+
+    # Focus Mode with goals only shows the goals
+    CONFIG.goalInFocusMode = True
+    status.setFocusMode(True)
+    assert status.isVisible() is True
+    assert status.dayProg.isVisible() is True
+    assert status.projProg.isVisible() is True
+    assert status.messageBox.isVisible() is False
+    assert status.langText.isVisible() is False
+    assert status.statsText.isVisible() is False
+    assert status.timeText.isVisible() is False
+
+    # Without goals, the statusbar is hidden
+    SHARED.project.data.setDailyTarget(0, False)
+    SHARED.project.data.setProjectTarget(0, None, False)
+    status.updateGoals(100, 50)
+    assert status.isVisible() is False
+    SHARED.project.data.setProjectTarget(2000, None, False)
+    status.updateGoals(100, 50)
+    assert status.isVisible() is True
+
+    # Changing the setting in Focus Mode is applied
+    CONFIG.goalInFocusMode = False
+    status.initSettings()
+    assert status.isVisible() is False
+    CONFIG.goalInFocusMode = True
+    status.initSettings()
+    assert status.isVisible() is True
+
+    # Leaving Focus Mode respects the hidden timer
+    CONFIG.showSessionTime = False
+    status.setFocusMode(False)
+    assert status.isVisible() is True
+    assert status.messageBox.isVisible() is True
+    assert status.langText.isVisible() is True
+    assert status.statsText.isVisible() is True
+    assert status.timeIcon.isVisible() is True
+    assert status.timeText.isVisible() is False
+
     # Set message
     status.messageBox.setMessage("Hi!", "info", 10000)
     assert status.messageBox._text.text() == "Hi!"

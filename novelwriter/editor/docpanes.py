@@ -160,6 +160,7 @@ class GuiDocPanes(QWidget):
     def setFocusMode(self, focusMode: bool) -> None:
         """Show or hide pane elements for focus mode."""
         self.docEditor.docFooter.setVisible(not (focusMode and CONFIG.hideFocusFooter))
+        self.docEditor.docHeader.setFocusMode(focusMode)
         self.splitView.setVisible(not focusMode and self.docViewer.docHandle is not None)
 
     def cycleFocus(self) -> None:

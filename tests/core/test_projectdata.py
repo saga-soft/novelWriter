@@ -155,18 +155,29 @@ def testProjectData_AutoReplace(mockGUI: MockGuiMain):
 
     # Requires a dict
     project.changed = 0
-    data.setAutoReplace(["not", "a", "dict"])  # type: ignore
+    data.setAutoReplace(["not", "a", "dict"], False)  # type: ignore
     assert project.changed == 0
     assert data.autoReplace == {}
 
     # Non-string entries are skipped
-    data.setAutoReplace({"A": "B", "C": 123})  # type: ignore
+    data.setAutoReplace({"A": "B", "C": 123}, False)  # type: ignore
     assert data.autoReplace == {"A": "B"}
 
     # Keys are cleaned too, not just values, as both end up in the
     # project XML, and a key that is only control characters is dropped
-    data.setAutoReplace({"foo\x1b": "bar\x1b", "\x00\x07": "baz"})
+    data.setAutoReplace({"foo\x1b": "bar\x1b", "\x00\x07": "baz"}, False)
     assert data.autoReplace == {"foo": "bar"}
+
+    # Ignore case flag
+    assert data.autoReplaceIgnoreCase is False
+    data.setAutoReplace({}, True)
+    assert data.autoReplaceIgnoreCase is True
+    data.setAutoReplace({}, "no")
+    assert data.autoReplaceIgnoreCase is False
+    data.setAutoReplace({}, "yes")
+    assert data.autoReplaceIgnoreCase is True
+    data.setAutoReplace({}, None)
+    assert data.autoReplaceIgnoreCase is False
 
 
 @pytest.mark.core

@@ -113,6 +113,7 @@ class ToQTextDocument(Tokenizer):
         "_listFmtU",
         "_mHead",
         "_mIndent",
+        "_mList",
         "_mMeta",
         "_mSep",
         "_mText",
@@ -160,6 +161,7 @@ class ToQTextDocument(Tokenizer):
         self._fHead: dict[BlockTyp, int] = {}
         self._iHead: dict[BlockTyp, int] = {}
         self._mText: tuple[float, float] = (1.0, 1.0)
+        self._mList: tuple[float, float] = (1.0, 1.0)
         self._mMeta: tuple[float, float] = (1.0, 1.0)
         self._mSep: tuple[float, float] = (1.0, 1.0)
         self._mIndent = 1.0
@@ -282,6 +284,7 @@ class ToQTextDocument(Tokenizer):
         }
 
         self._mText = (fPx * self._marginText[0], fPx * self._marginText[1])
+        self._mList = (fPx * self._marginList[0], fPx * self._marginList[1])
         self._mMeta = (fPx * self._marginMeta[0], fPx * self._marginMeta[1])
         self._mSep = (fPx * self._marginSep[0], fPx * self._marginSep[1])
 
@@ -289,6 +292,10 @@ class ToQTextDocument(Tokenizer):
         self._tIndent = mPx * self._firstWidth
 
         self._document.setIndentWidth(self._mIndent)
+
+        option = self._document.defaultTextOption()
+        option.setTabStopDistance(mPx * self._tabSize)
+        self._document.setDefaultTextOption(option)
 
         # Text Formats
         self._blockFmt.setTopMargin(self._mText[0])
@@ -323,6 +330,9 @@ class ToQTextDocument(Tokenizer):
             if tType in META_BLOCKS:
                 bFmt.setTopMargin(self._mMeta[0])
                 bFmt.setBottomMargin(self._mMeta[1])
+            elif tType in LIST_BLOCKS:
+                bFmt.setTopMargin(self._mList[0])
+                bFmt.setBottomMargin(self._mList[1])
             elif tType == BlockTyp.SEP:
                 bFmt.setTopMargin(self._mSep[0])
                 bFmt.setBottomMargin(self._mSep[1])
@@ -462,6 +472,8 @@ class ToQTextDocument(Tokenizer):
         cFmt = QTextCharFormat(dFmt)
         temp = text.replace("\n", nwUnicode.U_LSEP)
         start = 0
+        marked = False
+        error = False
         primary: QColor | None = None
         for pos, fmt, data in tFmt:
             # Insert buffer with previous format
@@ -485,9 +497,11 @@ class ToQTextDocument(Tokenizer):
             elif fmt == TextFmt.U_E:
                 cFmt.setFontUnderline(self._dUnderline)
             elif fmt == TextFmt.M_B:
-                cFmt.setBackground(self._theme.highlight)
+                marked = True
+                cFmt.setBackground(self._theme.error if error else self._theme.highlight)
             elif fmt == TextFmt.M_E:
-                cFmt.setBackground(QtTransparent)
+                marked = False
+                cFmt.setBackground(self._theme.error if error else QtTransparent)
             elif fmt == TextFmt.SUP_B:
                 cFmt.setVerticalAlignment(QtVAlignSuper)
             elif fmt == TextFmt.SUP_E:
@@ -542,6 +556,12 @@ class ToQTextDocument(Tokenizer):
             elif fmt == TextFmt.FIELD and (field := data.partition(":")[2]):
                 self._usedFields.append((cursor.position(), field))
                 cursor.insertText("0", cFmt)
+            elif fmt == TextFmt.ERR_B:
+                error = True
+                cFmt.setBackground(self._theme.error)
+            elif fmt == TextFmt.ERR_E:
+                error = False
+                cFmt.setBackground(self._theme.highlight if marked else QtTransparent)
 
             # Move pos for next pass
             start = pos

@@ -118,12 +118,19 @@ class ToHtml(Tokenizer):
     #  Class Methods
     ##
 
-    def doPreProcessing(self) -> None:
-        """Extend the auto-replace to also properly encode some unicode
+    def initDocument(self) -> None:
+        """Extend the initialisation to also encode the auto-replace
+        values into HTML entities.
+        """
+        super().initDocument()
+        self._replaceLookup = {k: v.translate(self._trMap) for k, v in self._replaceLookup.items()}
+
+    def tokenizeText(self) -> None:
+        """Extend the tokenizer to also properly encode some unicode
         characters into their respective HTML entities.
         """
-        super().doPreProcessing()
         self._text = self._text.translate(self._trMap)
+        super().tokenizeText()
 
     def doConvert(self) -> None:
         """Convert the list of text tokens into an HTML document."""
@@ -293,6 +300,8 @@ class ToHtml(Tokenizer):
         mbH4 = self._marginHead4[1]
         mtTT = self._marginText[0]
         mbTT = self._marginText[1]
+        mtLI = self._marginList[0]
+        mbLI = self._marginList[1]
         mtSP = self._marginSep[0]
         mbSP = self._marginSep[1]
 
@@ -365,8 +374,8 @@ class ToHtml(Tokenizer):
                 "margin-bottom": f"{mbH4:.2f}em",
             },
             "ul, ol": {
-                "margin-top": f"{mtTT:.2f}em",
-                "margin-bottom": f"{mbTT:.2f}em",
+                "margin-top": f"{mtLI:.2f}em",
+                "margin-bottom": f"{mbLI:.2f}em",
             },
             "li": {
                 "text-align": defaultAlign,

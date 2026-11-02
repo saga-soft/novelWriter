@@ -45,6 +45,7 @@ class RegExPatterns:
     _rxLink = re.compile(nwRegEx.FMT_LN)
     _rxSCPlain = re.compile(nwRegEx.FMT_SC)
     _rxSCValue = re.compile(nwRegEx.FMT_SV)
+    _rxAutoRep = re.compile(nwRegEx.AUTO_REP)
 
     @property
     def url(self) -> re.Pattern:
@@ -97,6 +98,11 @@ class RegExPatterns:
         return self._rxSCValue
 
     @property
+    def autoReplace(self) -> re.Pattern:
+        """Auto-replace key."""
+        return self._rxAutoRep
+
+    @property
     def dialogStyle(self) -> re.Pattern | None:
         """Dialogue detection rule based on user settings."""
         if CONFIG.dialogStyle > 0:
@@ -110,7 +116,7 @@ class RegExPatterns:
                     rx.append(f"(?:\\B{qO}[^{qO}]+{qC}\\B(?={qO}|\\s*))")
                 else:
                     rx.append(f"(?:{qO}[^{qO}]+{qC})")
-                if CONFIG.allowOpenDial:
+                if CONFIG.allowOpenDialog:
                     rx.append(f"(?:{qO}.+?$)")
             if CONFIG.dialogStyle in (2, 3):
                 qO = CONFIG.fmtDQuoteOpen.strip()[:1]
@@ -121,7 +127,7 @@ class RegExPatterns:
                     rx.append(f"(?:\\B{qO}[^{qO}]+{qC}\\B(?={qO}|\\s*))")
                 else:
                     rx.append(f"(?:{qO}[^{qO}]+{qC})")
-                if CONFIG.allowOpenDial:
+                if CONFIG.allowOpenDialog:
                     rx.append(f"(?:{qO}.+?$)")
             return re.compile("|".join(rx))
         return None

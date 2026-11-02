@@ -888,6 +888,8 @@ def testGuiBuildSettings_SizeAndMargins(monkeypatch: pytest.MonkeyPatch, qtbot: 
     build.setValue("format.h4MarginB", nwStyles.T_MARGIN["H4"][1])
     build.setValue("format.textMarginT", nwStyles.T_MARGIN["TT"][0])
     build.setValue("format.textMarginB", nwStyles.T_MARGIN["TT"][1])
+    build.setValue("format.listMarginT", nwStyles.T_MARGIN["LI"][0])
+    build.setValue("format.listMarginB", nwStyles.T_MARGIN["LI"][1])
     build.setValue("format.sepMarginT", nwStyles.T_MARGIN["SP"][0])
     build.setValue("format.sepMarginB", nwStyles.T_MARGIN["SP"][1])
 
@@ -920,6 +922,8 @@ def testGuiBuildSettings_SizeAndMargins(monkeypatch: pytest.MonkeyPatch, qtbot: 
     assert fmtTab.h4MarginB.value() == nwStyles.T_MARGIN["H4"][1]
     assert fmtTab.textMarginT.value() == nwStyles.T_MARGIN["TT"][0]
     assert fmtTab.textMarginB.value() == nwStyles.T_MARGIN["TT"][1]
+    assert fmtTab.listMarginT.value() == nwStyles.T_MARGIN["LI"][0]
+    assert fmtTab.listMarginB.value() == nwStyles.T_MARGIN["LI"][1]
     assert fmtTab.sepMarginT.value() == nwStyles.T_MARGIN["SP"][0]
     assert fmtTab.sepMarginB.value() == nwStyles.T_MARGIN["SP"][1]
 
@@ -941,6 +945,8 @@ def testGuiBuildSettings_SizeAndMargins(monkeypatch: pytest.MonkeyPatch, qtbot: 
     fmtTab.h4MarginB.setValue(1.0)
     fmtTab.textMarginT.setValue(1.0)
     fmtTab.textMarginB.setValue(1.0)
+    fmtTab.listMarginT.setValue(1.0)
+    fmtTab.listMarginB.setValue(1.0)
     fmtTab.sepMarginT.setValue(1.0)
     fmtTab.sepMarginB.setValue(1.0)
 
@@ -966,6 +972,8 @@ def testGuiBuildSettings_SizeAndMargins(monkeypatch: pytest.MonkeyPatch, qtbot: 
     assert sBuild.getFloat("format.h4MarginB") == 1.0
     assert sBuild.getFloat("format.textMarginT") == 1.0
     assert sBuild.getFloat("format.textMarginB") == 1.0
+    assert sBuild.getFloat("format.listMarginT") == 1.0
+    assert sBuild.getFloat("format.listMarginB") == 1.0
     assert sBuild.getFloat("format.sepMarginT") == 1.0
     assert sBuild.getFloat("format.sepMarginB") == 1.0
 
@@ -976,6 +984,7 @@ def testGuiBuildSettings_SizeAndMargins(monkeypatch: pytest.MonkeyPatch, qtbot: 
     fmtTab.btnH3Props.click()
     fmtTab.btnH4Props.click()
     fmtTab.btnTextProps.click()
+    fmtTab.btnListProps.click()
     fmtTab.btnSepProps.click()
 
     assert fmtTab.titleSize.value() == nwStyles.H_SIZES[0]
@@ -995,6 +1004,8 @@ def testGuiBuildSettings_SizeAndMargins(monkeypatch: pytest.MonkeyPatch, qtbot: 
     assert fmtTab.h4MarginB.value() == nwStyles.T_MARGIN["H4"][1]
     assert fmtTab.textMarginT.value() == nwStyles.T_MARGIN["TT"][0]
     assert fmtTab.textMarginB.value() == nwStyles.T_MARGIN["TT"][1]
+    assert fmtTab.listMarginT.value() == nwStyles.T_MARGIN["LI"][0]
+    assert fmtTab.listMarginB.value() == nwStyles.T_MARGIN["LI"][1]
     assert fmtTab.sepMarginT.value() == nwStyles.T_MARGIN["SP"][0]
     assert fmtTab.sepMarginB.value() == nwStyles.T_MARGIN["SP"][1]
 

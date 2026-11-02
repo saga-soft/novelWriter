@@ -765,7 +765,6 @@ def testToHtml_Save(mockGUI: MockGuiMain, fncPath: Path):
 
     for i in range(len(docText)):
         html._text = docText[i]
-        html.doPreProcessing()
         html.tokenizeText()
         html.doConvert()
 
@@ -856,7 +855,6 @@ def testToHtml_Methods(mockGUI: MockGuiMain):
     docText = "Text with <brackets> & short\u2013dash, long\u2014dash …\n"
     html._text = docText
     html.setReplaceUnicode(False)
-    html.doPreProcessing()
     html.tokenizeText()
     html.doConvert()
     assert html._pages[-1] == ("<p>Text with &lt;brackets&gt; &amp; short\u2013dash, long\u2014dash …</p>\n")
@@ -865,13 +863,20 @@ def testToHtml_Methods(mockGUI: MockGuiMain):
     docText = "Text with <brackets> & short\u2013dash, long\u2014dash …\n"
     html._text = docText
     html.setReplaceUnicode(True)
-    html.doPreProcessing()
     html.tokenizeText()
     html.doConvert()
     assert html._pages[-1] == ("<p>Text with &lt;brackets&gt; &amp; short&ndash;dash, long&mdash;dash &hellip;</p>\n")
 
     # Result Size
     assert sum(len(x) for x in html._pages) == 147
+
+    # Auto-Replace values are also encoded
+    project.data.setAutoReplace({"A": "Tom & Jerry\u2014"}, False)
+    html._text = "Text with <A>\n"
+    html.initDocument()
+    html.tokenizeText()
+    html.doConvert()
+    assert html._pages[-1] == "<p>Text with Tom &amp; Jerry&mdash;</p>\n"
 
     # CSS
     # ===

@@ -62,6 +62,7 @@ SETTINGS_TEMPLATE: dict[str, tuple[type, T_ViewValue]] = {
     "outline.showStatus":      (bool, False),
     "outline.commentIcons":    (bool, False),
     "outline.referenceIcons":  (bool, False),
+    "outline.joinComments":    (bool, False),
 
     "outline.showParts":       (bool, True),
     "outline.showScenes":      (bool, True),
@@ -85,6 +86,7 @@ SETTINGS_LABELS = {
     "outline.showStatus":      QT_TRANSLATE_NOOP("StoryViews", "Show document status"),
     "outline.commentIcons":    QT_TRANSLATE_NOOP("StoryViews", "Show icons for comment types"),
     "outline.referenceIcons":  QT_TRANSLATE_NOOP("StoryViews", "Show icons for reference types"),
+    "outline.joinComments":    QT_TRANSLATE_NOOP("StoryViews", "Join comments of the same type"),
 
     "outline.grpDocuments":    QT_TRANSLATE_NOOP("StoryViews", "Documents"),
     "outline.showParts":       QT_TRANSLATE_NOOP("StoryViews", "Show partitions"),

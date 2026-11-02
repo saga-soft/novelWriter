@@ -119,7 +119,6 @@
     "font": "type",
     "import": "file-input",
     "language": "languages",
-    "lines": "list-ordered",
     "link": "link",
     "list": "list",
     "margin_bottom": "arrow-down-to-line",
@@ -146,5 +145,7 @@
     "timer_off": "timer-off",
     "timer": "timer",
     "unchecked": "circle-x",
-    "view": "eye"
+    "view": "eye",
+    "zoom_in": "zoom-in",
+    "zoom_out": "zoom-out"
 }

@@ -54,6 +54,7 @@ class GuiMainStatus(QStatusBar):
         self._refTime = -1.0
         self._userIdle = False
         self._debugInfo = False
+        self._focusMode = False
 
         iPx = SHARED.theme.baseIconHeight
         iSz = SHARED.theme.baseIconSize
@@ -156,6 +157,7 @@ class GuiMainStatus(QStatusBar):
         else:
             self._trStatsCount = trStats(nwLabels.STATS_DISPLAY[nwStats.WORDS])
             self._trStatsTip = self.tr("Total word count (session change)")
+        self._updateVisibility()
 
     def initProjectSettings(self) -> None:
         """Apply project settings."""
@@ -213,6 +215,23 @@ class GuiMainStatus(QStatusBar):
         """Set the document status colour icon."""
         self.docIcon.setState(state)
 
+    def setFocusMode(self, focusMode: bool) -> None:
+        """Update the statusbar when in Focus Mode."""
+        self._focusMode = focusMode
+        isVisible = not focusMode
+        self.messageBox.setVisible(isVisible)
+        self.langIcon.setVisible(isVisible)
+        self.langText.setVisible(isVisible)
+        self.docIcon.setVisible(isVisible)
+        self.docText.setVisible(isVisible)
+        self.projIcon.setVisible(isVisible)
+        self.projText.setVisible(isVisible)
+        self.statsIcon.setVisible(isVisible)
+        self.statsText.setVisible(isVisible)
+        self.timeIcon.setVisible(isVisible)
+        self.timeText.setVisible(isVisible and CONFIG.showSessionTime)
+        self._updateVisibility()
+
     def setUserIdle(self, idle: bool) -> None:
         """Change the idle status icon."""
         if not CONFIG.stopWhenIdle:
@@ -252,6 +271,8 @@ class GuiMainStatus(QStatusBar):
             self.projProg.setToolTip(self.tr("Project Progress: {0}/{1}").format(f"{pProg:n}", f"{projTarget:n}"))
         else:
             self.projProg.setVisible(False)
+
+        self._updateVisibility()
 
     def updateTime(self, idleTime: float = 0.0) -> None:
         """Update the session clock."""
@@ -310,6 +331,15 @@ class GuiMainStatus(QStatusBar):
         if SHARED.question(self.tr("Do you want to reset the daily progress count?")):
             SHARED.project.data.resetDailyProgress()
             self.initProjectSettings()
+
+    ##
+    #  Internal Functions
+    ##
+
+    def _updateVisibility(self) -> None:
+        """Hide the statusbar in Focus Mode unless a goal is shown."""
+        hasGoal = not (self.dayProg.isHidden() and self.projProg.isHidden())
+        self.setVisible(not self._focusMode or (CONFIG.goalInFocusMode and hasGoal))
 
     ##
     #  Debug

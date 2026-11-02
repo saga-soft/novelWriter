@@ -44,6 +44,7 @@ from novelwriter.dialogs.editlabel import GuiEditLabel
 from novelwriter.dialogs.preferences import GuiNeedsUpdate
 from novelwriter.editor.editor import GuiDocEditor
 from novelwriter.enum import (
+    nwChange,
     nwDocAction,
     nwDocMode,
     nwFocus,
@@ -1098,26 +1099,23 @@ def testGuiMain_Viewing(
 
 
 @pytest.mark.gui
-def testGuiMain_Features(
+def testGuiMain_FocusMode(
     qtbot: QtBot,
     monkeypatch: pytest.MonkeyPatch,
     nwGUI: GuiMain,
     projPath: Path,
     mockRnd: MockRnd,
 ):
-    """Test various features of the main window."""
+    """Test focus mode in the main window."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
     nwGUI.docPanes.closeDocument()  # Opening the project auto-restores a document
-    cHandle = SHARED.project.newFile("Jane", C.hCharRoot)
-    newDoc = SHARED.project.storage.getDocument(cHandle)
-    newDoc.writeDocument("# Jane\n\n@tag: Jane\n\n")
-    nwGUI.rebuildIndex()
 
     assert SHARED.focusMode is False
 
-    # Focus Mode
-    # ==========
+    # Header heights don't change when a document is opened
+    editHeight = nwGUI.docEditor.docHeader.sizeHint().height()
+    viewHeight = nwGUI.docViewer.docHeader.sizeHint().height()
 
     # No document open, so not allowing focus mode
     nwGUI.toggleFocusMode()
@@ -1143,6 +1141,8 @@ def testGuiMain_Features(
     assert nwGUI.docPanes.openDocument(C.hSceneDoc)
     nwGUI.docPanes.viewDocument(C.hSceneDoc)
     assert nwGUI.docViewer.docHandle == C.hSceneDoc
+    assert nwGUI.docEditor.docHeader.sizeHint().height() == editHeight
+    assert nwGUI.docViewer.docHeader.sizeHint().height() == viewHeight
 
     # Enable focus mode
     nwGUI.toggleFocusMode()
@@ -1161,6 +1161,42 @@ def testGuiMain_Features(
     assert nwGUI.mainMenu.isVisible() is True
     assert nwGUI.sideBar.isVisible() is True
     assert nwGUI.docPanes.splitView.isVisible() is True
+
+    # Clean header hides most header content in focus mode
+    docHeader = nwGUI.docEditor.docHeader
+    CONFIG.cleanFocusHeader = True
+    nwGUI.toggleFocusMode()
+    assert SHARED.focusMode is True
+    assert docHeader.tbButton.isVisible() is True
+    assert docHeader.outlineButton.isVisible() is False
+    assert docHeader.searchButton.isVisible() is False
+    assert docHeader.itemTitle.isVisible() is False
+    assert docHeader.minmaxButton.isVisible() is True
+    assert docHeader.closeButton.isVisible() is False
+
+    # Item updates, like after a save, don't restore the header content
+    nwGUI.docEditor.onProjectItemChanged(C.hSceneDoc, nwChange.UPDATE)
+    assert docHeader.outlineButton.isVisible() is False
+    assert docHeader.searchButton.isVisible() is False
+    assert docHeader.itemTitle.isVisible() is False
+    assert docHeader.closeButton.isVisible() is False
+
+    # Leaving focus mode restores the header content
+    nwGUI.toggleFocusMode()
+    assert SHARED.focusMode is False
+    assert docHeader.outlineButton.isVisible() is True
+    assert docHeader.searchButton.isVisible() is True
+    assert docHeader.itemTitle.isVisible() is True
+    assert docHeader.closeButton.isVisible() is True
+
+    # A hidden footer reserves no space in focus mode
+    docFooter = nwGUI.docEditor.docFooter
+    CONFIG.hideFocusFooter = True
+    assert docFooter.heightHint() > 0
+    nwGUI.toggleFocusMode()
+    assert docFooter.heightHint() == 0
+    nwGUI.toggleFocusMode()
+    assert docFooter.heightHint() > 0
 
     # Closing editor disables focus mode
     nwGUI.toggleFocusMode()
@@ -1205,6 +1241,24 @@ def testGuiMain_Features(
     assert CONFIG.vimMode is False
     assert SHARED.focusMode is False
     qtbot.keyClick(nwGUI.docEditor, QtKeyEscape)
+
+
+@pytest.mark.gui
+def testGuiMain_Features(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
+    """Test various features of the main window."""
+    buildTestProject(NWProject(), projPath)
+    nwGUI.openProject(projPath)
+    nwGUI.docPanes.closeDocument()  # Opening the project auto-restores a document
+    cHandle = SHARED.project.newFile("Jane", C.hCharRoot)
+    newDoc = SHARED.project.storage.getDocument(cHandle)
+    newDoc.writeDocument("# Jane\n\n@tag: Jane\n\n")
+    nwGUI.rebuildIndex()
 
     # Full Screen Mode
     # ================

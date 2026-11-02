@@ -674,7 +674,7 @@ def testToDocX_Lists(mockGUI: MockGuiMain):
         "<w:r><w:rPr /><w:t>Text</w:t></w:r></w:p>"
         '<w:p><w:pPr><w:pStyle w:val="ListParagraph" />'
         '<w:numPr><w:ilvl w:val="0" /><w:numId w:val="1" /></w:numPr>'
-        '<w:spacing w:before="0" w:after="0" w:line="252" w:lineRule="auto" /></w:pPr>'
+        '<w:spacing w:before="132" w:after="0" w:line="252" w:lineRule="auto" /></w:pPr>'
         "<w:r><w:rPr /><w:t>One</w:t></w:r></w:p>"
         '<w:p><w:pPr><w:pStyle w:val="ListParagraph" />'
         '<w:numPr><w:ilvl w:val="0" /><w:numId w:val="1" /></w:numPr>'
@@ -950,7 +950,8 @@ def testToDocX_DoublePages(mockGUI: MockGuiMain):
     # Even and odd headers are enabled
     xSett = doc._files["settings.xml"].xml
     assert xSett[0].tag == _wTag("mirrorMargins")
-    assert xSett[1].tag == _wTag("evenAndOddHeaders")
+    assert xSett[1].tag == _wTag("defaultTabStop")
+    assert xSett[2].tag == _wTag("evenAndOddHeaders")
 
     # Single pages have no even page header
     doc.setPageLayout(210.0, 297.0, 20.0, 20.0, 20.0, 20.0, 10.0, False)

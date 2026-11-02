@@ -84,6 +84,8 @@ class nwConst:
     MAX_SEARCH_RESULT = 1000
     CHECK_PASS_CHUNK = 100  # Chunk size for spell and format checking
     BIG_DOC_LIMIT = 500000  # Doc size above which the initial cursor move is queued
+    TEXT_FONT_MIN_SIZE = 6.0  # Smallest text font size in points
+    TEXT_FONT_MAX_SIZE = 72.0  # Largest text font size in points
 
 
 class nwRegEx:
@@ -100,6 +102,7 @@ class nwRegEx:
     FMT_LN = r"(?<!\\)(\[)([^\[\]]+)(?<!\\)(\]\()([^\s()]+)(?<!\\)(\))"
     FMT_SC = r"(?i)(?<!\\)(\[(?:b|/b|i|/i|s|/s|u|/u|m|/m|sup|/sup|sub|/sub|br)\])"
     FMT_SV = r"(?i)(?<!\\)(\[(?:footnote|field):)(.+?)(?<!\\)(\])"
+    AUTO_REP = r"<([^\s<>]+)>"
 
 
 class nwShortcode:
@@ -159,6 +162,7 @@ class nwStyles:
         "H3": (1.20, 0.60),  # Heading 3 margins (top, bottom)
         "H4": (1.20, 0.60),  # Heading 4 margins (top, bottom)
         "TT": (0.00, 0.60),  # Text margins (top, bottom)
+        "LI": (0.60, 0.60),  # List margins (top, bottom)
         "SP": (1.20, 1.20),  # Separator margins (top, bottom)
         "MT": (0.00, 0.60),  # Meta margins (top, bottom)
         "FT": (1.40, 0.40),  # Footnote margins (left, bottom)
@@ -325,6 +329,12 @@ class nwStats:
     ]
 
 
+class nwProblems:
+    """Text problems."""
+
+    MISSING_AUTO_KEYS = "missingAutoKeys"
+
+
 class nwLabels:
     """Various Common GUI Labels."""
 
@@ -433,11 +443,16 @@ class nwLabels:
         nwStats.CHARS: QT_TRANSLATE_NOOP("Stats", "Characters: {0} ({1})"),
         nwStats.WORDS: QT_TRANSLATE_NOOP("Stats", "Words: {0} ({1})"),
     }
+    PROBLEM_NAME: ClassVar[dict[str, str]] = {
+        nwProblems.MISSING_AUTO_KEYS: QT_TRANSLATE_NOOP("Constant", "Missing Auto-Replace Keys"),
+    }
     UNIT_LABELS: ClassVar[dict[nwStdUnit, str]] = {
         nwStdUnit.CHARS: QT_TRANSLATE_NOOP("Units", "characters"),
         nwStdUnit.WORDS: QT_TRANSLATE_NOOP("Units", "words"),
         nwStdUnit.LINES: QT_TRANSLATE_NOOP("Units", "lines"),
         nwStdUnit.PIXELS: QT_TRANSLATE_NOOP("Units", "px"),
+        nwStdUnit.POINTS: QT_TRANSLATE_NOOP("Units", "pt"),
+        nwStdUnit.EM: QT_TRANSLATE_NOOP("Units", "em"),
         nwStdUnit.SECONDS: QT_TRANSLATE_NOOP("Units", "seconds"),
         nwStdUnit.MINUTES: QT_TRANSLATE_NOOP("Units", "minutes"),
     }

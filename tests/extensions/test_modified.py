@@ -49,7 +49,16 @@ from novelwriter.extensions.modified import (
     NTreeView,
 )
 from novelwriter.guimain import GuiMain
-from novelwriter.types import QtKeyEscape, QtModNone, QtMouseLeft, QtMouseMiddle, QtRejected
+from novelwriter.types import (
+    QtIconNormal,
+    QtIconOff,
+    QtIconOn,
+    QtKeyEscape,
+    QtModNone,
+    QtMouseLeft,
+    QtMouseMiddle,
+    QtRejected,
+)
 
 from tests.helpers import SimpleDialog
 from tests.mocked import MockGuiMain
@@ -313,9 +322,20 @@ def testNClickableLabel_Main(qtbot: QtBot):
     widget.mousePressEvent(rightEvent)
     assert received == []
 
+    # Tooltips are used as accessible names, without the shortcut
+    widget.setToolTip("Reset Zoom", "Ctrl+0")
+    assert widget.toolTip() == "Reset Zoom [Ctrl+0]"
+    assert widget.accessibleName() == "Reset Zoom"
+    widget.setToolTip("Zoom")
+    assert widget.toolTip() == "Zoom"
+    assert widget.accessibleName() == "Zoom"
+    widget.setToolTip(None)
+    assert widget.toolTip() == ""
+    assert widget.accessibleName() == ""
+
 
 @pytest.mark.gui
-def testNFlatButtons_Main(qtbot: QtBot, mockGUI: MockGuiMain):
+def testNFlatButtons_Main(qtbot: QtBot, mockGUIwithTheme: MockGuiMain):
     """Test the NFlatIconButton and NFlatIconTextButton classes."""
     dialog = SimpleDialog(None)
 
@@ -354,6 +374,27 @@ def testNFlatButtons_Main(qtbot: QtBot, mockGUI: MockGuiMain):
     button3.setToolTip("Add", "Ctrl+N")
     assert button3.toolTip() == "Add [Ctrl+N]"
     assert button3.accessibleName() == "Add"
+
+    # A toggle icon makes the text button checkable, with an on and off icon
+    assert button2.isCheckable() is False
+    button4 = NFlatIconTextButton(dialog, size, "toggle-bullet:action", "Toggle")
+    dialog.addWidget(button4)
+    assert button4.isCheckable() is True
+    iconOn = button4.icon().pixmap(size, QtIconNormal, QtIconOn).toImage()
+    iconOff = button4.icon().pixmap(size, QtIconNormal, QtIconOff).toImage()
+    assert iconOn.isNull() is False
+    assert iconOff.isNull() is False
+    assert iconOn != iconOff
+
+    # Toggling and theme refresh keep the toggle icon, and paint both states
+    button4.setChecked(True)
+    assert button4.isChecked() is True
+    button4.grab()
+    button4.refreshTheme()
+    assert button4.icon().isNull() is False
+    button4.setChecked(False)
+    assert button4.isChecked() is False
+    button4.grab()
 
 
 @pytest.mark.gui

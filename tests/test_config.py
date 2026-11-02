@@ -24,6 +24,7 @@ from __future__ import annotations
 import datetime
 import json
 import sys
+import tomllib
 
 from pathlib import Path
 from shutil import copyfile
@@ -31,13 +32,15 @@ from shutil import copyfile
 import pytest
 
 from PyQt6.QtCore import QRect, Qt
-from PyQt6.QtGui import QFontDatabase
+from PyQt6.QtGui import QFont, QFontDatabase
 
 from novelwriter import CONFIG
-from novelwriter.config import Config, RecentPaths, RecentProjects
-from novelwriter.constants import nwFiles
+from novelwriter.config import MOVED_CONFIGS, Config, RecentPaths, RecentProjects
+from novelwriter.constants import nwConst, nwFiles
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwTheme
+from novelwriter.formats.configparser import NConfigParser
+from novelwriter.formats.tomlparser import NTomlParser, T_TomlConfig
 from novelwriter.guimain import GuiMain
 
 from tests.helpers import TstPaths, cmpFiles, writeFile
@@ -350,6 +353,26 @@ def testConfig_Fonts(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
         mp.setattr(QFontDatabase, "families", lambda *a: ["Helvetica"])
         conf.setTextFont(None)
         assert conf.textFont.family() == "Helvetica"
+
+    # Text font size is capped to the zoom range, without changing the font passed in
+    font = QFont(conf.textFont)
+    font.setPointSizeF(2.0)
+    conf.setTextFont(font)
+    assert conf.textFont.pointSizeF() == nwConst.TEXT_FONT_MIN_SIZE
+    assert font.pointSizeF() == 2.0
+
+    font.setPointSizeF(100.0)
+    conf.setTextFont(font.toString())
+    assert conf.textFont.pointSizeF() == nwConst.TEXT_FONT_MAX_SIZE
+
+    font.setPointSizeF(12.0)
+    conf.setTextFont(font)
+    assert conf.textFont.pointSizeF() == 12.0
+
+    # Pixel sized fonts are left as is
+    font.setPixelSize(4)
+    conf.setTextFont(font)
+    assert conf.textFont.pixelSize() == 4
 
 
 @pytest.mark.base
@@ -666,7 +689,7 @@ def testConfig_ConvertOldConfig(fncPath: Path, tstPaths: TstPaths):
     assert conf.autoSaveDoc == 30
     assert conf.backupInterval == "session"
     assert conf.textWidth == 700
-    assert conf.tabWidth == 40
+    assert conf.tabSize == 2.0
     assert conf.dialogStyle == 2
     assert conf.spellLanguage == "en"
     assert conf.userIdleTime == 300
@@ -680,3 +703,38 @@ def testConfig_ConvertOldConfig(fncPath: Path, tstPaths: TstPaths):
     assert newConf.mainWinSize == conf.mainWinSize
     assert newConf.dialogStyle == conf.dialogStyle
     assert newConf.spellLanguage == conf.spellLanguage
+
+
+@pytest.mark.base
+def testConfig_MovedConfigs(fncPath: Path):
+    """Test that moved config options are saved to their new location
+    and read from their old location as a fallback.
+    """
+    conf = Config()
+    conf.initConfig(confPath=fncPath, dataPath=fncPath)
+    assert conf.saveConfig() is True
+    saved = tomllib.loads((fncPath / nwFiles.CONF_FILE).read_text(encoding="utf-8"))
+
+    for (newSec, newOpt), (oldSec, oldOpt) in MOVED_CONFIGS.items():
+        assert newSec is not None
+        assert newOpt in saved[newSec]
+        assert oldOpt not in saved.get(oldSec, {})
+
+        data: T_TomlConfig = {oldSec: {oldOpt: "old"}}
+
+        toml = NTomlParser(confMap=MOVED_CONFIGS)
+        toml.readString(toml.writeString(data))
+        assert toml.getStr(newSec, newOpt, "") == "old"
+
+        ini = NConfigParser(confMap=MOVED_CONFIGS)
+        ini.read_dict(data)
+        assert ini.getStr(newSec, newOpt, "") == "old"
+
+        # The new location takes precedence
+        data.setdefault(newSec, {})[newOpt] = "new"
+
+        toml.readString(toml.writeString(data))
+        assert toml.getStr(newSec, newOpt, "") == "new"
+
+        ini.read_dict(data)
+        assert ini.getStr(newSec, newOpt, "") == "new"

@@ -179,7 +179,7 @@ def testProjectXMLReader_ReadCurrent(
     assert xmlReader.state == XMLReadState.PARSED_OK
     assert xmlReader.xmlRoot == "novelWriterXML"
     assert xmlReader.xmlVersion == 0x0106
-    assert xmlReader.xmlRevision == 0
+    assert xmlReader.xmlRevision == 1
     assert xmlReader.appVersion == "26.2rc1"
     assert xmlReader.hexVersion == 0x260200C1
 
@@ -209,6 +209,8 @@ def testProjectXMLReader_ReadCurrent(
     assert data.dailyGoal == 1000
     assert data.dailyGoalAuto is False
     assert data.targetSkipRoots == {"d2d81f4831814"}
+    assert data.autoReplace == {"A": "B", "B": "E", "C": "D"}
+    assert data.autoReplaceIgnoreCase is True
     assert data._dailyLastDate == date.today()
     assert data._dailyLastCount == 0
 

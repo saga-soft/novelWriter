@@ -35,7 +35,7 @@ from PyQt6.QtWidgets import QListWidgetItem
 from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
-from novelwriter.constants import nwHeadFmt, nwStats
+from novelwriter.constants import nwHeadFmt, nwProblems, nwStats
 from novelwriter.core.project import NWProject
 from novelwriter.guimain import GuiMain
 from novelwriter.manuscript.buildsettings import BuildSettings
@@ -359,6 +359,75 @@ def testGuiManuscript_Features(
 
     # Tests are too fast to trigger this one, so we trigger it manually to ensure it isn't failing
     manus.docPreview._postUpdate()
+
+    # Problems
+    # ========
+
+    tabs = manus.detailsTabs
+    problems = manus.buildProblems
+    assert tabs.isTabVisible(tabs.indexOf(problems)) is False
+    assert problems.hasProblems() is False
+
+    # Missing auto-replace keys show the tab
+    SHARED.project.data.setAutoReplace({"A": "B"}, False)
+    SHARED.project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\nText <A> <X>\n\n")
+    manus._generatePreview()
+    assert tabs.isTabVisible(tabs.indexOf(problems)) is True
+    assert tabs.currentWidget() is problems
+    assert problems.hasProblems() is True
+    assert problems.problemCount() == 1
+    assert manus.docPreview.ageLabel.text().endswith(", Problems: 1")
+
+    # The tab isn't selected again if it was already visible
+    tabs.setCurrentWidget(manus.buildOutline)
+    manus._generatePreview()
+    assert tabs.currentWidget() is manus.buildOutline
+
+    parent = problems.listView.topLevelItem(0)
+    assert parent is not None
+    assert parent.text(0) == "Missing Auto-Replace Keys (1)"
+    assert parent.isExpanded() is True
+    child = parent.child(0)
+    assert child is not None
+    assert child.text(0) == "<X> in New Scene"
+
+    # Clicking an entry navigates, but clicking the category does not
+    with qtbot.assertNotEmitted(problems.problemEntryClicked):
+        problems._onItemClick(parent, 0)
+    with qtbot.waitSignal(problems.problemEntryClicked) as signal:
+        problems._onItemClick(child, 0)
+        assert signal.args == ["problem_0"]
+    assert manus.docPreview.source() == QUrl("#problem_0")
+
+    # The anchor exists in the preview document
+    names = []
+    preview = manus.docPreview.document()
+    assert preview is not None
+    block = preview.begin()
+    while block.isValid():
+        it = block.begin()
+        while not it.atEnd():
+            names.extend(it.fragment().charFormat().anchorNames())
+            it += 1
+        block = block.next()
+    assert "problem_0" in names
+
+    # Without a problem anchor, the heading anchor is used, and an unknown handle has no document name
+    problems.updateProblems({nwProblems.MISSING_AUTO_KEYS: [("Y", "0000000000000:T0001", "")]})
+    parent = problems.listView.topLevelItem(0)
+    assert parent is not None
+    child = parent.child(0)
+    assert child is not None
+    assert child.text(0) == "<Y>"
+    assert child.data(0, problems.D_ANCHOR) == "0000000000000:T0001"
+
+    # Fixing the problems hides the tab again
+    SHARED.project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\nText <A>\n\n")
+    manus._generatePreview()
+    assert tabs.isTabVisible(tabs.indexOf(problems)) is False
+    assert problems.hasProblems() is False
+    assert problems.problemCount() == 0
+    assert "Problems" not in manus.docPreview.ageLabel.text()
 
     # Builds
     # ======

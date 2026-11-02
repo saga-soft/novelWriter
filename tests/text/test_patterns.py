@@ -337,7 +337,7 @@ def testTextPatterns_DialogueStyle():
     # Closed
     # ======
 
-    CONFIG.allowOpenDial = False
+    CONFIG.allowOpenDialog = False
     regEx = REGEX_PATTERNS.dialogStyle
     assert regEx is not None
 
@@ -385,7 +385,7 @@ def testTextPatterns_DialogueStyle():
     # Open
     # ====
 
-    CONFIG.allowOpenDial = True
+    CONFIG.allowOpenDialog = True
     regEx = REGEX_PATTERNS.dialogStyle
     assert regEx is not None
 
@@ -479,7 +479,7 @@ def testTextPatterns_DialoguePlain():
     CONFIG.fmtDQuoteClose = '"'
 
     CONFIG.dialogStyle = 3
-    CONFIG.allowOpenDial = False
+    CONFIG.allowOpenDialog = False
     regEx = REGEX_PATTERNS.dialogStyle
     assert regEx is not None
 

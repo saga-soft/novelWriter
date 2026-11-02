@@ -32,6 +32,8 @@ from novelwriter.common import checkInt, checkPath
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from novelwriter.formats.tomlparser import T_ConfigMap
+
 logger = logging.getLogger(__name__)
 
 _T_Enum = TypeVar("_T_Enum", bound=Enum)
@@ -47,8 +49,9 @@ class NConfigParser(ConfigParser):
     It is kept for backwards compatibility with old config files.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, confMap: T_ConfigMap | None = None) -> None:
         super().__init__(interpolation=None)
+        self._confMap: T_ConfigMap | None = confMap
 
     def read(self, path: Path) -> None:
         """Read and parse config data from a file, mirroring write()."""
@@ -57,10 +60,12 @@ class NConfigParser(ConfigParser):
 
     def getStr(self, section: str, option: str, default: str) -> str:
         """Read string value."""
+        section, option = self._resolve(section, option)
         return self.get(section, option, fallback=default)
 
     def getInt(self, section: str, option: str, default: int) -> int:
         """Read integer value."""
+        section, option = self._resolve(section, option)
         try:
             return self.getint(section, option, fallback=default)
         except ValueError:
@@ -69,6 +74,7 @@ class NConfigParser(ConfigParser):
 
     def getFloat(self, section: str, option: str, default: float) -> float:
         """Read float value."""
+        section, option = self._resolve(section, option)
         try:
             return self.getfloat(section, option, fallback=default)
         except ValueError:
@@ -77,6 +83,7 @@ class NConfigParser(ConfigParser):
 
     def getBool(self, section: str, option: str, default: bool) -> bool:
         """Read boolean value."""
+        section, option = self._resolve(section, option)
         try:
             return self.getboolean(section, option, fallback=default)
         except ValueError:
@@ -85,10 +92,12 @@ class NConfigParser(ConfigParser):
 
     def getPath(self, section: str, option: str, default: Path) -> Path:
         """Read a Path value."""
+        section, option = self._resolve(section, option)
         return checkPath(self.get(section, option, fallback=default), default)
 
     def getStrList(self, section: str, option: str, default: list[str]) -> list[str]:
         """Read string list."""
+        section, option = self._resolve(section, option)
         result = default.copy() if isinstance(default, list) else []
         if self.has_option(section, option):
             data = self.get(section, option, fallback="").split(",")
@@ -98,6 +107,7 @@ class NConfigParser(ConfigParser):
 
     def getIntList(self, section: str, option: str, default: list[int]) -> list[int]:
         """Read integer list."""
+        section, option = self._resolve(section, option)
         result = default.copy() if isinstance(default, list) else []
         if self.has_option(section, option):
             data = self.get(section, option, fallback="").split(",")
@@ -107,7 +117,18 @@ class NConfigParser(ConfigParser):
 
     def getEnum(self, section: str, option: str, default: _T_Enum) -> _T_Enum:
         """Read enum value."""
+        section, option = self._resolve(section, option)
         if self.has_option(section, option):
             data = self.get(section, option, fallback="")
             return type(default).__members__.get(data.upper(), default)
         return default
+
+    ##
+    # Internal Functions
+    ##
+
+    def _resolve(self, section: str, option: str) -> tuple[str, str]:
+        """Redirect to the old location of a moved option if only set there."""
+        if self._confMap and not self.has_option(section, option):
+            return self._confMap.get((section, option), (section, option))
+        return section, option

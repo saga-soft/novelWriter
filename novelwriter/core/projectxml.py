@@ -52,7 +52,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 FILE_VERSION = "1.6"  # The current project file format version
-FILE_REVISION = "0"  # The current project file format revision
+FILE_REVISION = "1"  # The current project file format revision
 HEX_VERSION = 0x0106  # The current project file format version as hex
 LAST_BREAKING = 0x260200B2  # Last project format breaking change (not XML)
 
@@ -127,6 +127,8 @@ class ProjectXMLReader:
     1.6 The actual format released for 26.2. All documents are now
         stored with the .md file extension and a toml header. The
         project XML was not changed.
+
+        Rev 1: Added ignoreCase attribute to autoReplace (26.3).
     """
 
     def __init__(self, path: str | Path) -> None:
@@ -297,9 +299,9 @@ class ProjectXMLReader:
                 data.setInitLastHandles(self._parseDictKeyText(xItem))
             elif xItem.tag == "autoReplace":
                 if self._version >= 0x0102:
-                    data.setAutoReplace(self._parseDictKeyText(xItem))
+                    data.setAutoReplace(self._parseDictKeyText(xItem), xItem.attrib.get("ignoreCase"))
                 else:  # Pre 1.2 format
-                    data.setAutoReplace(self._parseDictTagText(xItem))
+                    data.setAutoReplace(self._parseDictTagText(xItem), False)
             else:
                 logger.warning("Ignored <root/settings/%s> in XML", xItem.tag)
 
@@ -546,7 +548,12 @@ class ProjectXMLWriter:
         self._packSingleValue(xSettings, "dailyTarget", str(data.dailyGoal), attrib=dailyAttr)
         self._packListValues(xSettings, "targetSkipRoots", data.targetSkipRoots)
         self._packDictKeyValue(xSettings, "lastHandle", data.lastHandle)
-        self._packDictKeyValue(xSettings, "autoReplace", data.autoReplace)
+        self._packDictKeyValue(
+            xSettings,
+            "autoReplace",
+            data.autoReplace,
+            attrib={"ignoreCase": yesNo(data.autoReplaceIgnoreCase)},
+        )
 
         # Save Status/Importance
         xStatus = ET.SubElement(xSettings, "status")
@@ -594,22 +601,40 @@ class ProjectXMLWriter:
     #  Internal Functions
     ##
 
-    def _packSingleValue(self, xParent: ET.Element, name: str, value: str | None, attrib: dict | None = None) -> None:
+    def _packSingleValue(
+        self,
+        xParent: ET.Element,
+        name: str,
+        value: str | None,
+        attrib: dict | None = None,
+    ) -> None:
         """Pack a single value into an XML element."""
         xItem = ET.SubElement(xParent, name, attrib=attrib or {})
         xItem.text = str(value) or ""
 
-    def _packListValues(self, xParent: ET.Element, name: str, data: list | tuple | set) -> None:
+    def _packListValues(
+        self,
+        xParent: ET.Element,
+        name: str,
+        data: list | tuple | set,
+        attrib: dict | None = None,
+    ) -> None:
         """Pack the entries of a sequence into an XML element."""
-        xItem = ET.SubElement(xParent, name)
+        xItem = ET.SubElement(xParent, name, attrib=attrib or {})
         for value in data:
             if len(str(value)) > 0:  # pragma: no branch
                 xEntry = ET.SubElement(xItem, "entry")
                 xEntry.text = str(value) or ""
 
-    def _packDictKeyValue(self, xParent: ET.Element, name: str, data: Mapping[str, str | None]) -> None:
+    def _packDictKeyValue(
+        self,
+        xParent: ET.Element,
+        name: str,
+        data: Mapping[str, str | None],
+        attrib: dict | None = None,
+    ) -> None:
         """Pack the entries of a dictionary into an XML element."""
-        xItem = ET.SubElement(xParent, name)
+        xItem = ET.SubElement(xParent, name, attrib=attrib or {})
         for key, value in data.items():
             if len(key) > 0:  # pragma: no branch
                 xEntry = ET.SubElement(xItem, "entry", attrib={"key": key})

@@ -182,7 +182,6 @@ ICONS = [
     "font",
     "import",
     "language",
-    "lines",
     "link",
     "list",
     "margin_bottom",
@@ -210,6 +209,8 @@ ICONS = [
     "timer",
     "unchecked",
     "view",
+    "zoom_in",
+    "zoom_out",
 ]
 # fmt: on
 
@@ -287,7 +288,7 @@ def processMaterialIcons(workDir: Path, iconsDir: Path, jobs: dict) -> None:
 
         icons: dict[str, ET.Element] = {}
         iconSrc = srcRepo / "symbols" / "web"
-        for key, icon in _loadMap("material_symbols").items():
+        for key, icon in _loadMap("material").items():
             if kind:
                 fileName = f"{icon}_{kind}_24px.svg"
             else:

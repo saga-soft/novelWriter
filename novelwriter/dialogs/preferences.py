@@ -170,6 +170,7 @@ class GuiPreferences(NDialog):
         self._textFont = CONFIG.textFont
 
         trPx = trUnit(nwStdUnit.PIXELS)
+        trEm = trUnit(nwStdUnit.EM)
         trSec = trUnit(nwStdUnit.SECONDS)
         trMin = trUnit(nwStdUnit.MINUTES)
 
@@ -292,6 +293,15 @@ class GuiPreferences(NDialog):
             self.tr("Display character count instead where available."),
         )
 
+        # Include Notes in Word Count
+        self.incNotesWCount = NSwitch(self)
+        self.incNotesWCount.setChecked(CONFIG.incNotesWCount)
+        self.mainForm.addRow(
+            self.tr("Include project notes in status bar word count"),
+            self.incNotesWCount,
+            self.tr("If off, only shows novel word count."),
+        )
+
         # Force RTL Layout
         self.guiForceRTL = NSwitch(self)
         self.guiForceRTL.setChecked(CONFIG.guiForceRTL)
@@ -334,12 +344,31 @@ class GuiPreferences(NDialog):
             self.tr("Add the parent folder names to the header."),
         )
 
-        # Include Notes in Word Count
-        self.incNotesWCount = NSwitch(self)
-        self.incNotesWCount.setChecked(CONFIG.incNotesWCount)
+        # Focus Mode Footer
+        self.hideFocusFooter = NSwitch(self)
+        self.hideFocusFooter.setChecked(CONFIG.hideFocusFooter)
         self.mainForm.addRow(
-            self.tr("Include project notes in status bar word count"),
-            self.incNotesWCount,
+            self.tr('Hide document footer in "Focus Mode"'),
+            self.hideFocusFooter,
+            self.tr("Hides the entire document footer."),
+        )
+
+        # Focus Mode Header
+        self.cleanFocusHeader = NSwitch(self)
+        self.cleanFocusHeader.setChecked(CONFIG.cleanFocusHeader)
+        self.mainForm.addRow(
+            self.tr('Minimal document header in "Focus Mode"'),
+            self.cleanFocusHeader,
+            self.tr("Hides the title and most buttons."),
+        )
+
+        # Project Goal in Focus Mode
+        self.goalInFocusMode = NSwitch(self)
+        self.goalInFocusMode.setChecked(CONFIG.goalInFocusMode)
+        self.mainForm.addRow(
+            self.tr('Show writing goal in "Focus Mode"'),
+            self.goalInFocusMode,
+            self.tr("Keeps the goal progress in the status bar."),
         )
 
         # Project View
@@ -544,15 +573,6 @@ class GuiPreferences(NDialog):
             unit=trPx,
         )
 
-        # Focus Mode Footer
-        self.hideFocusFooter = NSwitch(self)
-        self.hideFocusFooter.setChecked(CONFIG.hideFocusFooter)
-        self.mainForm.addRow(
-            self.tr('Hide document footer in "Focus Mode"'),
-            self.hideFocusFooter,
-            self.tr("Hide the information bar in the document editor."),
-        )
-
         # Justify Text
         self.doJustify = NSwitch(self)
         self.doJustify.setChecked(CONFIG.doJustify)
@@ -573,15 +593,15 @@ class GuiPreferences(NDialog):
             unit=trPx,
         )
 
-        # Tab Width
-        self.tabWidth = NSpinBox(self, minVal=0, maxVal=200)
-        self.tabWidth.setFixedNumbersWidth(3)
-        self.tabWidth.setValue(CONFIG.tabWidth)
+        # Tab Size
+        self.tabSize = NDoubleSpinBox(self, minVal=0.0, maxVal=19.9, step=0.1, prec=2)
+        self.tabSize.setFixedNumbersWidth(5)
+        self.tabSize.setValue(CONFIG.tabSize)
         self.mainForm.addRow(
-            self.tr("Tab width"),
-            self.tabWidth,
+            self.tr("Tab size"),
+            self.tabSize,
             self.tr("The width of a tab key press in the editor and viewer."),
-            unit=trPx,
+            unit=trEm,
         )
 
         # Line Height
@@ -592,7 +612,7 @@ class GuiPreferences(NDialog):
             self.tr("Line height"),
             self.lineHeight,
             self.tr("The relative line height in the editor and viewer."),
-            unit=self.tr("em"),
+            unit=trEm,
         )
 
         # Text Editing
@@ -668,22 +688,7 @@ class GuiPreferences(NDialog):
         self.mainForm.addRow(
             self.tr("Highlight current line"),
             self.lineHighlight,
-        )
-
-        # Show Tabs and Spaces
-        self.showTabsNSpaces = NSwitch(self)
-        self.showTabsNSpaces.setChecked(CONFIG.showTabsNSpaces)
-        self.mainForm.addRow(
-            self.tr("Show tabs and spaces"),
-            self.showTabsNSpaces,
-        )
-
-        # Show Line Endings
-        self.showLineEndings = NSwitch(self)
-        self.showLineEndings.setChecked(CONFIG.showLineEndings)
-        self.mainForm.addRow(
-            self.tr("Show line endings"),
-            self.showLineEndings,
+            self.tr("Shows the line of the cursor in a different background colour."),
         )
 
         # Editor Scrolling
@@ -745,11 +750,11 @@ class GuiPreferences(NDialog):
         )
 
         # Open-Ended Dialogue
-        self.allowOpenDial = NSwitch(self)
-        self.allowOpenDial.setChecked(CONFIG.allowOpenDial)
+        self.allowOpenDialog = NSwitch(self)
+        self.allowOpenDialog.setChecked(CONFIG.allowOpenDialog)
         self.mainForm.addRow(
             self.tr("Allow open-ended dialogue"),
-            self.allowOpenDial,
+            self.allowOpenDialog,
             self.tr("Highlight dialogue line with no closing quote."),
         )
 
@@ -1213,6 +1218,7 @@ class GuiPreferences(NDialog):
         CONFIG.hideVScroll = hideVScroll
         CONFIG.hideHScroll = hideHScroll
         CONFIG.nativeFont = self.nativeFont.isChecked()
+        CONFIG.incNotesWCount = self.incNotesWCount.isChecked()
         CONFIG.setGuiFont(self._guiFont)
         CONFIG.setPrimaryCount(useCharCount)
 
@@ -1223,7 +1229,9 @@ class GuiPreferences(NDialog):
         initViewer |= CONFIG.textFont != textFont
 
         CONFIG.showFullPath = self.showFullPath.isChecked()
-        CONFIG.incNotesWCount = self.incNotesWCount.isChecked()
+        CONFIG.hideFocusFooter = self.hideFocusFooter.isChecked()
+        CONFIG.cleanFocusHeader = self.cleanFocusHeader.isChecked()
+        CONFIG.goalInFocusMode = self.goalInFocusMode.isChecked()
         CONFIG.setTextFont(textFont)
 
         # Project View
@@ -1260,14 +1268,14 @@ class GuiPreferences(NDialog):
         focusWidth = self.focusWidth.value()
         doJustify = self.doJustify.isChecked()
         textMargin = self.textMargin.value()
-        tabWidth = self.tabWidth.value()
+        tabSize = self.tabSize.value()
         lineHeight = self.lineHeight.value()
 
         initEditor |= CONFIG.doJustify != doJustify
-        initEditor |= CONFIG.tabWidth != tabWidth
+        initEditor |= CONFIG.tabSize != tabSize
         initEditor |= CONFIG.lineHeight != lineHeight
         initViewer |= CONFIG.doJustify != doJustify
-        initViewer |= CONFIG.tabWidth != tabWidth
+        initViewer |= CONFIG.tabSize != tabSize
         initViewer |= CONFIG.lineHeight != lineHeight
         initViewport |= CONFIG.textWidth != textWidth
         initViewport |= CONFIG.focusWidth != focusWidth
@@ -1275,10 +1283,9 @@ class GuiPreferences(NDialog):
 
         CONFIG.textWidth = textWidth
         CONFIG.focusWidth = focusWidth
-        CONFIG.hideFocusFooter = self.hideFocusFooter.isChecked()
         CONFIG.doJustify = doJustify
         CONFIG.textMargin = textMargin
-        CONFIG.tabWidth = tabWidth
+        CONFIG.tabSize = tabSize
         CONFIG.lineHeight = lineHeight
 
         # Text Editing
@@ -1287,15 +1294,11 @@ class GuiPreferences(NDialog):
         scaleHeadings = self.scaleHeadings.isChecked()
         singleStarBold = self.singleStarBold.isChecked()
         lineHighlight = self.lineHighlight.isChecked()
-        showTabsNSpaces = self.showTabsNSpaces.isChecked()
-        showLineEndings = self.showLineEndings.isChecked()
 
         updateSyntax |= CONFIG.scaleHeadings != scaleHeadings
         updateSyntax |= CONFIG.singleStarBold != singleStarBold
         updateSyntax |= CONFIG.lineHighlight != lineHighlight
         initEditor |= CONFIG.cursorWidth != cursorWidth
-        initEditor |= CONFIG.showTabsNSpaces != showTabsNSpaces
-        initEditor |= CONFIG.showLineEndings != showLineEndings
         updateSpelling |= CONFIG.spellLanguage != spellLanguage
 
         CONFIG.spellLanguage = spellLanguage
@@ -1304,8 +1307,6 @@ class GuiPreferences(NDialog):
         CONFIG.scaleHeadings = scaleHeadings
         CONFIG.singleStarBold = singleStarBold
         CONFIG.lineHighlight = lineHighlight
-        CONFIG.showTabsNSpaces = showTabsNSpaces
-        CONFIG.showLineEndings = showLineEndings
 
         # Editor Scrolling
         scrollPastEnd = self.scrollPastEnd.isChecked()
@@ -1318,7 +1319,7 @@ class GuiPreferences(NDialog):
 
         # Text Highlighting
         dialogueStyle = self.dialogStyle.currentData()
-        allowOpenDial = self.allowOpenDial.isChecked()
+        allowOpenDialog = self.allowOpenDialog.isChecked()
         dialogueLine = processDialogSymbols(self.dialogLine.text())
         narratorBreak = self.narratorBreak.currentData()
         narratorDialog = self.narratorDialog.currentData()
@@ -1329,7 +1330,7 @@ class GuiPreferences(NDialog):
         showMultiSpaces = self.showMultiSpaces.isChecked()
 
         updateSyntax |= CONFIG.dialogStyle != dialogueStyle
-        updateSyntax |= CONFIG.allowOpenDial != allowOpenDial
+        updateSyntax |= CONFIG.allowOpenDialog != allowOpenDialog
         updateSyntax |= CONFIG.dialogLine != dialogueLine
         updateSyntax |= CONFIG.narratorBreak != narratorBreak
         updateSyntax |= CONFIG.narratorDialog != narratorDialog
@@ -1340,7 +1341,7 @@ class GuiPreferences(NDialog):
         initEditor |= CONFIG.showMultiSpaces != showMultiSpaces
 
         CONFIG.dialogStyle = dialogueStyle
-        CONFIG.allowOpenDial = allowOpenDial
+        CONFIG.allowOpenDialog = allowOpenDialog
         CONFIG.dialogLine = dialogueLine
         CONFIG.narratorBreak = narratorBreak
         CONFIG.narratorDialog = narratorDialog

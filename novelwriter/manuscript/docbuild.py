@@ -125,6 +125,7 @@ class DocumentBuilder:
         filtered = self._setupBuild(makeObj)
         makeObj.initDocument()
         makeObj.setShowNewPage(newPage)
+        makeObj.setProblemAnchors(True)
         self._outline = True
         yield from self._iterBuild(makeObj, filtered)
         makeObj.closeDocument()
@@ -160,6 +161,7 @@ class DocumentBuilder:
         elif bFormat in (nwBuildFmt.STD_MD, nwBuildFmt.EXT_MD):
             makeObj = ToMarkdown(self._project, bFormat == nwBuildFmt.EXT_MD)
             filtered = self._setupBuild(makeObj)
+            makeObj.initDocument()
             yield from self._iterBuild(makeObj, filtered)
             makeObj.closeDocument()
             if self._build.getBool("format.replaceTabs"):
@@ -168,6 +170,7 @@ class DocumentBuilder:
         elif bFormat in (nwBuildFmt.NWD, nwBuildFmt.J_NWD):
             makeObj = ToRaw(self._project)
             filtered = self._setupBuild(makeObj)
+            makeObj.initDocument()
             yield from self._iterBuild(makeObj, filtered)
             makeObj.closeDocument()
             if self._build.getBool("format.replaceTabs"):
@@ -290,6 +293,7 @@ class DocumentBuilder:
             self._build.getFloat("format.firstIndentWidth"),
             self._build.getBool("format.indentFirstPar"),
         )
+        bldObj.setTabSize(self._build.getFloat("format.tabSize"))
         bldObj.setHeadingStyles(
             self._build.getBool("format.colorHeadings"),
             self._build.getBool("format.boldHeadings"),
@@ -325,6 +329,10 @@ class DocumentBuilder:
         bldObj.setTextProperties(
             self._build.getFloat("format.textMarginT"),
             self._build.getFloat("format.textMarginB"),
+        )
+        bldObj.setListProperties(
+            self._build.getFloat("format.listMarginT"),
+            self._build.getFloat("format.listMarginB"),
         )
         bldObj.setSeparatorProperties(
             self._build.getFloat("format.sepMarginT"),
@@ -386,7 +394,6 @@ class DocumentBuilder:
                             bldObj.buildOutline()
                 elif tItem.isFileType():
                     bldObj.setText(tHandle)
-                    bldObj.doPreProcessing()
                     bldObj.tokenizeText()
                     if self._count:
                         bldObj.countStats()

@@ -119,7 +119,6 @@
     "font": "Text Font",
     "import": "Arrow Import",
     "language": "Local Language",
-    "lines": "List",
     "link": "Link",
     "list": "Text Bullet List",
     "margin_bottom": "Padding Down",
@@ -146,5 +145,7 @@
     "timer_off": "Timer Off",
     "timer": "Timer",
     "unchecked": "Dismiss Square",
-    "view": "Eye"
+    "view": "Eye",
+    "zoom_in": "Zoom In",
+    "zoom_out": "Zoom Out"
 }

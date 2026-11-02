@@ -61,6 +61,7 @@ class ProjectData:
         "_author",
         "_autoCount",
         "_autoReplace",
+        "_autoReplaceIgnoreCase",
         "_currCounts",
         "_dailyGoal",
         "_dailyGoalAuto",
@@ -110,6 +111,7 @@ class ProjectData:
         self._rtl = False
         self._spellCheck = False
         self._spellLang = None
+        self._autoReplaceIgnoreCase = False
 
         # Writing Target
         self._targetCount = 0
@@ -284,6 +286,11 @@ class ProjectData:
     def autoReplace(self) -> dict[str, str]:
         """Return the auto-replace dictionary."""
         return self._autoReplace
+
+    @property
+    def autoReplaceIgnoreCase(self) -> bool:
+        """Return True if the auto replace should ignore case."""
+        return self._autoReplaceIgnoreCase
 
     @property
     def itemStatus(self) -> ItemStatus:
@@ -462,8 +469,9 @@ class ProjectData:
         if cNotes is not None:
             self._currCounts[3] = checkInt(cNotes, 0)
 
-    def setAutoReplace(self, value: dict) -> None:
+    def setAutoReplace(self, value: dict, ignoreCase: Any) -> None:
         """Set the auto-replace dictionary."""
+        self._autoReplaceIgnoreCase = checkBool(ignoreCase, False)
         if isinstance(value, dict):
             self._autoReplace = {}
             for key, entry in value.items():

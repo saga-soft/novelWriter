@@ -119,7 +119,6 @@
     "font",
     "import",
     "language",
-    "lines",
     "link",
     "list",
     "margin_bottom",
@@ -146,5 +145,7 @@
     "timer_off",
     "timer",
     "unchecked",
-    "view"
+    "view",
+    "zoom_in",
+    "zoom_out"
 ]

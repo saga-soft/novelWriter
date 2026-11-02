@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<novelWriterXML appVersion="26.2rc1" hexVersion="0x260200c1" fileVersion="1.6" fileRevision="0" timeStamp="2026-07-20 17:28:47">
+<novelWriterXML appVersion="26.2rc1" hexVersion="0x260200c1" fileVersion="1.6" fileRevision="1" timeStamp="2026-07-20 17:28:47">
   <project id="e2be99af-f9bf-4403-857a-c3d1ac25abea" saveCount="2369" autoCount="429" editTime="1000" indexRevision="0">
     <name>Sample Project</name>
     <author>Jane Smith</author>
@@ -19,7 +19,7 @@
       <entry key="novel">7031beac91f75</entry>
       <entry key="story">7031beac91f75</entry>
     </lastHandle>
-    <autoReplace>
+    <autoReplace ignoreCase="yes">
       <entry key="A">B</entry>
       <entry key="B">E</entry>
       <entry key="C">D</entry>

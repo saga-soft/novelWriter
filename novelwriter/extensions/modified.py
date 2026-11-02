@@ -581,6 +581,14 @@ class NClickableLabel(QLabel):
 
     mouseClicked = pyqtSignal()
 
+    def setToolTip(self, text: str | None, shortcut: str = "") -> None:
+        """Set the tooltip with an optional shortcut, and use the text as
+        the accessible name.
+        """
+        text = text or ""
+        super().setToolTip(f"{text} [{shortcut}]" if shortcut else text)
+        self.setAccessibleName(text)
+
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """Capture a left mouse click and emit its signal."""
         if event.button() == QtMouseLeft:

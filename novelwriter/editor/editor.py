@@ -248,6 +248,7 @@ class GuiDocEditor(QTextEdit):
         "_trViewTag",
         "_vim",
         "_vpMargin",
+        "_wheelDelta",
         "_zoomIn",
         "_zoomOut",
         "_zoomReset",
@@ -291,6 +292,7 @@ class GuiDocEditor(QTextEdit):
         self._docChanged = False  # Flag for changed status of document
         self._docHandle = None  # The handle of the open document
         self._vpMargin = 0  # The editor viewport margin, set during init
+        self._wheelDelta = 0  # Accumulated Ctrl+Scroll wheel delta
 
         # Document Variables
         self._lastEdit = 0.0  # Timestamp of last edit
@@ -366,7 +368,15 @@ class GuiDocEditor(QTextEdit):
 
         # Connect Widget Signals
         self.docHeader.closeDocumentRequest.connect(self._closeCurrentDocument)
+        self.docHeader.gotoLineRequest.connect(self.setCursorLine)
+        self.docHeader.requestProjectItemSelected.connect(self.requestProjectItemSelected)
+        self.docHeader.toggleFocusModeRequest.connect(self.toggleFocusModeRequest)
+        self.docHeader.toggleSearchRequest.connect(self.toggleSearch)
         self.docHeader.toggleToolBarRequest.connect(self._toggleToolBarVisibility)
+        self.docFooter.zoomInRequest.connect(self.zoomIn)
+        self.docFooter.zoomOutRequest.connect(self.zoomOut)
+        self.docFooter.zoomResetRequest.connect(self.zoomReset)
+        self.docFooter.editOptionsChanged.connect(self._editOptionsChanged)
         self.docToolBar.requestDocAction.connect(self.docAction)
 
         # Context Menu
@@ -593,6 +603,11 @@ class GuiDocEditor(QTextEdit):
                 selection.format = self._formatErrFormat
         self._applyExtraSelections()
 
+    def updateReplaceKeys(self) -> None:
+        """Rehighlight the document if the auto-replace keys changed."""
+        if self._docHandle and self._qDocument.syntaxHighlighter.updateReplaceKeys():
+            self._qDocument.syntaxHighlighter.rehighlight()
+
     def initEditor(self) -> None:
         """Initialise or re-initialise the editor with the user's
         settings. This function is both called when the editor is
@@ -618,17 +633,9 @@ class GuiDocEditor(QTextEdit):
         self.initViewport()
 
         # Also set the document text options for the document text flow
-        options = QTextOption()
-        if CONFIG.doJustify:
-            options.setAlignment(QtAlignJustify)
-        if CONFIG.showTabsNSpaces:
-            options.setFlags(options.flags() | QTextOption.Flag.ShowTabsAndSpaces)
-        if CONFIG.showLineEndings:
-            options.setFlags(options.flags() | QTextOption.Flag.ShowLineAndParagraphSeparators)
-        self._qDocument.setDefaultTextOption(options)
+        self._applyTextOptions()
 
         # Refresh sizes
-        self.setTabStopDistance(CONFIG.tabWidth)
         self.setCursorWidth(CONFIG.cursorWidth)
         self._spellSelections.clear()
         self._formatSelections.clear()
@@ -844,8 +851,8 @@ class GuiDocEditor(QTextEdit):
 
         tB = self.frameWidth()
         tW = wW - 2 * tB - sW
-        tH = self.docHeader.height()
-        fH = self.docFooter.height()
+        tH = self.docHeader.heightHint()
+        fH = self.docFooter.heightHint()
         fY = wH - fH - tB - sH
         self.docHeader.setGeometry(tB, tB, tW, tH)
         self.docFooter.setGeometry(tB, fY, tW, fH)
@@ -1382,6 +1389,12 @@ class GuiDocEditor(QTextEdit):
             self._hoverCard.scheduleHide()
         super().mouseMoveEvent(event)
 
+    def changeEvent(self, event: QEvent) -> None:
+        """Update the zoom level when the font changes."""
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.FontChange:
+            self.docFooter.updateZoom(self.font().pointSizeF())
+
     def leaveEvent(self, event: QEvent) -> None:
         """Request that the hover card be hidden when the mouse leaves
         the editor. The hide is delayed rather than immediate, so the
@@ -1395,11 +1408,11 @@ class GuiDocEditor(QTextEdit):
         """Zoom the editor font with Ctrl+Scroll wheel."""
         self._hideHoverCard()
         if event.modifiers() & QtModCtrl == QtModCtrl:
-            delta = event.angleDelta().y() // 120
-            if delta > 0:
-                self.zoomIn(delta)
-            elif delta < 0:
-                self.zoomOut(-delta)
+            # High resolution wheels send fractions of a 120 unit step
+            self._wheelDelta += event.angleDelta().y()
+            if steps := int(self._wheelDelta / 120):
+                self._wheelDelta -= 120 * steps
+                self._setZoom(self.font().pointSizeF() + steps)
             event.accept()
             return
         super().wheelEvent(event)
@@ -1529,11 +1542,19 @@ class GuiDocEditor(QTextEdit):
         self.spellCheckDocument()
 
     @pyqtSlot()
+    def zoomIn(self, steps: int = 1) -> None:
+        """Increase the editor's font size."""
+        self._setZoom(self.font().pointSizeF() + steps)
+
+    @pyqtSlot()
+    def zoomOut(self, steps: int = 1) -> None:
+        """Decrease the editor's font size."""
+        self._setZoom(self.font().pointSizeF() - steps)
+
+    @pyqtSlot()
     def zoomReset(self) -> None:
         """Reset the editor's font size to the user's configured size."""
-        font = fontMatcher(CONFIG.textFont)
-        self.setFont(font)
-        self._qDocument.setDefaultFont(font)
+        self._setZoom(CONFIG.textFont.pointSizeF())
 
     ##
     #  Private Slots
@@ -1619,7 +1640,6 @@ class GuiDocEditor(QTextEdit):
     def _cursorMoved(self) -> None:
         """Triggered when the cursor moved in the editor."""
         self._hideHoverCard()
-        self.docFooter.updateLineCount(self.textCursor())
         if self._suppressed:
             # An underline was suppressed at the previous cursor
             # position, so the underlines must be refreshed
@@ -2003,6 +2023,14 @@ class GuiDocEditor(QTextEdit):
         state = not self.docToolBar.isVisible()
         self.docToolBar.setVisible(state)
         CONFIG.showEditToolBar = state
+
+    @pyqtSlot()
+    def _editOptionsChanged(self) -> None:
+        """Apply changed editor options to the open document."""
+        if self._docHandle:
+            self._qDocument.markLayoutBusy()
+            self.setReadOnly(self._qDocument.isLayoutBusy())
+        self._applyTextOptions()
 
     ##
     #  Search & Replace
@@ -3038,6 +3066,18 @@ class GuiDocEditor(QTextEdit):
     #  Internal Functions
     ##
 
+    def _applyTextOptions(self) -> None:
+        """Set the document text options from the user settings."""
+        options = QTextOption()
+        options.setTabStopDistance(CONFIG.tabSize * self.font().pointSizeF() * 96.0 / 72.0)
+        if CONFIG.doJustify:
+            options.setAlignment(QtAlignJustify)
+        if CONFIG.editShowTabsNSpaces:
+            options.setFlags(options.flags() | QTextOption.Flag.ShowTabsAndSpaces)
+        if CONFIG.editShowLineEndings:
+            options.setFlags(options.flags() | QTextOption.Flag.ShowLineAndParagraphSeparators)
+        self._qDocument.setDefaultTextOption(options)
+
     def _dispatchKeyPress(self, event: QKeyEvent) -> None:
         """Send a key event to the base class, except plain Return.
 
@@ -3074,6 +3114,13 @@ class GuiDocEditor(QTextEdit):
             event.accept()
         else:
             super().keyPressEvent(event)
+
+    def _setZoom(self, pointSize: float) -> None:
+        """Set the editor's font size within the zoom range."""
+        font = self.font()
+        font.setPointSizeF(minmax(pointSize, nwConst.TEXT_FONT_MIN_SIZE, nwConst.TEXT_FONT_MAX_SIZE))
+        self.setFont(font)
+        self._applyTextOptions()
 
     def _hideHoverCard(self) -> None:
         """Stop the hover timer and hide the hover card, if visible."""

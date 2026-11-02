@@ -119,7 +119,6 @@
     "font": "font_download",
     "import": "tab_move",
     "language": "translate",
-    "lines": "reorder",
     "link": "link",
     "list": "format_list_bulleted",
     "margin_bottom": "vertical_align_bottom",
@@ -146,5 +145,7 @@
     "timer_off": "timer_off",
     "timer": "timer",
     "unchecked": "disabled_by_default",
-    "view": "visibility"
+    "view": "visibility",
+    "zoom_in": "zoom_in",
+    "zoom_out": "zoom_out"
 }
