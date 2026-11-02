@@ -138,6 +138,8 @@ SETTINGS_TEMPLATE: dict[str, tuple[type, T_BuildValue]] = {
     "doc.pageCountOffset":     (int, 0),
     "doc.metaLanguage":        (str, ""),
 
+    "epub.nestedToc":          (bool, False),
+
     "html.addStyles":          (bool, True),
     "html.preserveTabs":       (bool, False),
 }
@@ -212,6 +214,9 @@ SETTINGS_LABELS = {
     "doc.pageHeaderEven":      QT_TRANSLATE_NOOP("Builds", "Page header for even pages"),
     "doc.pageCountOffset":     QT_TRANSLATE_NOOP("Builds", "Page counter offset"),
     "doc.metaLanguage":        QT_TRANSLATE_NOOP("Builds", "Override document language"),
+
+    "epub":                    QT_TRANSLATE_NOOP("Builds", "EPUB Options"),
+    "epub.nestedToc":          QT_TRANSLATE_NOOP("Builds", "Nested table of contents"),
 
     "html":                    QT_TRANSLATE_NOOP("Builds", "HTML Options"),
     "html.addStyles":          QT_TRANSLATE_NOOP("Builds", "Add CSS styles"),
