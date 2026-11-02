@@ -524,6 +524,14 @@ def testGuiMainMenu_Insert(
     assert docEditor.getText() == nwUnicode.U_THNBSP
     docEditor.clear()
 
+    mainMenu.aInsEnSpace.activate(QAction.ActionEvent.Trigger)
+    assert docEditor.getText() == nwUnicode.U_ENSP
+    docEditor.clear()
+
+    mainMenu.aInsEmSpace.activate(QAction.ActionEvent.Trigger)
+    assert docEditor.getText() == nwUnicode.U_EMSP
+    docEditor.clear()
+
     # Insert Keywords
     # ===============
 
