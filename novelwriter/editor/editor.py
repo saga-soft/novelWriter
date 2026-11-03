@@ -1249,8 +1249,8 @@ class GuiDocEditor(QTextEdit):
         if key == QtKeyEscape:
             if self.searchVisible():
                 self.closeSearch()
-            elif self._vimMode and self._vimMode.mode != nwVimMode.NORMAL:
-                self._vimMode.setVimMode(nwVimMode.NORMAL)
+            elif self._vimMode and self._vimMode.cancel():
+                pass  # Vim mode consumed the key
             elif SHARED.focusMode:
                 SHARED.setFocusMode(False)
             event.ignore()

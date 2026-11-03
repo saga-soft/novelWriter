@@ -33,7 +33,7 @@ from novelwriter.editor.editor import GuiDocEditor
 from novelwriter.editor.vim import VimState
 from novelwriter.enum import nwVimMode
 from novelwriter.guimain import GuiMain
-from novelwriter.types import QtKeyEscape
+from novelwriter.types import QtKeyEscape, QtKeyRight, QtModShift
 
 from tests.helpers import C, MockRnd, buildTestProject
 
@@ -98,12 +98,17 @@ def testEditorVimMode_Init(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd
     assert vimMode._vim.mode == nwVimMode.INSERT
     assert docFooter._vimMode == nwVimMode.INSERT
 
-    # Escape returns to NORMAL mode first, then leaves Focus Mode
+    # Escape returns to NORMAL mode first, then cancels a pending
+    # command, and then leaves Focus Mode
     nwGUI.toggleFocusMode()
     assert SHARED.focusMode is True
     qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
-    assert vimMode.mode == nwVimMode.NORMAL
+    assert vimMode._vim.mode == nwVimMode.NORMAL
     assert docFooter._vimMode == nwVimMode.NORMAL
+    assert SHARED.focusMode is True
+    qtbot.keyClick(docEditor, "d", delay=KEY_DELAY)
+    qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
+    assert vimMode._vim.command == ""
     assert SHARED.focusMode is True
     qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
     assert SHARED.focusMode is False
@@ -113,7 +118,7 @@ def testEditorVimMode_Init(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd
     docEditor.setReadOnly(True)
     qtbot.keyClicks(docEditor, "xV", delay=KEY_DELAY)
     assert docEditor.getText() == text
-    assert vimMode.mode == nwVimMode.NORMAL
+    assert vimMode._vim.mode == nwVimMode.NORMAL
     docEditor.setReadOnly(False)
 
     # Unrelated settings changes don't reset the mode
@@ -196,6 +201,18 @@ def testEditorVimMode_InsertMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     qtbot.keyClick(docEditor, QtKeyEscape)
     assert "above" in docEditor.getText().splitlines()[0]
 
+    # A/I: Append and insert at the ends of a wrapped paragraph
+    para = " ".join(["word"] * 500)
+    docEditor.setPlainText(para)
+    docEditor.setCursorPosition(5)
+    qtbot.keyClick(docEditor, "A", delay=KEY_DELAY)
+    qtbot.keyClicks(docEditor, "X", delay=KEY_DELAY)
+    qtbot.keyClick(docEditor, QtKeyEscape)
+    qtbot.keyClick(docEditor, "I", delay=KEY_DELAY)
+    qtbot.keyClicks(docEditor, "Y", delay=KEY_DELAY)
+    qtbot.keyClick(docEditor, QtKeyEscape)
+    assert docEditor.getText() == f"Y{para}X"
+
 
 @pytest.mark.gui
 def testEditorVimMode_NormalMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
@@ -251,6 +268,35 @@ def testEditorVimMode_NormalMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     qtbot.keyClick(docEditor, "l", delay=KEY_DELAY)
     assert docEditor.textCursor().position() == 1
 
+    # h: Move left
+    resetText(docEditor)
+    docEditor.setCursorPosition(2)
+    qtbot.keyClick(docEditor, "h", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == 1
+
+    # h/l: Don't move past the start or end of the line
+    text = resetText(docEditor)
+    docEditor.setCursorPosition(text.find("Line2"))
+    qtbot.keyClick(docEditor, "h", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == text.find("Line2")
+    docEditor.setCursorPosition(len("Line1"))
+    qtbot.keyClick(docEditor, "l", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == len("Line1")
+
+    # Navigation keys move the cursor and cancel a pending command
+    text = resetText(docEditor)
+    docEditor.setCursorPosition(0)
+    qtbot.keyClick(docEditor, "d", delay=KEY_DELAY)
+    qtbot.keyClick(docEditor, QtKeyRight, delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == 1
+    qtbot.keyClick(docEditor, "d", delay=KEY_DELAY)
+    assert docEditor.getText() == text
+
+    # Navigation keys with Shift are ignored
+    qtbot.keyClick(docEditor, QtKeyRight, QtModShift, delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == 1
+    assert docEditor.textCursor().hasSelection() is False
+
     # 0: Move to beginning of line
     resetText(docEditor)
     docEditor.setCursorPosition(3)
@@ -279,6 +325,15 @@ def testEditorVimMode_NormalMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     text = resetText(docEditor)
     qtbot.keyClick(docEditor, "G", delay=KEY_DELAY)
     assert docEditor.textCursor().position() == len(text)
+
+    # $/0: Move to the end and start of a wrapped paragraph
+    para = " ".join(["word"] * 500)
+    docEditor.setPlainText(para)
+    docEditor.setCursorPosition(5)
+    qtbot.keyClick(docEditor, "$", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == len(para)
+    qtbot.keyClick(docEditor, "0", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == 0
 
     # Unknown keys are discarded
     resetText(docEditor)
@@ -311,6 +366,7 @@ def testEditorVimMode_Delete(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockR
     docEditor.setCursorPosition(text.find("Line3"))
     qtbot.keyClicks(docEditor, "dd", delay=KEY_DELAY)
     assert docEditor.getText() == "Line1\nLine2"
+    assert docEditor.textCursor().position() == text.find("Line2")
 
     # dd: Delete a wrapped paragraph
     text = " ".join(["word"] * 500)
@@ -332,11 +388,23 @@ def testEditorVimMode_Delete(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockR
     qtbot.keyClicks(docEditor, "x", delay=KEY_DELAY)
     assert getLines(docEditor)[0] == "ine1"
 
+    # x: Don't delete the line break at the end of the line
+    text = resetText(docEditor)
+    docEditor.setCursorPosition(len("Line1"))
+    qtbot.keyClicks(docEditor, "x", delay=KEY_DELAY)
+    assert docEditor.getText() == text
+
     # dw: Delete word
     resetText(docEditor)
     docEditor.setCursorPosition(0)
     qtbot.keyClicks(docEditor, "dw", delay=KEY_DELAY)
-    assert getLines(docEditor) == ["Line2", "Line3"]
+    assert docEditor.getText() == "\nLine2\nLine3"
+
+    # dw: Don't delete the line break at the end of the line
+    text = resetText(docEditor)
+    docEditor.setCursorPosition(len("Line1"))
+    qtbot.keyClicks(docEditor, "dw", delay=KEY_DELAY)
+    assert docEditor.getText() == text
 
     # d$: Delete to end of line
     resetText(docEditor)
@@ -401,19 +469,44 @@ def testEditorVimMode_YankPaste(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mo
     qtbot.keyClicks(docEditor, "P", delay=KEY_DELAY)
     assert getLines(docEditor) == ["Line1", "Line3", "Line2", "Line3"]
 
-    # yw + p: Yank word and paste
+    # yy: Yank a wrapped paragraph without moving the cursor
+    para = " ".join(["word"] * 500)
+    docEditor.setPlainText(f"{para}\nLine2")
+    docEditor.setCursorPosition(5)
+    qtbot.keyClicks(docEditor, "yy", delay=KEY_DELAY)
+    assert vimMode._vim.pasteFromInternal() == para
+    assert vimMode._vim.lineWise is True
+    assert docEditor.textCursor().position() == 5
+
+    # yw + p: Paste word after the cursor
     text = resetText(docEditor)
     docEditor.setCursorPosition(0)
     qtbot.keyClicks(docEditor, "yw", delay=KEY_DELAY)
     docEditor.setCursorPosition(text.find("Line2"))
     qtbot.keyClicks(docEditor, "p", delay=KEY_DELAY)
-    assert getLines(docEditor) == ["Line1", "Line2", "Line1", "Line3"]
+    assert docEditor.getText() == "Line1\nLLine1ine2\nLine3"
+
+    # x + p: Paste character at the end of a line
+    resetText(docEditor)
+    docEditor.setCursorPosition(0)
+    qtbot.keyClicks(docEditor, "x", delay=KEY_DELAY)
+    docEditor.setCursorPosition(len("ine1"))
+    qtbot.keyClicks(docEditor, "p", delay=KEY_DELAY)
+    assert docEditor.getText() == "ine1L\nLine2\nLine3"
+
+    # x + P: Paste character before the cursor
+    resetText(docEditor)
+    docEditor.setCursorPosition(0)
+    qtbot.keyClicks(docEditor, "xP", delay=KEY_DELAY)
+    assert docEditor.getText() == "Line1\nLine2\nLine3"
 
 
 @pytest.mark.gui
 def testEditorVimMode_VisualMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test vim VISUAL and V-LINE mode selection, yank and paste."""
     docEditor = openVimEditor(nwGUI, projPath)
+    vimMode = docEditor._vimMode
+    assert vimMode is not None
     originalText = resetText(docEditor)
 
     # v: Select, yank and paste
@@ -464,6 +557,7 @@ def testEditorVimMode_VisualMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     assert docEditor.textCursor().position() == position
 
     # b: Extend selection to start of word
+    qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
     text = resetText(docEditor)
     docEditor.setCursorPosition(text.find("Line2") + 2)
     qtbot.keyClick(docEditor, "v", delay=KEY_DELAY)
@@ -471,6 +565,7 @@ def testEditorVimMode_VisualMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     assert docEditor.textCursor().selectedText() == "Li"
 
     # e: Extend selection to end of word
+    qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
     resetText(docEditor)
     docEditor.setCursorPosition(0)
     qtbot.keyClick(docEditor, "v", delay=KEY_DELAY)
@@ -478,6 +573,7 @@ def testEditorVimMode_VisualMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     assert docEditor.textCursor().selectedText() == "Line1"
 
     # e: Extend selection to end of next word
+    qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
     docEditor.setPlainText("Line1 lineExtra Line2 Line3")
     docEditor.setCursorPosition(len("Line1") - 1)
     qtbot.keyClick(docEditor, "v", delay=KEY_DELAY)
@@ -485,6 +581,7 @@ def testEditorVimMode_VisualMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     assert "lineExtra" in docEditor.textCursor().selectedText()
 
     # e: At the end of the document, there's nowhere further to extend
+    qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
     docEditor.setPlainText("Line1")
     docEditor.setCursorPosition(5)
     qtbot.keyClick(docEditor, "v", delay=KEY_DELAY)
@@ -492,6 +589,7 @@ def testEditorVimMode_VisualMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     assert docEditor.textCursor().position() == 5
 
     # ggvG: Select all, delete and undo
+    qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
     resetText(docEditor)
     qtbot.keyClicks(docEditor, "g", delay=KEY_DELAY)
     qtbot.keyClicks(docEditor, "g", delay=KEY_DELAY)
@@ -562,3 +660,61 @@ def testEditorVimMode_VisualMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     qtbot.keyClick(docEditor, "G", delay=KEY_DELAY)
     qtbot.keyClicks(docEditor, "qgg", delay=KEY_DELAY)
     assert docEditor.textCursor().position() == 0
+
+    # v: Leave VISUAL mode
+    qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
+    text = resetText(docEditor)
+    line2 = text.find("Line2")
+    docEditor.setCursorPosition(line2 + 2)
+    qtbot.keyClicks(docEditor, "vv", delay=KEY_DELAY)
+    assert vimMode._vim.mode == nwVimMode.NORMAL
+    assert docEditor.textCursor().hasSelection() is False
+
+    # V: Switch from VISUAL to V-LINE mode
+    qtbot.keyClicks(docEditor, "vV", delay=KEY_DELAY)
+    assert vimMode._vim.mode == nwVimMode.V_LINE
+    assert docEditor.textCursor().selectedText() == "Line2"
+
+    # v: Switch from V-LINE to VISUAL mode
+    qtbot.keyClick(docEditor, "v", delay=KEY_DELAY)
+    assert vimMode._vim.mode == nwVimMode.VISUAL
+    assert docEditor.textCursor().selectedText() == "Line2"
+
+    # V: Leave V-LINE mode
+    qtbot.keyClicks(docEditor, "VV", delay=KEY_DELAY)
+    assert vimMode._vim.mode == nwVimMode.NORMAL
+    assert docEditor.textCursor().hasSelection() is False
+
+    # V: Keep the direction of a backwards selection
+    docEditor.setCursorPosition(text.find("Line3") + 2)
+    qtbot.keyClicks(docEditor, "vkV", delay=KEY_DELAY)
+    cursor = docEditor.textCursor()
+    assert vimMode._vim.mode == nwVimMode.V_LINE
+    assert cursor.position() == line2
+    assert cursor.anchor() == len(text)
+
+    # i: Not a visual command, so nothing happens
+    qtbot.keyClick(docEditor, "i", delay=KEY_DELAY)
+    assert vimMode._vim.mode == nwVimMode.V_LINE
+    assert docEditor.getText() == text
+
+    # V: Select and delete whole wrapped paragraphs
+    qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
+    para = " ".join(["word"] * 500)
+    docEditor.setPlainText(f"{para}\nLine2\nLine3")
+    docEditor.setCursorPosition(5)
+    qtbot.keyClick(docEditor, "V", delay=KEY_DELAY)
+    assert docEditor.textCursor().selectedText() == para
+    qtbot.keyClick(docEditor, "j", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == len(f"{para}\nLine2")
+    qtbot.keyClick(docEditor, "d", delay=KEY_DELAY)
+    assert docEditor.getText() == "Line3"
+    assert vimMode._vim.lineWise is True
+
+    # h/l: Don't extend past the start or end of the line
+    text = resetText(docEditor)
+    docEditor.setCursorPosition(text.find("Line2"))
+    qtbot.keyClicks(docEditor, "vhh", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == text.find("Line2")
+    qtbot.keyClicks(docEditor, "$l", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == text.find("Line3") - 1
