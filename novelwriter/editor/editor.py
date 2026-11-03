@@ -89,7 +89,7 @@ from novelwriter.editor.highlighter import BLOCK_META, BLOCK_TITLE
 from novelwriter.editor.hovercard import GuiDocHoverCard
 from novelwriter.editor.runnables import T_TextCheckPayload, TextCheckDispatcher, WordCounterDispatcher
 from novelwriter.editor.textblock import T_TextCheckList, TextBlockData
-from novelwriter.editor.vim import DocumentVimMode
+from novelwriter.editor.vim import EditorVimMode
 from novelwriter.enum import (
     nwChange,
     nwComment,
@@ -462,8 +462,8 @@ class GuiDocEditor(QTextEdit):
         self.searchVisible = self.docSearch.isVisible
         self.changeFocusState = self.docHeader.changeFocusState
 
-        # Vim State for vimMode
-        self._vimMode = DocumentVimMode(self)
+        # Vim Mode
+        self._vimMode: EditorVimMode | None = None
 
         # Finalise
         self.updateSyntaxColors()
@@ -652,8 +652,7 @@ class GuiDocEditor(QTextEdit):
         else:
             self.clearEditor()
 
-        # Refresh Vim Mode
-        self._vimMode.setVimMode(nwVimMode.NORMAL)
+        self._initVimMode()
 
     def initViewport(self) -> None:
         """Initialise the settings of the editor viewport."""
@@ -683,7 +682,7 @@ class GuiDocEditor(QTextEdit):
             self.docHeader.setHandle(self._docHandle)
             self.docSearch.setAutoReplaceEnabled(CONFIG.doReplace)
         if updateVimMode:
-            self._vimMode.setVimMode(nwVimMode.NORMAL)
+            self._initVimMode()
 
     def loadText(self, tHandle: str, tLine: int | None = None) -> bool:
         """Load text from a document into the editor. If we have an I/O
@@ -743,6 +742,8 @@ class GuiDocEditor(QTextEdit):
         self.setDocumentChanged(False)
         self._qDocument.clearUndoRedoStacks()
         self.docToolBar.setVisible(CONFIG.showEditToolBar)
+        if self._vimMode:
+            self._vimMode.setVimMode(nwVimMode.NORMAL)
 
         # Process State Changes
         SHARED.project.data.setLastHandle(tHandle, "editor")
@@ -1248,14 +1249,14 @@ class GuiDocEditor(QTextEdit):
         if key == QtKeyEscape:
             if self.searchVisible():
                 self.closeSearch()
-            elif CONFIG.vimMode:
+            elif self._vimMode:
                 self._vimMode.setVimMode(nwVimMode.NORMAL)
             elif SHARED.focusMode:
                 SHARED.setFocusMode(False)
             event.ignore()
             return
 
-        if CONFIG.vimMode and self._vimMode.processVimKeyEvent(event):
+        if self._vimMode and self._vimMode.processVimKeyEvent(event):
             return
 
         if self.docSearch.anyFocus() and key in ENTER_KEYS:
@@ -2731,6 +2732,16 @@ class GuiDocEditor(QTextEdit):
         if CONFIG.editShowLineEndings:
             options.setFlags(options.flags() | QTextOption.Flag.ShowLineAndParagraphSeparators)
         self._qDocument.setDefaultTextOption(options)
+
+    def _initVimMode(self) -> None:
+        """Enable or disable vim mode from the user settings."""
+        if CONFIG.vimMode:
+            if self._vimMode is None:
+                self._vimMode = EditorVimMode(self, self.docFooter.updateVimModeStatusBar)
+            self._vimMode.setVimMode(nwVimMode.NORMAL)
+        else:
+            self._vimMode = None
+            self.docFooter.updateVimModeStatusBar(None)
 
     def _dispatchKeyPress(self, event: QKeyEvent) -> None:
         """Send a key event to the base class, except plain Return.
