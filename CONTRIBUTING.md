@@ -156,3 +156,24 @@ uv run pyright
   spelling of this text **must** be British English. US English spelling **is not allowed** for
   these strings. A US English translation is provided via the translation framework.
 * Commit descriptions and pull requests must also be in English.
+
+
+### License Headers and Credits
+
+All code should add the license header on the exact format as used in other files. Update the title
+as needed, and the copyright line. The year should be the year the code module was first created.
+The default is:
+
+```
+Copyright (C) <YEAR> <Original Author Name> and novelWriter contributors.
+```
+
+For major changes to an existing file, don't touch the year, but you can append your name. By major
+contributions is meant new code, like added new classes or larger functions, not modifications. Use
+common sense since "novelWriter contributors" includes most modifications and changes.
+
+```
+Copyright (C) <YEAR> <Original Author Name>, <Your Name> and novelWriter contributors.
+```
+
+Make sure the `CREDITS.md` and `credits_en.htm` files are updated too if appropriate.
