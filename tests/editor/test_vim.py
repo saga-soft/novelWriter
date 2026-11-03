@@ -27,7 +27,7 @@ import pytest
 
 from pytestqt.qtbot import QtBot
 
-from novelwriter import CONFIG
+from novelwriter import CONFIG, SHARED
 from novelwriter.core.project import NWProject
 from novelwriter.editor.editor import GuiDocEditor
 from novelwriter.editor.vim import VimState
@@ -54,6 +54,11 @@ def resetText(docEditor: GuiDocEditor) -> str:
     """Reset the editor to the standard test text."""
     docEditor.setPlainText("Line1\nLine2\nLine3")
     return docEditor.getText()
+
+
+def getLines(docEditor: GuiDocEditor) -> list[str]:
+    """Return the non-empty lines of the editor text."""
+    return list(filter(str.strip, docEditor.getText().splitlines()))
 
 
 def testVimState_InsertModeNoOp():
@@ -93,10 +98,23 @@ def testEditorVimMode_Init(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd
     assert vimMode._vim.mode == nwVimMode.INSERT
     assert docFooter._vimMode == nwVimMode.INSERT
 
-    # Escape returns to NORMAL mode
+    # Escape returns to NORMAL mode first, then leaves Focus Mode
+    nwGUI.toggleFocusMode()
+    assert SHARED.focusMode is True
     qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
-    assert vimMode._vim.mode == nwVimMode.NORMAL
+    assert vimMode.mode == nwVimMode.NORMAL
     assert docFooter._vimMode == nwVimMode.NORMAL
+    assert SHARED.focusMode is True
+    qtbot.keyClick(docEditor, QtKeyEscape, delay=KEY_DELAY)
+    assert SHARED.focusMode is False
+
+    # Commands are ignored when the editor is read-only
+    text = docEditor.getText()
+    docEditor.setReadOnly(True)
+    qtbot.keyClicks(docEditor, "xV", delay=KEY_DELAY)
+    assert docEditor.getText() == text
+    assert vimMode.mode == nwVimMode.NORMAL
+    docEditor.setReadOnly(False)
 
     # Unrelated settings changes don't reset the mode
     vimMode.setVimMode(nwVimMode.INSERT)
@@ -235,6 +253,7 @@ def testEditorVimMode_NormalMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
 
     # 0: Move to beginning of line
     resetText(docEditor)
+    docEditor.setCursorPosition(3)
     qtbot.keyClick(docEditor, "0", delay=KEY_DELAY)
     assert docEditor.textCursor().position() == 0
 
@@ -261,76 +280,81 @@ def testEditorVimMode_NormalMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     qtbot.keyClick(docEditor, "G", delay=KEY_DELAY)
     assert docEditor.textCursor().position() == len(text)
 
+    # Unknown keys are discarded
+    resetText(docEditor)
+    docEditor.setCursorPosition(0)
+    qtbot.keyClicks(docEditor, "qw", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == len("Line1")
+
+    # Unknown prefixed commands are discarded
+    resetText(docEditor)
+    docEditor.setCursorPosition(0)
+    qtbot.keyClicks(docEditor, "dgdd", delay=KEY_DELAY)
+    assert "Line1" not in docEditor.getText()
+
 
 @pytest.mark.gui
-def testEditorVimMode_DeleteYankPaste(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
-    """Test vim delete, yank and paste commands."""
+def testEditorVimMode_Delete(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
+    """Test vim delete commands."""
     docEditor = openVimEditor(nwGUI, projPath)
     vimMode = docEditor._vimMode
     assert vimMode is not None
-
-    def getLines() -> list[str]:
-        return list(filter(str.strip, docEditor.getText().splitlines()))
-
-    # p/P: Pasting with nothing yanked does nothing
-    resetText(docEditor)
-    assert vimMode._vim.pasteFromInternal() == ""
-    docEditor.setCursorPosition(0)
-    qtbot.keyClicks(docEditor, "p", delay=KEY_DELAY)
-    assert docEditor.getText() == "Line1\nLine2\nLine3"
-    qtbot.keyClicks(docEditor, "P", delay=KEY_DELAY)
-    assert docEditor.getText() == "Line1\nLine2\nLine3"
 
     # dd: Delete line
     text = resetText(docEditor)
     docEditor.setCursorPosition(text.find("Line2"))
     qtbot.keyClicks(docEditor, "dd", delay=KEY_DELAY)
-    assert getLines() == ["Line1", "Line3"]
+    assert docEditor.getText() == "Line1\nLine3"
+
+    # dd: Delete last line
+    text = resetText(docEditor)
+    docEditor.setCursorPosition(text.find("Line3"))
+    qtbot.keyClicks(docEditor, "dd", delay=KEY_DELAY)
+    assert docEditor.getText() == "Line1\nLine2"
+
+    # dd: Delete a wrapped paragraph
+    text = " ".join(["word"] * 500)
+    docEditor.setPlainText(f"{text}\nLine2")
+    docEditor.setCursorPosition(0)
+    qtbot.keyClicks(docEditor, "dd", delay=KEY_DELAY)
+    assert docEditor.getText() == "Line2"
+    assert vimMode._vim.pasteFromInternal() == text
+
+    # d$: Delete to end of a wrapped paragraph
+    docEditor.setPlainText(f"{text}\nLine2")
+    docEditor.setCursorPosition(5)
+    qtbot.keyClicks(docEditor, "d$", delay=KEY_DELAY)
+    assert docEditor.getText() == "word \nLine2"
 
     # x: Delete character
     resetText(docEditor)
     docEditor.setCursorPosition(0)
     qtbot.keyClicks(docEditor, "x", delay=KEY_DELAY)
-    assert getLines()[0] == "ine1"
-
-    # yy + p: Paste after current line
-    text = resetText(docEditor)
-    docEditor.setCursorPosition(text.find("Line2"))
-    qtbot.keyClicks(docEditor, "yy", delay=KEY_DELAY)
-    qtbot.keyClicks(docEditor, "p", delay=KEY_DELAY)
-    assert getLines() == ["Line1", "Line2", "Line2", "Line3"]
-
-    # yy + P: Paste before current line
-    text = resetText(docEditor)
-    docEditor.setCursorPosition(text.find("Line3"))
-    qtbot.keyClicks(docEditor, "yy", delay=KEY_DELAY)
-    docEditor.setCursorPosition(text.find("Line2"))
-    qtbot.keyClicks(docEditor, "P", delay=KEY_DELAY)
-    assert getLines() == ["Line1", "Line3", "Line2", "Line3"]
+    assert getLines(docEditor)[0] == "ine1"
 
     # dw: Delete word
     resetText(docEditor)
     docEditor.setCursorPosition(0)
     qtbot.keyClicks(docEditor, "dw", delay=KEY_DELAY)
-    assert getLines() == ["Line2", "Line3"]
+    assert getLines(docEditor) == ["Line2", "Line3"]
 
     # d$: Delete to end of line
     resetText(docEditor)
     docEditor.setCursorPosition(0)
     qtbot.keyClicks(docEditor, "d$", delay=KEY_DELAY)
-    assert getLines() == ["Line2", "Line3"]
+    assert getLines(docEditor) == ["Line2", "Line3"]
 
     # de: Delete to end of word
     text = resetText(docEditor)
     docEditor.setCursorPosition(text.find("Line2"))
     qtbot.keyClicks(docEditor, "de", delay=KEY_DELAY)
-    assert getLines() == ["Line1", "Line3"]
+    assert getLines(docEditor) == ["Line1", "Line3"]
 
     # de: Delete next word when already at end of word
     text = resetText(docEditor)
     docEditor.setCursorPosition(text.find("Line2") + len("Line2"))
     qtbot.keyClicks(docEditor, "de", delay=KEY_DELAY)
-    assert getLines() == ["Line1", "Line2"]
+    assert getLines(docEditor) == ["Line1", "Line2"]
 
     # de: At the end of the document, there's nothing to delete
     docEditor.setPlainText("Line1")
@@ -343,15 +367,47 @@ def testEditorVimMode_DeleteYankPaste(qtbot: QtBot, nwGUI: GuiMain, projPath: Pa
     docEditor.setCursorPosition(0)
     qtbot.keyClicks(docEditor, "w", delay=KEY_DELAY)
     qtbot.keyClicks(docEditor, "db", delay=KEY_DELAY)
-    assert getLines() == ["Line2", "Line3"]
+    assert getLines(docEditor) == ["Line2", "Line3"]
 
-    # yw: Yank word
+
+@pytest.mark.gui
+def testEditorVimMode_YankPaste(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
+    """Test vim yank and paste commands."""
+    docEditor = openVimEditor(nwGUI, projPath)
+    vimMode = docEditor._vimMode
+    assert vimMode is not None
+
+    # p/P: Pasting with nothing yanked does nothing
+    resetText(docEditor)
+    assert vimMode._vim.pasteFromInternal() == ""
+    docEditor.setCursorPosition(0)
+    qtbot.keyClicks(docEditor, "p", delay=KEY_DELAY)
+    assert docEditor.getText() == "Line1\nLine2\nLine3"
+    qtbot.keyClicks(docEditor, "P", delay=KEY_DELAY)
+    assert docEditor.getText() == "Line1\nLine2\nLine3"
+
+    # yy + p: Paste after current line
+    text = resetText(docEditor)
+    docEditor.setCursorPosition(text.find("Line2"))
+    qtbot.keyClicks(docEditor, "yy", delay=KEY_DELAY)
+    qtbot.keyClicks(docEditor, "p", delay=KEY_DELAY)
+    assert getLines(docEditor) == ["Line1", "Line2", "Line2", "Line3"]
+
+    # yy + P: Paste before current line
+    text = resetText(docEditor)
+    docEditor.setCursorPosition(text.find("Line3"))
+    qtbot.keyClicks(docEditor, "yy", delay=KEY_DELAY)
+    docEditor.setCursorPosition(text.find("Line2"))
+    qtbot.keyClicks(docEditor, "P", delay=KEY_DELAY)
+    assert getLines(docEditor) == ["Line1", "Line3", "Line2", "Line3"]
+
+    # yw + p: Yank word and paste
     text = resetText(docEditor)
     docEditor.setCursorPosition(0)
     qtbot.keyClicks(docEditor, "yw", delay=KEY_DELAY)
     docEditor.setCursorPosition(text.find("Line2"))
     qtbot.keyClicks(docEditor, "p", delay=KEY_DELAY)
-    assert getLines() == ["Line1", "Line2", "Line1", "Line3"]
+    assert getLines(docEditor) == ["Line1", "Line2", "Line1", "Line3"]
 
 
 @pytest.mark.gui
@@ -494,3 +550,15 @@ def testEditorVimMode_VisualMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     qtbot.keyClick(docEditor, "G", delay=KEY_DELAY)
     qtbot.keyClick(docEditor, "d", delay=KEY_DELAY)
     assert docEditor.getText().strip() == ""
+
+    # Motions don't leave a pending command
+    text = resetText(docEditor)
+    docEditor.setCursorPosition(text.find("Line3"))
+    qtbot.keyClick(docEditor, "v", delay=KEY_DELAY)
+    qtbot.keyClicks(docEditor, "jgg", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == 0
+
+    # Unknown keys are discarded
+    qtbot.keyClick(docEditor, "G", delay=KEY_DELAY)
+    qtbot.keyClicks(docEditor, "qgg", delay=KEY_DELAY)
+    assert docEditor.textCursor().position() == 0
