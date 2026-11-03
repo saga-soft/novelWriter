@@ -2,8 +2,9 @@
 novelWriter - Project Search Tool
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
