@@ -85,9 +85,23 @@ class GuiMainMenu(QMenuBar):
         self._buildToolsMenu()
         self._buildHelpMenu()
 
+        self.updateVimModeKeys()
         self.installEventFilter(StatusTipFilter(mainGui))
 
         logger.debug("Ready: GuiMainMenu")
+
+    ##
+    #  Methods
+    ##
+
+    def updateVimModeKeys(self) -> None:
+        """Update shortcuts that depend on vim mode state."""
+        if CONFIG.vimMode:
+            self.aViewDoc.setShortcuts([])
+            self.aCloseView.setShortcuts([])
+        else:
+            self.aViewDoc.setShortcut("Ctrl+R")
+            self.aCloseView.setShortcut("Ctrl+Shift+R")
 
     ##
     #  Public Slots
@@ -263,12 +277,10 @@ class GuiMainMenu(QMenuBar):
 
         # Document > Preview
         self.aViewDoc = qtAddAction(self.docuMenu, self.tr("View Document"))
-        self.aViewDoc.setShortcut("Ctrl+R")
         self.aViewDoc.triggered.connect(qtWeakLambda(self.mainGui.docPanes.viewDocument, None))
 
         # Document > Close Preview
         self.aCloseView = qtAddAction(self.docuMenu, self.tr("Close Document View"))
-        self.aCloseView.setShortcut("Ctrl+Shift+R")
         self.aCloseView.triggered.connect(self.mainGui.docPanes.closeDocViewer)
 
         # Document > Separator

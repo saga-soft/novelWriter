@@ -26,6 +26,8 @@ import logging
 
 from typing import TYPE_CHECKING
 
+from PyQt6.QtCore import Qt
+
 from novelwriter.enum import nwDocAction, nwVimMode
 from novelwriter.types import (
     QtKeepAnchor,
@@ -37,6 +39,7 @@ from novelwriter.types import (
     QtKeyPageUp,
     QtKeyRight,
     QtKeyUp,
+    QtModCtrl,
     QtModShift,
     QtMoveDown,
     QtMoveEnd,
@@ -158,6 +161,8 @@ class EditorVimMode:
         """Handle key events for Vim mode NORMAL mode motions."""
         key = event.text()
         cursor = self.textCursor()
+        if event.key() == Qt.Key.Key_R and event.modifiers() == QtModCtrl:
+            key = "<C-r>"
 
         if key in self._vim.PREFIX_KEYS or key in self._vim.SUFFIX_KEYS:
             self._vim.pushCommandKey(key)
@@ -317,6 +322,10 @@ class EditorVimMode:
 
         elif command == "u":
             self._editor.docAction(nwDocAction.UNDO)
+            self._vim.resetCommand()
+
+        elif command == "<C-r>":
+            self._editor.docAction(nwDocAction.REDO)
             self._vim.resetCommand()
 
         elif command == "zz":

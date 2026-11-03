@@ -775,6 +775,8 @@ class GuiMain(QMainWindow):
 
         if update.theme:
             self.refreshThemeColors(syntax=update.syntax, force=True)
+        if update.vim:
+            self.mainMenu.updateVimModeKeys()
         self.docPanes.applySettings(update)
         if update.viewport:
             self.projView.initViewport()

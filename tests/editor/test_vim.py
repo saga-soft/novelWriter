@@ -26,19 +26,32 @@ from pathlib import Path
 
 import pytest
 
+from PyQt6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.core.project import NWProject
+from novelwriter.dialogs.preferences import GuiNeedsUpdate
 from novelwriter.editor.editor import GuiDocEditor
 from novelwriter.editor.vim import VimState
 from novelwriter.enum import nwVimMode
 from novelwriter.guimain import GuiMain
-from novelwriter.types import QtKeyEscape, QtKeyRight, QtModShift
+from novelwriter.types import QtKeyEscape, QtKeyRight, QtModCtrl, QtModShift
 
 from tests.helpers import C, MockRnd, buildTestProject
 
 KEY_DELAY = 2
+VIM_CHANGED = GuiNeedsUpdate(
+    restart=False,
+    tree=False,
+    theme=False,
+    syntax=False,
+    spelling=False,
+    vim=True,
+    editor=False,
+    viewer=False,
+    viewport=False,
+)
 
 
 def openVimEditor(nwGUI: GuiMain, projPath: Path) -> GuiDocEditor:
@@ -47,7 +60,7 @@ def openVimEditor(nwGUI: GuiMain, projPath: Path) -> GuiDocEditor:
     nwGUI.openProject(projPath)
     assert nwGUI.docPanes.openDocument(C.hSceneDoc)
     CONFIG.vimMode = True
-    nwGUI.docEditor.initSettings(updateVimMode=True)
+    nwGUI._processConfigChanges(VIM_CHANGED)
     return nwGUI.docEditor
 
 
@@ -80,19 +93,24 @@ def testEditorVimMode_Init(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd
     assert nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor = nwGUI.docEditor
     docFooter = docEditor.docFooter
+    mainMenu = nwGUI.mainMenu
 
     # Disabled by default
     assert docEditor._vimMode is None
     assert docFooter.vimStatus.isHidden() is True
+    assert mainMenu.aViewDoc.shortcut().toString() == "Ctrl+R"
+    assert mainMenu.aCloseView.shortcut().toString() == "Ctrl+Shift+R"
 
-    # Enable from settings
+    # Enable from settings, which also releases conflicting shortcuts
     CONFIG.vimMode = True
-    docEditor.initSettings(updateVimMode=True)
+    nwGUI._processConfigChanges(VIM_CHANGED)
     vimMode = docEditor._vimMode
     assert vimMode is not None
     assert vimMode._vim.mode == nwVimMode.NORMAL
     assert docFooter._vimMode == nwVimMode.NORMAL
     assert docFooter.vimStatus.isHidden() is False
+    assert mainMenu.aViewDoc.shortcut().isEmpty() is True
+    assert mainMenu.aCloseView.shortcut().isEmpty() is True
 
     # Mode changes are reported to the footer
     qtbot.keyClick(docEditor, "i", delay=KEY_DELAY)
@@ -139,12 +157,14 @@ def testEditorVimMode_Init(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd
     assert nwGUI.docPanes.openDocument(C.hChapterDoc)
     assert vimMode._vim.mode == nwVimMode.NORMAL
 
-    # Disable from settings
+    # Disable from settings, which also restores the shortcuts
     CONFIG.vimMode = False
-    docEditor.initSettings(updateVimMode=True)
+    nwGUI._processConfigChanges(VIM_CHANGED)
     assert docEditor._vimMode is None
     assert docFooter._vimMode is None
     assert docFooter.vimStatus.isHidden() is True
+    assert mainMenu.aViewDoc.shortcut().toString() == "Ctrl+R"
+    assert mainMenu.aCloseView.shortcut().toString() == "Ctrl+Shift+R"
 
 
 @pytest.mark.gui
@@ -597,6 +617,12 @@ def testEditorVimMode_VisualMode(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, m
     qtbot.keyClick(docEditor, "v", delay=KEY_DELAY)
     qtbot.keyClick(docEditor, "G", delay=KEY_DELAY)
     qtbot.keyClick(docEditor, "d", delay=KEY_DELAY)
+    assert docEditor.getText().strip() == ""
+    qtbot.keyClick(docEditor, "u", delay=KEY_DELAY)
+    assert docEditor.getText() == originalText
+
+    # Ctrl+R: Redo and undo again
+    qtbot.keyClick(docEditor, Qt.Key.Key_R, QtModCtrl, delay=KEY_DELAY)
     assert docEditor.getText().strip() == ""
     qtbot.keyClick(docEditor, "u", delay=KEY_DELAY)
     assert docEditor.getText() == originalText
