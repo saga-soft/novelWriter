@@ -456,7 +456,10 @@ def testGuiMain_ProcessConfigChanges_LightweightSettings(
     docViewer = nwGUI.docViewer
 
     CONFIG.vimMode = True
-    docEditor._vim.setMode(nwVimMode.INSERT)
+    docEditor.initSettings(updateVimMode=True)
+    vimMode = docEditor._vimMode
+    assert vimMode is not None
+    vimMode._vim.setMode(nwVimMode.INSERT)
 
     # Clear the headers so we can tell if they were refreshed
     docEditor.docHeader._docHandle = None
@@ -478,7 +481,7 @@ def testGuiMain_ProcessConfigChanges_LightweightSettings(
     nwGUI._processConfigChanges(noChange)
     assert docEditor.docHeader._docHandle == C.hSceneDoc
     assert docViewer.docHeader._docHandle == C.hSceneDoc
-    assert docEditor._vim.mode == nwVimMode.INSERT
+    assert vimMode._vim.mode == nwVimMode.INSERT
 
     # A save where the Vim setting changed must reset the mode to Normal
     vimChanged = GuiNeedsUpdate(
@@ -493,11 +496,11 @@ def testGuiMain_ProcessConfigChanges_LightweightSettings(
         viewport=False,
     )
     nwGUI._processConfigChanges(vimChanged)
-    assert docEditor._vim.mode == nwVimMode.NORMAL
+    assert vimMode._vim.mode == nwVimMode.NORMAL
 
     # A save that fully reinitialises the editor and viewer must not
     # additionally run the lightweight path
-    docEditor._vim.setMode(nwVimMode.INSERT)
+    vimMode._vim.setMode(nwVimMode.INSERT)
     fullReinit = GuiNeedsUpdate(
         restart=False,
         tree=False,
@@ -510,7 +513,7 @@ def testGuiMain_ProcessConfigChanges_LightweightSettings(
         viewport=False,
     )
     nwGUI._processConfigChanges(fullReinit)
-    assert docEditor._vim.mode == nwVimMode.NORMAL
+    assert vimMode._vim.mode == nwVimMode.NORMAL
 
     # A viewport-only change must reinitialise the viewport on both the
     # editor and viewer even though neither is otherwise reinitialised
