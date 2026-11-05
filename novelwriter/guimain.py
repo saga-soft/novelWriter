@@ -945,7 +945,7 @@ class GuiMain(QMainWindow):
         function to handle all the close process steps.
         """
         if self.closeMain():
-            if self._themeHints is not None:
+            if self._themeHints is not None and self._themeChangedSlot is not None:
                 self._themeHints.colorSchemeChanged.disconnect(self._themeChangedSlot)
             self.docEditor.clearEditor()  # Extra safety to clear widgets
             event.accept()

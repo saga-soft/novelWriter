@@ -3115,10 +3115,13 @@ class GuiDocEditor(QTextEdit):
             if follow and exist:
                 logger.debug("Attempting to follow tag '%s'", tag)
                 self.loadDocumentTagRequest.emit(tag, nwDocMode.EDIT if edit else nwDocMode.VIEW)
-            elif create and not exist:
-                if SHARED.question(self.tr("Do you want to create a new project note for the tag '{0}'?").format(tag)):
-                    itemClass = nwKeyWords.KEY_CLASS.get(tBits[0], nwItemClass.NO_CLASS)
-                    self.requestNewNoteCreation.emit(tag, itemClass)
+            elif (
+                create
+                and not exist
+                and SHARED.question(self.tr("Do you want to create a new project note for the tag '{0}'?").format(tag))
+            ):
+                itemClass = nwKeyWords.KEY_CLASS.get(tBits[0], nwItemClass.NO_CLASS)
+                self.requestNewNoteCreation.emit(tag, itemClass)
 
         return status
 
