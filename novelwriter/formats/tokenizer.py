@@ -473,15 +473,6 @@ class Tokenizer(ABC):
     def setLineForMargin(self, value: bool) -> None:
         """Enable using empty lines for margins."""
         self._lineMargins = value
-        self._marginTitle = (0.0, 0.0) if value else nwStyles.T_MARGIN["H0"]
-        self._marginHead1 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H1"]
-        self._marginHead2 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H2"]
-        self._marginHead3 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H3"]
-        self._marginHead4 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H4"]
-        self._marginText = (0.0, 0.0) if value else nwStyles.T_MARGIN["TT"]
-        self._marginMeta = (0.0, 0.0) if value else nwStyles.T_MARGIN["MT"]
-        self._marginFoot = (0.0, 0.0) if value else nwStyles.T_MARGIN["FT"]
-        self._marginSep = (0.0, 0.0) if value else nwStyles.T_MARGIN["SP"]
 
     def setLinkHeadings(self, state: bool) -> None:
         """Enable or disable adding an anchor before headings."""
@@ -540,6 +531,17 @@ class Tokenizer(ABC):
         self._classes["tag"] = self._theme.tag
         self._classes["keyword"] = self._theme.keyword
         self._classes["optional"] = self._theme.optional
+
+        if self._lineMargins:
+            self._marginTitle = (0.0, 0.0)
+            self._marginHead1 = (0.0, 0.0)
+            self._marginHead2 = (0.0, 0.0)
+            self._marginHead3 = (0.0, 0.0)
+            self._marginHead4 = (0.0, 0.0)
+            self._marginText = (0.0, 0.0)
+            self._marginMeta = (0.0, 0.0)
+            self._marginFoot = (0.0, 0.0)
+            self._marginSep = (0.0, 0.0)
 
     def setBreakNext(self) -> None:
         """Set a page break for next block."""
