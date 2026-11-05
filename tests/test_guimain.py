@@ -427,6 +427,7 @@ def testGuiMain_OSThemeChangeAndClose(qtbot: QtBot, monkeypatch: pytest.MonkeyPa
 
     # The theme hint object must be explicitly disconnected, since it is
     # connected to a singleton and will therefore bleed over into other tests
+    assert nwGUI._themeChangedSlot is not None
     nwGUI._themeHints.colorSchemeChanged.disconnect(nwGUI._themeChangedSlot)
     nwGUI._themeHints = None
     event = QCloseEvent()
