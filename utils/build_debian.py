@@ -2,8 +2,9 @@
 novelWriter - Debian Build
 ==========================
 
-This file is a part of novelWriter
-Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -135,10 +136,9 @@ def aptPackages(target: DistroTarget) -> list[str]:
 def makeDebianPackage(
     target: DistroTarget,
     signKey: str | None,
-    sourceBuild: bool,
     buildNum: int,
     installSource: str,
-) -> str:
+) -> None:
     """Build a Debian package."""
     log("")
     log("[b]Build Debian Package[e]")
@@ -149,7 +149,7 @@ def makeDebianPackage(
     # Version Info
     # ============
 
-    numVers, hexVers, relDate = extractVersion()
+    numVers, _, relDate = extractVersion()
     relDate = datetime.strptime(relDate, "%Y-%m-%d")
     pkgDate = email.utils.format_datetime(relDate.replace(hour=12, tzinfo=None))
     log("")
@@ -240,26 +240,16 @@ def makeDebianPackage(
     else:
         signArgs = [f"-k{signKey}"]
 
-    if sourceBuild:
-        systemCall(["debuild", "-S", *signArgs], cwd=outDir)
-        toUpload(bldDir / f"{bldPkg}.tar.xz")
-    else:
-        systemCall(["dpkg-buildpackage", *signArgs], cwd=outDir)
-        shutil.copyfile(bldDir / f"{bldPkg}.tar.xz", bldDir / f"{bldPkg}.debian.tar.xz")
-        toUpload(bldDir / f"{bldPkg}.debian.tar.xz")
-        toUpload(bldDir / f"{bldPkg}_all.deb")
-        toUpload(makeCheckSum(f"{bldPkg}.debian.tar.xz", cwd=bldDir))
-        toUpload(makeCheckSum(f"{bldPkg}_all.deb", cwd=bldDir))
+    systemCall(["dpkg-buildpackage", *signArgs], cwd=outDir)
+    shutil.copyfile(bldDir / f"{bldPkg}.tar.xz", bldDir / f"{bldPkg}.debian.tar.xz")
+    toUpload(bldDir / f"{bldPkg}.debian.tar.xz")
+    toUpload(bldDir / f"{bldPkg}_all.deb")
+    toUpload(makeCheckSum(f"{bldPkg}.debian.tar.xz", cwd=bldDir))
+    toUpload(makeCheckSum(f"{bldPkg}_all.deb", cwd=bldDir))
 
     log("")
     log("[cg]Done![e]")
     log("")
-
-    if sourceBuild:
-        ppaName = "novelwriter" if hexVers[-2] == "f" else "novelwriter-pre"
-        return f"dput {ppaName}/{target.codename} {bldDir}/{bldPkg}_source.changes"
-
-    return ""
 
 
 def printDebDepends(args: argparse.Namespace) -> None:
@@ -284,46 +274,4 @@ def debian(args: argparse.Namespace) -> None:
         log(f"[cr]ERROR:[e] {target.family.title()} {target.codename} is EOL, not building package for it.")
         sys.exit(1)
 
-    makeDebianPackage(target, signKey, False, bldNum, installSource)
-
-
-def launchpad(args: argparse.Namespace) -> None:
-    """Build Debian packages for Launchpad."""
-    if sys.platform != "linux":
-        log("[cr]ERROR:[e] Command 'build-ubuntu' can only be used on Linux")
-        sys.exit(1)
-
-    log("")
-    log("[b]Launchpad Packages[e]")
-    log("[b]==================[e]")
-    log("")
-
-    if args.build:
-        bldNum = int(args.build)
-    else:
-        bldNum = 0
-
-    ubuntuTargets = [t for t in DISTRO_TARGETS.values() if t.family == "ubuntu"]
-
-    log("[b]Building Ubuntu packages for:[e]")
-    log("")
-    for target in ubuntuTargets:
-        log(f" * Ubuntu {target.numVersion} {target.codename.title()}")
-    log("")
-
-    signKey = SIGN_KEY if args.sign else None
-
-    log(f"Sign Key: {signKey!s}")
-    log("")
-
-    dputCmd = []
-    for target in ubuntuTargets:
-        dCmd = makeDebianPackage(target, signKey, True, bldNum, "launchpad")
-        dputCmd.append(dCmd)
-
-    log("[b]Packages Built[e]")
-    log("[b]==============[e]")
-    log("")
-    for dCmd in dputCmd:
-        log(f" > {dCmd}")
-    log("")
+    makeDebianPackage(target, signKey, bldNum, installSource)

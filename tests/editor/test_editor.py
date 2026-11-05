@@ -2,8 +2,9 @@
 novelWriter - Document Editor Tests
 ===================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,11 +26,12 @@ import re
 
 from pathlib import Path
 from time import time
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
 
-from PyQt6.QtCore import QEvent, QMimeData, QPoint, QPointF, QRect, Qt, QThreadPool, QUrl, QVariant
+from PyQt6.QtCore import QEvent, QMimeData, QPoint, QPointF, QRect, QRunnable, Qt, QThreadPool, QUrl, QVariant
 from PyQt6.QtGui import (
     QAction,
     QClipboard,
@@ -46,7 +48,8 @@ from PyQt6.QtGui import (
     QTextOption,
     QWheelEvent,
 )
-from PyQt6.QtWidgets import QApplication, QMenu, QTextEdit
+from PyQt6.QtWidgets import QAbstractButton, QApplication, QMenu, QTextEdit
+from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import decodeMimeHandles, utf16CharMap
@@ -55,10 +58,12 @@ from novelwriter.core.item import ProjectItem
 from novelwriter.core.project import NWProject
 from novelwriter.core.spellcheck import SpellEnchant
 from novelwriter.dialogs.editlabel import GuiEditLabel
+from novelwriter.dialogs.editlink import GuiEditLink
 from novelwriter.editor.editor import GuiDocEditor, _TagAction
 from novelwriter.editor.editsearch import GuiDocEditSearch
 from novelwriter.editor.textblock import TextBlockData, formatCheckText
-from novelwriter.enum import nwComment, nwDocAction, nwDocInsert, nwItemClass, nwItemLayout, nwState, nwVimMode
+from novelwriter.enum import nwComment, nwDocAction, nwDocInsert, nwItemClass, nwItemLayout, nwState
+from novelwriter.guimain import GuiMain
 from novelwriter.shared import _GuiAlert
 from novelwriter.text.counting import standardCounter
 from novelwriter.types import (
@@ -67,7 +72,6 @@ from novelwriter.types import (
     QtImCurrentSelection,
     QtImCursorRectangle,
     QtKeepAnchor,
-    QtKeyEscape,
     QtKeyReturn,
     QtModCtrl,
     QtModNone,
@@ -80,7 +84,7 @@ from novelwriter.types import (
     QtSelectWord,
 )
 
-from tests.helpers import C, buildTestProject, writeFile
+from tests.helpers import C, MockRnd, buildTestProject, writeFile
 from tests.mocked import causeOSError
 
 KEY_DELAY = 1
@@ -103,20 +107,21 @@ def getMenuForPos(editor: GuiDocEditor, pos: int, select: bool = False) -> QMenu
 
 
 @pytest.mark.gui
-def testGuiDocEditor_Init(qtbot, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_Init(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, ipsumText: list[str], mockRnd: MockRnd):
     """Test initialising the editor."""
     # Open project
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc)
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor = nwGUI.docEditor
 
     docEditor.setPlainText(f"### Lorem Ipsum\n\n{ipsumText[0]}")
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
 
     # Check Defaults
-    qDoc = docEditor.document()
+    qDoc = docEditor._qDocument
     assert qDoc.defaultTextOption().alignment() == QtAlignLeft
+    assert qDoc.defaultTextOption().textDirection() == Qt.LayoutDirection.LayoutDirectionAuto
     assert docEditor.verticalScrollBarPolicy() == QtScrollAsNeeded
     assert docEditor.horizontalScrollBarPolicy() == QtScrollAsNeeded
     assert CONFIG.fmtPadThin is False
@@ -134,18 +139,31 @@ def testGuiDocEditor_Init(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     # Check that editor handles settings
     CONFIG.textFont = QFont()
     CONFIG.doJustify = True
-    CONFIG.showTabsNSpaces = True
-    CONFIG.showLineEndings = True
     CONFIG.hideVScroll = True
     CONFIG.hideHScroll = True
     CONFIG.fmtPadThin = True
     CONFIG.showFullPath = False
+    SHARED.project.setProjectLang(None, True)
+
+    # Whitespace display is toggled live from the footer options menu
+    docFooter = docEditor.docFooter
+    assert docFooter.optsButton.isHidden() is False
+    assert not qDoc.defaultTextOption().flags() & QTextOption.Flag.ShowTabsAndSpaces
+    docFooter.aShowTabsNSpaces.setChecked(True)
+    assert CONFIG.editShowTabsNSpaces is True
+    assert qDoc.defaultTextOption().flags() & QTextOption.Flag.ShowTabsAndSpaces
+    assert not qDoc.defaultTextOption().flags() & QTextOption.Flag.ShowLineAndParagraphSeparators
+    docFooter.aShowLineEndings.setChecked(True)
+    assert CONFIG.editShowLineEndings is True
+    assert qDoc.defaultTextOption().flags() & QTextOption.Flag.ShowLineAndParagraphSeparators
+    assert docEditor.isReadOnly() is False
 
     docEditor.initEditor()
 
-    qDoc = docEditor.document()
+    qDoc = docEditor._qDocument
     assert CONFIG.textFont == qDoc.defaultFont()
     assert qDoc.defaultTextOption().alignment() == QtAlignJustify
+    assert qDoc.defaultTextOption().textDirection() == Qt.LayoutDirection.LayoutDirectionAuto
     assert qDoc.defaultTextOption().flags() & QTextOption.Flag.ShowTabsAndSpaces
     assert qDoc.defaultTextOption().flags() & QTextOption.Flag.ShowLineAndParagraphSeparators
     assert docEditor.verticalScrollBarPolicy() == QtScrollAlwaysOff
@@ -191,6 +209,13 @@ def testGuiDocEditor_Init(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     with qtbot.waitSignal(docEditor.docHeader.toggleToolBarRequest, timeout=1000):
         docEditor.docHeader.tbButton.click()
 
+    # Toggle search from header
+    assert docEditor.searchVisible() is False
+    docEditor.docHeader.searchButton.click()
+    assert docEditor.searchVisible() is True
+    docEditor.docHeader.searchButton.click()
+    assert docEditor.searchVisible() is False
+
     # Toggle focus mode from header
     with qtbot.waitSignal(docEditor.toggleFocusModeRequest, timeout=1000):
         docEditor.docHeader.minmaxButton.click()
@@ -205,21 +230,29 @@ def testGuiDocEditor_Init(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     assert docEditor.docHeader.minmaxButton.isVisible() is False
     assert docEditor.docHeader.itemTitle.text() == ""
 
+    # With no document open, a toggle leaves the editor read-only
+    assert docEditor.docHandle is None
+    assert docEditor.isReadOnly() is True
+    docFooter.aShowTabsNSpaces.setChecked(False)
+    assert CONFIG.editShowTabsNSpaces is False
+    assert not docEditor._qDocument.defaultTextOption().flags() & QTextOption.Flag.ShowTabsAndSpaces
+    assert docEditor.isReadOnly() is True
+
     # qtbot.stop()
 
 
 @pytest.mark.gui
-def testGuiDocEditor_LoadText(qtbot, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_LoadText(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, ipsumText: list[str], mockRnd: MockRnd):
     """Test loading text into the editor."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     longText = "### Lorem Ipsum\n\n{0}".format("\n\n".join(ipsumText * 20))
     docEditor.replaceText(longText)
-    nwGUI.saveDocument()
-    nwGUI.closeDocument()
+    nwGUI.docPanes.saveDocument()
+    nwGUI.docPanes.closeDocument()
 
     # Invalid handle
     assert docEditor.loadText("abcdefghijklm") is False
@@ -227,14 +260,19 @@ def testGuiDocEditor_LoadText(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     # Regular open
     assert docEditor.loadText(C.hSceneDoc) is True
 
+    # RTL projects still use automatic direction in the editor
+    SHARED.project.setProjectLang(None, True)
+    assert docEditor.loadText(C.hSceneDoc) is True
+    assert docEditor._qDocument.defaultTextOption().textDirection() == Qt.LayoutDirection.LayoutDirectionAuto
+
     # Regular open, with line number (1 indexed)
     assert docEditor.loadText(C.hSceneDoc, tLine=4) is True
     cursPos = docEditor.getCursorPosition()
-    assert docEditor.document().findBlock(cursPos).blockNumber() == 3
+    assert docEditor._qDocument.findBlock(cursPos).blockNumber() == 3
 
     # Load empty document
     docEditor.replaceText("")
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
     assert docEditor.loadText(C.hSceneDoc) is True
     assert docEditor.toPlainText() == ""
 
@@ -242,11 +280,19 @@ def testGuiDocEditor_LoadText(qtbot, nwGUI, projPath, ipsumText, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_SaveText(qtbot, monkeypatch, caplog, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_SaveText(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test saving text from the editor."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     longText = "### Lorem Ipsum\n\n{0}".format("\n\n".join(ipsumText))
@@ -282,14 +328,21 @@ def testGuiDocEditor_SaveText(qtbot, monkeypatch, caplog, nwGUI, projPath, ipsum
 
 
 @pytest.mark.gui
-def testGuiDocEditor_SaveTextEdgeCases(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_SaveTextEdgeCases(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test defensive branches in saveText not covered by the main save
     text test: a write failure with no hash mismatch, and a successful
     forced overwrite after a hash mismatch.
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     text = "### Lorem Ipsum\n\n{0}".format("\n\n".join(ipsumText))
@@ -315,16 +368,24 @@ def testGuiDocEditor_SaveTextEdgeCases(qtbot, monkeypatch, nwGUI, projPath, ipsu
 
 
 @pytest.mark.gui
-def testGuiDocEditor_DragAndDrop(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_DragAndDrop(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test drag and drop in the editor."""
     docEditor = nwGUI.docEditor
 
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hTitlePage) is True
+    assert nwGUI.docPanes.openDocument(C.hTitlePage) is True
     assert docEditor.docHandle == C.hTitlePage
 
-    middle = docEditor.viewport().rect().center()
+    viewport = docEditor.viewport()
+    assert viewport is not None
+    middle = viewport.rect().center()
     action = Qt.DropAction.MoveAction
     mouse = Qt.MouseButton.NoButton
 
@@ -367,7 +428,7 @@ def testGuiDocEditor_DragAndDrop(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
         assert mockMove.call_count == 1
 
     # Drop
-    middle = QPointF(docEditor.viewport().rect().center())
+    middle = QPointF(viewport.rect().center())
     mockDrop = MagicMock()
     docEvent = QDropEvent(middle, action, docMime, mouse, QtModNone)
     noneEvent = QDropEvent(middle, action, noneMime, mouse, QtModNone)
@@ -391,11 +452,11 @@ def testGuiDocEditor_DragAndDrop(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_MetaData(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_MetaData(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test extracting various meta data and other values."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     # Get Text
@@ -457,14 +518,20 @@ def testGuiDocEditor_MetaData(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_ContextMenu(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_ContextMenu(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the editor context menu."""
     monkeypatch.setattr(QMenu, "exec", lambda *a: None)
     monkeypatch.setattr(QMenu, "setParent", lambda *a: None)
 
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
     sceneItem = SHARED.project.tree[C.hSceneDoc]
     assert sceneItem is not None
@@ -589,7 +656,7 @@ def testGuiDocEditor_ContextMenu(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
         "More Actions",
     ]
     ctxMenu.actions()[2].trigger()
-    assert docEditor.textCursor().selectedText() == docEditor.document().toRawText()
+    assert docEditor.textCursor().selectedText() == docEditor._qDocument.toRawText()
     ctxMenu.setObjectName("")
     ctxMenu.deleteLater()
 
@@ -631,7 +698,14 @@ def testGuiDocEditor_ContextMenu(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_SpellChecking(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_SpellChecking(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test the document spell checker."""
     monkeypatch.setattr(QMenu, "exec", lambda *a: None)
     monkeypatch.setattr(QMenu, "setParent", lambda *a: None)
@@ -645,7 +719,7 @@ def testGuiDocEditor_SpellChecking(qtbot, monkeypatch, nwGUI, projPath, ipsumTex
     monkeypatch.setattr(SpellEnchant, "checkWord", lambda *a: True)
     monkeypatch.setattr(SHARED, "runInThreadPool", lambda r: r.run())
 
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     text = "### A Scene\n\n{0}".format("\n\n".join(ipsumText))
@@ -898,14 +972,69 @@ def testGuiDocEditor_FormatCheckText():
     assert data.formatErrors == []
 
 
+def testGuiDocEditor_ProcessTextLinks():
+    """Test that TextBlockData detects Markdown links, and does not
+    also flag the URL they contain as a separate bare URL.
+    """
+    data = TextBlockData()
+
+    # A bare URL is kept in the spell text, and recorded as a "url"
+    text = "See http://example.com for details."
+    data.processText(text, 0, None)
+    assert data._text == "See                    for details."
+    assert data.metaData == [(4, 22, "http://example.com", "url")]
+
+    # A Markdown link has its brackets and URL blanked from the spell
+    # text, keeping only the link text, and is recorded as a "link"
+    # with the target URL
+    text = "See [a link](http://example.com) for details."
+    data.processText(text, 0, None)
+    assert data._text == "See  a link                      for details."
+    assert data.metaData == [(4, 32, "http://example.com", "link")]
+
+    # The URL inside a Markdown link must not also be picked up as a
+    # separate bare URL, while an unrelated bare URL still is
+    text = "See [a link](http://example.com) and http://other.com too."
+    data.processText(text, 0, None)
+    assert data.metaData == [
+        (4, 32, "http://example.com", "link"),
+        (37, 53, "http://other.com", "url"),
+    ]
+
+    # A Markdown link's positions are translated through a UTF-16 map
+    # when the block contains a 4 byte Unicode character
+    text = "\U0001f605 [a link](http://example.com) done."
+    utf16Map = utf16CharMap(text)
+    data.processText(text, 0, utf16Map)
+    assert data.metaData == [(3, 31, "http://example.com", "link")]
+
+    # A bare "file://" URL has no "http" substring, so the bare URL
+    # check must not be gated on that alone, or it would be missed
+    text = "See file:///tmp/note.txt here."
+    data.processText(text, 0, None)
+    assert data.metaData == [(4, 24, "file:///tmp/note.txt", "url")]
+
+    # A Markdown link's target need not be a URL with a "://" scheme,
+    # so the link check must not be gated on that either
+    text = "See [reference](internal-note) here."
+    data.processText(text, 0, None)
+    assert data.metaData == [(4, 30, "internal-note", "link")]
+
+
 @pytest.mark.gui
-def testGuiDocEditor_FormatChecking(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_FormatChecking(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the document multi-space and trailing-space checker."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
     monkeypatch.setattr(SHARED, "runInThreadPool", lambda r: r.run())
 
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     text = "### A Scene\n\nA  double space, and a trailing space \n"
@@ -923,7 +1052,7 @@ def testGuiDocEditor_FormatChecking(qtbot, monkeypatch, nwGUI, projPath, mockRnd
     CONFIG.showMultiSpaces = True
     docEditor._beginCheckPass()
 
-    data = docEditor.textCursor().document().findBlock(blockPos).userData()
+    data = docEditor._qDocument.findBlock(blockPos).userData()
     assert isinstance(data, TextBlockData)
     assert data.formatErrors == [(1, 3, "multi"), (37, 38, "trail")]
 
@@ -965,7 +1094,13 @@ def testGuiDocEditor_FormatChecking(qtbot, monkeypatch, nwGUI, projPath, mockRnd
 
 
 @pytest.mark.gui
-def testGuiDocEditor_UpdateSyntaxColors(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_UpdateSyntaxColors(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """A theme change must immediately re-colour any extra selections
     that already exist, rather than waiting for the cursor to move or
     for the spell/format check cache to be invalidated by an edit.
@@ -975,7 +1110,7 @@ def testGuiDocEditor_UpdateSyntaxColors(qtbot, monkeypatch, nwGUI, projPath, moc
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
 
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     text = "### A Scene\n\nA  double space, and a trailing space \n"
@@ -985,7 +1120,7 @@ def testGuiDocEditor_UpdateSyntaxColors(qtbot, monkeypatch, nwGUI, projPath, moc
     # Build a format error selection
     CONFIG.showMultiSpaces = True
     docEditor._beginCheckPass()
-    data = docEditor.textCursor().document().findBlock(blockPos).userData()
+    data = docEditor._qDocument.findBlock(blockPos).userData()
     assert isinstance(data, TextBlockData)
     assert data.formatErrors != []
 
@@ -1039,7 +1174,31 @@ def testGuiDocEditor_UpdateSyntaxColors(qtbot, monkeypatch, nwGUI, projPath, moc
 
 
 @pytest.mark.gui
-def testGuiDocEditor_Actions(qtbot, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_UpdateReplaceKeys(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
+    """Test that auto-replace key changes refresh the highlighter."""
+    buildTestProject(NWProject(), projPath)
+    nwGUI.openProject(projPath)
+    docEditor = nwGUI.docEditor
+    syntax = docEditor._qDocument.syntaxHighlighter
+
+    # No document open, nothing is updated
+    nwGUI.docPanes.closeDocument()
+    SHARED.project.data.setAutoReplace({"Name": "Bob"}, False)
+    docEditor.updateReplaceKeys()
+    assert syntax._replaceKeys == frozenset()
+
+    # Opening a document loads the keys
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
+    assert syntax._replaceKeys == frozenset({"Name"})
+
+    # Changed keys are picked up
+    SHARED.project.data.setAutoReplace({"Name": "Bob", "Place": "Here"}, False)
+    docEditor.updateReplaceKeys()
+    assert syntax._replaceKeys == frozenset({"Name", "Place"})
+
+
+@pytest.mark.gui
+def testGuiDocEditor_Actions(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, ipsumText: list[str], mockRnd: MockRnd):
     """Test the document actions. This is not an extensive test of the
     action features, just that the actions are actually called. The
     various action features are tested when their respective functions
@@ -1047,12 +1206,12 @@ def testGuiDocEditor_Actions(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     text = "### A Scene\n\n{0}".format("\n\n".join(ipsumText))
     docEditor.replaceText(text)
-    doc = docEditor.document()
+    doc = docEditor._qDocument
 
     # Check that the reset colour state works (used for action errors)
     docEditor.changeFocusState(True)
@@ -1248,6 +1407,28 @@ def testGuiDocEditor_Actions(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     docEditor.setCursorPosition(0)  # Blocked on headings
     assert docEditor.docAction(nwDocAction.SC_SUB) is False
 
+    # RTL projects get an RTL mark when a shortcode would set the direction
+    SHARED.project.setProjectLang(None, True)
+    word = "متن"
+    text = f"### A Scene\n\n{word} {word}\n\n% {word}"
+    docEditor.replaceText(text)
+
+    docEditor.setCursorPosition(14)
+    assert docEditor.docAction(nwDocAction.SC_ITALIC) is True
+    assert docEditor.getText() == f"### A Scene\n\n\u200f[i]{word}[/i] {word}\n\n% {word}"
+    assert docEditor.docAction(nwDocAction.UNDO) is True
+
+    docEditor.setCursorPosition(18)  # Not needed after a strong character
+    assert docEditor.docAction(nwDocAction.SC_ITALIC) is True
+    assert docEditor.getText() == f"### A Scene\n\n{word} [i]{word}[/i]\n\n% {word}"
+    assert docEditor.docAction(nwDocAction.UNDO) is True
+
+    docEditor.setCursorPosition(25)  # Goes after the comment prefix
+    assert docEditor.docAction(nwDocAction.SC_ITALIC) is True
+    assert docEditor.getText() == f"### A Scene\n\n{word} {word}\n\n% \u200f[i]{word}[/i]"
+    assert docEditor.docAction(nwDocAction.UNDO) is True
+    SHARED.project.setProjectLang(None, False)
+
     # Quotes
     # ======
 
@@ -1386,7 +1567,7 @@ def testGuiDocEditor_Actions(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     docEditor._docHandle = C.hSceneDoc
 
     # Wrong Action Type
-    assert docEditor.docAction(None) is False
+    assert docEditor.docAction(None) is False  # type: ignore
 
     # Unknown Action
     assert docEditor.docAction(nwDocAction.NO_ACTION) is False
@@ -1395,13 +1576,13 @@ def testGuiDocEditor_Actions(qtbot, nwGUI, projPath, ipsumText, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_Zoom(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_Zoom(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test zooming the editor font via docAction and Ctrl+Scroll, and
     resetting it back to the configured font size.
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc)
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor = nwGUI.docEditor
 
     basePt = docEditor.font().pointSizeF()
@@ -1419,6 +1600,24 @@ def testGuiDocEditor_Zoom(qtbot, nwGUI, projPath, mockRnd):
 
     assert docEditor.docAction(nwDocAction.ZOOM_RESET) is True
     assert docEditor.font().pointSizeF() == basePt
+
+    # Zoom with the footer buttons, and show the font size in the footer
+    docFooter = docEditor.docFooter
+    assert docFooter.zoomLabel.text().startswith(f"{basePt:n}")
+    docFooter.zoomInButton.click()
+    assert docEditor.font().pointSizeF() == basePt + 1
+    assert docFooter.zoomLabel.text().startswith(f"{basePt + 1:n}")
+    docFooter.zoomOutButton.click()
+    assert docEditor.font().pointSizeF() == basePt
+    assert docFooter.zoomLabel.text().startswith(f"{basePt:n}")
+
+    # Clicking the zoom label resets the zoom
+    docFooter.zoomInButton.click()
+    docFooter.zoomInButton.click()
+    assert docEditor.font().pointSizeF() == basePt + 2
+    qtbot.mouseClick(docFooter.zoomLabel, QtMouseLeft)
+    assert docEditor.font().pointSizeF() == basePt
+    assert docFooter.zoomLabel.text().startswith(f"{basePt:n}")
 
     # Zoom in and out with Ctrl+Scroll wheel
     position = QPointF(10, 10)
@@ -1477,13 +1676,38 @@ def testGuiDocEditor_Zoom(qtbot, nwGUI, projPath, mockRnd):
     docEditor.wheelEvent(scrollEvent)
     assert docEditor.font().pointSizeF() == basePt
 
+    # High resolution wheel steps add up to whole points in both directions
+    for dy, size in ((-40, 0), (-40, 0), (-40, -1), (40, -1), (40, -1), (40, 0)):
+        hiResEvent = QWheelEvent(
+            position,
+            position,
+            QPoint(0, 0),
+            QPoint(0, dy),
+            Qt.MouseButton.NoButton,
+            QtModCtrl,
+            Qt.ScrollPhase.NoScrollPhase,
+            False,
+        )
+        docEditor.wheelEvent(hiResEvent)
+        assert docEditor.font().pointSizeF() == basePt + size
+
+    # Zoom is capped at the minimum and maximum size
+    docEditor.zoomOut(100)
+    assert docEditor.font().pointSizeF() == nwConst.TEXT_FONT_MIN_SIZE
+    docEditor.zoomIn(100)
+    assert docEditor.font().pointSizeF() == nwConst.TEXT_FONT_MAX_SIZE
+
+    # Tab stops follow the zoomed font size
+    tabStop = docEditor._qDocument.defaultTextOption().tabStopDistance()
+    assert tabStop == CONFIG.tabSize * nwConst.TEXT_FONT_MAX_SIZE * 96.0 / 72.0
+
 
 @pytest.mark.gui
-def testGuiDocEditor_Navigation(qtbot, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_Navigation(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, ipsumText: list[str], mockRnd: MockRnd):
     """Test editor navigation."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor: GuiDocEditor = nwGUI.docEditor
 
     text = "### A Scene\n\n{0}".format("\n\n".join(ipsumText[:3]))
@@ -1508,7 +1732,7 @@ def testGuiDocEditor_Navigation(qtbot, nwGUI, projPath, ipsumText, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_ToolBar(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_ToolBar(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test the document actions. This is not an extensive test of the
     action features, just that the actions are actually called. The
     various action features are tested when their respective functions
@@ -1516,7 +1740,7 @@ def testGuiDocEditor_ToolBar(qtbot, nwGUI, projPath, mockRnd):
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
 
     docEditor = nwGUI.docEditor
     docToolBar = docEditor.docToolBar
@@ -1607,15 +1831,37 @@ def testGuiDocEditor_ToolBar(qtbot, nwGUI, projPath, mockRnd):
         "Text [sub]subscript[/sub] one\n\n"
     )
 
+    # Lists
+    # =====
+
+    docEditor.replaceText("One\n\nTwo\n\n")
+
+    # Click Unordered List
+    docEditor.setCursorPosition(1)
+    docToolBar.tbListU.click()
+    assert docEditor.getText() == "* One\n\nTwo\n\n"
+
+    # Click Ordered List
+    docEditor.setCursorPosition(9)
+    docToolBar.tbListO.click()
+    assert docEditor.getText() == "* One\n\n#. Two\n\n"
+
     # qtbot.stop()
 
 
 @pytest.mark.gui
-def testGuiDocEditor_Insert(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_Insert(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test the document insert functions."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
     text = f"### A Scene\n\n{ipsumText[0]}"
 
@@ -1656,14 +1902,14 @@ def testGuiDocEditor_Insert(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mock
     docEditor.replaceText(text)
     docEditor.insertText(nwDocInsert.NO_INSERT)
     assert docEditor.getText() == text
-    docEditor.insertText(123)
+    docEditor.insertText(123)  # type: ignore
     assert docEditor.getText() == text
 
     # Insert Comments
     # ===============
 
     docEditor.replaceText(text)
-    count = docEditor.document().characterCount()
+    count = docEditor._qDocument.characterCount()
 
     # Invalid Position
     docEditor.setCursorPosition(12)
@@ -1721,11 +1967,17 @@ def testGuiDocEditor_Insert(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mock
 
 
 @pytest.mark.gui
-def testGuiDocEditor_TextManipulation(qtbot, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_TextManipulation(
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test the text manipulation functions."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     text = "### A Scene\n\n{0}".format("\n\n".join(ipsumText))
@@ -1951,11 +2203,18 @@ def testGuiDocEditor_TextManipulation(qtbot, nwGUI, projPath, ipsumText, mockRnd
 
 
 @pytest.mark.gui
-def testGuiDocEditor_BlockFormatting(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_BlockFormatting(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test the block formatting function."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     # Invalid and Generic
@@ -2216,6 +2475,56 @@ def testGuiDocEditor_BlockFormatting(qtbot, monkeypatch, nwGUI, projPath, ipsumT
     assert docEditor.getText() == "###! Some text\n\n"
     assert docEditor.getCursorPosition() == 10
 
+    # Unordered List
+    docEditor.replaceText("Some text\n\n")
+    docEditor.setCursorPosition(5)
+    assert docEditor._formatBlock(nwDocAction.BLOCK_LST_U) is True
+    assert docEditor.getText() == "* Some text\n\n"
+    assert docEditor.getCursorPosition() == 7
+
+    # Ordered List
+    docEditor.replaceText("Some text\n\n")
+    docEditor.setCursorPosition(5)
+    assert docEditor._formatBlock(nwDocAction.BLOCK_LST_O) is True
+    assert docEditor.getText() == "#. Some text\n\n"
+    assert docEditor.getCursorPosition() == 8
+
+    # Unordered to Ordered List, and back
+    docEditor.replaceText("* Some text\n\n")
+    docEditor.setCursorPosition(7)
+    assert docEditor._formatBlock(nwDocAction.BLOCK_LST_O) is True
+    assert docEditor.getText() == "#. Some text\n\n"
+    assert docEditor.getCursorPosition() == 8
+    assert docEditor._formatBlock(nwDocAction.BLOCK_LST_U) is True
+    assert docEditor.getText() == "* Some text\n\n"
+    assert docEditor.getCursorPosition() == 7
+
+    # List to Plain Text
+    docEditor.replaceText("#. Some text\n\n")
+    docEditor.setCursorPosition(8)
+    assert docEditor._formatBlock(nwDocAction.BLOCK_TXT) is True
+    assert docEditor.getText() == "Some text\n\n"
+    assert docEditor.getCursorPosition() == 5
+
+    # Toggle Lists Off
+    docEditor.replaceText("* Some text\n\n")
+    docEditor.setCursorPosition(7)
+    assert docEditor._formatBlock(nwDocAction.BLOCK_LST_U) is True
+    assert docEditor.getText() == "Some text\n\n"
+    assert docEditor.getCursorPosition() == 5
+
+    docEditor.replaceText("#. Some text\n\n")
+    docEditor.setCursorPosition(8)
+    assert docEditor._formatBlock(nwDocAction.BLOCK_LST_O) is True
+    assert docEditor.getText() == "Some text\n\n"
+    assert docEditor.getCursorPosition() == 5
+
+    # A separator is not a list item
+    docEditor.replaceText("* * *\n\n")
+    docEditor.setCursorPosition(5)
+    assert docEditor._formatBlock(nwDocAction.ALIGN_C) is True
+    assert docEditor.getText() == ">> * * * <<\n\n"
+
     # Left Indent
     docEditor.replaceText("Some text\n\n")
     docEditor.setCursorPosition(5)
@@ -2288,11 +2597,17 @@ def testGuiDocEditor_BlockFormatting(qtbot, monkeypatch, nwGUI, projPath, ipsumT
 
 
 @pytest.mark.gui
-def testGuiDocEditor_MultiBlockFormatting(qtbot, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_MultiBlockFormatting(
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test the block formatting function."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     text = "### A Scene\n\n@char: Jane, John\n\n" + "\n\n".join(ipsumText) + "\n\n"
@@ -2433,6 +2748,121 @@ def testGuiDocEditor_MultiBlockFormatting(qtbot, nwGUI, projPath, ipsumText, moc
         "",
     ]
 
+    # Toggle List
+    cursor = docEditor.textCursor()
+    cursor.setPosition(50)
+    cursor.movePosition(QtMoveRight, QtKeepAnchor, 2000)
+    docEditor.setTextCursor(cursor)
+
+    docEditor._iterFormatBlocks(nwDocAction.BLOCK_LST_U)
+    assert [x[:5] for x in docEditor.getText().splitlines()] == [
+        "### A",
+        "",
+        "@char",
+        "",
+        "* Lor",
+        "",
+        "* Nul",
+        "",
+        "* Nul",
+        "",
+        "* Pel",
+        "",
+        "Integ",
+        "",
+    ]
+
+    # Un-toggle all, the first item decides
+    cursor = docEditor.textCursor()
+    cursor.setPosition(50)
+    cursor.movePosition(QtMoveRight, QtKeepAnchor, 3000)
+    docEditor.setTextCursor(cursor)
+
+    docEditor._iterFormatBlocks(nwDocAction.BLOCK_LST_U)
+    assert [x[:5] for x in docEditor.getText().splitlines()] == [
+        "### A",
+        "",
+        "@char",
+        "",
+        "Lorem",
+        "",
+        "Nulla",
+        "",
+        "Nulla",
+        "",
+        "Pelle",
+        "",
+        "Integ",
+        "",
+    ]
+
+    # Align across a heading and a keyword, which are skipped
+    cursor = docEditor.textCursor()
+    cursor.setPosition(0)
+    cursor.movePosition(QtMoveRight, QtKeepAnchor, 2000)
+    docEditor.setTextCursor(cursor)
+
+    docEditor.docAction(nwDocAction.ALIGN_C)
+    assert [x[:5] for x in docEditor.getText().splitlines()] == [
+        "### A",
+        "",
+        "@char",
+        "",
+        ">> Lo",
+        "",
+        ">> Nu",
+        "",
+        ">> Nu",
+        "",
+        ">> Pe",
+        "",
+        "Integ",
+        "",
+    ]
+
+    # The affected blocks are reselected
+    lastBlock = docEditor._qDocument.findBlockByNumber(10)
+    assert lastBlock.text().startswith(">> Pe")
+    cursor = docEditor.textCursor()
+    assert cursor.selectionStart() == 0
+    assert cursor.selectionEnd() == lastBlock.position() + lastBlock.length() - 1
+
+    # Toggle back off, the first formattable block decides
+    docEditor.docAction(nwDocAction.ALIGN_C)
+    assert [x[:5] for x in docEditor.getText().splitlines()] == [
+        "### A",
+        "",
+        "@char",
+        "",
+        "Lorem",
+        "",
+        "Nulla",
+        "",
+        "Nulla",
+        "",
+        "Pelle",
+        "",
+        "Integ",
+        "",
+    ]
+
+    # Indent the same selection
+    docEditor.docAction(nwDocAction.INDENT_L)
+    docEditor.docAction(nwDocAction.INDENT_R)
+    assert docEditor.getText().splitlines()[4].startswith("> Lorem")
+    assert docEditor.getText().splitlines()[4].endswith(" <")
+    assert docEditor.getText().splitlines()[0] == "### A Scene"
+    cursor = docEditor.textCursor()
+    cursor.setPosition(50)
+    cursor.movePosition(QtMoveRight, QtKeepAnchor, 2000)
+    docEditor.setTextCursor(cursor)
+    docEditor.docAction(nwDocAction.BLOCK_TXT)
+
+    # A single heading is not aligned
+    docEditor.setCursorPosition(3)
+    assert docEditor._formatBlock(nwDocAction.ALIGN_C) is False
+    assert docEditor.getText().splitlines()[0] == "### A Scene"
+
     # Final text should be identical to initial text
     assert docEditor.getText() == text
 
@@ -2440,11 +2870,11 @@ def testGuiDocEditor_MultiBlockFormatting(qtbot, nwGUI, projPath, ipsumText, moc
 
 
 @pytest.mark.gui
-def testGuiDocEditor_Tags(qtbot, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_Tags(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, ipsumText: list[str], mockRnd: MockRnd):
     """Test the document editor tags functionality."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
     docViewer = nwGUI.docViewer
 
@@ -2455,13 +2885,13 @@ def testGuiDocEditor_Tags(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     # Create Character
     text = "### Jane Doe\n\n@tag: Jane\n\n" + ipsumText[1] + "\n\n"
     cHandle = SHARED.project.newFile("Jane Doe", C.hCharRoot)
-    nwGUI.openDocument(cHandle)
+    nwGUI.docPanes.openDocument(cHandle)
     docEditor.replaceText(text)
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
 
     # Follow Tag
     # ==========
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
 
     # Empty Block
     docEditor.setCursorLine(2)
@@ -2487,7 +2917,7 @@ def testGuiDocEditor_Tags(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     assert docViewer._docHandle is None
     docEditor.mouseReleaseEvent(event)
     assert docViewer._docHandle == cHandle
-    assert nwGUI.closeViewerPanel() is True
+    nwGUI.docPanes.closeViewerPanel()
     assert docViewer._docHandle is None
 
     # A mouse release without the Ctrl modifier does not follow the tag
@@ -2500,7 +2930,7 @@ def testGuiDocEditor_Tags(qtbot, nwGUI, projPath, ipsumText, mockRnd):
     assert docEditor._docHandle == cHandle
 
     # On Unknown Tag, Create It
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     assert "0000000000012" not in SHARED.project.tree
     docEditor.setCursorPosition(28)
     assert docEditor._processTag(create=True) == _TagAction.CREATE
@@ -2524,7 +2954,7 @@ def testGuiDocEditor_Tags(qtbot, nwGUI, projPath, ipsumText, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_HoverCard(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_HoverCard(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test the mouse-driven reference tag hover card: the debounce
     timer is only started when the block under the cursor holds any
     meta data at all, showing the card requires the more precise
@@ -2534,15 +2964,15 @@ def testGuiDocEditor_HoverCard(qtbot, nwGUI, projPath, mockRnd):
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     cHandle = SHARED.project.newFile("Jane Doe", C.hCharRoot)
-    assert nwGUI.openDocument(cHandle) is True
+    assert nwGUI.docPanes.openDocument(cHandle) is True
     docEditor.replaceText("# Jane Doe\n\n@tag: Jane\n\n")
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
 
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor.replaceText("### A Scene\n\n@char: Jane\n\n")
 
     def moveTo(position: int) -> QPoint:
@@ -2599,9 +3029,19 @@ def testGuiDocEditor_HoverCard(qtbot, nwGUI, projPath, mockRnd):
     docEditor.updateChangedTags([], [])
     assert docEditor._hoverCard._cache == {"jane": "<p>Cached</p>"}
 
+    # A new or rebuilt index clears the whole cache
+    docEditor.indexHasAppeared()
+    assert docEditor._hoverCard._cache == {}
+
 
 @pytest.mark.gui
-def testGuiDocEditor_ProcessTagEdgeCases(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_ProcessTagEdgeCases(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test defensive branches in tag processing not covered by the
     main tags test: an exhausted tag search, a cursor past the last
     tag's end, a missing document handle, and a declined note-creation
@@ -2609,7 +3049,7 @@ def testGuiDocEditor_ProcessTagEdgeCases(qtbot, monkeypatch, nwGUI, projPath, mo
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
     docEditor.replaceText("### A Scene\n\n@char: Jane\n\n")
 
@@ -2655,13 +3095,20 @@ def testGuiDocEditor_ProcessTagEdgeCases(qtbot, monkeypatch, nwGUI, projPath, mo
 
 
 @pytest.mark.gui
-def testGuiDocEditor_MoveTextToNewDocument(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_MoveTextToNewDocument(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test the moving text to new document feature."""
     monkeypatch.setattr(GuiEditLabel, "getLabel", lambda *a, text, info: (text, True))
 
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor: GuiDocEditor = nwGUI.docEditor
 
     text = "### A Scene\n\n{0}".format("\n\n".join(ipsumText))
@@ -2674,7 +3121,7 @@ def testGuiDocEditor_MoveTextToNewDocument(qtbot, monkeypatch, nwGUI, projPath, 
     item = SHARED.project.tree[nHandle]
     assert isinstance(item, ProjectItem)
     assert item.itemName == "New Scene (1)"
-    assert nwGUI.openDocument(nHandle) is True
+    assert nwGUI.docPanes.openDocument(nHandle) is True
     assert docEditor.getText() == "### New Scene (1)\n\n{0}\n".format("\n\n".join(ipsumText[2:]))
 
     # New from selection, with existing header
@@ -2696,18 +3143,18 @@ def testGuiDocEditor_MoveTextToNewDocument(qtbot, monkeypatch, nwGUI, projPath, 
     item = SHARED.project.tree[nHandle]
     assert isinstance(item, ProjectItem)
     assert item.itemName == "Another Scene"
-    assert nwGUI.openDocument(nHandle) is True
+    assert nwGUI.docPanes.openDocument(nHandle) is True
     assert docEditor.getText() == f"### Another Scene\n\n{ipsumText[3]}\n"
 
     # An empty document has no text to select, so nothing happens
     emptyHandle = SHARED.project.newFile("Empty", C.hNovelRoot)
-    assert nwGUI.openDocument(emptyHandle) is True
+    assert nwGUI.docPanes.openDocument(emptyHandle) is True
     countBefore = len(SHARED.project.tree)
     docEditor.docAction(nwDocAction.MOVE_TEXT)
     assert len(SHARED.project.tree) == countBefore
 
     # Cancelling the label dialog does not create a new document
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor.docAction(nwDocAction.SEL_ALL)
     countBefore = len(SHARED.project.tree)
     with monkeypatch.context() as mp:
@@ -2727,11 +3174,18 @@ def testGuiDocEditor_MoveTextToNewDocument(qtbot, monkeypatch, nwGUI, projPath, 
 
 
 @pytest.mark.gui
-def testGuiDocEditor_Links(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_Links(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test the document editor links functionality."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor = nwGUI.docEditor
     docEditor.replaceText("### Scene\n\nFoo http://www.example.com bar.\n\n")
 
@@ -2750,13 +3204,116 @@ def testGuiDocEditor_Links(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mockR
 
 
 @pytest.mark.gui
-def testGuiDocEditor_InternalSlotEdgeCases(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_FormatLink(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
+    """Test formatting a link under the cursor via the edit dialog."""
+    buildTestProject(NWProject(), projPath)
+    nwGUI.openProject(projPath)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
+    docEditor = nwGUI.docEditor
+
+    # Cancelling the dialog is a no-op, regardless of context
+    docEditor.replaceText("Foo http://example.com bar.")
+    docEditor.setCursorPosition(6)
+    with monkeypatch.context() as mp:
+        mp.setattr(GuiEditLink, "getLink", lambda *a, text="", url="": (text, url, False))
+        docEditor.docAction(nwDocAction.MD_LINK)
+    assert docEditor.getText() == "Foo http://example.com bar."
+
+    # A bare URL under the cursor is detected via TextBlockData and its
+    # URL is passed to the dialog, with no link text
+    captured = {}
+
+    def fakeBareUrl(*_a: Any, text: str = "", url: str = "") -> tuple[str, str, bool]:
+        captured["text"], captured["url"] = text, url
+        return "a link", url, True
+
+    with monkeypatch.context() as mp:
+        mp.setattr(GuiEditLink, "getLink", fakeBareUrl)
+        assert docEditor.docAction(nwDocAction.MD_LINK) is True
+    assert captured == {"text": "", "url": "http://example.com"}
+    assert docEditor.getText() == "Foo [a link](http://example.com) bar."
+
+    # An existing Markdown link under the cursor has both its text and
+    # URL passed to the dialog, and the whole construct is replaced
+    docEditor.replaceText("Foo [a link](http://example.com) bar.")
+    docEditor.setCursorPosition(10)
+    captured.clear()
+
+    def fakeEditLink(*_a: Any, text: str = "", url: str = "") -> tuple[str, str, bool]:
+        captured["text"], captured["url"] = text, url
+        return "new text", "http://new.example.com", True
+
+    with monkeypatch.context() as mp:
+        mp.setattr(GuiEditLink, "getLink", fakeEditLink)
+        assert docEditor.docAction(nwDocAction.MD_LINK) is True
+    assert captured == {"text": "a link", "url": "http://example.com"}
+    assert docEditor.getText() == "Foo [new text](http://new.example.com) bar."
+
+    # With no link or selection at the cursor, a new link is inserted
+    docEditor.replaceText("Foo bar.")
+    docEditor.setCursorPosition(4)
+    with monkeypatch.context() as mp:
+        mp.setattr(GuiEditLink, "getLink", lambda *a, text="", url="": ("site", "http://site.com", True))
+        assert docEditor.docAction(nwDocAction.MD_LINK) is True
+    assert docEditor.getText() == "Foo [site](http://site.com)bar."
+
+    # A selection with no identified link pre-fills the link text
+    docEditor.replaceText("Foo bar baz.")
+    cursor = docEditor.textCursor()
+    cursor.setPosition(4)
+    cursor.setPosition(7, QtKeepAnchor)
+    docEditor.setTextCursor(cursor)
+    captured.clear()
+    with monkeypatch.context() as mp:
+        mp.setattr(GuiEditLink, "getLink", fakeEditLink)
+        assert docEditor.docAction(nwDocAction.MD_LINK) is True
+    assert captured == {"text": "bar", "url": ""}
+    assert docEditor.getText() == "Foo [new text](http://new.example.com) baz."
+
+    # A blank URL from the dialog is a no-op
+    docEditor.replaceText("Foo bar.")
+    docEditor.setCursorPosition(4)
+    with monkeypatch.context() as mp:
+        mp.setattr(GuiEditLink, "getLink", lambda *a, text="", url="": ("text", "", True))
+        assert docEditor.docAction(nwDocAction.MD_LINK) is True
+    assert docEditor.getText() == "Foo bar."
+
+    # With more than one identified URL in the block, the one matching
+    # the cursor position is picked, not just the first one
+    docEditor.replaceText("Foo http://one.com and http://two.com bar.")
+    docEditor.setCursorPosition(30)
+    captured.clear()
+    with monkeypatch.context() as mp:
+        mp.setattr(GuiEditLink, "getLink", fakeBareUrl)
+        assert docEditor.docAction(nwDocAction.MD_LINK) is True
+    assert captured == {"text": "", "url": "http://two.com"}
+
+    # An empty block has no TextBlockData at all, which must not be
+    # mistaken for an identified link
+    docEditor.replaceText("")
+    docEditor.setCursorPosition(0)
+    with monkeypatch.context() as mp:
+        mp.setattr(GuiEditLink, "getLink", lambda *a, text="", url="": ("site", "http://site.com", True))
+        assert docEditor.docAction(nwDocAction.MD_LINK) is True
+    assert docEditor.getText() == "[site](http://site.com)"
+
+    # qtbot.stop()
+
+
+@pytest.mark.gui
+def testGuiDocEditor_InternalSlotEdgeCases(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test defensive branches in a few internal slots and functions
     that aren't covered by their respective feature tests.
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
     docEditor.replaceText("### A Scene\n\nSome text.\n\n")
 
@@ -2805,52 +3362,75 @@ def testGuiDocEditor_InternalSlotEdgeCases(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_UpdateDocMargins(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_UpdateDocMargins(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test that the margins collapse to the viewport padding when no
     fixed text width or Focus Mode is in effect.
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor = nwGUI.docEditor
 
     CONFIG.textWidth = 0
     SHARED.setFocusMode(False)
     docEditor.updateDocMargins()
 
+    # Tool bar and search box are placed on opposite sides
+    docEditor.beginSearch()
+    assert docEditor.docSearch.isVisible()
+    tB = docEditor.frameWidth()
+    vBar = docEditor.verticalScrollBar()
+    sW = vBar.width() if vBar and vBar.isVisible() else 0
+
+    CONFIG.rtlMode = False
+    docEditor.updateDocMargins()
+    assert docEditor.docToolBar.x() == 0
+    assert docEditor.docSearch.x() == docEditor.width() - sW - docEditor.docSearch.width() - 2 * tB
+
+    # In RTL, the tool bar position uses its size hint, also while hidden
+    CONFIG.rtlMode = True
+    docEditor.docToolBar.setVisible(False)
+    docEditor.updateDocMargins()
+    assert docEditor.docToolBar.x() == docEditor.width() - docEditor.docToolBar.sizeHint().width()
+    assert docEditor.docSearch.x() == 2
+
 
 @pytest.mark.gui
-def testGuiDocEditor_ScrollPastEnd(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_ScrollPastEnd(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test the scroll-past-end feature, which fakes QPlainTextEdit's
     centerOnScroll via a bottom margin on the document's root frame.
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor = nwGUI.docEditor
     docEditor.resize(400, 300)
 
-    rootFrame = docEditor.document().rootFrame()
+    rootFrame = docEditor._qDocument.rootFrame()
+    assert rootFrame is not None
+
+    vBar = docEditor.verticalScrollBar()
+    assert vBar is not None
 
     CONFIG.scrollPastEnd = True
     docEditor.updateDocMargins()
     assert rootFrame.frameFormat().bottomMargin() > 0
-    maxWithScrollPastEnd = docEditor.verticalScrollBar().maximum()
+    maxWithScrollPastEnd = vBar.maximum()
 
     CONFIG.scrollPastEnd = False
     docEditor.updateDocMargins()
     assert rootFrame.frameFormat().bottomMargin() == 0
-    assert docEditor.verticalScrollBar().maximum() < maxWithScrollPastEnd
+    assert vBar.maximum() < maxWithScrollPastEnd
 
 
 @pytest.mark.gui
-def testGuiDocEditor_TypewriterScrolling(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_TypewriterScrolling(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test the typewriter scrolling (auto-scroll) feature, which
     animates the scrollbar by the actual pixel movement of the cursor.
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor = nwGUI.docEditor
     docEditor.resize(400, 300)
 
@@ -2858,12 +3438,13 @@ def testGuiDocEditor_TypewriterScrolling(qtbot, nwGUI, projPath, mockRnd):
     cursor = docEditor.textCursor()
     cursor.setPosition(0)
     docEditor.setTextCursor(cursor)
-    docEditor.verticalScrollBar().setValue(0)
+    vBar = docEditor.verticalScrollBar()
+    assert vBar is not None
+    vBar.setValue(0)
 
     CONFIG.autoScroll = True
     CONFIG.autoScrollPos = 30
 
-    vBar = docEditor.verticalScrollBar()
     assert vBar.value() == 0
 
     # Move the cursor down past the auto-scroll threshold by inserting
@@ -2877,14 +3458,14 @@ def testGuiDocEditor_TypewriterScrolling(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_LineHeight(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_LineHeight(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test that CONFIG.lineHeight is applied to all blocks in the
     document, both on load and when settings are refreshed.
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
     docEditor = nwGUI.docEditor
-    document = docEditor.document()
+    document = docEditor._qDocument
 
     def allBlocksHaveLineHeight(height: int) -> bool:
         block = document.firstBlock()
@@ -2904,7 +3485,7 @@ def testGuiDocEditor_LineHeight(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_LineHeightPaste(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_LineHeightPaste(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test that pasting multi-line text keeps the configured line
     height on every resulting block, including the ones created after
     a line break in the pasted text (Issue #2874).
@@ -2912,7 +3493,7 @@ def testGuiDocEditor_LineHeightPaste(qtbot, nwGUI, projPath, mockRnd):
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
     docEditor = nwGUI.docEditor
-    document = docEditor.document()
+    document = docEditor._qDocument
 
     def allBlocksHaveLineHeight(height: int) -> bool:
         block = document.firstBlock()
@@ -2936,7 +3517,7 @@ def testGuiDocEditor_LineHeightPaste(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_InsertFromMimeData_Markdown(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_InsertFromMimeData_Markdown(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test that pasting Markdown mime data is converted to
     novelWriter's own text format before being inserted, and that a
     Markdown paste that converts to an empty string is a no-op.
@@ -2977,7 +3558,42 @@ def testGuiDocEditor_InsertFromMimeData_Markdown(qtbot, nwGUI, projPath, mockRnd
 
 
 @pytest.mark.gui
-def testGuiDocEditor_StripUnsafeCharacters(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_InsertFromMimeData_Urls(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
+    """Test that dropped file and web URLs are inserted as properly
+    encoded URLs rather than as raw, unencoded text.
+    """
+    buildTestProject(NWProject(), projPath)
+    nwGUI.openProject(projPath)
+    docEditor = nwGUI.docEditor
+    assert docEditor.loadText(C.hSceneDoc) is True
+    docEditor.setCursorPosition(0)
+
+    # A local file path with a space, as provided by a file manager drag,
+    # must be percent-encoded so that it is recognised as a single URL
+    mime = QMimeData()
+    mime.setUrls([QUrl.fromLocalFile("/some/path/my file.txt")])
+    docEditor.insertFromMimeData(mime)
+    assert docEditor.getText().startswith("file:///some/path/my%20file.txt")
+
+    # Multiple dropped files are inserted one per line
+    docEditor.replaceText("")
+    docEditor.setCursorPosition(0)
+    mime = QMimeData()
+    mime.setUrls([QUrl.fromLocalFile("/some/one.txt"), QUrl.fromLocalFile("/some/two.txt")])
+    docEditor.insertFromMimeData(mime)
+    assert docEditor.getText().startswith("file:///some/one.txt\nfile:///some/two.txt")
+
+    # A regular web URL is preserved as-is
+    docEditor.replaceText("")
+    docEditor.setCursorPosition(0)
+    mime = QMimeData()
+    mime.setUrls([QUrl("https://example.com/page")])
+    docEditor.insertFromMimeData(mime)
+    assert docEditor.getText().startswith("https://example.com/page")
+
+
+@pytest.mark.gui
+def testGuiDocEditor_StripUnsafeCharacters(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Control characters must never survive an import/replace or a
     paste, and must never be returned by getText or getSelectedText,
     even if one reaches the document by another route. See #3038.
@@ -3013,7 +3629,7 @@ def testGuiDocEditor_StripUnsafeCharacters(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_PasteAsPlainText(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_PasteAsPlainText(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test that the Ctrl+Shift+V shortcut always inserts the
     clipboard's plain text, ignoring any HTML or Markdown formatting
     also present on the clipboard.
@@ -3039,7 +3655,7 @@ def testGuiDocEditor_PasteAsPlainText(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_LineHeightDoubleReturn(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_LineHeightDoubleReturn(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test that a blank-line paragraph break (two consecutive Return
     presses) works normally with a non-default line height set on
     every block. Qt's own Return handling otherwise treats the second
@@ -3064,42 +3680,135 @@ def testGuiDocEditor_LineHeightDoubleReturn(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_CursorVisibility(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_ListMarkerOnReturn(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
+    """Test that list markers are carried over to new lines."""
+    buildTestProject(NWProject(), projPath)
+    nwGUI.openProject(projPath)
+    docEditor = nwGUI.docEditor
+    assert docEditor.loadText(C.hSceneDoc) is True
+
+    # Unordered item, then ordered item, at end of line
+    docEditor.setPlainText("* One")
+    docEditor.setCursorPosition(5)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    qtbot.keyClicks(docEditor, "Two")
+    assert docEditor.getText() == "* One\n* Two"
+
+    docEditor.setPlainText("#. One")
+    docEditor.setCursorPosition(6)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    qtbot.keyClicks(docEditor, "Two")
+    assert docEditor.getText() == "#. One\n#. Two"
+
+    # Splitting an item carries the marker
+    docEditor.setPlainText("* OneTwo")
+    docEditor.setCursorPosition(5)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    assert docEditor.getText() == "* One\n* Two"
+
+    # Return inside the marker inserts a plain line
+    docEditor.setPlainText("#. One")
+    docEditor.setCursorPosition(1)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    assert docEditor.getText() == "#\n. One"
+
+    # Return on an empty item clears the marker
+    docEditor.setPlainText("* One\n* ")
+    docEditor.setCursorPosition(8)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    assert docEditor.getText() == "* One\n"
+    assert docEditor.getCursorPosition() == 6
+
+    docEditor.setPlainText("#.  ")
+    docEditor.setCursorPosition(4)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    assert docEditor.getText() == ""
+
+    # Not list items
+    docEditor.setPlainText("* * *")
+    docEditor.setCursorPosition(5)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    assert docEditor.getText() == "* * *\n"
+
+    docEditor.setPlainText("*")
+    docEditor.setCursorPosition(1)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    assert docEditor.getText() == "*\n"
+
+    # A selection is replaced, and the marker is from its first line
+    docEditor.setPlainText("* One\nText")
+    cursor = docEditor.textCursor()
+    cursor.setPosition(3)
+    cursor.setPosition(8, QtKeepAnchor)
+    docEditor.setTextCursor(cursor)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    assert docEditor.getText() == "* O\n* xt"
+
+    # A selection on an empty item is not cleared as an empty item
+    docEditor.setPlainText("* ")
+    cursor = docEditor.textCursor()
+    cursor.setPosition(1)
+    cursor.setPosition(2, QtKeepAnchor)
+    docEditor.setTextCursor(cursor)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    assert docEditor.getText() == "*\n"
+
+    # The marker is undone with the new line
+    docEditor.setPlainText("* One")
+    docEditor.setCursorPosition(5)
+    qtbot.keyClick(docEditor, QtKeyReturn, delay=KEY_DELAY)
+    assert docEditor.getText() == "* One\n* "
+    docEditor.docAction(nwDocAction.UNDO)
+    assert docEditor.getText() == "* One"
+
+
+@pytest.mark.gui
+def testGuiDocEditor_CursorVisibility(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the custom ensure cursor visible feature."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor = nwGUI.docEditor
 
     docEditor.setPlainText("### Scene\n\n" + "".join(["Text\n\n"] * 100))
     assert docEditor.cursorIsVisible() is True
 
+    vBar = docEditor.verticalScrollBar()
+    viewport = docEditor.viewport()
+    assert vBar is not None
+    assert viewport is not None
+
     # Scroll Down
     cursor = docEditor.textCursor()
     cursor.setPosition(605)
     docEditor.setTextCursor(cursor)
-    docEditor.verticalScrollBar().setValue(0)
-    assert docEditor.verticalScrollBar().value() == 0
+    vBar.setValue(0)
+    assert vBar.value() == 0
     docEditor.ensureCursorVisible(centre=False)
-    assert docEditor.verticalScrollBar().value() > 0
+    assert vBar.value() > 0
     assert docEditor.cursorIsVisible() is True
 
     # Scroll Up
     cursor = docEditor.textCursor()
     cursor.setPosition(0)
     docEditor.setTextCursor(cursor)
-    docEditor.verticalScrollBar().setValue(200)
-    assert docEditor.verticalScrollBar().value() > 100
+    vBar.setValue(200)
+    assert vBar.value() > 100
     docEditor.ensureCursorVisible(centre=False)
-    assert docEditor.verticalScrollBar().value() < 100
+    assert vBar.value() < 100
     assert docEditor.cursorIsVisible() is True
 
     # Centre Cursor
-    viewport = docEditor.viewport()
     cursor = docEditor.textCursor()
     cursor.setPosition(300)
     docEditor.setTextCursor(cursor)
-    docEditor.verticalScrollBar().setValue(0)
+    vBar.setValue(0)
     docEditor.ensureCursorVisible(centre=True)
     cRect = docEditor.cursorRect()
     cCentre = (cRect.top() + cRect.bottom()) // 2
@@ -3109,11 +3818,11 @@ def testGuiDocEditor_CursorVisibility(qtbot, monkeypatch, nwGUI, projPath, mockR
     # Centre Cursor, Already Visible
     # Even if the cursor is already visible but off-centre, centre=True
     # should still move it, rather than no-op like centre=False does
-    vBarAfterCentre = docEditor.verticalScrollBar().value()
-    docEditor.verticalScrollBar().setValue(vBarAfterCentre - 5)
+    vBarAfterCentre = vBar.value()
+    vBar.setValue(vBarAfterCentre - 5)
     assert docEditor.cursorIsVisible() is True
     docEditor.ensureCursorVisible(centre=True)
-    assert docEditor.verticalScrollBar().value() == vBarAfterCentre
+    assert vBar.value() == vBarAfterCentre
     cRect = docEditor.cursorRect()
     cCentre = (cRect.top() + cRect.bottom()) // 2
     assert abs(cCentre - viewport.height() // 2) <= 1
@@ -3122,7 +3831,13 @@ def testGuiDocEditor_CursorVisibility(qtbot, monkeypatch, nwGUI, projPath, mockR
 
 
 @pytest.mark.gui
-def testGuiDocEditor_ReplaceNextEdgeCases(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_ReplaceNextEdgeCases(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test defensive branches in replaceNext not covered by the main
     search test: replacing with match-case disabled, and a selection
     that doesn't match the last recorded find.
@@ -3131,7 +3846,7 @@ def testGuiDocEditor_ReplaceNextEdgeCases(qtbot, monkeypatch, nwGUI, projPath, m
 
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
     docSearch = docEditor.docSearch
 
@@ -3161,7 +3876,14 @@ def testGuiDocEditor_ReplaceNextEdgeCases(qtbot, monkeypatch, nwGUI, projPath, m
 
 
 @pytest.mark.gui
-def testGuiDocEditor_WordCounters(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_WordCounters(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test the word counter."""
     docEditor = nwGUI.docEditor
 
@@ -3169,13 +3891,13 @@ def testGuiDocEditor_WordCounters(qtbot, monkeypatch, nwGUI, projPath, ipsumText
         def __init__(self):
             self._runObj = None
 
-        def start(self, runObj, priority=0):
+        def start(self, runObj: QRunnable, priority: int = 0) -> None:
             self._runObj = runObj
 
         def runnable(self):
             return self._runObj
 
-        def waitForDone(self, msecs=-1):
+        def waitForDone(self, msecs: int = -1) -> bool:
             return True
 
         def clear(self):
@@ -3188,7 +3910,7 @@ def testGuiDocEditor_WordCounters(qtbot, monkeypatch, nwGUI, projPath, ipsumText
 
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    nwGUI.closeDocument()  # Opening the project auto-restores a document
+    nwGUI.docPanes.closeDocument()  # Opening the project auto-restores a document
 
     # Run on an empty document
     docEditor._runDocumentTasks()
@@ -3202,7 +3924,7 @@ def testGuiDocEditor_WordCounters(qtbot, monkeypatch, nwGUI, projPath, ipsumText
     assert docEditor.docFooter.wordsText.text() == "Words: 0 (+0)"
 
     # Open a document and populate it
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     SHARED.project.tree[C.hSceneDoc]._wordInit = 0  # type: ignore
     SHARED.project.tree[C.hSceneDoc]._charInit = 0  # type: ignore
     SHARED.project.tree[C.hSceneDoc]._wordCount = 0  # type: ignore
@@ -3290,7 +4012,14 @@ def testGuiDocEditor_WordCounters(qtbot, monkeypatch, nwGUI, projPath, ipsumText
 
 
 @pytest.mark.gui
-def testGuiDocEditor_Search(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_Search(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test the document editor search functionality."""
     monkeypatch.setattr(GuiDocEditor, "hasFocus", lambda *a: True)
 
@@ -3305,7 +4034,7 @@ def testGuiDocEditor_Search(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mock
         flags = 0 if case else re.IGNORECASE
         return [(m.start(), m.end()) for m in re.finditer(pat, source, flags)]
 
-    def setToggle(button, state: bool) -> None:
+    def setToggle(button: QAbstractButton, state: bool) -> None:
         """Click a checkable tool button until it reaches the wanted state."""
         if button.isChecked() != state:
             button.click()
@@ -3329,7 +4058,7 @@ def testGuiDocEditor_Search(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mock
         doc.writeDocument(content)
         SHARED.project.index.reIndexHandle(handle)
 
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor: GuiDocEditor = nwGUI.docEditor
     docSearch: GuiDocEditSearch = docEditor.docSearch
 
@@ -3613,7 +4342,7 @@ def testGuiDocEditor_Search(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mock
 
     # Replace Text
     # ============
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
 
     setToggle(docSearch.tbCase, True)
     setToggle(docSearch.tbWord, False)
@@ -3681,11 +4410,11 @@ def testGuiDocEditor_Search(qtbot, monkeypatch, nwGUI, projPath, ipsumText, mock
 
 
 @pytest.mark.gui
-def testGuiDocEditor_SearchAutoReplace(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocEditor_SearchAutoReplace(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test the auto-replace symbols feature of the search and replace boxes."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
 
     docEditor = nwGUI.docEditor
     docSearch: GuiDocEditSearch = docEditor.docSearch
@@ -3718,7 +4447,7 @@ def testGuiDocEditor_SearchAutoReplace(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_BigFixes(qtbot, nwGUI):
+def testGuiDocEditor_BigFixes(qtbot: QtBot, nwGUI: GuiMain):
     """Test specific bug fixes in the editor."""
     docEditor = nwGUI.docEditor
 
@@ -3735,593 +4464,19 @@ def testGuiDocEditor_BigFixes(qtbot, nwGUI):
 
 
 @pytest.mark.gui
-def testGuiDocEditor_Vim_EnableVimMode(qtbot, nwGUI, projPath, mockRnd):
-    """Test that enabling CONFIG.vimMode activates vim behavior."""
-    inputDelay = 2
-    buildTestProject(NWProject(), projPath)
-    nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc)
-
-    docEditor = nwGUI.docEditor
-    CONFIG.vimMode = True
-
-    def resetText():
-        """Reset test text."""
-        docEditor.setPlainText("Line1\nLine2\nLine3")
-        return docEditor.getText()
-
-    original_text = resetText()
-
-    # Normal mode: hjkl should NOT change text
-    for key in "hjkl":
-        qtbot.keyClick(docEditor, key, delay=inputDelay)
-        assert docEditor.getText() == original_text
-
-    # Enter insert mode with "i"
-    qtbot.keyClick(docEditor, "i", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "TEST", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape)
-
-    # Text must have changed now
-    new_text = docEditor.getText()
-    assert new_text != original_text
-    assert "TEST" in new_text
-
-
-@pytest.mark.gui
-def testGuiDocEditor_Vim_StateInsertModeNoOp(qtbot, nwGUI, projPath, mockRnd):
-    """Test that the vim state machine ignores command keys while in
-    INSERT mode, which is a state neither the NORMAL nor VISUAL mode
-    key handlers ever pass through.
-    """
-    buildTestProject(NWProject(), projPath)
-    nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc)
-    docEditor = nwGUI.docEditor
-
-    vim = docEditor._vim
-    vim.setMode(nwVimMode.INSERT)
-    vim.pushCommandKey("d")
-    assert vim.command == ""
-    vim.setCommand("d")
-    assert vim.command == ""
-
-
-@pytest.mark.gui
-def testGuiDocEditor_Vim_InsertMode(qtbot, nwGUI, projPath, mockRnd):
-    """Test vim hjkl movements and insert commands (i, I, A)."""
-    inputDelay = 2
-    buildTestProject(NWProject(), projPath)
-    nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc)
-
-    docEditor = nwGUI.docEditor
-    CONFIG.vimMode = True
-
-    def resetText():
-        """Reset test text."""
-        docEditor.setPlainText("Line1\nLine2\nLine3")
-        return docEditor.getText()
-
-    # Insert Mode
-    # ===========
-
-    # i: Insert before cursor
-    resetText()
-    qtbot.keyClick(docEditor, "i", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "X", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape)
-    assert "X" in docEditor.getText()
-
-    # I: Insert at beginning of line
-    resetText()
-    qtbot.keyClick(docEditor, QtKeyEscape)
-    qtbot.keyClick(docEditor, "h", delay=inputDelay)  # Move forward 1
-    qtbot.keyClick(docEditor, "h", delay=inputDelay)  # Move forward 1
-    qtbot.keyClick(docEditor, "I", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "START", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape)
-    lines = docEditor.getText().splitlines()
-    assert lines[0].startswith("START")
-
-    # A: Append at end of line
-    resetText()
-    qtbot.keyClick(docEditor, "A", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "END", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape)
-    lines = docEditor.getText().splitlines()
-    assert lines[0].endswith("END")
-
-    # o: Open new line below
-    resetText()
-    qtbot.keyClick(docEditor, "o", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "below", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape)
-    lines = docEditor.getText().splitlines()
-    assert "below" in lines[1]  # Inserted after Line1
-
-    # O: Open new line above
-    resetText()
-    qtbot.keyClick(docEditor, "O", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "above", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape)
-    lines = docEditor.getText().splitlines()
-    assert "above" in lines[0]  # Inserted before Line1
-
-    # INSERT MODE MOTIONS
-    # ===================
-
-    # i: Insert before cursor
-    resetText()
-    qtbot.keyClick(docEditor, "i", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "TEST", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape, delay=inputDelay)
-    assert "TEST" in docEditor.getText()
-
-    # aX: Append after cursor
-    resetText()
-    qtbot.keyClick(docEditor, "a", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "X", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape, delay=inputDelay)
-    assert "X" in docEditor.getText()
-
-    # New line below
-    resetText()
-    qtbot.keyClick(docEditor, "o", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "below", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape, delay=inputDelay)
-    lines = docEditor.getText().splitlines()
-    assert "below" in lines[1]
-
-    # New line above
-    resetText()
-    qtbot.keyClick(docEditor, "O", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "above", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape, delay=inputDelay)
-    lines = docEditor.getText().splitlines()
-    assert "above" in lines[0]
-
-
-@pytest.mark.gui
-def testGuiDocEditor_Vim_DeleteYankPaste(qtbot, nwGUI, projPath, mockRnd):
-    """Test vim delete (dd, x), yank (yy) and paste (p, P) commands."""
-    inputDelay = 2
-    buildTestProject(NWProject(), projPath)
-    nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc)
-
-    docEditor = nwGUI.docEditor
-    CONFIG.vimMode = True
-
-    def resetText():
-        """Reset test text."""
-        docEditor.setPlainText("Line1\nLine2\nLine3")
-        return docEditor.getText()
-
-    # p/P: Pasting with nothing yanked yet does nothing
-    resetText()
-    assert docEditor._vim.pasteFromInternal() == ""
-    docEditor.setCursorPosition(0)
-    qtbot.keyClicks(docEditor, "p", delay=inputDelay)
-    assert docEditor.getText() == "Line1\nLine2\nLine3"
-    qtbot.keyClicks(docEditor, "P", delay=inputDelay)
-    assert docEditor.getText() == "Line1\nLine2\nLine3"
-
-    # dd: Delete entire line
-    resetText()
-    docEditor.setCursorPosition(docEditor.getText().find("Line2"))
-    qtbot.keyClicks(docEditor, "dd", delay=inputDelay)
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines == ["Line1", "Line3"]
-
-    # x: Delete single character
-    resetText()
-    docEditor.setCursorPosition(0)
-    qtbot.keyClicks(docEditor, "x", delay=inputDelay)
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines[0] == "ine1"  # 'L' deleted
-
-    # p: Paste after current line
-    resetText()
-    line2_pos = docEditor.getText().find("Line2")
-    docEditor.setCursorPosition(line2_pos)
-    qtbot.keyClicks(docEditor, "yy", delay=inputDelay)  # Yank Line2
-    qtbot.keyClicks(docEditor, "p", delay=inputDelay)  # Paste after Line2
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines == ["Line1", "Line2", "Line2", "Line3"]
-
-    # P: Paste before current line (using Line3)
-    resetText()
-    line2_pos = docEditor.getText().find("Line2")
-    docEditor.setCursorPosition(line2_pos)
-    line3_pos = docEditor.getText().find("Line3")
-    docEditor.setCursorPosition(line3_pos)
-    qtbot.keyClicks(docEditor, "yy", delay=inputDelay)  # Yank Line3
-    docEditor.setCursorPosition(line2_pos)
-    qtbot.keyClicks(docEditor, "P", delay=inputDelay)  # Paste before Line2
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines == ["Line1", "Line3", "Line2", "Line3"]
-
-    # dw: Delete word (from Line1 up to next word boundary)
-    resetText()
-    docEditor.setCursorPosition(0)  # Start of Line1
-    qtbot.keyClicks(docEditor, "dw", delay=inputDelay)
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines == ["Line2", "Line3"]
-
-    # d$: Delete line
-    resetText()
-    docEditor.setCursorPosition(0)  # Start of Line1
-    qtbot.keyClicks(docEditor, "d$", delay=inputDelay)
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines == ["Line2", "Line3"]
-
-    # de: Delete word (from Line1 up to end of word boundary)
-    resetText()
-    line2_pos = docEditor.getText().find("Line2")
-    docEditor.setCursorPosition(line2_pos)
-    qtbot.keyClicks(docEditor, "de", delay=inputDelay)
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines == ["Line1", "Line3"]
-
-    # de: Delete word already at end of word
-    resetText()
-    line2_pos = docEditor.getText().find("Line2")
-    end_pos = docEditor.getText().find("Line2") + len("Line2")
-    docEditor.setCursorPosition(end_pos)
-    qtbot.keyClicks(docEditor, "de", delay=inputDelay)
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines == ["Line1", "Line2"]
-
-    # de: Already at the very end of the document, nowhere further to delete
-    docEditor.setPlainText("Line1")
-    end_pos = len(docEditor.getText())
-    docEditor.setCursorPosition(end_pos)
-    qtbot.keyClicks(docEditor, "de", delay=inputDelay)
-    assert docEditor.getText() == "Line1"
-
-    # db: Delete word back (from Line2 up to end of word boundary)
-    resetText()
-    docEditor.setCursorPosition(0)  # Start of Line1
-    qtbot.keyClicks(docEditor, "w", delay=inputDelay)  # End of line1
-    qtbot.keyClicks(docEditor, "db", delay=inputDelay)
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines == ["Line2", "Line3"]
-
-    # yw: Yank word (yank Line1)
-    resetText()
-    docEditor.setCursorPosition(0)  # Start of Line1
-    qtbot.keyClicks(docEditor, "yw", delay=inputDelay)
-    # Move to start of Line2 and paste
-    docEditor.setCursorPosition(docEditor.getText().find("Line2"))
-    qtbot.keyClicks(docEditor, "p", delay=inputDelay)
-    lines = list(filter(str.strip, docEditor.getText().splitlines()))
-    assert lines[0] == "Line1"
-    assert lines[1] == "Line2"
-    assert lines[2] == "Line1"
-    assert lines[3] == "Line3"
-
-
-@pytest.mark.gui
-def testGuiDocEditor_Vim_VisualMode(qtbot, nwGUI, projPath, mockRnd):
-    """Test vim visual mode selection, yank and paste."""
-    inputDelay = 2
-    buildTestProject(NWProject(), projPath)
-    nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc)
-
-    docEditor = nwGUI.docEditor
-    CONFIG.vimMode = True
-
-    def resetText():
-        """Reset test text."""
-        docEditor.setPlainText("Line1\nLine2\nLine3")
-        return docEditor.getText()
-
-    original_text = resetText()
-
-    # Visual mode with yy
-    resetText()
-    docEditor.setCursorPosition(docEditor.getText().find("Line3") + 1)  # Inside Line3
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)
-    qtbot.keyClick(docEditor, "j", delay=inputDelay)
-    qtbot.keyClick(docEditor, "h", delay=inputDelay)
-    qtbot.keyClick(docEditor, "k", delay=inputDelay)
-    qtbot.keyClick(docEditor, "l", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "y", delay=inputDelay)
-    qtbot.keyClick(docEditor, "p", delay=inputDelay)
-    text = docEditor.getText()
-    assert "Line3" in text or text.endswith("n")
-
-    # Line-wise visual mode (V) with yank and paste
-    resetText()
-    line2_pos = docEditor.getText().find("Line2")
-    docEditor.setCursorPosition(line2_pos)
-    qtbot.keyClick(docEditor, "V", delay=inputDelay)  # Line-wise visual mode
-    qtbot.keyClick(docEditor, "j", delay=inputDelay)
-    qtbot.keyClick(docEditor, "h", delay=inputDelay)
-    qtbot.keyClick(docEditor, "k", delay=inputDelay)
-    qtbot.keyClick(docEditor, "l", delay=inputDelay)
-    qtbot.keyClick(docEditor, "y", delay=inputDelay)  # Yank Line2
-    qtbot.keyClick(docEditor, "j", delay=inputDelay)  # Move to Line3
-    qtbot.keyClick(docEditor, "p", delay=inputDelay)  # Paste Line2 after Line3
-
-    lines = docEditor.getText().splitlines()
-    assert lines == ["Line1", "Line2", "Line3", "Line2"]
-
-    # Visual mode with w motion
-    resetText()
-    docEditor.setCursorPosition(0)  # start of Line1
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)  # Enter visual mode
-    qtbot.keyClicks(docEditor, "w", delay=inputDelay)  # Move by word
-    cursor_pos = docEditor.textCursor().position()
-    expected_pos = docEditor.getText().find("Line1") + len("Line1")
-    assert cursor_pos == expected_pos
-
-    # 0: Move to start of line
-    resetText()
-    line2_pos = docEditor.getText().find("Line2") + 3  # Middle of Line2
-    docEditor.setCursorPosition(line2_pos)
-    qtbot.keyClicks(docEditor, "0", delay=inputDelay)
-    cursor_pos = docEditor.textCursor().position()
-
-    # Start of Line2
-    expected_pos = docEditor.getText().find("Line2")
-    assert cursor_pos == expected_pos
-
-    # No-op command 'a': nothing happens
-    resetText()
-    line3_pos = docEditor.getText().find("Line3") + 2
-    docEditor.setCursorPosition(line3_pos)
-    text_before = docEditor.getText()
-    cursor_before = docEditor.textCursor().position()
-    qtbot.keyClicks(docEditor, "a", delay=inputDelay)
-    text_after = docEditor.getText()
-    cursor_after = docEditor.textCursor().position()
-
-    # Nothing should have changed
-    assert text_after == text_before
-    assert cursor_after == cursor_before
-
-    resetText()
-    start_pos = docEditor.getText().find("Line2") + 2  # Inside "Line2"
-    docEditor.setCursorPosition(start_pos)
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)  # Enter visual mode
-    qtbot.keyClicks(docEditor, "b", delay=inputDelay)
-    selected = docEditor.textCursor().selectedText()
-
-    # Should have selected from inside "Line2" back to its start
-    assert selected == "Li"
-
-    resetText()
-    start_pos = docEditor.getText().find("Line1")  # Start of "Line1"
-    docEditor.setCursorPosition(start_pos)
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)  # Enter visual mode
-    qtbot.keyClicks(docEditor, "e", delay=inputDelay)
-    selected = docEditor.textCursor().selectedText()
-    # Should have selected "Line1"
-    assert selected == "Line1"
-
-    docEditor.setPlainText("Line1 lineExtra Line2 Line3")
-    end_pos = docEditor.getText().find("Line1") + len("Line1") - 1
-    docEditor.setCursorPosition(end_pos)
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)  # Enter visual mode
-    qtbot.keyClicks(docEditor, "e", delay=inputDelay)
-    selected = docEditor.textCursor().selectedText().strip()
-    # Should have selected whitespace + "lineExtra"
-    assert "lineExtra" in selected
-
-    # At the very end of the document, there's nowhere further to extend to
-    docEditor.setPlainText("Line1")
-    end_pos = len(docEditor.getText())
-    docEditor.setCursorPosition(end_pos)
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)  # Enter visual mode
-    qtbot.keyClicks(docEditor, "e", delay=inputDelay)
-    assert docEditor.textCursor().position() == end_pos
-
-    resetText()
-    # Visual select all with ggVG
-    qtbot.keyClicks(docEditor, "g", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "g", delay=inputDelay)  # Go to start
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)  # Enter visual mode
-    qtbot.keyClick(docEditor, "G", delay=inputDelay)  # Extend to end of file
-
-    # Delete selection
-    qtbot.keyClick(docEditor, "d", delay=inputDelay)
-    assert docEditor.getText().strip() == ""  # Everything deleted
-
-    # Undo
-    qtbot.keyClick(docEditor, "u", delay=inputDelay)
-    restored_text = docEditor.getText()
-    assert restored_text == original_text
-
-    # Move back to start
-    qtbot.keyClicks(docEditor, "g", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "g", delay=inputDelay)
-    cursor_pos = docEditor.textCursor().position()
-    assert restored_text[cursor_pos] == "L"  # First char restored
-
-    # Visual select all with Gvgg
-    qtbot.keyClick(docEditor, "G", delay=inputDelay)  # End of file
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)  # Enter visual mode
-    qtbot.keyClicks(docEditor, "g", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "g", delay=inputDelay)  # Extend select to start
-
-    # Delete selection
-    qtbot.keyClick(docEditor, "d", delay=inputDelay)
-    assert docEditor.getText().strip() == ""  # Everything deleted
-
-    # Undo
-    qtbot.keyClick(docEditor, "u", delay=inputDelay)
-    restored_text = docEditor.getText()
-    assert restored_text == original_text
-
-    # Move back to start
-    qtbot.keyClicks(docEditor, "g", delay=inputDelay)
-    qtbot.keyClicks(docEditor, "g", delay=inputDelay)
-    cursor_pos = docEditor.textCursor().position()
-    assert restored_text[cursor_pos] == "L"  # First char restored
-
-    # VISUAL MODE MOTIONS
-    resetText()
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)  # Enter visual
-    qtbot.keyClick(docEditor, "l", delay=inputDelay)  # Extend selection
-    qtbot.keyClick(docEditor, "y", delay=inputDelay)  # Yank selection
-    qtbot.keyClick(docEditor, "p", delay=inputDelay)  # Paste it
-    assert "Li" in docEditor.getText()
-
-    resetText()
-    qtbot.keyClick(docEditor, "v", delay=inputDelay)
-    qtbot.keyClick(docEditor, "$", delay=inputDelay)  # Extend to EOL
-    qtbot.keyClick(docEditor, "d", delay=inputDelay)  # Delete
-    line0 = docEditor.getText().splitlines()[0]
-    assert line0.strip() == ""  # first line emptied
-
-    # VISUAL LINE MODE MOTIONS
-    resetText()
-    line2_pos = docEditor.getText().find("Line2")
-    docEditor.setCursorPosition(line2_pos)
-    qtbot.keyClick(docEditor, "V", delay=inputDelay)  # Vline mode
-    qtbot.keyClick(docEditor, "j", delay=inputDelay)  # Extend
-    qtbot.keyClick(docEditor, "y", delay=inputDelay)  # Yank
-    qtbot.keyClick(docEditor, "p", delay=inputDelay)  # Paste
-    lines = docEditor.getText().splitlines()
-    assert lines.count("Line2") > 1
-
-    resetText()
-    qtbot.keyClick(docEditor, "V", delay=inputDelay)  # Vline select
-    qtbot.keyClick(docEditor, "G", delay=inputDelay)  # Extend to EOF
-    qtbot.keyClick(docEditor, "d", delay=inputDelay)  # Delete all
-    assert docEditor.getText().strip() == ""
-
-
-@pytest.mark.gui
-def testGuiDocEditor_Vim_NormalMode(qtbot, nwGUI, projPath, mockRnd):
-    """Test vim NORMAL mode commands."""
-    inputDelay = 2
-    buildTestProject(NWProject(), projPath)
-    nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc)
-
-    docEditor = nwGUI.docEditor
-    CONFIG.vimMode = True
-
-    def resetText():
-        """Reset test text."""
-        docEditor.setPlainText("Line1\nLine2\nLine3")
-        return docEditor.getText()
-
-    originalText = resetText()
-
-    # NORMAL MODE: hjkl should NOT modify text
-    for key in "hjkl":
-        qtbot.keyClick(docEditor, key)
-        assert docEditor.getText() == originalText
-
-    # b: Move to beginning of word
-    resetText()
-    start_pos = docEditor.getText().find("Line2") + 2  # Inside the word
-    docEditor.setCursorPosition(start_pos)
-    qtbot.keyClicks(docEditor, "b", delay=inputDelay)
-    cursorPos = docEditor.textCursor().position()
-    expectedPos = docEditor.getText().find("Line2")  # Beginning of Line2
-    assert cursorPos == expectedPos
-
-    # e: Move to end of current word
-    resetText()
-    start_pos = docEditor.getText().find("Line1")  # Start of Line1
-    docEditor.setCursorPosition(start_pos)
-    qtbot.keyClicks(docEditor, "e", delay=inputDelay)
-    cursorPos = docEditor.textCursor().position()
-    expectedPos = docEditor.getText().find("Line1") + len("Line1")
-    assert cursorPos == expectedPos
-
-    # e: Move to end of next word when already at end
-    docEditor.setPlainText("Line1 lineExtra Line2 Line3")
-    end_pos = docEditor.getText().find("Line1") + len("Line1")
-    docEditor.setCursorPosition(end_pos)
-    qtbot.keyClicks(docEditor, "e", delay=inputDelay)
-    cursorPos = docEditor.textCursor().position()
-    expectedPos = docEditor.getText().find("lineExtra") + len("lineExtra")
-    assert cursorPos == expectedPos
-
-    # e: At the very end of the document, there's nowhere further to move
-    docEditor.setPlainText("Line1")
-    end_pos = len(docEditor.getText())
-    docEditor.setCursorPosition(end_pos)
-    qtbot.keyClicks(docEditor, "e", delay=inputDelay)
-    assert docEditor.textCursor().position() == end_pos
-
-    # $: Move to end of first line
-    docEditor.setCursorPosition(0)  # Start of Line1
-    qtbot.keyClick(docEditor, "$", delay=inputDelay)
-    cursorPos = docEditor.textCursor().position()
-    text = docEditor.getText().splitlines()[0]
-    assert cursorPos == len(text)  # Cursor at end of first line
-
-    # a: Move right and enter insert mode
-    docEditor.setCursorPosition(0)  # Start of Line1 again
-    qtbot.keyClick(docEditor, "a", delay=inputDelay)
-    # Cursor should have moved one character right
-    cursorPos = docEditor.textCursor().position()
-    assert cursorPos == 1
-    # Insert some text
-    qtbot.keyClicks(docEditor, "TEST", delay=inputDelay)
-    qtbot.keyClick(docEditor, QtKeyEscape, delay=inputDelay)
-    newText = docEditor.getText()
-    assert newText.startswith(("LTESSTine1", "LTESTine1"))
-
-    # w: Move forward by word
-    resetText()
-    docEditor.setCursorPosition(0)  # Start of "Line1"
-    qtbot.keyClicks(docEditor, "w", delay=inputDelay)
-    cursorPos = docEditor.textCursor().position()
-    # Cursor should now be at end of "Line1"
-    expectedPos = docEditor.getText().find("Line1") + len("Line1")
-    assert cursorPos == expectedPos
-
-    # NORMAL MODE MOTIONS
-    resetText()
-    qtbot.keyClick(docEditor, "l", delay=inputDelay)  # Move right
-    assert docEditor.textCursor().position() == 1
-
-    resetText()
-    qtbot.keyClick(docEditor, "0", delay=inputDelay)  # Beginning of line
-    assert docEditor.textCursor().position() == 0
-
-    resetText()
-    docEditor.setCursorPosition(0)  # Start of Line1
-    qtbot.keyClick(docEditor, "h", delay=inputDelay)
-
-    # Move otherwise "$" is somehow not captured always
-    qtbot.keyClick(docEditor, "l", delay=inputDelay)
-
-    qtbot.keyClick(docEditor, "$", delay=inputDelay)  # End of line
-    cursorPos = docEditor.textCursor().position()
-    assert cursorPos == len("Line1")
-
-    resetText()
-    qtbot.keyClick(docEditor, "g", delay=inputDelay)
-    qtbot.keyClick(docEditor, "g", delay=inputDelay)  # Top of buffer
-    assert docEditor.textCursor().position() == 0
-
-    qtbot.keyClick(docEditor, "z", delay=inputDelay)
-    qtbot.keyClick(docEditor, "z", delay=inputDelay)  # Center view
-
-    resetText()
-    qtbot.keyClick(docEditor, "G", delay=inputDelay)  # Bottom of buffer
-    cursorPos = docEditor.textCursor().position()
-    assert cursorPos == len(docEditor.getText())
-
-
-@pytest.mark.gui
-def testGuiDocEditor_BigDocLifecycle(qtbot, nwGUI, projPath, ipsumText, mockRnd):
+def testGuiDocEditor_BigDocLifecycle(
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    ipsumText: list[str],
+    mockRnd: MockRnd,
+):
     """Test that loading, navigating, and refreshing a large document
     queues cursor moves and keeps the editor read-only until settled.
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     docEditor = nwGUI.docEditor
 
     unit = "\n\n".join(ipsumText)
@@ -4329,8 +4484,8 @@ def testGuiDocEditor_BigDocLifecycle(qtbot, nwGUI, projPath, ipsumText, mockRnd)
     text = "### Big Doc\n\n" + "\n\n".join([unit] * reps)
 
     docEditor.replaceText(text)
-    nwGUI.saveDocument()
-    nwGUI.closeDocument()
+    nwGUI.docPanes.saveDocument()
+    nwGUI.docPanes.closeDocument()
 
     cursPos = len(text) - 500
     item = SHARED.project.tree[C.hSceneDoc]

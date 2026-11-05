@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<novelWriterXML appVersion="26.2rc1" hexVersion="0x260200c1" fileVersion="1.6" fileRevision="0" timeStamp="2026-07-20 17:28:47">
+<novelWriterXML appVersion="26.2rc1" hexVersion="0x260200c1" fileVersion="1.6" fileRevision="1" timeStamp="2026-07-20 17:28:47">
   <project id="d0f3fe10-c6e6-4310-8bfd-181eb4224eed" saveCount="2369" autoCount="429" editTime="1000" indexRevision="0">
     <name>Sample Project</name>
     <author>Jane Smith</author>
   </project>
   <settings>
     <doBackup>no</doBackup>
-    <language>en_GB</language>
+    <language rtl="no">en_GB</language>
     <spellChecking auto="yes">None</spellChecking>
     <projectTarget date="2026-08-20" last="0" mode="words">100000</projectTarget>
     <dailyTarget auto="no" last="0" date="2026-07-20">1000</dailyTarget>
@@ -17,9 +17,9 @@
       <entry key="editor">636b6aa9b697b</entry>
       <entry key="viewer">636b6aa9b697b</entry>
       <entry key="novel">7031beac91f75</entry>
-      <entry key="outline">7031beac91f75</entry>
+      <entry key="story">7031beac91f75</entry>
     </lastHandle>
-    <autoReplace>
+    <autoReplace ignoreCase="no">
       <entry key="A">B</entry>
       <entry key="B">E</entry>
       <entry key="C">D</entry>

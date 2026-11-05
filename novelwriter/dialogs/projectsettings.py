@@ -2,8 +2,9 @@
 novelWriter - GUI Project Settings
 ==================================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -49,9 +50,9 @@ from PyQt6.QtWidgets import (
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import formatFileFilter, qtAddAction, qtLambda, simplified
-from novelwriter.constants import nwLabels, trConst, trStats
+from novelwriter.constants import nwLabels, trConst, trUnit
 from novelwriter.core.status import CUSTOM_COL, ItemStatus, StatusEntry
-from novelwriter.enum import nwItemClass, nwStandardButton, nwStatusShape, nwToolButton
+from novelwriter.enum import nwItemClass, nwStandardButton, nwStatusShape, nwStdUnit, nwToolButton
 from novelwriter.extensions.configlayout import NColorLabel, NFixedPage, NScrollableForm
 from novelwriter.extensions.modified import NComboBox, NDialog, NIconButton, NSpinBox
 from novelwriter.extensions.pagedsidebar import NPagedSideBar
@@ -200,12 +201,13 @@ class GuiProjectSettings(NDialog):
         projName = self.settingsPage.projName.text()
         projAuthor = self.settingsPage.projAuthor.text()
         projLang = self.settingsPage.projLang.currentData()
+        isRTL = self.settingsPage.isRTL.isChecked()
         spellLang = self.settingsPage.spellLang.currentData()
         doBackup = not self.settingsPage.noBackup.isChecked()
 
         project.data.setName(projName)
         project.data.setAuthor(projAuthor)
-        project.setProjectLang(projLang)
+        project.setProjectLang(projLang, isRTL)
         project.data.setSpellLang(spellLang)
         project.data.setDoBackup(doBackup)
 
@@ -229,9 +231,11 @@ class GuiProjectSettings(NDialog):
             logger.debug("Updating importance labels")
             project.updateStatus("i", self.importPage.getNewList())
 
+        autoReplaceIgnoreCase = self.replacePage.swtIgnoreCase.isChecked()
+
         if self.replacePage.changed:
             logger.debug("Updating auto-replace settings")
-            project.data.setAutoReplace(self.replacePage.getNewList())
+            project.data.setAutoReplace(self.replacePage.getNewList(), autoReplaceIgnoreCase)
 
         self.newProjectSettingsReady.emit()
         self.close()
@@ -326,6 +330,15 @@ class _SettingsPage(NScrollableForm):
             self.tr("Disable backup on close"),
             self.noBackup,
             self.tr("Overrides main preferences."),
+        )
+
+        # RTL Support
+        self.isRTL = NSwitch(self)
+        self.isRTL.setChecked(data.isRTL)
+        self.addRow(
+            self.tr("Enable right-to-left text support"),
+            self.isRTL,
+            self.tr("Improves RTL text handling in editor and manuscript."),
         )
 
         self.finalise()
@@ -425,7 +438,7 @@ class _GoalsPage(NScrollableForm):
     @pyqtSlot(bool)
     def _updateCountMode(self, checked: bool) -> None:
         """Update the unit label when the count mode is changed."""
-        unit = trStats("Characters" if checked else "Words")
+        unit = trUnit(nwStdUnit.CHARS if checked else nwStdUnit.WORDS)
         self.setUnitText("targetCount", unit)
         self.setUnitText("dailyGoal", unit)
 
@@ -829,6 +842,7 @@ class _ReplacePage(NFixedPage):
         self._changed = False
 
         wCol0 = SHARED.project.options.getInt("GuiProjectSettings", "replaceColW", 130)
+        iPx = SHARED.theme.baseIconHeight
 
         # Title
         self.pageTitle = NColorLabel(
@@ -862,6 +876,14 @@ class _ReplacePage(NFixedPage):
         self.delButton = SHARED.theme.getFlatButton(nwToolButton.REMOVE, self)
         self.delButton.clicked.connect(self._onEntryDeleted)
 
+        # Settings
+        self.swtIgnoreCase = NSwitch(self, height=iPx)
+        self.swtIgnoreCase.setChecked(SHARED.project.data.autoReplaceIgnoreCase)
+        self.swtIgnoreCase.toggled.connect(self._onIgnoreCaseToggled)
+
+        self.lblIgnoreCase = QLabel(self.tr("Ignore case for keywords"), self)
+        self.lblIgnoreCase.setBuddy(self.swtIgnoreCase)
+
         # Edit Form
         self.editKey = QLineEdit(self)
         self.editKey.setPlaceholderText(self.tr("Select item to edit"))
@@ -880,6 +902,12 @@ class _ReplacePage(NFixedPage):
         self.listControls.addWidget(self.delButton)
         self.listControls.addStretch(1)
 
+        self.optsBox = QHBoxLayout()
+        self.optsBox.addWidget(self.lblIgnoreCase)
+        self.optsBox.addWidget(self.swtIgnoreCase)
+        self.optsBox.setSpacing(12)
+        self.optsBox.addStretch(1)
+
         self.editBox = QHBoxLayout()
         self.editBox.addWidget(self.editKey, 4)
         self.editBox.addWidget(self.editValue, 5)
@@ -887,6 +915,7 @@ class _ReplacePage(NFixedPage):
         self.mainBox = QVBoxLayout()
         self.mainBox.addWidget(self.listBox, 1)
         self.mainBox.addLayout(self.editBox, 0)
+        self.mainBox.addLayout(self.optsBox, 0)
 
         self.innerBox = QHBoxLayout()
         self.innerBox.addLayout(self.mainBox)
@@ -936,6 +965,11 @@ class _ReplacePage(NFixedPage):
         if item := self._getSelectedItem():
             item.setText(self.C_REPL, text)
             self._changed = True
+
+    @pyqtSlot(bool)
+    def _onIgnoreCaseToggled(self, state: bool) -> None:
+        """Mark the settings as changed."""
+        self._changed = True
 
     @pyqtSlot()
     def _onSelectionChanged(self) -> None:

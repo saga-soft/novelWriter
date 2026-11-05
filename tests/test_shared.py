@@ -2,8 +2,9 @@
 novelWriter - Shared Data Class Tests
 =====================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@ from __future__ import annotations
 
 import sys
 
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -30,6 +32,7 @@ import pytest
 from PyQt6.QtCore import QThreadPool, QUrl
 from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtWidgets import QFileDialog, QWidget
+from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG
 from novelwriter.core.project import NWProject
@@ -73,7 +76,7 @@ def testSharedData_Init():
 
 
 @pytest.mark.base
-def testSharedData_Functions(monkeypatch):
+def testSharedData_Functions(monkeypatch: pytest.MonkeyPatch):
     """Test SharedData class functions."""
     shared = SharedData()
 
@@ -87,7 +90,7 @@ def testSharedData_Functions(monkeypatch):
 
 
 @pytest.mark.base
-def testSharedData_Projects(monkeypatch, caplog, fncPath):
+def testSharedData_Projects(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, fncPath: Path):
     """Test SharedData handling of projects."""
     project = NWProject()
     buildTestProject(project, fncPath)
@@ -147,7 +150,7 @@ def testSharedData_Projects(monkeypatch, caplog, fncPath):
 
 
 @pytest.mark.base
-def testSharedData_EdgeCases(qtbot, monkeypatch, mockGUI):
+def testSharedData_EdgeCases(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain):
     """Test defensive branches in SharedData not covered by the other
     functional tests: spell check no-ops, progress bar and thread pool
     calls with no GUI, and a signal proxy for a stale project.
@@ -193,7 +196,12 @@ def testSharedData_EdgeCases(qtbot, monkeypatch, mockGUI):
 
 
 @pytest.mark.base
-def testSharedData_Alerts(qtbot, monkeypatch, caplog, mockGUI):
+def testSharedData_Alerts(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    mockGUI: MockGuiMain,
+):
     """Test SharedData class alert helper functions."""
     monkeypatch.setattr(_GuiAlert, "exec", lambda *a: None)
     monkeypatch.setattr(_GuiAlert, "finalState", True)

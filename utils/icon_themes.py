@@ -2,8 +2,9 @@
 novelWriter - Icon Theme Utils
 ==============================
 
-This file is a part of novelWriter
-Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,31 +29,45 @@ import urllib.request
 import zipfile
 
 from pathlib import Path
+from urllib.parse import quote
 from xml.etree import ElementTree as ET
 
-from utils.common import ROOT_DIR, log
+from utils.common import ROOT_DIR, log, readEnvFile
 
 UTILS = Path(__file__).parent
 ET.register_namespace("", "http://www.w3.org/2000/svg")
 
+# Material
+# Repo: https://github.com/google/material-design-icons
+# Website: https://fonts.google.com/icons
+
+# Lucide
+# Repo: https://github.com/lucide-icons/lucide
+# Website: https://lucide.dev/
+
+# Fluent UI
+# Repo: https://github.com/microsoft/fluentui-system-icons
+# Website: https://fluenticon.com/
+
 ICON_SOURCES = {
     "material": "https://github.com/google/material-design-icons.git",
-    "font_awesome": "https://github.com/FortAwesome/Font-Awesome/archive/refs/tags/7.3.1.zip",
-    "remix": "https://github.com/Remix-Design/RemixIcon/archive/refs/tags/v4.8.0.zip",
-    "lucide": "https://github.com/lucide-icons/lucide/archive/refs/tags/1.24.0.zip",
+    "lucide": "https://github.com/lucide-icons/lucide/archive/refs/tags/1.49.0.zip",
+    "fluentui": "https://github.com/microsoft/fluentui-system-icons/archive/refs/tags/1.1.343.zip",
 }
 ICON_EXTRACT = {
     "material": "material-design-icons",
-    "font_awesome": "Font-Awesome-7.3.1",
-    "remix": "RemixIcon-4.8.0",
-    "lucide": "lucide-1.24.0",
+    "lucide": "lucide-1.49.0",
+    "fluentui": "fluentui-system-icons-1.1.343",
 }
+
+# fmt: off
 ICONS = [
-    # Remember to also update tests/files/all_icons.json for test coverage
+    # Remember to also update tests/_files/all_icons.json for test coverage
     "alert_error",
     "alert_info",
     "alert_question",
     "alert_warn",
+
     "cls_archive",
     "cls_character",
     "cls_custom",
@@ -65,21 +80,39 @@ ICONS = [
     "cls_timeline",
     "cls_trash",
     "cls_world",
+
+    "key_pov",
+    "key_focus",
+    "key_mention",
+
+    "cmn_general",
+    "cmn_note",
+    "cmn_story",
+
     "prj_folder",
     "prj_document",
     "prj_title",
     "prj_chapter",
     "prj_scene",
     "prj_note",
+
+    "fmt_align_center",
+    "fmt_align_left",
+    "fmt_align_right",
     "fmt_bold",
     "fmt_italic",
+    "fmt_link",
+    "fmt_list_o",
+    "fmt_list_o_rtl",
+    "fmt_list_u",
     "fmt_mark",
     "fmt_size",
     "fmt_strike",
     "fmt_subscript",
     "fmt_superscript",
-    "fmt_underline",
     "fmt_toolbar",
+    "fmt_underline",
+
     "search",
     "search_auto",
     "search_cancel",
@@ -90,20 +123,23 @@ ICONS = [
     "search_regex",
     "search_replace",
     "search_word",
+
     "bullet-off",
     "bullet-on",
     "unfold-hide",
     "unfold-show",
+
     "sb_build",
-    "sb_details",
     "sb_novel",
-    "sb_outline",
     "sb_project",
     "sb_search",
     "sb_stats",
+    "sb_story",
+
     "theme_light",
     "theme_dark",
     "theme_auto",
+
     "btn_ok",
     "btn_cancel",
     "btn_yes",
@@ -121,6 +157,7 @@ ICONS = [
     "btn_build",
     "btn_print",
     "btn_preview",
+
     "add",
     "bookmarks",
     "browse",
@@ -146,11 +183,12 @@ ICONS = [
     "font",
     "import",
     "language",
-    "lines",
     "link",
     "list",
     "margin_bottom",
+    "margin_inner",
     "margin_left",
+    "margin_outer",
     "margin_right",
     "margin_top",
     "maximise",
@@ -172,7 +210,10 @@ ICONS = [
     "timer",
     "unchecked",
     "view",
+    "zoom_in",
+    "zoom_out",
 ]
+# fmt: on
 
 
 def _loadMap(name: str) -> dict[str, str]:
@@ -198,7 +239,12 @@ def _writeThemeFile(path: Path, name: str, author: str, license_: str, icons: di
         out.write("\n")
         out.write("# Icons\n")
         for key, svg in icons.items():
-            icon = ET.tostring(svg).decode().replace("\n", "")
+            for elem in svg.iter():
+                if elem.text and not elem.text.strip():
+                    elem.text = None
+                if elem.tail and not elem.tail.strip():
+                    elem.tail = None
+            icon = ET.tostring(svg).decode()
             out.write(f"icon:{key:<15s} = {icon}\n")
         log(f"- [cg]Wrote:[e] {len(icons)} icons")
         log(f"- Target: {path.relative_to(UTILS.parent)}")
@@ -243,7 +289,7 @@ def processMaterialIcons(workDir: Path, iconsDir: Path, jobs: dict) -> None:
 
         icons: dict[str, ET.Element] = {}
         iconSrc = srcRepo / "symbols" / "web"
-        for key, icon in _loadMap("material_symbols").items():
+        for key, icon in _loadMap("material").items():
             if kind:
                 fileName = f"{icon}_{kind}_24px.svg"
             else:
@@ -260,55 +306,7 @@ def processMaterialIcons(workDir: Path, iconsDir: Path, jobs: dict) -> None:
 
         target = iconsDir / f"{file}.icons"
         _writeThemeFile(target, name, "Google Inc", "Apache 2.0", icons)
-
-    log("")
-
-
-def processFontAwesome(workDir: Path, iconsDir: Path, jobs: dict) -> None:
-    """Process Font Awesome icons of a given spec and write output file."""
-    srcRepo = workDir / ICON_EXTRACT["font_awesome"]
-    if not srcRepo.is_dir():
-        _downloadIconPack(workDir, "font_awesome")
-
-    for file, job in jobs.items():
-        name: str = job["name"]
-        log(f"[b]Processing:[e] {name}")
-
-        icons: dict[str, ET.Element] = {}
-        iconSrc = srcRepo / "svgs"
-        for key, value in _loadMap("font_awesome").items():
-            icon, _, forced = value.partition(":")
-            iconSolid = iconSrc / "solid" / f"{icon}.svg"
-            iconRegular = iconSrc / "regular" / f"{icon}.svg"
-            if forced == "regular":
-                iconFile = iconRegular
-            elif forced == "solid" or iconSolid.is_file():
-                iconFile = iconSolid
-            elif iconRegular.is_file():
-                iconFile = iconRegular
-            else:
-                log(f"[cr]Not Found:[e] {icon}.svg")
-                continue
-
-            if iconFile.is_file():
-                svg = ET.fromstring(iconFile.read_text(encoding="utf-8"))
-                viewbox = [int(x) for x in svg.get("viewBox", "").split()]
-                viewbox = [viewbox[2] // 2 - 256, 0, 512, 512]
-                for elem in svg.iter():
-                    elem.attrib.pop("fill", None)
-                svg.set("viewBox", " ".join(str(x) for x in viewbox))
-                svg.set("fill", "#000000")
-                svg.set("height", "128")
-                svg.set("width", "128")
-                icons[key] = svg
-            else:
-                log(f"[cr]Not Found:[e] {icon}.svg")
-                continue
-
-        target = iconsDir / f"{file}.icons"
-        _writeThemeFile(target, name, "Fonticons Inc", "CC BY 4.0", icons)
-
-    log("")
+        log("")
 
 
 def processLucide(workDir: Path, iconsDir: Path, jobs: dict) -> None:
@@ -328,6 +326,7 @@ def processLucide(workDir: Path, iconsDir: Path, jobs: dict) -> None:
             if iconFile.is_file():
                 svg = ET.fromstring(iconFile.read_text(encoding="utf-8"))
                 ET.indent(svg, space="")
+                svg.set("viewBox", "-1 -1 26 26")  # Pad to match Material icons
                 svg.set("fill", "none")
                 svg.set("stroke", "#000000")
                 svg.set("height", "128")
@@ -338,54 +337,83 @@ def processLucide(workDir: Path, iconsDir: Path, jobs: dict) -> None:
 
         target = iconsDir / f"{file}.icons"
         _writeThemeFile(target, name, "Cole Bemis, Lucide Contributors", "ISC/MIT License", icons)
+        log("")
 
-    log("")
 
-
-def processRemix(workDir: Path, iconsDir: Path, jobs: dict) -> None:
-    """Process Remix icons of a given spec and write output file."""
-    srcRepo = workDir / ICON_EXTRACT["remix"]
+def processFluentUIIcons(workDir: Path, iconsDir: Path, jobs: dict) -> None:
+    """Process Fluent UI icons of a given spec and write output file."""
+    srcRepo = workDir / ICON_EXTRACT["fluentui"]
     if not srcRepo.is_dir():
-        _downloadIconPack(workDir, "remix")
+        _downloadIconPack(workDir, "fluentui")
 
+    listFluentUIIcons(workDir)
     for file, job in jobs.items():
         name: str = job["name"]
-        style = "fill" if job["filled"] else "line"
+        style: str = job["style"]
 
         log(f"[b]Processing:[e] {name}")
 
         icons: dict[str, ET.Element] = {}
-        iconSrc = srcRepo / "icons"
-        iconGroups = [x for x in iconSrc.iterdir() if x.is_dir()]
-        for key, icon in _loadMap("remix").items():
-            if icon.endswith(("-line", "-fill")):
-                fileName = f"{icon}.svg"
-            else:
-                fileName = f"{icon}-{style}.svg"
-            for group in iconGroups:
-                iconFile = group / fileName
-                if iconFile.is_file():
-                    break
-            else:
-                fileName = f"{icon}.svg"
-                for group in iconGroups:
-                    iconFile = group / fileName
-                    if iconFile.is_file():
-                        break
-                else:
-                    log(f"[cr]Not Found:[e] {fileName}")
-                    continue
+        iconSrc = srcRepo / "assets"
 
-            svg = ET.fromstring(iconFile.read_text(encoding="utf-8"))
-            svg.set("fill", "#000000")
-            svg.set("height", "128")
-            svg.set("width", "128")
-            icons[key] = svg
+        for key, icon in _loadMap("fluentui").items():
+            if ":" in icon:
+                icon, _, select = icon.partition(":")
+            else:
+                select = style
+            uname = icon.lower().replace(" ", "_")
+            iconFile = None
+            for size in (24, 28, 20, 32):
+                if (sized := iconSrc / icon / "SVG" / f"ic_fluent_{uname}_{size}_{select}.svg").is_file():
+                    iconFile = sized
+                    break
+            if iconFile and iconFile.is_file():
+                svg = ET.fromstring(iconFile.read_text(encoding="utf-8"))
+                for elem in svg.iter():
+                    elem.attrib.pop("fill", None)
+                svg.set("fill", "#000000")
+                svg.set("height", "128")
+                svg.set("width", "128")
+                icons[key] = svg
+            else:
+                log(f"[cr]Not Found:[e] {icon} -> {iconFile}")
 
         target = iconsDir / f"{file}.icons"
-        _writeThemeFile(target, name, "Remix Icon", "Apache 2.0", icons)
+        _writeThemeFile(target, name, "Microsoft", "MIT", icons)
+        log("")
 
-    log("")
+
+def listFluentUIIcons(workDir: Path) -> None:
+    """Write an HTML page listing all Fluent UI icons."""
+    srcRepo = workDir / ICON_EXTRACT["fluentui"]
+    if not srcRepo.is_dir():
+        _downloadIconPack(workDir, "fluentui")
+
+    cells = []
+    for folder in sorted((srcRepo / "assets").iterdir()):
+        uname = folder.name.lower().replace(" ", "_")
+        imgs = ""
+        for style in ("regular", "filled"):
+            iconFile = folder / "SVG" / f"ic_fluent_{uname}_24_{style}.svg"
+            for size in (24, 28, 20, 32, 16, 48, 12, 10):
+                if (sized := folder / "SVG" / f"ic_fluent_{uname}_{size}_{style}.svg").is_file():
+                    iconFile = sized
+                    break
+            if style == "regular" or iconFile.is_file():
+                imgs += f'<img src="{quote(iconFile.relative_to(workDir).as_posix())}">'
+        cells.append(f"<div>{imgs}<br>{folder.name}</div>")
+
+    target = workDir / "fluentui.html"
+    target.write_text(
+        "<!DOCTYPE html>\n<html><head><meta charset='utf-8'><title>Fluent UI Icons</title>\n"
+        "<style>\n"
+        "body {background: #fff; display: grid; grid-template-columns: repeat(auto-fill, 140px); gap: 4px;}\n"
+        "div {border: 1px solid #000; height: 100px; padding: 4px; text-align: center; font-size: 11px;}\n"
+        "img {width: 48px; height: 48px; margin: 8px;}\n"
+        "</style></head><body>\n" + "\n".join(cells) + "\n</body></html>\n",
+        encoding="utf-8",
+    )
+    log(f"[cg]Wrote:[e] {len(cells)} icons to {target}")
 
 
 def main(args: argparse.Namespace) -> None:
@@ -393,14 +421,23 @@ def main(args: argparse.Namespace) -> None:
     log("")
     log("[b]Build Icon Themes[e]")
     log("[b]=================[e]")
+
+    if args.work_dir:
+        workDir = Path(args.work_dir).absolute()
+    elif cacheDir := readEnvFile().get("CACHE_DIR"):
+        workDir = Path(cacheDir).expanduser().absolute() / "icons"
+    else:
+        workDir = ROOT_DIR / "build_icons"
+
+    workDir.mkdir(parents=True, exist_ok=True)
+
+    log(f"Work Dir: {workDir}")
     log("")
 
-    workDir = Path(args.work_dir).absolute()
-    workDir.mkdir(exist_ok=True)
     iconsDir = ROOT_DIR / "novelwriter" / "assets" / "icons"
 
     style = args.style
-    if style in ("all", "default", "material"):
+    if style in ("all", "default", "free", "material"):
         processMaterialIcons(
             workDir,
             iconsDir,
@@ -444,18 +481,7 @@ def main(args: argparse.Namespace) -> None:
             },
         )
 
-    if style in ("all", "optional", "free", "font_awesome"):
-        processFontAwesome(
-            workDir,
-            iconsDir,
-            {
-                "font_awesome": {
-                    "name": "Font Awesome 7",
-                },
-            },
-        )
-
-    if style in ("all", "optional", "free", "lucide"):
+    if style in ("all", "default", "free", "lucide"):
         processLucide(
             workDir,
             iconsDir,
@@ -466,18 +492,18 @@ def main(args: argparse.Namespace) -> None:
             },
         )
 
-    if style in ("all", "optional", "non-free", "remix"):
-        processRemix(
+    if style in ("all", "default", "free", "fluentui"):
+        processFluentUIIcons(
             workDir,
             iconsDir,
             {
-                "remix_outline": {
-                    "name": "Remix Icon - Outline",
-                    "filled": False,
+                "fluentui_regular": {
+                    "name": "Fluent UI - Regular",
+                    "style": "regular",
                 },
-                "remix_filled": {
-                    "name": "Remix Icon - Filled",
-                    "filled": True,
+                "fluentui_filled": {
+                    "name": "Fluent UI - Filled",
+                    "style": "filled",
                 },
             },
         )

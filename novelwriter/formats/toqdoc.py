@@ -2,8 +2,9 @@
 novelWriter - QTextDocument Converter
 =====================================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,15 +39,17 @@ from PyQt6.QtGui import (
     QTextDocument,
     QTextFrameFormat,
     QTextLength,
+    QTextListFormat,
     QTextTableCellFormat,
     QTextTableFormat,
 )
 from PyQt6.QtPrintSupport import QPrinter
 
 from novelwriter import __version__
+from novelwriter.common import textDirection
 from novelwriter.constants import nwUnicode
 from novelwriter.formats.shared import BlockFmt, BlockTyp, T_Formats, TextFmt, stripEscape
-from novelwriter.formats.tokenizer import HEADING_BLOCKS, META_BLOCKS, Tokenizer
+from novelwriter.formats.tokenizer import HEADING_BLOCKS, LIST_BLOCKS, META_BLOCKS, Tokenizer
 from novelwriter.types import (
     QtAlignAbsolute,
     QtAlignCenter,
@@ -56,6 +59,7 @@ from novelwriter.types import (
     QtFontBold,
     QtFontNormal,
     QtKeepAnchor,
+    QtLayoutRTL,
     QtMoveAnchor,
     QtMoveEnd,
     QtPageBreakAfter,
@@ -106,8 +110,11 @@ class ToQTextDocument(Tokenizer):
         "_hWeight",
         "_iHead",
         "_init",
+        "_listFmtO",
+        "_listFmtU",
         "_mHead",
         "_mIndent",
+        "_mList",
         "_mMeta",
         "_mSep",
         "_mText",
@@ -155,12 +162,15 @@ class ToQTextDocument(Tokenizer):
         self._fHead: dict[BlockTyp, int] = {}
         self._iHead: dict[BlockTyp, int] = {}
         self._mText: tuple[float, float] = (1.0, 1.0)
+        self._mList: tuple[float, float] = (1.0, 1.0)
         self._mMeta: tuple[float, float] = (1.0, 1.0)
         self._mSep: tuple[float, float] = (1.0, 1.0)
         self._mIndent = 1.0
         self._tIndent = 1.0
         self._blockFmt = QTextBlockFormat()
         self._charFmt = QTextCharFormat()
+        self._listFmtU = QTextListFormat()
+        self._listFmtO = QTextListFormat()
 
     ##
     #  Properties
@@ -175,7 +185,17 @@ class ToQTextDocument(Tokenizer):
     #  Setters
     ##
 
-    def setPageLayout(self, width: float, height: float, top: float, bottom: float, left: float, right: float) -> None:
+    def setPageLayout(
+        self,
+        width: float,
+        height: float,
+        top: float,
+        bottom: float,
+        left: float,
+        right: float,
+        gutter: float,
+        doublePages: bool,
+    ) -> None:
         """Set the document page size and margins in millimetres."""
         self._pageSize = QPageSize(QSizeF(width, height), QPageSize.Unit.Millimeter)
         self._pageMargins = QMarginsF(left, top, right, bottom)
@@ -265,20 +285,34 @@ class ToQTextDocument(Tokenizer):
         }
 
         self._mText = (fPx * self._marginText[0], fPx * self._marginText[1])
+        self._mList = (fPx * self._marginList[0], fPx * self._marginList[1])
         self._mMeta = (fPx * self._marginMeta[0], fPx * self._marginMeta[1])
         self._mSep = (fPx * self._marginSep[0], fPx * self._marginSep[1])
 
         self._mIndent = mPx * 2.0
         self._tIndent = mPx * self._firstWidth
 
+        self._document.setIndentWidth(self._mIndent)
+
+        option = self._document.defaultTextOption()
+        option.setTabStopDistance(mPx * self._tabSize)
+        self._document.setDefaultTextOption(option)
+
         # Text Formats
         self._blockFmt.setTopMargin(self._mText[0])
         self._blockFmt.setBottomMargin(self._mText[1])
-        self._blockFmt.setAlignment(QtAlignAbsolute)
+        if not self._isRTL:
+            self._blockFmt.setAlignment(QtAlignAbsolute)
         self._blockFmt.setLineHeight(100.0 * self._lineHeight, QtPropLineHeight)
 
         self._charFmt.setBackground(QtTransparent)
         self._charFmt.setForeground(self._theme.text)
+
+        self._listFmtU.setStyle(QTextListFormat.Style.ListDisc)
+        self._listFmtU.setIndent(1)
+
+        self._listFmtO.setStyle(QTextListFormat.Style.ListDecimal)
+        self._listFmtO.setIndent(1)
 
         self._init = True
 
@@ -291,25 +325,29 @@ class ToQTextDocument(Tokenizer):
         cursor = QTextCursor(self._document)
         cursor.movePosition(QtMoveEnd)
 
+        qList = None
         for tType, tMeta, tText, tFormat, tStyle in self._blocks:
             bFmt = QTextBlockFormat(self._blockFmt)
             if tType in META_BLOCKS:
                 bFmt.setTopMargin(self._mMeta[0])
                 bFmt.setBottomMargin(self._mMeta[1])
+            elif tType in LIST_BLOCKS:
+                bFmt.setTopMargin(self._mList[0])
+                bFmt.setBottomMargin(self._mList[1])
             elif tType == BlockTyp.SEP:
                 bFmt.setTopMargin(self._mSep[0])
                 bFmt.setBottomMargin(self._mSep[1])
 
             if tStyle & BlockFmt.LEFT:
-                bFmt.setAlignment(QtAlignLeft)
+                bFmt.setAlignment(QtAlignAbsolute | QtAlignLeft)
             elif tStyle & BlockFmt.RIGHT:
-                bFmt.setAlignment(QtAlignRight)
+                bFmt.setAlignment(QtAlignAbsolute | QtAlignRight)
             elif tStyle & BlockFmt.CENTRE:
                 bFmt.setAlignment(QtAlignCenter)
             elif tStyle & BlockFmt.JUSTIFY:
                 bFmt.setAlignment(QtAlignJustify)
 
-            if tStyle & BlockFmt.PBB:
+            if tStyle & BlockFmt.BREAK_B:
                 self._insertNewPageMarker(cursor)
                 bFmt.setPageBreakPolicy(QtPageBreakBefore)
             if tStyle & BlockFmt.PBA:
@@ -329,6 +367,15 @@ class ToQTextDocument(Tokenizer):
 
             if tType == BlockTyp.TEXT:
                 newBlock(cursor, bFmt)
+                self._insertFragments(tText, tFormat, cursor, self._charFmt)
+
+            elif tType in LIST_BLOCKS:
+                newBlock(cursor, bFmt)
+                cursor.setBlockCharFormat(self._charFmt)
+                if qList is None or tStyle & BlockFmt.LIST_S:
+                    qList = cursor.createList(self._listFmtO if tType == BlockTyp.LIST_O else self._listFmtU)
+                else:
+                    qList.add(cursor.block())
                 self._insertFragments(tText, tFormat, cursor, self._charFmt)
 
             elif tType in HEADING_BLOCKS:
@@ -403,6 +450,18 @@ class ToQTextDocument(Tokenizer):
                     cursor.insertText(f"{index}. ", cFmt)
                     self._insertFragments(*content, cursor, self._charFmt)
 
+        # Blocks without strong characters would otherwise fall back to LTR
+        if self._isRTL:
+            cursor = QTextCursor(self._document)
+            bFmt = QTextBlockFormat()
+            bFmt.setLayoutDirection(QtLayoutRTL)
+            block = self._document.firstBlock()
+            while block.isValid():
+                if not textDirection(block.text()):
+                    cursor.setPosition(block.position())
+                    cursor.mergeBlockFormat(bFmt)
+                block = block.next()
+
         self._document.blockSignals(False)
 
     ##
@@ -414,6 +473,8 @@ class ToQTextDocument(Tokenizer):
         cFmt = QTextCharFormat(dFmt)
         temp = text.replace("\n", nwUnicode.U_LSEP)
         start = 0
+        marked = False
+        error = False
         primary: QColor | None = None
         for pos, fmt, data in tFmt:
             # Insert buffer with previous format
@@ -437,9 +498,11 @@ class ToQTextDocument(Tokenizer):
             elif fmt == TextFmt.U_E:
                 cFmt.setFontUnderline(self._dUnderline)
             elif fmt == TextFmt.M_B:
-                cFmt.setBackground(self._theme.highlight)
+                marked = True
+                cFmt.setBackground(self._theme.error if error else self._theme.highlight)
             elif fmt == TextFmt.M_E:
-                cFmt.setBackground(QtTransparent)
+                marked = False
+                cFmt.setBackground(self._theme.error if error else QtTransparent)
             elif fmt == TextFmt.SUP_B:
                 cFmt.setVerticalAlignment(QtVAlignSuper)
             elif fmt == TextFmt.SUP_E:
@@ -494,6 +557,12 @@ class ToQTextDocument(Tokenizer):
             elif fmt == TextFmt.FIELD and (field := data.partition(":")[2]):
                 self._usedFields.append((cursor.position(), field))
                 cursor.insertText("0", cFmt)
+            elif fmt == TextFmt.ERR_B:
+                error = True
+                cFmt.setBackground(self._theme.error)
+            elif fmt == TextFmt.ERR_E:
+                error = False
+                cFmt.setBackground(self._theme.highlight if marked else QtTransparent)
 
             # Move pos for next pass
             start = pos

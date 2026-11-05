@@ -2,8 +2,9 @@
 novelWriter - GUI Doc Split Dialog
 ==================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,6 +23,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import logging
+
+from typing import Any
 
 from PyQt6.QtCore import pyqtSlot
 from PyQt6.QtWidgets import (
@@ -58,7 +61,7 @@ class GuiDocSplit(NDialog):
         logger.debug("Create: GuiDocSplit")
         self.setObjectName("GuiDocSplit")
 
-        self._data = {}
+        self._data: dict[str, Any] = {}
         self._text = []
 
         self.setWindowTitle(self.tr("Split Document"))

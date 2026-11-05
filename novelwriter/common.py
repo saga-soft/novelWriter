@@ -2,8 +2,9 @@
 novelWriter - Common Functions
 ==============================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,9 +35,9 @@ from typing import TYPE_CHECKING, Any, Literal, TypeGuard, TypeVar
 from urllib.parse import urljoin
 from urllib.request import pathname2url
 
-from PyQt6.QtCore import QCoreApplication, QLocale, QMimeData, QUrl
+from PyQt6.QtCore import QCoreApplication, QLocale, QMimeData, Qt, QUrl
 from PyQt6.QtGui import QAction, QDesktopServices, QFont, QFontDatabase, QFontInfo, QIcon
-from PyQt6.QtWidgets import QMenu, QMenuBar, QWidget
+from PyQt6.QtWidgets import QMenu, QMenuBar, QStyle, QWidget
 
 from novelwriter.constants import nwConst, nwLabels, nwQuotes, nwUnicode, trConst
 from novelwriter.enum import nwItemClass, nwItemLayout, nwItemType
@@ -45,6 +46,8 @@ from novelwriter.error import logException
 if TYPE_CHECKING:
     from collections.abc import Callable, Generator
     from types import MethodType
+
+    from novelwriter.types import T_Num
 
 logger = logging.getLogger(__name__)
 
@@ -201,9 +204,9 @@ def hexToInt(value: Any, default: int = 0) -> int:
     return default
 
 
-def minmax(value: int, minVal: int, maxVal: int) -> int:
-    """Check that an value is between min and max value (inclusive)."""
-    return min(maxVal, max(minVal, value))
+def minmax(value: T_Num, minimum: T_Num, maximum: T_Num) -> T_Num:
+    """Check that a value is between min and max value (inclusive)."""
+    return min(maximum, max(minimum, value))
 
 
 def checkIntTuple(value: int, valid: tuple | list | set, default: int) -> int:
@@ -382,6 +385,18 @@ def elide(text: str, length: int) -> str:
     if len(text) > (cut := max(4, length)):
         return f"{text[: cut - 4].rstrip()} ..."
     return text
+
+
+def textDirection(text: str) -> Literal["ltr", "rtl", ""]:
+    """Return the direction of the first strong character in a text,
+    or an empty string if there is none.
+    """
+    for c in text:
+        if (bidi := unicodedata.bidirectional(c)) == "L":
+            return "ltr"
+        elif bidi in ("R", "AL"):
+            return "rtl"
+    return ""
 
 
 def yesNo(value: int | bool | None) -> Literal["yes", "no"]:
@@ -615,6 +630,13 @@ def qtAddMenu(parent: QMenuBar | QMenu, label: str) -> QMenu:
     menu = QMenu(label, parent)
     parent.addMenu(menu)
     return menu
+
+
+def qtVisualAlign(widget: QWidget, align: Qt.AlignmentFlag) -> Qt.AlignmentFlag:
+    """Map an alignment to the widget's layout direction. Labels
+    otherwise align by the direction of their text.
+    """
+    return QStyle.visualAlignment(widget.layoutDirection(), align)
 
 
 def encodeMimeHandles(mimeData: QMimeData, handles: list[str]) -> None:

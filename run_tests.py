@@ -15,6 +15,7 @@ if __name__ == "__main__":
     """Parse command line options and run the commands."""
     parser = argparse.ArgumentParser(usage="run_tests.py [--flags]")
     parser.add_argument("-o", action="store_true", help="Run off screen")
+    parser.add_argument("-v", type=int, default=3, help="Verbosity level (0-3)")
     parser.add_argument("-r", action="store_true", help="Generate xml coverage report")
     parser.add_argument("--html", action="store_true", help="Generate html coverage report")
     parser.add_argument("-t", action="store_true", help="Generate terminal coverage report")
@@ -39,7 +40,17 @@ if __name__ == "__main__":
     else:
         cmd = [sys.executable, "-m"]
 
-    cmd += ["pytest", "-vv"]
+    cmd += ["pytest"]
+    match args.v:
+        case 0:
+            cmd += ["-q"]
+        case 1:
+            pass
+        case 2:
+            cmd += ["-v"]
+        case 3:
+            cmd += ["-vv"]
+
     if args.o:
         env["QT_QPA_PLATFORM"] = "offscreen"
     if args.failed:

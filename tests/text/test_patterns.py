@@ -2,8 +2,9 @@
 novelWriter - Text Patterns Tests
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -64,6 +65,8 @@ def testTextPatterns_Urls():
         "http://www.www.www.example.com/",
         "https://example.com",
         "https://www.example.com/",
+        "file:///path/to/file.txt",
+        "file://localhost/path/to/file.txt",
     ]
     invalid = [
         "hppt://example.com/",
@@ -71,6 +74,7 @@ def testTextPatterns_Urls():
         "http:/example.com/",
         "http://www example com/",
         "http://www\texample\tcom/",
+        "file:/path/to/file.txt",
     ]
 
     for test in valid:
@@ -334,7 +338,7 @@ def testTextPatterns_DialogueStyle():
     # Closed
     # ======
 
-    CONFIG.allowOpenDial = False
+    CONFIG.allowOpenDialog = False
     regEx = REGEX_PATTERNS.dialogStyle
     assert regEx is not None
 
@@ -382,7 +386,7 @@ def testTextPatterns_DialogueStyle():
     # Open
     # ====
 
-    CONFIG.allowOpenDial = True
+    CONFIG.allowOpenDialog = True
     regEx = REGEX_PATTERNS.dialogStyle
     assert regEx is not None
 
@@ -476,7 +480,7 @@ def testTextPatterns_DialoguePlain():
     CONFIG.fmtDQuoteClose = '"'
 
     CONFIG.dialogStyle = 3
-    CONFIG.allowOpenDial = False
+    CONFIG.allowOpenDialog = False
     regEx = REGEX_PATTERNS.dialogStyle
     assert regEx is not None
 

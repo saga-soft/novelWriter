@@ -11,6 +11,11 @@ shortcuts. Most of them are also listed in the application's user interface.
 
    On MacOS, replace :kbd:`Ctrl` with :kbd:`Cmd`.
 
+.. note::
+
+   Shortcuts marked with (*) are remapped when Vim Mode is enabled and no longer work as listed in
+   the tables below. See :ref:`docs_features_vim_mode` for more details.
+
 
 Main Window Shortcuts
 =====================
@@ -34,7 +39,7 @@ Main Window Shortcuts
    ":kbd:`Ctrl+Shift+T`", "Switch focus to the outline view"
    ":kbd:`Ctrl+Shift+W`", "Close the current project"
    ":kbd:`Shift+F1`",     "Open the local user manual (PDF) if it is available"
-   ":kbd:`Shift+F6`",     "Open the **Project Details** dialog"
+   ":kbd:`Shift+F8`",     "Toggle tree pane visibility"
 
 
 Project Tree Shortcuts
@@ -53,7 +58,7 @@ Project Tree Shortcuts
    ":kbd:`Ctrl+L`",         "Open the **Quick Links** menu"
    ":kbd:`Ctrl+N`",         "Open the **Create New Item** menu"
    ":kbd:`Ctrl+O`",         "Open the selected document in the editor"
-   ":kbd:`Ctrl+R`",         "Open the selected document in the viewer"
+   ":kbd:`Ctrl+R`",         "Open the selected document in the viewer (*)"
    ":kbd:`Ctrl+Up`",        "Move selected item one step up in the tree"
    ":kbd:`Ctrl+Down`",      "Move selected item one step down in the tree"
    ":kbd:`Ctrl+Shift+Del`", "Move the selected item to Trash"
@@ -116,7 +121,7 @@ Other Editor Shortcuts
    ":kbd:`Ctrl+A`",            "Select all text in the document"
    ":kbd:`Ctrl+C`",            "Copy selected text to clipboard"
    ":kbd:`Ctrl+K`",            "Activate the insert commands (see list in :ref:`docs_features_shortcuts_insert`)"
-   ":kbd:`Ctrl+R`",            "Open or reload the current document in the viewer"
+   ":kbd:`Ctrl+R`",            "Open or reload the current document in the viewer (*)"
    ":kbd:`Ctrl+S`",            "Save the current document"
    ":kbd:`Ctrl+V`",            "Paste text from clipboard to cursor position"
    ":kbd:`Ctrl+W`",            "Close the current document"
@@ -157,7 +162,7 @@ a key or key combination for the inserted content.
    ":kbd:`Ctrl+K`, :kbd:`_`",           "Insert a long dash (em dash)"
    ":kbd:`Ctrl+K`, :kbd:`.`",           "Insert an ellipsis"
    ":kbd:`Ctrl+K`, :kbd:`'`",           "Insert a modifier apostrophe"
-   ":kbd:`Ctrl+K`, :kbd:`*`",           "Insert a list bullet"
+   ":kbd:`Ctrl+K`, :kbd:`*`",           "Insert a bullet symbol"
    ":kbd:`Ctrl+K`, :kbd:`%`",           "Insert a per mille symbol"
    ":kbd:`Ctrl+K`, :kbd:`~`",           "Insert a figure dash (same width as a number)"
    ":kbd:`Ctrl+K`, :kbd:`−`",           "Insert a short dash (en dash)"
@@ -205,4 +210,4 @@ Document Viewer Shortcuts
    ":kbd:`Ctrl+-`",       "Zoom out"
    ":kbd:`Ctrl+_`",       "Zoom out"
    ":kbd:`Ctrl+Shift+A`", "Select all text in the current paragraph"
-   ":kbd:`Ctrl+Shift+R`", "Close the document viewer"
+   ":kbd:`Ctrl+Shift+R`", "Close the document viewer (*)"

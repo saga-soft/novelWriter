@@ -2,8 +2,9 @@
 novelWriter - Formats Shared
 ============================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,6 +35,7 @@ ESCAPES = {
     r"\_": "_",
     r"\[": "[",
     r"\]": "]",
+    r"\#": "#",
     r"\ ": "",
 }
 RX_ESC = re.compile("|".join([re.escape(k) for k in ESCAPES]), flags=re.DOTALL)
@@ -62,6 +64,7 @@ class TextDocumentTheme:
     optional: QColor = QColor(66, 113, 174)
     dialog: QColor = QColor(66, 113, 174)
     altdialog: QColor = QColor(129, 55, 9)
+    error: QColor = QColor(255, 160, 160)
 
 
 # Enums
@@ -76,6 +79,7 @@ class TextFmt(IntEnum):
     text block.
     """
 
+    NONE = 0  # No format
     B_B = 1  # Begin bold
     B_E = 2  # End bold
     I_B = 3  # Begin italics
@@ -101,6 +105,8 @@ class TextFmt(IntEnum):
     FNOTE = 23  # Footnote marker
     FIELD = 24  # Data field
     STRIP = 25  # Strip the format code
+    ERR_B = 26  # Begin error marker
+    ERR_E = 27  # End error marker
 
 
 class BlockTyp(IntEnum):
@@ -117,13 +123,15 @@ class BlockTyp(IntEnum):
     HEAD3 = 6  # Heading 3 or Section
     HEAD4 = 7  # Heading 4
     TEXT = 8  # Text line
-    SEP = 9  # Scene separator
-    HRULE = 10  # Horizontal rule
-    SKIP = 11  # Paragraph break
-    SUMMARY = 12  # Synopsis/short comment
-    NOTE = 13  # Note
-    COMMENT = 14  # Comment
-    KEYWORD = 15  # Tag/reference keywords
+    LIST_U = 9  # List item
+    LIST_O = 10  # Ordered list item
+    SEP = 11  # Scene separator
+    HRULE = 12  # Horizontal rule
+    SKIP = 13  # Paragraph break
+    SUMMARY = 14  # Synopsis/short comment
+    NOTE = 15  # Note
+    COMMENT = 16  # Comment
+    KEYWORD = 17  # Tag/reference keywords
 
 
 class BlockFmt(Flag):
@@ -139,14 +147,18 @@ class BlockFmt(Flag):
     JUSTIFY = 0x0008  # Justified
     PBB = 0x0010  # Page break before
     PBA = 0x0020  # Page break after
-    Z_TOP = 0x0040  # Zero top margin
-    Z_BTM = 0x0080  # Zero bottom margin
-    IND_L = 0x0100  # Left indentation
-    IND_R = 0x0200  # Right indentation
-    IND_T = 0x0400  # Text indentation
+    HBB = 0x0040  # Header page break before
+    Z_TOP = 0x0080  # Zero top margin
+    Z_BTM = 0x0100  # Zero bottom margin
+    IND_L = 0x0200  # Left indentation
+    IND_R = 0x0400  # Right indentation
+    IND_T = 0x0800  # Text indentation
+    LIST_S = 0x1000  # List start
+    LIST_E = 0x2000  # List end
 
     # Masks
     ALIGNED = LEFT | RIGHT | CENTRE | JUSTIFY
+    BREAK_B = PBB | HBB
 
 
 # Types

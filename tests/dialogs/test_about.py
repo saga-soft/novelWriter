@@ -2,8 +2,9 @@
 novelWriter - About Dialog Tests
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,13 +28,15 @@ import pytest
 
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QMessageBox
+from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
 from novelwriter.dialogs.about import GuiAbout
+from novelwriter.guimain import GuiMain
 
 
 @pytest.mark.gui
-def testGuiAbout_NWDialog(qtbot, monkeypatch, nwGUI):
+def testGuiAbout_NWDialog(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain):
     """Test the novelWriter about dialogs."""
     monkeypatch.setattr(GuiAbout, "exec", lambda *a: None)
 
@@ -55,7 +58,7 @@ def testGuiAbout_NWDialog(qtbot, monkeypatch, nwGUI):
 
 
 @pytest.mark.gui
-def testGuiAbout_QtDialog(monkeypatch, nwGUI):
+def testGuiAbout_QtDialog(monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain):
     """Test the Qt about dialogs."""
     monkeypatch.setattr(QMessageBox, "aboutQt", lambda *a, **k: None)
 

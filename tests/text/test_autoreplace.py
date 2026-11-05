@@ -2,8 +2,9 @@
 novelWriter - GUI TextAutoReplace Tests
 =======================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@ import pytest
 
 from PyQt6.QtGui import QTextCursor, QTextDocument
 from PyQt6.QtWidgets import QLineEdit
+from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG
 from novelwriter.constants import nwUnicode
@@ -167,7 +169,7 @@ def testTextAutoReplace_Process():
 
 
 @pytest.mark.gui
-def testTextAutoReplace_LineEdit(qtbot):
+def testTextAutoReplace_LineEdit(qtbot: QtBot):
     """Test the line edit auto-replace functionality."""
     CONFIG.fmtDQuoteOpen = nwUnicode.U_LAQUO
     CONFIG.fmtDQuoteClose = nwUnicode.U_RAQUO

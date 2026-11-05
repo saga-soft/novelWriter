@@ -2,8 +2,9 @@
 novelWriter - GUI Document Editor
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ from PyQt6.QtCore import (
     QRect,
     Qt,
     QTimer,
+    QUrl,
     QVariant,
     pyqtSignal,
     pyqtSlot,
@@ -71,11 +73,13 @@ from novelwriter.common import (
     qtLambda,
     qtWeakLambda,
     stripUnsafe,
+    textDirection,
     transferCase,
 )
 from novelwriter.constants import nwConst, nwKeyWords, nwShortcode, nwStyles, nwUnicode
 from novelwriter.core.document import ProjectDocument
 from novelwriter.dialogs.editlabel import GuiEditLabel
+from novelwriter.dialogs.editlink import GuiEditLink
 from novelwriter.editor.completer import CommandCompleter
 from novelwriter.editor.editordocument import GuiTextDocument
 from novelwriter.editor.editsearch import GuiDocEditSearch
@@ -86,6 +90,7 @@ from novelwriter.editor.highlighter import BLOCK_META, BLOCK_TITLE
 from novelwriter.editor.hovercard import GuiDocHoverCard
 from novelwriter.editor.runnables import T_TextCheckPayload, TextCheckDispatcher, WordCounterDispatcher
 from novelwriter.editor.textblock import T_TextCheckList, TextBlockData
+from novelwriter.editor.vim import EditorVimMode
 from novelwriter.enum import (
     nwChange,
     nwComment,
@@ -100,6 +105,7 @@ from novelwriter.extensions.eventfilters import WheelEventFilter
 from novelwriter.formats.fromqdoc import FromQTextDocument
 from novelwriter.text.autoreplace import TextAutoReplace
 from novelwriter.text.formats import processHeading
+from novelwriter.text.patterns import REGEX_PATTERNS
 from novelwriter.tools.lipsum import GuiLipsum
 from novelwriter.types import (
     QAnimDeleteWhenStopped,
@@ -123,23 +129,13 @@ from novelwriter.types import (
     QtModNone,
     QtModShift,
     QtMoveAnchor,
-    QtMoveDown,
     QtMoveEnd,
-    QtMoveEndOfLine,
-    QtMoveEndOfWord,
     QtMoveLeft,
-    QtMoveNextChar,
-    QtMoveNextWord,
-    QtMovePreviousWord,
     QtMoveRight,
-    QtMoveStart,
-    QtMoveStartOfLine,
-    QtMoveUp,
     QtScrollAlwaysOff,
     QtScrollAsNeeded,
     QtSelectBlock,
     QtSelectDocument,
-    QtSelectLine,
     QtSelectWord,
     QtTransparent,
     QtWidgetShortcut,
@@ -154,6 +150,13 @@ T_SelCache = dict[int, tuple[T_TextCheckList, T_Selections]]
 
 MOVE_KEYS = (QtKeyLeft, QtKeyRight, QtKeyUp, QtKeyDown, QtKeyPageUp, QtKeyPageDown)
 ENTER_KEYS = (QtKeyReturn, QtKeyEnter)
+BLOCK_TEXT_ONLY = (
+    nwDocAction.ALIGN_L,
+    nwDocAction.ALIGN_C,
+    nwDocAction.ALIGN_R,
+    nwDocAction.INDENT_L,
+    nwDocAction.INDENT_R,
+)
 
 
 class _SelectAction(Enum):
@@ -235,8 +238,9 @@ class GuiDocEditor(QTextEdit):
         "_trSpellSuggest",
         "_trSplitDoc",
         "_trViewTag",
-        "_vim",
+        "_vimMode",
         "_vpMargin",
+        "_wheelDelta",
         "_zoomIn",
         "_zoomOut",
         "_zoomReset",
@@ -280,6 +284,7 @@ class GuiDocEditor(QTextEdit):
         self._docChanged = False  # Flag for changed status of document
         self._docHandle = None  # The handle of the open document
         self._vpMargin = 0  # The editor viewport margin, set during init
+        self._wheelDelta = 0  # Accumulated Ctrl+Scroll wheel delta
 
         # Document Variables
         self._lastEdit = 0.0  # Timestamp of last edit
@@ -355,7 +360,15 @@ class GuiDocEditor(QTextEdit):
 
         # Connect Widget Signals
         self.docHeader.closeDocumentRequest.connect(self._closeCurrentDocument)
+        self.docHeader.gotoLineRequest.connect(self.setCursorLine)
+        self.docHeader.requestProjectItemSelected.connect(self.requestProjectItemSelected)
+        self.docHeader.toggleFocusModeRequest.connect(self.toggleFocusModeRequest)
+        self.docHeader.toggleSearchRequest.connect(self.toggleSearch)
         self.docHeader.toggleToolBarRequest.connect(self._toggleToolBarVisibility)
+        self.docFooter.zoomInRequest.connect(self.zoomIn)
+        self.docFooter.zoomOutRequest.connect(self.zoomOut)
+        self.docFooter.zoomResetRequest.connect(self.zoomReset)
+        self.docFooter.editOptionsChanged.connect(self._editOptionsChanged)
         self.docToolBar.requestDocAction.connect(self.docAction)
 
         # Context Menu
@@ -450,8 +463,8 @@ class GuiDocEditor(QTextEdit):
         self.searchVisible = self.docSearch.isVisible
         self.changeFocusState = self.docHeader.changeFocusState
 
-        # Vim State for vimMode
-        self._vim = VimState()
+        # Vim Mode
+        self._vimMode: EditorVimMode | None = None
 
         # Finalise
         self.updateSyntaxColors()
@@ -582,6 +595,11 @@ class GuiDocEditor(QTextEdit):
                 selection.format = self._formatErrFormat
         self._applyExtraSelections()
 
+    def updateReplaceKeys(self) -> None:
+        """Rehighlight the document if the auto-replace keys changed."""
+        if self._docHandle and self._qDocument.syntaxHighlighter.updateReplaceKeys():
+            self._qDocument.syntaxHighlighter.rehighlight()
+
     def initEditor(self) -> None:
         """Initialise or re-initialise the editor with the user's
         settings. This function is both called when the editor is
@@ -607,17 +625,9 @@ class GuiDocEditor(QTextEdit):
         self.initViewport()
 
         # Also set the document text options for the document text flow
-        options = QTextOption()
-        if CONFIG.doJustify:
-            options.setAlignment(QtAlignJustify)
-        if CONFIG.showTabsNSpaces:
-            options.setFlags(options.flags() | QTextOption.Flag.ShowTabsAndSpaces)
-        if CONFIG.showLineEndings:
-            options.setFlags(options.flags() | QTextOption.Flag.ShowLineAndParagraphSeparators)
-        self._qDocument.setDefaultTextOption(options)
+        self._applyTextOptions()
 
         # Refresh sizes
-        self.setTabStopDistance(CONFIG.tabWidth)
         self.setCursorWidth(CONFIG.cursorWidth)
         self._spellSelections.clear()
         self._formatSelections.clear()
@@ -643,8 +653,7 @@ class GuiDocEditor(QTextEdit):
         else:
             self.clearEditor()
 
-        # Refresh Vim Mode
-        self.setVimMode(nwVimMode.NORMAL)
+        self._initVimMode()
 
     def initViewport(self) -> None:
         """Initialise the settings of the editor viewport."""
@@ -674,7 +683,7 @@ class GuiDocEditor(QTextEdit):
             self.docHeader.setHandle(self._docHandle)
             self.docSearch.setAutoReplaceEnabled(CONFIG.doReplace)
         if updateVimMode:
-            self.setVimMode(nwVimMode.NORMAL)
+            self._initVimMode()
 
     def loadText(self, tHandle: str, tLine: int | None = None) -> bool:
         """Load text from a document into the editor. If we have an I/O
@@ -734,6 +743,8 @@ class GuiDocEditor(QTextEdit):
         self.setDocumentChanged(False)
         self._qDocument.clearUndoRedoStacks()
         self.docToolBar.setVisible(CONFIG.showEditToolBar)
+        if self._vimMode:
+            self._vimMode.setVimMode(nwVimMode.NORMAL)
 
         # Process State Changes
         SHARED.project.data.setLastHandle(tHandle, "editor")
@@ -833,19 +844,26 @@ class GuiDocEditor(QTextEdit):
 
         tB = self.frameWidth()
         tW = wW - 2 * tB - sW
-        tH = self.docHeader.height()
-        fH = self.docFooter.height()
+        tH = self.docHeader.heightHint()
+        fH = self.docFooter.heightHint()
         fY = wH - fH - tB - sH
         self.docHeader.setGeometry(tB, tB, tW, tH)
         self.docFooter.setGeometry(tB, fY, tW, fH)
-        self.docToolBar.move(0, tH)
+        if CONFIG.rtlMode:
+            dW = self.docToolBar.sizeHint().width()
+            self.docToolBar.move(wW - dW, tH)
+        else:
+            self.docToolBar.move(0, tH)
 
         rH = 0
         if self.docSearch.isVisible():
             rH = self.docSearch.height()
             rW = self.docSearch.width()
-            rL = wW - sW - rW - 2 * tB
-            self.docSearch.move(rL, 2 * tB)
+            if CONFIG.rtlMode:
+                self.docSearch.move(2, 2 * tB)
+            else:
+                rL = wW - sW - rW - 2 * tB
+                self.docSearch.move(rL, 2 * tB)
 
         uM = max(self._vpMargin, tH, rH)
         lM = max(self._vpMargin, fH)
@@ -882,18 +900,6 @@ class GuiDocEditor(QTextEdit):
     ##
     #  Setters
     ##
-
-    def setVimMode(self, mode: nwVimMode) -> None:
-        """Change the vim mode."""
-        if CONFIG.vimMode:
-            if mode == nwVimMode.NORMAL:
-                cursor = self.textCursor()
-                cursor.clearSelection()
-                self.setTextCursor(cursor)
-            self._vim.setMode(mode)
-            self.docFooter.updateVimModeStatusBar(mode)
-        else:
-            self.docFooter.updateVimModeStatusBar(None)
 
     def setDocumentChanged(self, state: bool) -> None:
         """Keep track of the document changed variable, and emit the
@@ -1031,6 +1037,8 @@ class GuiDocEditor(QTextEdit):
             self._toggleFormat(2, "~")
         elif action == nwDocAction.MD_MARK and not noFormat:
             self._toggleFormat(2, "=")
+        elif action == nwDocAction.MD_LINK and not noFormat:
+            self._formatLink()
         elif action == nwDocAction.S_QUOTE:
             self._wrapSelection(CONFIG.fmtSQuoteOpen, CONFIG.fmtSQuoteClose)
         elif action == nwDocAction.D_QUOTE:
@@ -1053,6 +1061,10 @@ class GuiDocEditor(QTextEdit):
             self._iterFormatBlocks(nwDocAction.BLOCK_IGN)
         elif action == nwDocAction.BLOCK_TXT:
             self._iterFormatBlocks(nwDocAction.BLOCK_TXT)
+        elif action == nwDocAction.BLOCK_LST_U:
+            self._iterFormatBlocks(nwDocAction.BLOCK_LST_U)
+        elif action == nwDocAction.BLOCK_LST_O:
+            self._iterFormatBlocks(nwDocAction.BLOCK_LST_O)
         elif action == nwDocAction.BLOCK_TTL:
             self._formatBlock(nwDocAction.BLOCK_TTL)
         elif action == nwDocAction.BLOCK_UNN:
@@ -1065,30 +1077,22 @@ class GuiDocEditor(QTextEdit):
             self._replaceQuotes('"', CONFIG.fmtDQuoteOpen, CONFIG.fmtDQuoteClose)
         elif action == nwDocAction.RM_BREAKS:
             self._removeInParLineBreaks()
-        elif action == nwDocAction.ALIGN_L and not noFormat:
-            self._formatBlock(nwDocAction.ALIGN_L)
-        elif action == nwDocAction.ALIGN_C and not noFormat:
-            self._formatBlock(nwDocAction.ALIGN_C)
-        elif action == nwDocAction.ALIGN_R and not noFormat:
-            self._formatBlock(nwDocAction.ALIGN_R)
-        elif action == nwDocAction.INDENT_L and not noFormat:
-            self._formatBlock(nwDocAction.INDENT_L)
-        elif action == nwDocAction.INDENT_R and not noFormat:
-            self._formatBlock(nwDocAction.INDENT_R)
+        elif action in BLOCK_TEXT_ONLY and not (noFormat and len(self._selectedBlocks(cursor)) < 2):
+            self._iterFormatBlocks(action)
         elif action == nwDocAction.SC_ITALIC and not noFormat:
-            self._wrapSelection(nwShortcode.ITALIC_O, nwShortcode.ITALIC_C)
+            self._wrapSelection(nwShortcode.ITALIC_O, nwShortcode.ITALIC_C, rtlMark=True)
         elif action == nwDocAction.SC_BOLD and not noFormat:
-            self._wrapSelection(nwShortcode.BOLD_O, nwShortcode.BOLD_C)
+            self._wrapSelection(nwShortcode.BOLD_O, nwShortcode.BOLD_C, rtlMark=True)
         elif action == nwDocAction.SC_STRIKE and not noFormat:
-            self._wrapSelection(nwShortcode.STRIKE_O, nwShortcode.STRIKE_C)
+            self._wrapSelection(nwShortcode.STRIKE_O, nwShortcode.STRIKE_C, rtlMark=True)
         elif action == nwDocAction.SC_ULINE and not noFormat:
-            self._wrapSelection(nwShortcode.ULINE_O, nwShortcode.ULINE_C)
+            self._wrapSelection(nwShortcode.ULINE_O, nwShortcode.ULINE_C, rtlMark=True)
         elif action == nwDocAction.SC_MARK and not noFormat:
-            self._wrapSelection(nwShortcode.MARK_O, nwShortcode.MARK_C)
+            self._wrapSelection(nwShortcode.MARK_O, nwShortcode.MARK_C, rtlMark=True)
         elif action == nwDocAction.SC_SUP and not noFormat:
-            self._wrapSelection(nwShortcode.SUP_O, nwShortcode.SUP_C)
+            self._wrapSelection(nwShortcode.SUP_O, nwShortcode.SUP_C, rtlMark=True)
         elif action == nwDocAction.SC_SUB and not noFormat:
-            self._wrapSelection(nwShortcode.SUB_O, nwShortcode.SUB_C)
+            self._wrapSelection(nwShortcode.SUB_O, nwShortcode.SUB_C, rtlMark=True)
         elif action == nwDocAction.MOVE_TEXT:
             self._moveTextToNewDocument()
         elif action == nwDocAction.ZOOM_IN:
@@ -1246,22 +1250,14 @@ class GuiDocEditor(QTextEdit):
         if key == QtKeyEscape:
             if self.searchVisible():
                 self.closeSearch()
-            elif CONFIG.vimMode:
-                self.setVimMode(nwVimMode.NORMAL)
+            elif self._vimMode and self._vimMode.cancel():
+                pass  # Vim mode consumed the key
             elif SHARED.focusMode:
                 SHARED.setFocusMode(False)
             event.ignore()
             return
 
-        if CONFIG.vimMode and self._vim.mode != nwVimMode.INSERT:
-            if self._handleVimNormalModeModeSwitching(event):
-                return
-
-            if self._vim.mode in (nwVimMode.VISUAL, nwVimMode.V_LINE):
-                self._handleVimVisualMode(event)
-            else:
-                self._handleVimNormalMode(event)
-
+        if self._vimMode and self._vimMode.processVimKeyEvent(event):
             return
 
         if self.docSearch.anyFocus() and key in ENTER_KEYS:
@@ -1366,6 +1362,12 @@ class GuiDocEditor(QTextEdit):
             self._hoverCard.scheduleHide()
         super().mouseMoveEvent(event)
 
+    def changeEvent(self, event: QEvent) -> None:
+        """Update the zoom level when the font changes."""
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.FontChange:
+            self.docFooter.updateZoom(self.font().pointSizeF())
+
     def leaveEvent(self, event: QEvent) -> None:
         """Request that the hover card be hidden when the mouse leaves
         the editor. The hide is delayed rather than immediate, so the
@@ -1379,11 +1381,11 @@ class GuiDocEditor(QTextEdit):
         """Zoom the editor font with Ctrl+Scroll wheel."""
         self._hideHoverCard()
         if event.modifiers() & QtModCtrl == QtModCtrl:
-            delta = event.angleDelta().y() // 120
-            if delta > 0:
-                self.zoomIn(delta)
-            elif delta < 0:
-                self.zoomOut(-delta)
+            # High resolution wheels send fractions of a 120 unit step
+            self._wheelDelta += event.angleDelta().y()
+            if steps := int(self._wheelDelta / 120):
+                self._wheelDelta -= 120 * steps
+                self._setZoom(self.font().pointSizeF() + steps)
             event.accept()
             return
         super().wheelEvent(event)
@@ -1452,6 +1454,8 @@ class GuiDocEditor(QTextEdit):
 
         if document is not None:
             text = FromQTextDocument(document).convertText().strip("\n")
+        elif urls := source.urls():
+            text = "\n".join(url.toString(QUrl.ComponentFormattingOption.FullyEncoded) for url in urls)
         elif source.hasText():
             text = source.text()
         else:
@@ -1499,17 +1503,31 @@ class GuiDocEditor(QTextEdit):
             self._qDocument.syntaxHighlighter.rehighlightByType(BLOCK_META)
             self._hoverCard.pruneCache(updated + deleted)
 
+    @pyqtSlot()
+    def indexHasAppeared(self) -> None:
+        """Rehighlight tags after the index has been loaded or rebuilt."""
+        self._qDocument.syntaxHighlighter.rehighlightByType(BLOCK_META)
+        self._hoverCard.clearCache()
+
     @pyqtSlot(str, str)
     def processSpellCheckChange(self, language: str, provider: str) -> None:
         """Process a change in the spell check language or provider."""
         self.spellCheckDocument()
 
     @pyqtSlot()
+    def zoomIn(self, steps: int = 1) -> None:
+        """Increase the editor's font size."""
+        self._setZoom(self.font().pointSizeF() + steps)
+
+    @pyqtSlot()
+    def zoomOut(self, steps: int = 1) -> None:
+        """Decrease the editor's font size."""
+        self._setZoom(self.font().pointSizeF() - steps)
+
+    @pyqtSlot()
     def zoomReset(self) -> None:
         """Reset the editor's font size to the user's configured size."""
-        font = fontMatcher(CONFIG.textFont)
-        self.setFont(font)
-        self._qDocument.setDefaultFont(font)
+        self._setZoom(CONFIG.textFont.pointSizeF())
 
     ##
     #  Private Slots
@@ -1595,7 +1613,6 @@ class GuiDocEditor(QTextEdit):
     def _cursorMoved(self) -> None:
         """Triggered when the cursor moved in the editor."""
         self._hideHoverCard()
-        self.docFooter.updateLineCount(self.textCursor())
         if self._suppressed:
             # An underline was suppressed at the previous cursor
             # position, so the underlines must be refreshed
@@ -1907,7 +1924,7 @@ class GuiDocEditor(QTextEdit):
             and (item := self._nwItem)
             and (parent := item.itemParent)
         ):
-            heading, title = processHeading(text.partition("\n")[0])
+            heading, title, _ = processHeading(text.partition("\n")[0])
             label, dlgOk = GuiEditLabel.getLabel(
                 self,
                 text=title or f"{item.itemName} (1)",
@@ -1979,6 +1996,14 @@ class GuiDocEditor(QTextEdit):
         state = not self.docToolBar.isVisible()
         self.docToolBar.setVisible(state)
         CONFIG.showEditToolBar = state
+
+    @pyqtSlot()
+    def _editOptionsChanged(self) -> None:
+        """Apply changed editor options to the open document."""
+        if self._docHandle:
+            self._qDocument.markLayoutBusy()
+            self.setReadOnly(self._qDocument.isLayoutBusy())
+        self._applyTextOptions()
 
     ##
     #  Search & Replace
@@ -2274,11 +2299,14 @@ class GuiDocEditor(QTextEdit):
         after: str | None = None,
         pos: int | None = None,
         select: _SelectAction = _SelectAction.NO_DECISION,
+        rtlMark: bool = False,
     ) -> None:
         """Wrap the selected text in whatever is in tBefore and tAfter.
         If there is no selection, the autoSelect setting decides the
         action. AutoSelect will select the word under the cursor before
-        wrapping it. If this feature is disabled, nothing is done.
+        wrapping it. If this feature is disabled, nothing is done. If
+        rtlMark is set, an RTL mark is added in RTL projects when the
+        wrapping would otherwise set the paragraph direction.
         """
         if after is None:
             after = before
@@ -2302,6 +2330,12 @@ class GuiDocEditor(QTextEdit):
         blockE = self._qDocument.findBlock(posE)
         if blockS != blockE:
             posE = blockS.position() + blockS.length() - 1
+
+        if rtlMark and SHARED.project.data.isRTL:
+            # Qt picks the paragraph direction from the first strong character
+            prefix = blockS.text()[: posS - blockS.position()]
+            if not textDirection(prefix):
+                before = nwUnicode.U_RLM + before
 
         cursor.clearSelection()
         cursor.beginEditBlock()
@@ -2374,7 +2408,10 @@ class GuiDocEditor(QTextEdit):
         """Process the formatting of a single text block."""
         # Remove existing format first, if any
         if text.startswith("@"):
-            logger.error("Cannot apply block format to keyword/value line")
+            logger.debug("Cannot apply block format to keyword/value line")
+            return nwDocAction.NO_ACTION, "", 0
+        elif action in BLOCK_TEXT_ONLY and text.startswith(nwStyles.H_MARKERS):
+            logger.debug("Cannot apply text block format to heading")
             return nwDocAction.NO_ACTION, "", 0
         elif text.startswith("%~"):
             temp = text[2:].lstrip()
@@ -2389,27 +2426,25 @@ class GuiDocEditor(QTextEdit):
         elif text.startswith("# "):
             temp = text[2:]
             offset = 2
-        elif text.startswith("## "):
+        elif text.startswith(("## ", "#! ", ">> ")):
             temp = text[3:]
             offset = 3
-        elif text.startswith("### "):
+        elif text.startswith(("### ", "##! ")):
             temp = text[4:]
             offset = 4
-        elif text.startswith("#### "):
+        elif text.startswith(("#### ", "###! ")):
             temp = text[5:]
             offset = 5
-        elif text.startswith("#! "):
+        elif text.startswith("* ") and text[2:].strip("* "):
+            temp = text[2:]
+            offset = 2
+            if toggle and action == nwDocAction.BLOCK_LST_U:
+                action = nwDocAction.BLOCK_TXT
+        elif text.startswith("#. "):
             temp = text[3:]
             offset = 3
-        elif text.startswith("##! "):
-            temp = text[4:]
-            offset = 4
-        elif text.startswith("###! "):
-            temp = text[5:]
-            offset = 5
-        elif text.startswith(">> "):
-            temp = text[3:]
-            offset = 3
+            if toggle and action == nwDocAction.BLOCK_LST_O:
+                action = nwDocAction.BLOCK_TXT
         elif (text.startswith("> ") and action != nwDocAction.INDENT_R) or text.startswith(">>"):
             temp = text[2:]
             offset = 2
@@ -2429,6 +2464,16 @@ class GuiDocEditor(QTextEdit):
             temp = temp[:-1]
 
         # Apply new format
+        if toggle and action in (nwDocAction.ALIGN_L, nwDocAction.ALIGN_C, nwDocAction.ALIGN_R):
+            isRight = text.startswith(">>")
+            isLeft = text.endswith("<<")
+            if (
+                (action == nwDocAction.ALIGN_L and isLeft and not isRight)
+                or (action == nwDocAction.ALIGN_C and isLeft and isRight)
+                or (action == nwDocAction.ALIGN_R and isRight and not isLeft)
+            ):
+                action = nwDocAction.BLOCK_TXT
+
         if action == nwDocAction.BLOCK_COM:
             text = f"% {temp}"
             offset -= 2
@@ -2456,6 +2501,12 @@ class GuiDocEditor(QTextEdit):
         elif action == nwDocAction.BLOCK_HSC:
             text = f"###! {temp}"
             offset -= 5
+        elif action == nwDocAction.BLOCK_LST_U:
+            text = f"* {temp}"
+            offset -= 2
+        elif action == nwDocAction.BLOCK_LST_O:
+            text = f"#. {temp}"
+            offset -= 3
         elif action == nwDocAction.ALIGN_L:
             text = f"{temp} <<"
         elif action == nwDocAction.ALIGN_C:
@@ -2502,6 +2553,51 @@ class GuiDocEditor(QTextEdit):
 
         return True
 
+    def _formatLink(self) -> None:
+        """Format a link under the cursor, or insert a new one. An
+        existing bare URL or Markdown link at the cursor is detected via
+        the block's TextBlockData, and used to pre-fill the edit dialog.
+        """
+        cursor = self.textCursor()
+        block = cursor.block()
+
+        text = ""
+        url = ""
+        posS = posE = cursor.position()
+        if cursor.hasSelection():
+            posS = cursor.selectionStart()
+            posE = cursor.selectionEnd()
+            text = cursor.selectedText()
+
+        if isinstance(data := block.userData(), TextBlockData):
+            check = cursor.position() - block.position()
+            for start, end, mData, mType in data.metaData:
+                if mType in ("url", "link") and start <= check <= end:
+                    posS = block.position() + start
+                    posE = block.position() + end
+                    url = mData
+                    text = ""
+                    if mType == "link":
+                        linkCursor = QTextCursor(self._qDocument)
+                        linkCursor.setPosition(posS)
+                        linkCursor.setPosition(posE, QtKeepAnchor)
+                        if m := REGEX_PATTERNS.markdownLink.match(linkCursor.selectedText()):  # pragma: no branch
+                            text, url = m.group(2), m.group(4)
+                    break
+
+        newText, newUrl, dlgOk = GuiEditLink.getLink(self, text=text, url=url)
+        if not dlgOk or not newUrl:
+            return
+
+        result = f"[{newText}]({newUrl})" if newText else newUrl
+
+        cursor.setPosition(posS)
+        cursor.setPosition(posE, QtKeepAnchor)
+        cursor.beginEditBlock()
+        cursor.insertText(result)
+        cursor.endEditBlock()
+        self.setTextCursor(cursor)
+
     def _iterFormatBlocks(self, action: nwDocAction) -> bool:
         """Iterate over all selected blocks and apply format. If no
         selection is made, just forward the call to the single block
@@ -2525,6 +2621,11 @@ class GuiDocEditor(QTextEdit):
                 toggle = False
 
         cursor.endEditBlock()
+
+        # Reselect the affected blocks so the action can be repeated
+        cursor.setPosition(blocks[0].position())
+        cursor.setPosition(blocks[-1].position() + blocks[-1].length() - 1, QtKeepAnchor)
+        self.setTextCursor(cursor)
 
         return True
 
@@ -2618,351 +2719,74 @@ class GuiDocEditor(QTextEdit):
             QTimer.singleShot(0, lambda: self.ensureCursorVisible(centre=False))
 
     ##
-    #  Internal Functions : Vim Mode
-    ##
-
-    def _handleVimNormalModeModeSwitching(self, event: QKeyEvent) -> bool:
-        """Handle key events for Vim mode switching in NORMAL mode."""
-        if (text := event.text()) == "i":
-            self.setVimMode(nwVimMode.INSERT)
-        elif text == "I":
-            cursor = self.textCursor()
-            cursor.movePosition(QtMoveStartOfLine)
-            self.setTextCursor(cursor)
-            self.setVimMode(nwVimMode.INSERT)
-            return True
-        elif text == "v":
-            self.setVimMode(nwVimMode.VISUAL)
-            cursor = self.textCursor()
-            cursor.movePosition(QtMoveRight, QtKeepAnchor, 1)
-            self.setTextCursor(cursor)
-            return True
-        elif text == "V":
-            self.setVimMode(nwVimMode.V_LINE)
-            cursor = self.textCursor()
-            cursor.select(QtSelectLine)
-            self.setTextCursor(cursor)
-            return True
-        return False  # Not a mode switching motion
-
-    def _handleVimNormalMode(self, event: QKeyEvent) -> None:
-        """Handle key events for Vim mode NORMAL mode motions."""
-        key = event.text()
-        cursor = self.textCursor()
-        # -- NORMAL mode PREFIX
-        if self._vim.mode == nwVimMode.NORMAL:
-            if key in self._vim.PREFIX_KEYS or key in self._vim.SUFFIX_KEYS:
-                self._vim.pushCommandKey(key)
-            else:
-                self._vim.setCommand(key)
-
-        if (command := self._vim.command) == "dd":
-            cursor.beginEditBlock()
-            cursor.select(QtSelectLine)
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.removeSelectedText()
-            cursor.endEditBlock()
-            cursor.setPosition(cursor.selectionEnd())
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "x":
-            cursor.movePosition(QtMoveRight, QtKeepAnchor, 1)
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.removeSelectedText()
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "w":
-            cursor.movePosition(QtMoveNextWord)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "b":
-            cursor.movePosition(QtMovePreviousWord)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "e":
-            # Try to move to end of the current word
-            origPos = cursor.position()
-            cursor.movePosition(QtMoveEndOfWord)
-
-            # If we didn't move (we were already at end of a word),
-            # step forward one character (if possible) and then move to the next EndOfWord.
-            if cursor.position() == origPos:
-                textLen = len(self.toPlainText())
-                if origPos < textLen:
-                    cursor.movePosition(QtMoveNextChar)
-                    cursor.movePosition(QtMoveEndOfWord)
-
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "dw":
-            cursor.beginEditBlock()
-            cursor.movePosition(QtMoveNextWord, QtKeepAnchor)
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.removeSelectedText()
-            cursor.endEditBlock()
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "db":
-            cursor.beginEditBlock()
-            cursor.movePosition(QtMovePreviousWord, QtKeepAnchor)
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.removeSelectedText()
-            cursor.endEditBlock()
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "de":
-            cursor.beginEditBlock()
-            # Extend selection to end of current/next word
-            origPos = cursor.position()
-            cursor.movePosition(QtMoveEndOfWord, QtKeepAnchor)
-            if cursor.position() == origPos:  # Already at end-of-word
-                textLen = len(self.toPlainText())
-                if origPos < textLen:
-                    cursor.movePosition(QtMoveNextChar, QtKeepAnchor)
-                    cursor.movePosition(QtMoveEndOfWord, QtKeepAnchor)
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.removeSelectedText()
-            cursor.endEditBlock()
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "d$":
-            cursor.beginEditBlock()
-            cursor.movePosition(QtMoveEndOfLine, QtKeepAnchor)
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.removeSelectedText()
-            cursor.endEditBlock()
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "yw":
-            cursor.beginEditBlock()
-            cursor.movePosition(QtMoveNextWord, QtKeepAnchor)
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.clearSelection()
-            cursor.endEditBlock()
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "gg":
-            cursor.movePosition(QtMoveStart)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "G":
-            cursor.movePosition(QtMoveEnd)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "yy":
-            cursor.select(QtSelectLine)
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.clearSelection()
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "p":
-            if text := self._vim.pasteFromInternal():
-                cursor.beginEditBlock()
-                cursor.movePosition(QtMoveEndOfLine)
-                cursor.insertText("\n" + text)
-                cursor.endEditBlock()
-                self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "P":
-            if text := self._vim.pasteFromInternal():
-                cursor.beginEditBlock()
-                cursor.movePosition(QtMoveStartOfLine)
-                cursor.insertText(text + "\n")
-                cursor.endEditBlock()
-                self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "o":
-            cursor.beginEditBlock()
-            cursor.movePosition(QtMoveEndOfLine)
-            cursor.insertText("\n")
-            cursor.endEditBlock()
-            self.setTextCursor(cursor)
-            self.setVimMode(nwVimMode.INSERT)
-
-        elif command == "O":
-            cursor.beginEditBlock()
-            cursor.movePosition(QtMoveStartOfLine)
-            cursor.insertText("\n")
-            cursor.movePosition(QtMoveUp)
-            cursor.endEditBlock()
-            self.setTextCursor(cursor)
-            self.setVimMode(nwVimMode.INSERT)
-
-        elif command == "$":
-            cursor.movePosition(QtMoveEndOfLine)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "a":
-            cursor.movePosition(QtMoveRight)
-            self.setTextCursor(cursor)
-            self.setVimMode(nwVimMode.INSERT)
-            self._vim.resetCommand()
-
-        elif command == "A":
-            cursor.movePosition(QtMoveEndOfLine)
-            self.setTextCursor(cursor)
-            self.setVimMode(nwVimMode.INSERT)
-            self._vim.resetCommand()
-
-        elif command == "u":
-            self.docAction(nwDocAction.UNDO)
-            self._vim.resetCommand()
-
-        elif command == "zz":
-            self.setTextCursor(cursor)
-            self.ensureCursorVisible(centre=True)
-            self._vim.resetCommand()
-
-        # Single-step navigation
-        elif command == "h":
-            cursor.movePosition(QtMoveLeft)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "j":
-            cursor.movePosition(QtMoveDown)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "k":
-            cursor.movePosition(QtMoveUp)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "l":
-            cursor.movePosition(QtMoveRight)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-    def _handleVimVisualMode(self, event: QKeyEvent) -> None:
-        """Handle key events for Vim mode VISUAL and VLINE mode motions."""
-        key = event.text()
-        cursor = self.textCursor()
-
-        # -- VISUAL mode PREFIX
-        if key in self._vim.VISUAL_PREFIX_KEYS:
-            self._vim.pushCommandKey(key)
-        else:
-            # If adding none repeating visual mode motions,
-            # need to add a suffix case, see normal mode.
-            self._vim.setCommand(key)
-
-        # --- VISUAL / VISUALLINE mode ---
-        if (command := self._vim.command) in ("d", "x"):
-            cursor.beginEditBlock()
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.removeSelectedText()
-            cursor.endEditBlock()
-            self.setTextCursor(cursor)
-            self.setVimMode(nwVimMode.NORMAL)
-
-        elif command == "y":
-            self._vim.yankToInternal(cursor.selectedText())
-            cursor.clearSelection()
-            self.setTextCursor(cursor)
-            self.setVimMode(nwVimMode.NORMAL)
-
-        elif command == "w":
-            cursor.movePosition(QtMoveNextWord, QtKeepAnchor)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "b":
-            cursor.movePosition(QtMovePreviousWord, QtKeepAnchor)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "e":
-            origPos = cursor.position()
-            cursor.movePosition(QtMoveEndOfWord, QtKeepAnchor)
-            if cursor.position() == origPos:
-                textLen = len(self.toPlainText())
-                if origPos < textLen:
-                    cursor.movePosition(QtMoveNextChar, QtKeepAnchor)
-                    cursor.movePosition(QtMoveEndOfWord, QtKeepAnchor)
-
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        elif command == "gg":
-            cursor.movePosition(QtMoveStart, QtKeepAnchor)
-            self.setTextCursor(cursor)
-            self._vim.resetCommand()
-
-        # Handle motions (extend selection)
-        elif command == "h":
-            cursor.movePosition(QtMoveLeft, QtKeepAnchor)
-            self.setTextCursor(cursor)
-
-        elif command == "l":
-            cursor.movePosition(QtMoveRight, QtKeepAnchor)
-            self.setTextCursor(cursor)
-
-        elif command == "j":
-            cursor.movePosition(QtMoveDown, QtKeepAnchor)
-            self.setTextCursor(cursor)
-
-        elif command == "k":
-            cursor.movePosition(QtMoveUp, QtKeepAnchor)
-            self.setTextCursor(cursor)
-
-        elif command == "$":
-            cursor.movePosition(QtMoveEndOfLine, QtKeepAnchor)
-            self.setTextCursor(cursor)
-
-        elif command == "0":
-            cursor.movePosition(QtMoveStartOfLine, QtKeepAnchor)
-            self.setTextCursor(cursor)
-
-        elif command == "G":
-            cursor.movePosition(QtMoveEnd, QtKeepAnchor)
-            self.setTextCursor(cursor)
-
-    ##
     #  Internal Functions
     ##
 
-    def _dispatchKeyPress(self, event: QKeyEvent) -> None:
-        """Send a key event on to the base class for regular handling,
-        except for a plain Return/Enter press, which is handled
-        directly instead.
+    def _applyTextOptions(self) -> None:
+        """Set the document text options from the user settings."""
+        options = QTextOption()
+        options.setTabStopDistance(CONFIG.tabSize * self.font().pointSizeF() * 96.0 / 72.0)
+        if CONFIG.doJustify:
+            options.setAlignment(QtAlignJustify)
+        if CONFIG.editShowTabsNSpaces:
+            options.setFlags(options.flags() | QTextOption.Flag.ShowTabsAndSpaces)
+        if CONFIG.editShowLineEndings:
+            options.setFlags(options.flags() | QTextOption.Flag.ShowLineAndParagraphSeparators)
+        self._qDocument.setDefaultTextOption(options)
 
-        Qt's own Return handling (QWidgetTextControlPrivate::
-        insertParagraphSeparator) resets the current block's format to
-        a bare default and swallows the keypress whenever the cursor
-        is on an empty block whose format isn't already default. That
-        heuristic exists so rich-text users can hit Enter twice to
-        escape a list/heading/quote, but every block here always
-        carries a non-default line height, so it fires on every
-        ordinary blank-line paragraph break and silently eats every
-        second Return. novelWriter never uses Qt's native list/heading
-        block formatting, so the heuristic serves no purpose here, and
-        can be bypassed entirely by inserting the new block directly.
+    def _initVimMode(self) -> None:
+        """Enable or disable vim mode from the user settings."""
+        if CONFIG.vimMode:
+            if self._vimMode is None:
+                self._vimMode = EditorVimMode(self, self.docFooter.updateVimModeStatusBar)
+            self._vimMode.setVimMode(nwVimMode.NORMAL)
+        else:
+            self._vimMode = None
+            self.docFooter.updateVimModeStatusBar(None)
+
+    def _dispatchKeyPress(self, event: QKeyEvent) -> None:
+        """Send a key event to the base class, except plain Return.
+
+        Qt's Return handling swallows the keypress on empty blocks with
+        a non-default format, which all blocks have here due to line
+        height, so new blocks are inserted directly. List markers are
+        carried over to the new block.
         """
         if event.key() in ENTER_KEYS and event.modifiers() == QtModNone:
             cursor = self.textCursor()
-            cursor.insertBlock()
+            block = self._qDocument.findBlock(cursor.selectionStart())
+            text = block.text()
+            marker = ""
+            if text.startswith("* ") and text[2:].strip("* "):
+                marker = "* "
+            elif text.startswith("#. ") and text[3:].strip():
+                marker = "#. "
+
+            cursor.beginEditBlock()
+            if text.startswith(("* ", "#. ")) and text.rstrip() in ("*", "#.") and not cursor.hasSelection():
+                # Enter on an empty item clears the marker and ends the list (see #1460)
+                cursor.setPosition(block.position())
+                cursor.setPosition(block.position() + block.length() - 1, QtKeepAnchor)
+                cursor.removeSelectedText()
+            else:
+                inMarker = cursor.selectionStart() - block.position() < len(marker)
+                cursor.insertBlock()
+                if marker and not inMarker:
+                    cursor.insertText(marker)
+            cursor.endEditBlock()
+
             self.setTextCursor(cursor)
             self.ensureCursorVisible(centre=False)
             event.accept()
         else:
             super().keyPressEvent(event)
+
+    def _setZoom(self, pointSize: float) -> None:
+        """Set the editor's font size within the zoom range."""
+        font = self.font()
+        font.setPointSizeF(minmax(pointSize, nwConst.TEXT_FONT_MIN_SIZE, nwConst.TEXT_FONT_MAX_SIZE))
+        self.setFont(font)
+        self._applyTextOptions()
 
     def _hideHoverCard(self) -> None:
         """Stop the hover timer and hide the hover card, if visible."""
@@ -3224,67 +3048,3 @@ class GuiDocEditor(QTextEdit):
                     cursor.setPosition(block.position())
                     self.setTextCursor(cursor)
                     break
-
-
-class VimState:
-    """Minimal Vim state machine."""
-
-    __slots__ = ("_internalClipboard", "_mode", "_normalCommand", "_visualCommand")
-
-    PREFIX_KEYS = "dygz"
-    VISUAL_PREFIX_KEYS = "g"
-    SUFFIX_KEYS = "web$"
-
-    def __init__(self) -> None:
-        self._mode: nwVimMode = nwVimMode.NORMAL
-        self._normalCommand = ""
-        self._visualCommand = ""
-        self._internalClipboard = ""
-        self.setMode(nwVimMode.NORMAL)
-
-    @property
-    def mode(self) -> nwVimMode:
-        """Return current vim mode."""
-        return self._mode
-
-    @property
-    def command(self) -> str:
-        """Return the current vim command."""
-        if self._mode in (nwVimMode.VISUAL, nwVimMode.V_LINE):
-            return self._visualCommand
-        else:
-            return self._normalCommand
-
-    def setMode(self, mode: nwVimMode) -> None:
-        """Switch vim mode."""
-        if mode != self._mode:
-            logger.debug("Vim Mode changed to %s", mode.name)
-            self._mode = mode
-            self.resetCommand()
-
-    def resetCommand(self) -> None:
-        """Reset internal vim command."""
-        self._normalCommand = ""
-        self._visualCommand = ""
-
-    def pushCommandKey(self, key: str) -> None:
-        """Push key to the current command building stack."""
-        if self._mode is nwVimMode.NORMAL:
-            self._normalCommand += key
-        elif self._mode in (nwVimMode.VISUAL, nwVimMode.V_LINE):
-            self._visualCommand += key
-
-    def setCommand(self, key: str) -> None:
-        """Set the state of the current vim command."""
-        if self._mode is nwVimMode.NORMAL:
-            self._normalCommand = key
-        elif self._mode in (nwVimMode.VISUAL, nwVimMode.V_LINE):
-            self._visualCommand = key
-
-    def yankToInternal(self, text: str) -> None:
-        """Put text into internal vim buffer."""
-        self._internalClipboard = text
-
-    def pasteFromInternal(self) -> str:
-        """Paste from the internal vim clipboard."""
-        return self._internalClipboard

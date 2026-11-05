@@ -2,8 +2,9 @@
 novelWriter - Project Item Status
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@ import dataclasses
 import logging
 import random
 
-from typing import TYPE_CHECKING, Literal, TypeGuard
+from typing import TYPE_CHECKING, Final, Literal, TypeGuard
 
 from PyQt6.QtCore import QPointF, Qt
 from PyQt6.QtGui import QColor, QIcon, QPainter, QPainterPath, QPixmap, QPolygonF
@@ -73,8 +74,8 @@ T_StatusKind = Literal["s", "i"]
 class ItemStatus:
     """Core: Status/Importance Label Class."""
 
-    STATUS = "s"
-    IMPORT = "i"
+    STATUS: Final = "s"
+    IMPORT: Final = "i"
 
     __slots__ = ("_default", "_height", "_prefix", "_store")
 

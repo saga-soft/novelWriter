@@ -2,8 +2,9 @@
 novelWriter - Markdown Format Tests
 ===================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,6 +22,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from novelwriter.constants import nwHeadFmt
@@ -29,9 +32,11 @@ from novelwriter.enum import nwComment
 from novelwriter.formats.shared import BlockFmt, BlockTyp
 from novelwriter.formats.tomarkdown import ToMarkdown
 
+from tests.mocked import MockGuiMain
+
 
 @pytest.mark.core
-def testToMarkdown_ConvertNovelHeaders(mockGUI):
+def testToMarkdown_ConvertNovelHeaders(mockGUI: MockGuiMain):
     """Test header formats in the ToMarkdown class."""
     project = NWProject()
     md = ToMarkdown(project, False)
@@ -86,7 +91,7 @@ def testToMarkdown_ConvertNovelHeaders(mockGUI):
 
 
 @pytest.mark.core
-def testToMarkdown_ConvertNotesHeaders(mockGUI):
+def testToMarkdown_ConvertNotesHeaders(mockGUI: MockGuiMain):
     """Test header formats in the ToMarkdown class."""
     project = NWProject()
     md = ToMarkdown(project, False)
@@ -138,7 +143,7 @@ def testToMarkdown_ConvertNotesHeaders(mockGUI):
 
 
 @pytest.mark.core
-def testToMarkdown_ConvertParagraphs(mockGUI):
+def testToMarkdown_ConvertParagraphs(mockGUI: MockGuiMain):
     """Test paragraph formats in the ToMarkdown class."""
     project = NWProject()
     md = ToMarkdown(project, False)
@@ -181,6 +186,24 @@ def testToMarkdown_ConvertParagraphs(mockGUI):
     md.tokenizeText()
     md.doConvert()
     assert md._pages[-1] == ("Some **bold**, _italic_, strike, underline, mark, superscript, subscript here\n\n")
+
+    # Unordered Lists
+    md._text = "Text\n\n* One\n* Two\nmore\n\n* Three\n\nText\n"
+    md.tokenizeText()
+    md.doConvert()
+    assert md._pages[-1] == "Text\n\n* One\n* Two  \n  more\n\n* Three\n\nText\n\n"
+
+    # Ordered Lists
+    md._text = "#. One\n#. Two\nmore\n" + 8 * "#. Item\n" + "#. Eleven\nmore\n* Bullet\n\n#. One\n"
+    md.tokenizeText()
+    md.doConvert()
+    assert md._pages[-1] == (
+        "1. One\n2. Two  \n   more\n"
+        "3. Item\n4. Item\n5. Item\n6. Item\n7. Item\n8. Item\n9. Item\n10. Item\n"
+        "11. Eleven  \n    more\n\n"
+        "* Bullet\n\n"
+        "1. One\n\n"
+    )
 
     # Text w/Hard Break
     md._text = "Line one\nLine two\nLine three\n"
@@ -256,7 +279,7 @@ def testToMarkdown_ConvertParagraphs(mockGUI):
 
 
 @pytest.mark.core
-def testToMarkdown_Fields(mockGUI):
+def testToMarkdown_Fields(mockGUI: MockGuiMain):
     """Test field substitution in the ToMarkdown class."""
     project = NWProject()
     md = ToMarkdown(project, False)
@@ -272,7 +295,7 @@ def testToMarkdown_Fields(mockGUI):
 
 
 @pytest.mark.core
-def testToMarkdown_ConvertDirect(mockGUI):
+def testToMarkdown_ConvertDirect(mockGUI: MockGuiMain):
     """Test the converter directly using the ToMarkdown class."""
     project = NWProject()
     md = ToMarkdown(project, False)
@@ -314,7 +337,7 @@ def testToMarkdown_ConvertDirect(mockGUI):
 
 
 @pytest.mark.core
-def testToMarkdown_Save(mockGUI, fncPath):
+def testToMarkdown_Save(mockGUI: MockGuiMain, fncPath: Path):
     """Test the save method of the ToMarkdown class."""
     project = NWProject()
     md = ToMarkdown(project, False)
@@ -344,7 +367,6 @@ def testToMarkdown_Save(mockGUI, fncPath):
 
     for i in range(len(docText)):
         md._text = docText[i]
-        md.doPreProcessing()
         md.tokenizeText()
         md.doConvert()
 

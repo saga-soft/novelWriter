@@ -2,8 +2,9 @@
 novelWriter - Project Index Data
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@ from __future__ import annotations
 
 import logging
 
+from collections import defaultdict
 from typing import TYPE_CHECKING, Literal
 
 from novelwriter import CONFIG
@@ -39,6 +41,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 T_NoteTypes = Literal["footnotes", "comments"]
+T_IndexHeadRefs = dict[str, list[str]]
 
 TT_NONE = "T0000"  # Default title key
 NOTE_TYPES: list[T_NoteTypes] = ["footnotes", "comments"]
@@ -61,7 +64,7 @@ class IndexNode:
         self._handle = tHandle
         self._item = nwItem
         self._headings: dict[str, IndexHeading] = {TT_NONE: IndexHeading(self._cache, TT_NONE)}
-        self._notes: dict[str, set[str]] = {}
+        self._notes: dict[str, set[str]] = defaultdict(set)
         self._count = 0
 
     def __repr__(self) -> str:
@@ -129,8 +132,7 @@ class IndexNode:
 
     def addNoteKey(self, style: T_NoteTypes, key: str) -> None:
         """Add a note key to the index."""
-        if style not in self._notes:
-            self._notes[style] = set()
+        self._cache.keys.add(key)
         self._notes[style].add(key)
 
     ##
@@ -184,7 +186,8 @@ class IndexNode:
                         raise ValueError("The notes style is invalid")
                     if not isListInstance(keys, str):
                         raise ValueError("The notes keys must be a list of strings")
-                    self._notes[style] = set(keys)
+                    self._notes[style].update(keys)
+                    self._cache.keys.update(keys)
             else:
                 raise KeyError("Index node contains an invalid key")
 
@@ -197,14 +200,23 @@ class IndexHeading:
     of all references made under the heading.
     """
 
-    __slots__ = ("_cache", "_comments", "_counts", "_key", "_level", "_line", "_refs", "_tag", "_title")
+    __slots__ = ("_cache", "_comments", "_counts", "_key", "_level", "_line", "_mod", "_refs", "_tag", "_title")
 
-    def __init__(self, cache: IndexCache, key: str, line: int = 0, level: str = "H0", title: str = "") -> None:
+    def __init__(
+        self,
+        cache: IndexCache,
+        key: str,
+        line: int = 0,
+        level: str = "H0",
+        title: str = "",
+        mod: bool = False,
+    ) -> None:
         self._cache = cache
         self._key = key
         self._line = line
         self._level = level
         self._title = title
+        self._mod = mod
         self._counts: tuple[int, int, int] = (0, 0, 0)
         self._tag = ""
         self._refs: dict[str, set[str]] = {}
@@ -220,50 +232,67 @@ class IndexHeading:
 
     @property
     def key(self) -> str:
+        """Return the heading key."""
         return self._key
 
     @property
     def line(self) -> int:
+        """Return the heading line number."""
         return self._line
 
     @property
     def level(self) -> str:
+        """Return the heading level key."""
         return self._level
 
     @property
     def title(self) -> str:
+        """Return the heading title text."""
         return self._title
 
     @property
+    def modified(self) -> bool:
+        """Return True if the heading is a modified heading type."""
+        return self._mod
+
+    @property
     def mainCount(self) -> int:
+        """Return the main count stats for the heading."""
         return self._counts[0 if CONFIG.useCharCount else 1]
 
     @property
     def charCount(self) -> int:
+        """Return the heading character count."""
         return self._counts[0]
 
     @property
     def wordCount(self) -> int:
+        """Return the heading word count."""
         return self._counts[1]
 
     @property
     def paraCount(self) -> int:
+        """Return the heading paragraph count."""
         return self._counts[2]
 
     @property
     def synopsis(self) -> str:
+        """Return the heading synopsis."""
         return self._comments.get("summary", "")
 
     @property
     def comments(self) -> dict[str, str]:
+        """Return the heading comments."""
         return self._comments
 
     @property
     def tag(self) -> str:
+        """Return the heading tag."""
         return self._tag
 
     @property
     def references(self) -> dict[str, set[str]]:
+        """Return the heading references."""
         return self._refs
 
     ##
@@ -313,6 +342,7 @@ class IndexHeading:
         if keyword in nwKeyWords.VALID_KEYS:
             tag = tag.lower()
             if tag not in self._refs:
+                # This is deliberate since using defaultdict for _refs is unsafe
                 self._refs[tag] = set()
             self._refs[tag].add(keyword)
 
@@ -320,7 +350,7 @@ class IndexHeading:
     #  Getters
     ##
 
-    def getReferences(self) -> dict[str, list[str]]:
+    def getReferences(self) -> T_IndexHeadRefs:
         """Extract all tags and references for this heading."""
         refs = {x: [] for x in nwKeyWords.VALID_KEYS}
         for tag, types in self._refs.items():
@@ -353,6 +383,7 @@ class IndexHeading:
         data["meta"] = {
             "level": self._level,
             "title": self._title,
+            "mod": self._mod,
             "line": self._line,
             "tag": self._tag,
             "counts": self._counts,
@@ -370,9 +401,12 @@ class IndexHeading:
             if key == "meta":
                 self.setLevel(entry.get("level", "H0"))
                 self._title = str(entry.get("title", ""))
+                self._mod = bool(entry.get("mod", False))
                 self._tag = str(entry.get("tag", ""))
                 self.setLine(entry.get("line", 0))
                 self.setCounts(entry.get("counts", [0, 0, 0]))
+                if not entry.keys() >= {"level", "title", "line", "mod", "tag", "counts"}:
+                    raise KeyError("Heading meta is missing keys")
             elif key == "refs":
                 for tag, value in entry.items():
                     if not isinstance(tag, str):

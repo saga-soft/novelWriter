@@ -2,8 +2,9 @@
 novelWriter - Hover Card Tests
 ==============================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,23 +22,33 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
-from PyQt6.QtCore import QEvent, QPoint, QPointF
-from PyQt6.QtGui import QEnterEvent
+from PyQt6.QtCore import QEvent, QPoint, QPointF, Qt
+from PyQt6.QtGui import QEnterEvent, QGuiApplication
 from PyQt6.QtWidgets import QWidget
+from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
 from novelwriter.core.indexdata import TT_NONE
 from novelwriter.core.project import NWProject
 from novelwriter.editor.hovercard import GuiDocHoverCard
 from novelwriter.enum import nwDocMode
+from novelwriter.guimain import GuiMain
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
 
 
 @pytest.mark.gui
-def testGuiDocHoverCard_Widget(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocHoverCard_Widget(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the hover card's widget mechanics: theming, caching, and
     the show/hide/mouse-enter grace period. A real project is needed
     since setTag() looks up SHARED.project.index even for tags that
@@ -124,6 +135,22 @@ def testGuiDocHoverCard_Widget(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
     assert not card.mask().isEmpty()
     card.repaint()
 
+    # The card extends from the leading side of the anchor, and is kept
+    # horizontally within the screen
+    screen = QGuiApplication.primaryScreen()
+    assert screen is not None
+    area = screen.availableGeometry()
+    assert card.x() == 50
+    card.showAt(QPoint(area.right(), 50), 400, 800)
+    assert card.x() == area.right() + 1 - card.width()
+
+    card.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+    card.showAt(QPoint(area.center().x(), 50), 400, 800)
+    assert card.x() == area.center().x() - card.width()
+    card.showAt(QPoint(area.left(), 50), 400, 800)
+    assert card.x() == area.left()
+    card.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+
     # A scheduled hide is cancelled if the mouse enters the card first,
     # mirroring the grace period used when leaving the editor/viewer
     card.scheduleHide()
@@ -144,7 +171,7 @@ def testGuiDocHoverCard_Widget(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocHoverCard_TagContent(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocHoverCard_TagContent(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test that setTag() assembles the correct HTML for a tag's name,
     display alias, title and synopsis, and that the View/Edit buttons
     resolve the current tag and re-emit openDocumentRequest.
@@ -154,13 +181,13 @@ def testGuiDocHoverCard_TagContent(qtbot, nwGUI, projPath, mockRnd):
 
     cHandle = SHARED.project.newFile("People", C.hCharRoot)
     assert cHandle is not None
-    assert nwGUI.openDocument(cHandle) is True
+    assert nwGUI.docPanes.openDocument(cHandle) is True
     nwGUI.docEditor.replaceText(
         "# Jane Doe\n\n@tag: Jane | Janey\n\n%Synopsis: A short synopsis.\n\n"
         "# Solo Person\n\n@tag: Solo\n\n"
         "# Multi Person\n\n@tag: Multi\n\n%Synopsis: First part.\n\n%Synopsis: Second part.\n\n"
     )
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
 
     parent = QWidget()
     qtbot.addWidget(parent)
@@ -227,7 +254,13 @@ def testGuiDocHoverCard_TagContent(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocHoverCard_NoHeadingTitle(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocHoverCard_NoHeadingTitle(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """A tag defined under the dummy T0000 heading must not show a
     title. The real indexer never actually produces this combination
     for a tag definition, since an '@' line before any heading is not
@@ -238,9 +271,9 @@ def testGuiDocHoverCard_NoHeadingTitle(monkeypatch, qtbot, nwGUI, projPath, mock
     nwGUI.openProject(projPath)
     cHandle = SHARED.project.newFile("People", C.hCharRoot)
     assert cHandle is not None
-    assert nwGUI.openDocument(cHandle) is True
+    assert nwGUI.docPanes.openDocument(cHandle) is True
     nwGUI.docEditor.replaceText("# Jane Doe\n\n@tag: Jane\n\n")
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
 
     _, _, _, hItem = SHARED.project.index.getSingleTag("Jane")
     assert hItem is not None
@@ -259,7 +292,13 @@ def testGuiDocHoverCard_NoHeadingTitle(monkeypatch, qtbot, nwGUI, projPath, mock
 
 
 @pytest.mark.gui
-def testGuiDocHoverCard_NoHeadingItem(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocHoverCard_NoHeadingItem(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """A tag whose heading cannot be resolved at all, despite having a
     valid name and item, must fall back to just the name paragraph.
     getSingleTag() cannot actually return this shape for a tag with a
@@ -270,9 +309,9 @@ def testGuiDocHoverCard_NoHeadingItem(monkeypatch, qtbot, nwGUI, projPath, mockR
     nwGUI.openProject(projPath)
     cHandle = SHARED.project.newFile("People", C.hCharRoot)
     assert cHandle is not None
-    assert nwGUI.openDocument(cHandle) is True
+    assert nwGUI.docPanes.openDocument(cHandle) is True
     nwGUI.docEditor.replaceText("# Jane Doe\n\n@tag: Jane\n\n")
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
 
     name, tClass, iItem, hItem = SHARED.project.index.getSingleTag("Jane")
     assert hItem is not None

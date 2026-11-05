@@ -2,8 +2,9 @@
 novelWriter - Project Search Tests
 ==================================
 
-This file is a part of novelWriter
-Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,17 +24,28 @@ from __future__ import annotations
 
 import re
 
+from collections.abc import Iterable
+from pathlib import Path
+
 import pytest
 
 from novelwriter.constants import nwConst
+from novelwriter.core.item import ProjectItem
 from novelwriter.core.project import NWProject
-from novelwriter.core.projectsearch import DocSearch
+from novelwriter.core.projectsearch import DocSearch, T_SearchResults
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
+from tests.mocked import MockGuiMain
 
 
 @pytest.mark.core
-def testProjectSearch_Search(monkeypatch, mockGUI, fncPath, mockRnd, ipsumText):
+def testProjectSearch_Search(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+    ipsumText: list[str],
+):
     """Test the DocSearch utility."""
     project = NWProject()
     mockRnd.reset()
@@ -66,7 +78,7 @@ def testProjectSearch_Search(monkeypatch, mockGUI, fncPath, mockRnd, ipsumText):
     # Test Settings
     # =============
 
-    def pruneResult(result, index):
+    def pruneResult(result: Iterable[tuple[ProjectItem, T_SearchResults, bool]], index: int) -> list:
         temp = [(i.itemHandle, r, c) for i, r, c in result][index][1]
         return [(s, n, c[o : o + n]) for s, n, c, o in temp]
 
@@ -209,7 +221,7 @@ def testProjectSearch_SearchContext():
 
 
 @pytest.mark.core
-def testProjectSearch_DocumentFilters(mockGUI, fncPath, mockRnd):
+def testProjectSearch_DocumentFilters(mockGUI: MockGuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test that the document type and root folder filters exclude the
     expected documents from the project-wide search.
     """
@@ -228,7 +240,7 @@ def testProjectSearch_DocumentFilters(mockGUI, fncPath, mockRnd):
 
     search = DocSearch()
 
-    def handles(result):
+    def handles(result: Iterable[tuple[ProjectItem, T_SearchResults, bool]]) -> list[str]:
         return [i.itemHandle for i, r, _ in result if r]
 
     # By default, novel documents, notes, and inactive documents are all included
@@ -283,7 +295,7 @@ def testProjectSearch_ContentFilters():
     search._regEx = re.compile(r"TARGET")
     text = "# Heading TARGET\n@char: TARGET\n% comment TARGET\n\nBody text TARGET here\n"
 
-    def pruneResult(result):
+    def pruneResult(result: T_SearchResults) -> list:
         return [(pos, num, context) for pos, num, context, _ in result]
 
     # By default, all content types are searched

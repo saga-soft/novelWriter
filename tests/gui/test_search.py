@@ -2,8 +2,9 @@
 novelWriter - GUI Project Search Tests
 ======================================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +24,8 @@ from __future__ import annotations
 
 import re
 
+from collections.abc import Iterator
+from pathlib import Path
 from time import time
 
 import pytest
@@ -30,19 +33,28 @@ import pytest
 from PyQt6.QtCore import QModelIndex, QRect, Qt
 from PyQt6.QtGui import QAction, QPainter, QPixmap
 from PyQt6.QtWidgets import QStyleOptionViewItem
+from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.constants import nwItemClass, nwUnicode
+from novelwriter.core.item import ProjectItem
 from novelwriter.core.project import NWProject
-from novelwriter.core.projectsearch import DocSearch
+from novelwriter.core.projectsearch import DocSearch, T_SearchResults
 from novelwriter.enum import nwChange, nwDocMode, nwView
-from novelwriter.types import QtDisplayRole, QtKeyDown, QtKeyReturn, QtKeyUp
+from novelwriter.guimain import GuiMain
+from novelwriter.types import QtDisplayRole, QtKeyDown, QtKeyReturn, QtKeyUp, QtTransparent
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
 
 
 @pytest.mark.gui
-def testGuiProjectSearch_Interaction(qtbot, nwGUI, fncPath, mockRnd, ipsumText):
+def testGuiProjectSearch_Interaction(
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+    ipsumText: list[str],
+):
     """Test running a search and interacting with the result tree via
     the keyboard, mouse and selection.
     """
@@ -53,7 +65,7 @@ def testGuiProjectSearch_Interaction(qtbot, nwGUI, fncPath, mockRnd, ipsumText):
     project.storage.getDocument(C.hChapterDoc).writeDocument("## New Chapter\n\n" + ipsumText[0])
     project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\n" + ipsumText[1])
 
-    nwGUI._changeView(nwView.SEARCH)
+    nwGUI.changeView(nwView.SEARCH)
     search = nwGUI.projSearch
     model = search._model
     root = QModelIndex()
@@ -74,7 +86,9 @@ def testGuiProjectSearch_Interaction(qtbot, nwGUI, fncPath, mockRnd, ipsumText):
     assert model.data(sceneIdx, QtDisplayRole) == "New Scene"
 
     firstResult = model.index(0, 0, chapterIdx)
-    handle, start, length = model.result(firstResult)
+    result = model.result(firstResult)
+    assert result is not None
+    handle, start, length = result
     assert handle == C.hChapterDoc
 
     # Move down from the search box selects the first result
@@ -131,7 +145,7 @@ def testGuiProjectSearch_Interaction(qtbot, nwGUI, fncPath, mockRnd, ipsumText):
 
 
 @pytest.mark.gui
-def testGuiProjectSearch_Options(qtbot, nwGUI, fncPath, mockRnd, ipsumText):
+def testGuiProjectSearch_Options(qtbot: QtBot, nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd, ipsumText: list[str]):
     """Test the case sensitive, whole word, and RegEx search options."""
     mockRnd.reset()
     buildTestProject(NWProject(), fncPath)
@@ -140,7 +154,7 @@ def testGuiProjectSearch_Options(qtbot, nwGUI, fncPath, mockRnd, ipsumText):
     sceneText = ipsumText[0] + "\n\n" + ipsumText[1]
     project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\n" + sceneText)
 
-    nwGUI._changeView(nwView.SEARCH)
+    nwGUI.changeView(nwView.SEARCH)
     search = nwGUI.projSearch
     model = search._model
     root = QModelIndex()
@@ -197,13 +211,13 @@ def testGuiProjectSearch_Options(qtbot, nwGUI, fncPath, mockRnd, ipsumText):
 
 
 @pytest.mark.gui
-def testGuiProjectSearch_AutoReplace(qtbot, nwGUI, fncPath, mockRnd):
+def testGuiProjectSearch_AutoReplace(qtbot: QtBot, nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test the auto-replace symbols feature of the search box."""
     mockRnd.reset()
     buildTestProject(NWProject(), fncPath)
     nwGUI.openProject(fncPath)
 
-    nwGUI._changeView(nwView.SEARCH)
+    nwGUI.changeView(nwView.SEARCH)
     search = nwGUI.projSearch
 
     # Auto-replace is off by default, so typed text is left untouched
@@ -224,7 +238,7 @@ def testGuiProjectSearch_AutoReplace(qtbot, nwGUI, fncPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiProjectSearch_FilterPanel(nwGUI, fncPath, mockRnd, ipsumText):
+def testGuiProjectSearch_FilterPanel(nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd, ipsumText: list[str]):
     """Test that toggling the switches in the search filter panel
     updates the underlying DocSearch filters and triggers a live
     refresh of the current search.
@@ -239,7 +253,7 @@ def testGuiProjectSearch_FilterPanel(nwGUI, fncPath, mockRnd, ipsumText):
     # building the list of root folder filters
     project.newRoot(nwItemClass.TRASH)
 
-    nwGUI._changeView(nwView.SEARCH)
+    nwGUI.changeView(nwView.SEARCH)
     search = nwGUI.projSearch
     search.openProjectTasks()
 
@@ -288,7 +302,7 @@ def testGuiProjectSearch_FilterPanel(nwGUI, fncPath, mockRnd, ipsumText):
 
 
 @pytest.mark.gui
-def testGuiProjectSearch_LiveRefresh(nwGUI, fncPath, mockRnd, ipsumText):
+def testGuiProjectSearch_LiveRefresh(nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd, ipsumText: list[str]):
     """Test the live per-document refresh triggered while a document is
     being edited, which keeps stale match positions from lingering.
     """
@@ -298,7 +312,7 @@ def testGuiProjectSearch_LiveRefresh(nwGUI, fncPath, mockRnd, ipsumText):
     project = SHARED.project
     project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\n" + ipsumText[0])
 
-    nwGUI._changeView(nwView.SEARCH)
+    nwGUI.changeView(nwView.SEARCH)
     search = nwGUI.projSearch
     model = search._model
     root = QModelIndex()
@@ -313,7 +327,7 @@ def testGuiProjectSearch_LiveRefresh(nwGUI, fncPath, mockRnd, ipsumText):
     assert firstEntry is not None
 
     # Open the document and add another occurrence, but don't save it
-    assert nwGUI.openDocument(C.hSceneDoc)
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc)
     nwGUI.docEditor.setPlainText(nwGUI.docEditor.getText() + "\n\nLorem again.")
 
     # An older timestamp is considered stale and is ignored
@@ -337,7 +351,7 @@ def testGuiProjectSearch_LiveRefresh(nwGUI, fncPath, mockRnd, ipsumText):
 
 
 @pytest.mark.gui
-def testGuiProjectSearch_EdgeCases(nwGUI, fncPath, mockRnd, ipsumText):
+def testGuiProjectSearch_EdgeCases(nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd, ipsumText: list[str]):
     """Test empty search text, re-entrant search calls, and closing the project."""
     mockRnd.reset()
     buildTestProject(NWProject(), fncPath)
@@ -345,7 +359,7 @@ def testGuiProjectSearch_EdgeCases(nwGUI, fncPath, mockRnd, ipsumText):
     project = SHARED.project
     project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\n" + ipsumText[0])
 
-    nwGUI._changeView(nwView.SEARCH)
+    nwGUI.changeView(nwView.SEARCH)
     search = nwGUI.projSearch
     model = search._model
     root = QModelIndex()
@@ -383,7 +397,13 @@ def testGuiProjectSearch_EdgeCases(nwGUI, fncPath, mockRnd, ipsumText):
 
 
 @pytest.mark.gui
-def testGuiProjectSearch_ReentrancyGuard(nwGUI, fncPath, mockRnd, ipsumText, monkeypatch):
+def testGuiProjectSearch_ReentrancyGuard(
+    nwGUI: GuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+    ipsumText: list[str],
+    monkeypatch: pytest.MonkeyPatch,
+):
     """Regression test for the processSearch re-entrancy guard."""
     mockRnd.reset()
     buildTestProject(NWProject(), fncPath)
@@ -392,7 +412,7 @@ def testGuiProjectSearch_ReentrancyGuard(nwGUI, fncPath, mockRnd, ipsumText, mon
     project.storage.getDocument(C.hChapterDoc).writeDocument("## New Chapter\n\n" + ipsumText[0])
     project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\n" + ipsumText[1])
 
-    nwGUI._changeView(nwView.SEARCH)
+    nwGUI.changeView(nwView.SEARCH)
     search = nwGUI.projSearch
     model = search._model
     root = QModelIndex()
@@ -401,7 +421,9 @@ def testGuiProjectSearch_ReentrancyGuard(nwGUI, fncPath, mockRnd, ipsumText, mon
 
     realIterSearch = DocSearch.iterSearch
 
-    def nestedIterSearch(self, project, searchText):
+    def nestedIterSearch(
+        self: DocSearch, project: NWProject, searchText: str
+    ) -> Iterator[tuple[ProjectItem, T_SearchResults, bool]]:
         for i, result in enumerate(realIterSearch(self, project, searchText)):
             if i == 0:
                 # Simulate a nested invocation entering mid-iteration
@@ -421,7 +443,7 @@ def testGuiProjectSearch_ReentrancyGuard(nwGUI, fncPath, mockRnd, ipsumText, mon
 
 
 @pytest.mark.gui
-def testGuiProjectSearch_DelegatePaint(nwGUI, fncPath, mockRnd):
+def testGuiProjectSearch_DelegatePaint(nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test the search result delegate's paint code directly for the
     branches not exercised by normal interaction: eliding a match whose
     context overflows the available width, and a zero-length match.
@@ -432,7 +454,7 @@ def testGuiProjectSearch_DelegatePaint(nwGUI, fncPath, mockRnd):
     item = SHARED.project.tree[C.hSceneDoc]
     assert item is not None
 
-    nwGUI._changeView(nwView.SEARCH)
+    nwGUI.changeView(nwView.SEARCH)
     search = nwGUI.projSearch
     model = search._model
     delegate = search._matchDelegate
@@ -457,3 +479,38 @@ def testGuiProjectSearch_DelegatePaint(nwGUI, fncPath, mockRnd):
     painter = QPainter(pixmap)
     delegate.paint(painter, option, matchIdx)
     painter.end()
+
+    # The highlight follows the text layout and the view direction
+    def matchSpan(text: str, direction: Qt.LayoutDirection) -> tuple[int, int]:
+        model.setResult(item, [(0, 3, text, 0)], False)
+        index = model.index(0, 0, model.index(0, 0, root))
+        option.rect = QRect(0, 0, 200, 20)
+        option.direction = direction
+        canvas = QPixmap(200, 20)
+        canvas.fill(QtTransparent)
+        painter = QPainter(canvas)
+        delegate.paint(painter, option, index)
+        painter.end()
+        image = canvas.toImage()
+        ref = delegate._rectColM
+        xs = [
+            x
+            for x in range(200)
+            if (c := image.pixelColor(x, 15)).alpha() == ref.alpha()
+            and abs(c.red() - ref.red()) + abs(c.green() - ref.green()) + abs(c.blue() - ref.blue()) < 6
+        ]
+        return min(xs), max(xs)
+
+    ltr = Qt.LayoutDirection.LeftToRight
+    rtl = Qt.LayoutDirection.RightToLeft
+
+    # English text starts at the left in LTR views, and the right in RTL views
+    aL, _ = matchSpan("abc def", ltr)
+    assert aL < 20
+    aL, _ = matchSpan("abc def", rtl)
+    assert aL > 100
+
+    # The first word of RTL text is drawn on the right of the text
+    word = "متن"
+    aL, _ = matchSpan(f"{word} {word}", ltr)
+    assert aL > 20

@@ -2,8 +2,9 @@
 novelWriter - Common Utils
 ==========================
 
-This file is a part of novelWriter
-Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -284,7 +285,7 @@ def copyPackageFiles(dst: Path, oldLicense: bool = False) -> None:
         new = []
         for line in text.splitlines():
             if line.startswith("license = "):
-                line = 'license = {text = "GPL-3.0-or-later AND Apache-2.0 AND CC-BY-4.0"}'
+                line = f"license = {{text = {line.partition('=')[2].strip()}}}"
             if line.startswith("license-files = "):
                 continue
             new.append(line)

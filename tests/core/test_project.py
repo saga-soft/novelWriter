@@ -2,8 +2,9 @@
 novelWriter - NWProject Tests
 =============================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 from datetime import datetime
+from pathlib import Path
 from shutil import copyfile
 from zipfile import ZipFile
 
@@ -31,15 +33,15 @@ from novelwriter import CONFIG, SHARED
 from novelwriter.constants import nwFiles
 from novelwriter.core.project import NWProject, NWProjectState
 from novelwriter.core.projectxml import ProjectXMLReader, ProjectXMLWriter, XMLReadState
-from novelwriter.enum import nwItemClass
+from novelwriter.enum import nwItemClass, nwProjectKind
 from novelwriter.shared import _GuiAlert
 
-from tests.helpers import XML_IGNORE, C, buildTestProject, cmpFiles
-from tests.mocked import causeOSError
+from tests.helpers import XML_IGNORE, C, MockRnd, TstPaths, buildTestProject, cmpFiles
+from tests.mocked import MockGuiMain, causeOSError
 
 
 @pytest.mark.core
-def testNWProject_NewRoot(fncPath, tstPaths, mockGUI, mockRnd):
+def testNWProject_NewRoot(fncPath: Path, tstPaths: TstPaths, mockGUI: MockGuiMain, mockRnd: MockRnd):
     """Check that new root folders can be added to the project."""
     projFile = fncPath / "nwProject.nwx"
     testFile = tstPaths.outDir / "coreProject_NewRoot_nwProject.nwx"
@@ -87,7 +89,13 @@ def testNWProject_NewRoot(fncPath, tstPaths, mockGUI, mockRnd):
 
 
 @pytest.mark.core
-def testNWProject_NewFileFolder(monkeypatch, fncPath, tstPaths, mockGUI, mockRnd):
+def testNWProject_NewFileFolder(
+    monkeypatch: pytest.MonkeyPatch,
+    fncPath: Path,
+    tstPaths: TstPaths,
+    mockGUI: MockGuiMain,
+    mockRnd: MockRnd,
+):
     """Check that new files can be added to the project."""
     projFile = fncPath / "nwProject.nwx"
     testFile = tstPaths.outDir / "coreProject_NewFileFolder_nwProject.nwx"
@@ -194,7 +202,7 @@ def testNWProject_NewFileFolder(monkeypatch, fncPath, tstPaths, mockGUI, mockRnd
 
 
 @pytest.mark.core
-def testNWProject_CreateNewNote(monkeypatch, fncPath, mockGUI, mockRnd):
+def testNWProject_CreateNewNote(monkeypatch: pytest.MonkeyPatch, fncPath: Path, mockGUI: MockGuiMain, mockRnd: MockRnd):
     """Check that new notes can be created for a given tag."""
     project = NWProject()
     mockRnd.reset()
@@ -229,7 +237,13 @@ def testNWProject_CreateNewNote(monkeypatch, fncPath, mockGUI, mockRnd):
 
 
 @pytest.mark.core
-def testNWProject_Open(monkeypatch, caplog, mockGUI, fncPath, mockRnd):
+def testNWProject_Open(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+):
     """Test opening a project."""
     project = NWProject()
     mockRnd.reset()
@@ -336,6 +350,49 @@ def testNWProject_Open(monkeypatch, caplog, mockGUI, fncPath, mockRnd):
         mp.setattr("novelwriter.core.storage.ProjectStorage.storagePath", property(lambda *a: None))
         assert project.openProject(fncPath, clearLock=True) is True
 
+    # A copied project keeps its ID if the user declines
+    copyPath = fncPath / "copy"
+    copyPath.mkdir()
+    (copyPath / nwFiles.PROJ_FILE).touch()
+    oldUuid = project.data.uuid
+    CONFIG.recentProjects.update(copyPath, project.data, 0)
+    with monkeypatch.context() as mp:
+        mp.setattr(_GuiAlert, "finalState", False)
+        assert project.openProject(fncPath, clearLock=True) is True
+        assert "This project appears to be a copy of another project" in SHARED.lastAlert[0]
+        assert project.data.uuid == oldUuid
+        assert project.projChanged is False
+
+    # A copied project gets a new ID if the user accepts
+    CONFIG.recentProjects.update(copyPath, project.data, 0)
+    assert project.openProject(fncPath, clearLock=True) is True
+    assert project.data.uuid != oldUuid
+    assert project.projChanged is True
+
+    # A backup keeps its ID if the user declines, and skips the copy check
+    manifest = fncPath / nwFiles.MANIFEST_FILE
+    manifest.write_text(project.storage._generateManifest(nwProjectKind.BACKUP, 1000.0), encoding="utf-8")
+    CONFIG.recentProjects.update(copyPath, project.data, 0)
+    with monkeypatch.context() as mp:
+        mp.setattr(_GuiAlert, "finalState", False)
+        assert project.openProject(fncPath, clearLock=True) is True
+        assert "This project is a backup copy" in SHARED.lastAlert[0]
+        assert project.data.uuid == oldUuid
+        assert project.projChanged is True
+
+    # A backup gets a new ID if the user accepts
+    assert project.openProject(fncPath, clearLock=True) is True
+    assert "This project is a backup copy" in SHARED.lastAlert[0]
+    assert project.data.uuid != oldUuid
+    assert project.projChanged is True
+    CONFIG.recentProjects.remove(copyPath)
+
+    # Once saved, the backup is a regular project
+    assert project.saveProject() is True
+    assert project.openProject(fncPath, clearLock=True) is True
+    assert project.storage.kind == nwProjectKind.PROJECT
+    assert project.projChanged is False
+
     # Fail checking items should still pass
     with monkeypatch.context() as mp:
         mp.setattr("novelwriter.core.tree.ProjectTree.checkConsistency", lambda *a: (1, 0))
@@ -354,7 +411,12 @@ def testNWProject_Open(monkeypatch, caplog, mockGUI, fncPath, mockRnd):
 
 
 @pytest.mark.core
-def testNWProject_OpenConvertsOldDocuments(monkeypatch, mockGUI, fncPath, mockRnd):
+def testNWProject_OpenConvertsOldDocuments(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+):
     """Test that an old .nwd document file is only converted to .md
     once the user accepts the upgrade prompt.
     """
@@ -388,7 +450,7 @@ def testNWProject_OpenConvertsOldDocuments(monkeypatch, mockGUI, fncPath, mockRn
 
 
 @pytest.mark.core
-def testNWProject_Save(monkeypatch, mockGUI, mockRnd, fncPath):
+def testNWProject_Save(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test saving a project."""
     project = NWProject()
 
@@ -411,6 +473,7 @@ def testNWProject_Save(monkeypatch, mockGUI, mockRnd, fncPath):
     # Save with and without autosave
     assert project.saveProject(autoSave=False) is True
     assert project.saveProject(autoSave=True) is True
+    assert (fncPath / nwFiles.MANIFEST_FILE).is_file()
 
     # If the storage path is unavailable, recent projects are not updated
     with monkeypatch.context() as mp:
@@ -421,7 +484,7 @@ def testNWProject_Save(monkeypatch, mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testNWProject_AutoSaveIndexRevision(mockGUI, mockRnd, fncPath):
+def testNWProject_AutoSaveIndexRevision(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test that the index revision is kept current in the project file
     on every save, including autosave.
     """
@@ -457,7 +520,7 @@ def testNWProject_AutoSaveIndexRevision(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testNWProject_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
+def testNWProject_Methods(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test other project class methods and functions."""
     project = NWProject()
     buildTestProject(project, fncPath)
@@ -469,13 +532,6 @@ def testNWProject_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
     # Project Author
     project.data.setAuthor("  Jane\tDoe ")
     assert project.data.author == "Jane Doe"
-
-    # Edit Time
-    project.data.setEditTime(1234)
-    project._session._start = 1600000000
-    with monkeypatch.context() as mp:
-        mp.setattr("novelwriter.core.project.time", lambda: 1600005600)
-        assert project.currentEditTime == 6834
 
     # Spell check
     project.setProjectChanged(False)
@@ -497,32 +553,37 @@ def testNWProject_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
 
     # Project Language
     project.setProjectChanged(False)
-    project.data.setLanguage("en")
-    project.setProjectLang(None)
+    project.data.setLanguage("en", False)
+    project.setProjectLang(None, False)
     assert project.data.language is None
-    project.setProjectLang("en_GB")
+    project.setProjectLang("en_GB", False)
     assert project.data.language == "en_GB"
 
     # Setting the same language again does nothing
     project.setProjectChanged(False)
-    project.setProjectLang("en_GB")
+    project.setProjectLang("en_GB", False)
     assert project.projChanged is False
 
     # A non-bool value does not change the project changed flag
     assert project.setProjectChanged("not a bool") is False  # type: ignore
+
+    # Changing only the direction is a change
+    project.setProjectLang("en_GB", True)
+    assert project.data.isRTL is True
+    assert project.projChanged is True
 
     # Language Lookup
     assert project.localLookup(1) == "One"
     assert project.localLookup(10) == "Ten"
 
     # Set invalid language
-    project.data.setLanguage("foo")
+    project.data.setLanguage("foo", False)
     project._loadProjectLocalisation()
     assert project.localLookup(1) == "One"
     assert project.localLookup(10) == "Ten"
 
     # Block reading language data
-    project.data.setLanguage("en")
+    project.data.setLanguage("en", False)
     with monkeypatch.context() as mp:
         mp.setattr("builtins.open", causeOSError)
         project._loadProjectLocalisation()
@@ -543,7 +604,7 @@ def testNWProject_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
 
     # Auto Replace
     project.setProjectChanged(False)
-    project.data.setAutoReplace({"A": "B", "C": "D"})
+    project.data.setAutoReplace({"A": "B", "C": "D"}, False)
     assert project.data.autoReplace == {"A": "B", "C": "D"}
     assert project.projChanged
 
@@ -555,7 +616,7 @@ def testNWProject_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
 
 
 @pytest.mark.core
-def testNWProject_Backup(monkeypatch, mockGUI, fncPath, tstPaths):
+def testNWProject_Backup(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path, tstPaths: TstPaths):
     """Test the automated backup feature of the project class. The test
     creates a backup of the Minimal test project, and then unzips the
     backup file and checks that the project XML file is identical to

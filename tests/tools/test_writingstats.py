@@ -2,8 +2,9 @@
 novelWriter - Writing Stats Dialog Tests
 ========================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,24 +24,34 @@ from __future__ import annotations
 
 import json
 
+from pathlib import Path
+
 import pytest
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QFileDialog
+from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
 from novelwriter.constants import nwFiles
 from novelwriter.core.project import NWProject
+from novelwriter.guimain import GuiMain
 from novelwriter.tools.writingstats import GuiWritingStats
 from novelwriter.types import QtMouseLeft
 
-from tests.helpers import buildTestProject, checkDialogFreedOnClose
+from tests.helpers import TstPaths, buildTestProject, checkDialogFreedOnClose
 from tests.mocked import causeOSError
 
 
 @pytest.mark.gui
-def testGuiWritingStats_Main(qtbot, monkeypatch, nwGUI, projPath, tstPaths):
+def testGuiWritingStats_Main(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    tstPaths: TstPaths,
+):
     """Test the full writing stats tool."""
     # Create a project to work on
     buildTestProject(NWProject(), projPath)
@@ -106,7 +117,13 @@ def testGuiWritingStats_Main(qtbot, monkeypatch, nwGUI, projPath, tstPaths):
 
 
 @pytest.mark.gui
-def testGuiWritingStats_Export(qtbot, monkeypatch, nwGUI, projPath, tstPaths):
+def testGuiWritingStats_Export(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    tstPaths: TstPaths,
+):
     """Test the export feature."""
     monkeypatch.setattr(QFileDialog, "getSaveFileName", lambda ss, tt, pp, options: (pp, ""))
 
@@ -260,12 +277,18 @@ def testGuiWritingStats_Export(qtbot, monkeypatch, nwGUI, projPath, tstPaths):
     # I/O Error
     with monkeypatch.context() as mp:
         mp.setattr("builtins.open", causeOSError)
-        assert not sessLog._loadLogFile()
-        assert not sessLog._saveData(sessLog.FMT_CSV)
+        sessLog._loadLogFile()
+        assert sessLog._saveData(sessLog.FMT_CSV) is False
 
 
 @pytest.mark.gui
-def testGuiWritingStats_Filters(qtbot, monkeypatch, nwGUI, projPath, tstPaths):
+def testGuiWritingStats_Filters(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    tstPaths: TstPaths,
+):
     """Test the filters."""
     monkeypatch.setattr(QFileDialog, "getSaveFileName", lambda ss, tt, pp, options: (pp, ""))
 
@@ -857,7 +880,7 @@ def testGuiWritingStats_Filters(qtbot, monkeypatch, nwGUI, projPath, tstPaths):
 
 
 @pytest.mark.gui
-def testGuiWritingStats_MemoryLeakRegression(qtbot, nwGUI, projPath):
+def testGuiWritingStats_MemoryLeakRegression(qtbot: QtBot, nwGUI: GuiMain, projPath: Path):
     """Test that the dialog is freed when it is closed."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)

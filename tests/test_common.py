@@ -2,8 +2,9 @@
 novelWriter - Common Functions Tests
 ====================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,8 +31,10 @@ from xml.etree import ElementTree as ET
 
 import pytest
 
-from PyQt6.QtCore import QMimeData, QUrl
+from PyQt6.QtCore import QMimeData, Qt, QUrl
 from PyQt6.QtGui import QDesktopServices, QFont, QFontDatabase, QFontInfo
+from PyQt6.QtWidgets import QWidget
+from pytestqt.qtbot import QtBot
 
 from novelwriter.common import (
     appendIfSet,
@@ -77,6 +80,7 @@ from novelwriter.common import (
     openExternalPath,
     processDialogSymbols,
     processLangCode,
+    qtVisualAlign,
     qtWeakLambda,
     readTextFile,
     safeExists,
@@ -84,6 +88,7 @@ from novelwriter.common import (
     safeIsFile,
     safeIterDir,
     simplified,
+    textDirection,
     transferCase,
     uniqueCompact,
     utf16CharMap,
@@ -92,8 +97,9 @@ from novelwriter.common import (
     xmlSubElem,
     yesNo,
 )
+from novelwriter.types import QtAlignAbsolute, QtAlignCenter, QtAlignLeft, QtAlignRight
 
-from tests.helpers import writeFile
+from tests.helpers import TstPaths, writeFile
 from tests.mocked import causeOSError
 
 
@@ -542,6 +548,19 @@ def testCommon_elide():
 
 
 @pytest.mark.base
+def testCommon_textDirection():
+    """Test the textDirection function."""
+    assert textDirection("") == ""
+    assert textDirection("1234 - !?") == ""
+    assert textDirection("Text") == "ltr"
+    assert textDirection("12 Text") == "ltr"
+    assert textDirection("متن") == "rtl"
+    assert textDirection("שלום") == "rtl"
+    assert textDirection("12 متن Text") == "rtl"
+    assert textDirection("[i]متن") == "ltr"
+
+
+@pytest.mark.base
 def testCommon_yesNo():
     """Test the yesNo function."""
     # Bool
@@ -744,7 +763,7 @@ def testCommon_describeFont():
 
 
 @pytest.mark.base
-def testCommon_fontMatcher(monkeypatch):
+def testCommon_fontMatcher(monkeypatch: pytest.MonkeyPatch):
     """Test the fontMatcher function."""
     # Nonsense font is just returned
     nonsense = QFont("nonesense", 10)
@@ -767,7 +786,7 @@ def testCommon_fontMatcher(monkeypatch):
 
 
 @pytest.mark.base
-def testCommon_encodeDecodeMimeHandles(monkeypatch):
+def testCommon_encodeDecodeMimeHandles(monkeypatch: pytest.MonkeyPatch):
     """Test the encodeMimeHandles and decodeMimeHandles functions."""
     handles = ["0123456789abc", "123456789abcd", "23456789abcde"]
     mimeData = QMimeData()
@@ -776,7 +795,7 @@ def testCommon_encodeDecodeMimeHandles(monkeypatch):
 
 
 @pytest.mark.base
-def testCommon_utf16CharMap(monkeypatch):
+def testCommon_utf16CharMap(monkeypatch: pytest.MonkeyPatch):
     """Test the utf16CharMap function."""
     assert utf16CharMap("abc") == [0, 1, 2, 3]
     assert utf16CharMap("a\u2014b\u2014c") == [0, 1, 2, 3, 4, 5]
@@ -914,7 +933,7 @@ def testCommon_xmlSubElem():
 
 
 @pytest.mark.base
-def testCommon_readTextFile(monkeypatch, fncPath, ipsumText):
+def testCommon_readTextFile(monkeypatch: pytest.MonkeyPatch, fncPath: Path, ipsumText: list[str]):
     """Test the readTextFile function."""
     testText = "\n\n".join(ipsumText) + "\n"
     testFile = fncPath / "ipsum.txt"
@@ -967,7 +986,7 @@ def testCommon_makeFileNameSafe():
 
 
 @pytest.mark.base
-def testCommon_getFileSize(fncPath):
+def testCommon_getFileSize(fncPath: Path):
     """Test the getFileSize function."""
     (fncPath / "one.txt").write_bytes(b"foobar")
     (fncPath / "two.txt").touch()
@@ -978,7 +997,7 @@ def testCommon_getFileSize(fncPath):
 
 
 @pytest.mark.base
-def testCommon_openExternalPath(monkeypatch, tstPaths):
+def testCommon_openExternalPath(monkeypatch: pytest.MonkeyPatch, tstPaths: TstPaths):
     """Test the openExternalPath function."""
     lastUrl = ""
 
@@ -1014,3 +1033,17 @@ def testCommon_qtWeakLambda():
     del obj
     assert ref() is None
     wrapper()
+
+
+@pytest.mark.gui
+def testCommon_qtVisualAlign(qtbot: QtBot):
+    """Test the qtVisualAlign function."""
+    widget = QWidget()
+    qtbot.addWidget(widget)
+    assert qtVisualAlign(widget, QtAlignLeft) == QtAlignAbsolute | QtAlignLeft
+    assert qtVisualAlign(widget, QtAlignRight) == QtAlignAbsolute | QtAlignRight
+
+    widget.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+    assert qtVisualAlign(widget, QtAlignLeft) == QtAlignAbsolute | QtAlignRight
+    assert qtVisualAlign(widget, QtAlignRight) == QtAlignAbsolute | QtAlignLeft
+    assert qtVisualAlign(widget, QtAlignCenter) == QtAlignCenter

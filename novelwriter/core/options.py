@@ -2,8 +2,9 @@
 novelWriter - Project Options Cache
 ===================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeVar
 
-from novelwriter import SHARED
+from novelwriter import CONFIG, SHARED
 from novelwriter.common import checkBool, checkFloat, checkInt, checkString, jsonEncode, safeExists
 from novelwriter.constants import nwFiles
 from novelwriter.error import logException
@@ -62,9 +63,6 @@ VALID_MAP: dict[str, set[str]] = {
         "spLevel",
         "intoFolder",
         "docHierarchy",
-    },
-    "GuiOutline": {
-        "columnState",
     },
     "GuiProjectSettings": {
         "winWidth",
@@ -110,25 +108,12 @@ VALID_MAP: dict[str, set[str]] = {
         "colWidths",
         "hideInactive",
     },
-    "GuiNovelDetails": {
-        "winWidth",
-        "winHeight",
-        "widthCol0",
-        "widthCol1",
-        "widthCol2",
-        "widthCol3",
-        "widthCol4",
-        "wordsPerPage",
-        "countFrom",
-        "clearDouble",
-        "novelRoot",
-    },
-    "GuiOutlineDetails": {
-        "detailsWidth",
-        "tagsWidth",
-    },
     "GuiProjectSearch": {
         "searchFilters",
+    },
+    "GuiStorySettings": {
+        "winWidth",
+        "winHeight",
     },
 }
 
@@ -185,7 +170,7 @@ class OptionState:
 
         logger.debug("Saving GUI options file")
         try:
-            with open(stateFile, mode="w+", encoding="utf-8") as fObj:
+            with open(stateFile, mode="w+", encoding="utf-8", newline=CONFIG.lineEnding) as fObj:
                 data = {"novelWriter.guiOptions": self._state}
                 fObj.write(jsonEncode(data, nmax=4))
         except Exception as exc:

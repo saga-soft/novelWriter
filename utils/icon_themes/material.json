@@ -17,6 +17,14 @@
     "cls_trash": "delete",
     "cls_world": "globe",
 
+    "key_pov": "person_heart",
+    "key_focus": "person_check",
+    "key_mention": "person_add",
+
+    "cmn_general": "notes",
+    "cmn_note": "chat",
+    "cmn_story": "label_important",
+
     "prj_folder": "folder",
     "prj_document": "news",
     "prj_title": "news",
@@ -24,15 +32,22 @@
     "prj_scene": "news",
     "prj_note": "sticky_note_2",
 
+    "fmt_align_center": "format_align_center",
+    "fmt_align_left": "format_align_left",
+    "fmt_align_right": "format_align_right",
     "fmt_bold": "format_bold",
     "fmt_italic": "format_italic",
+    "fmt_link": "link",
+    "fmt_list_o": "format_list_numbered",
+    "fmt_list_o_rtl": "format_list_numbered_rtl",
+    "fmt_list_u": "format_list_bulleted",
     "fmt_mark": "format_ink_highlighter",
     "fmt_size": "format_size",
     "fmt_strike": "strikethrough_s",
     "fmt_subscript": "subscript",
     "fmt_superscript": "superscript",
-    "fmt_underline": "format_underlined",
     "fmt_toolbar": "text_format",
+    "fmt_underline": "format_underlined",
 
     "search": "search",
     "search_auto": "wand_stars",
@@ -51,12 +66,11 @@
     "unfold-show": "arrow_drop_down",
 
     "sb_build": "export_notes",
-    "sb_details": "format_list_bulleted",
     "sb_novel": "book_4_spark",
-    "sb_outline": "summarize",
     "sb_project": "bookmark_manager",
     "sb_search": "search",
     "sb_stats": "bar_chart",
+    "sb_story": "summarize",
 
     "theme_light": "light_mode",
     "theme_dark": "dark_mode",
@@ -105,11 +119,12 @@
     "font": "font_download",
     "import": "tab_move",
     "language": "translate",
-    "lines": "reorder",
     "link": "link",
     "list": "format_list_bulleted",
     "margin_bottom": "vertical_align_bottom",
+    "margin_inner": "horizontal_align_center",
     "margin_left": "keyboard_tab_rtl",
+    "margin_outer": "arrows_outward",
     "margin_right": "keyboard_tab",
     "margin_top": "vertical_align_top",
     "maximise": "fullscreen",
@@ -130,5 +145,7 @@
     "timer_off": "timer_off",
     "timer": "timer",
     "unchecked": "disabled_by_default",
-    "view": "visibility"
+    "view": "visibility",
+    "zoom_in": "zoom_in",
+    "zoom_out": "zoom_out"
 }

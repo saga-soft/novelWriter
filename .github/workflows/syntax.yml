@@ -21,13 +21,13 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install UV and Python
-        uses: astral-sh/setup-uv@v10.0.1
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           enable-cache: true
 
       - name: Install Dependencies
         run: |
-          uv sync --no-dev --group lint
+          uv sync --no-dev --group lint --group test
 
       - name: Ruff Check
         run: |

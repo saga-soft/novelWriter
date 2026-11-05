@@ -229,8 +229,8 @@ Electronic Publication E-book (EPub)
 
 Standard/Extended Markdown
    The Markdown format comes in both Standard and Extended flavour. The *only* difference in terms
-   of novelWriter functionality is the support for strike through text, which is not supported by
-   the Standard flavour.
+   of novelWriter functionality is the support for strike through and highlighted text, which is
+   not supported by the Standard flavour.
 
 novelWriter Markup
    This is simply a concatenation of the project documents selected by the filters into a ``.txt``

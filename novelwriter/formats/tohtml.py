@@ -2,8 +2,9 @@
 novelWriter - HTML Text Converter
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,13 +25,14 @@ from __future__ import annotations
 import json
 import logging
 
+from html import unescape
 from time import time
 from typing import TYPE_CHECKING
 
-from novelwriter.common import formatTimeStamp
+from novelwriter.common import formatTimeStamp, textDirection
 from novelwriter.constants import nwHtmlUnicode
 from novelwriter.formats.shared import BlockFmt, BlockTyp, T_Formats, TextFmt, stripEscape
-from novelwriter.formats.tokenizer import COMMENT_BLOCKS, Tokenizer
+from novelwriter.formats.tokenizer import COMMENT_BLOCKS, LIST_BLOCKS, Tokenizer
 from novelwriter.types import FONT_STYLE, FONT_WEIGHTS, QtHexRgb
 
 if TYPE_CHECKING:
@@ -117,19 +119,30 @@ class ToHtml(Tokenizer):
     #  Class Methods
     ##
 
-    def doPreProcessing(self) -> None:
-        """Extend the auto-replace to also properly encode some unicode
+    def initDocument(self) -> None:
+        """Extend the initialisation to also encode the auto-replace
+        values into HTML entities.
+        """
+        super().initDocument()
+        self._replaceLookup = {k: v.translate(self._trMap) for k, v in self._replaceLookup.items()}
+
+    def tokenizeText(self) -> None:
+        """Extend the tokenizer to also properly encode some unicode
         characters into their respective HTML entities.
         """
-        super().doPreProcessing()
         self._text = self._text.translate(self._trMap)
+        super().tokenizeText()
 
     def doConvert(self) -> None:
         """Convert the list of text tokens into an HTML document."""
         lines = []
         for tType, tMeta, tText, tFmt, tStyle in self._blocks:
+            hDir = self._blockDir(tText)
             tText, tFmt = self._processHtmlEntities(tText, tFmt)
-            hStyle = self._genInlineStyles(tStyle)
+            hStyle = hDir + self._genInlineStyles(tStyle)
+
+            if tStyle & BlockFmt.LIST_S:
+                lines.append("<ol>\n" if tType == BlockTyp.LIST_O else "<ul>\n")
 
             aNm = ""
             if self._linkHeadings and tMeta:
@@ -138,6 +151,9 @@ class ToHtml(Tokenizer):
             # Process Text Type
             if tType == BlockTyp.TEXT:
                 lines.append(f"<p{hStyle}>{self._formatText(tText, tFmt)}</p>\n")
+
+            elif tType in LIST_BLOCKS:
+                lines.append(f"<li{hStyle}>{self._formatText(tText, tFmt)}</li>\n")
 
             elif tType in (BlockTyp.TITLE, BlockTyp.PART):
                 tHead = tText.replace("\n", self._brTag)
@@ -178,6 +194,9 @@ class ToHtml(Tokenizer):
             else:  # pragma: no cover
                 pass
 
+            if tStyle & BlockFmt.LIST_E:
+                lines.append("</ol>\n" if tType == BlockTyp.LIST_O else "</ul>\n")
+
         self._pages.append("".join(lines))
 
     def closeDocument(self) -> None:
@@ -199,7 +218,7 @@ class ToHtml(Tokenizer):
             for key, index in self._usedNotes.items():
                 if content := self._footnotes.get(key):  # pragma: no branch
                     text = self._formatText(*content)
-                    lines.append(f"<li id='footnote_{index}'><p>{text}</p></li>\n")
+                    lines.append(f"<li id='footnote_{index}'><p{self._blockDir(content[0])}>{text}</p></li>\n")
             lines.append("</ol>\n")
 
             self._pages.append("".join(lines))
@@ -214,6 +233,7 @@ class ToHtml(Tokenizer):
                     "novelAuthor": self._project.data.author,
                     "buildTime": int(ts),
                     "buildTimeStr": formatTimeStamp(ts),
+                    "direction": "rtl" if self._isRTL else "ltr",
                 },
                 "text": {
                     "css": self._generateStyleSheet(),
@@ -226,7 +246,8 @@ class ToHtml(Tokenizer):
         else:
             html = []
             html.append("<!DOCTYPE html>")
-            html.append(f"<html lang='{self._dLocale.bcp47Name()}'>")
+            hDir = " dir='rtl'" if self._isRTL else ""
+            html.append(f"<html lang='{self._dLocale.bcp47Name()}'{hDir}>")
             html.append("<head>")
             html.append(f"<title>{self._project.data.name:s}</title>")
             html.append("<meta charset='utf-8'>")
@@ -261,6 +282,7 @@ class ToHtml(Tokenizer):
         if not self._cssStyles:
             return []
 
+        defaultAlign = "start" if self._isRTL else self._defaultAlign
         tColor = self._theme.text.name(QtHexRgb)
         lColor = self._theme.head.name(QtHexRgb)
         mColor = self._theme.highlight.name(QtHexRgb)
@@ -279,6 +301,8 @@ class ToHtml(Tokenizer):
         mbH4 = self._marginHead4[1]
         mtTT = self._marginText[0]
         mbTT = self._marginText[1]
+        mtLI = self._marginList[0]
+        mbLI = self._marginList[1]
         mtSP = self._marginSep[0]
         mbSP = self._marginSep[1]
 
@@ -306,7 +330,7 @@ class ToHtml(Tokenizer):
                 "font-style": fS,
             },
             "p": {
-                "text-align": self._defaultAlign,
+                "text-align": defaultAlign,
                 "line-height": f"{lHeight}%",
                 "margin-top": f"{mtTT:.2f}em",
                 "margin-bottom": f"{mbTT:.2f}em",
@@ -350,6 +374,14 @@ class ToHtml(Tokenizer):
                 "margin-top": f"{mtH4:.2f}em",
                 "margin-bottom": f"{mbH4:.2f}em",
             },
+            "ul, ol": {
+                "margin-top": f"{mtLI:.2f}em",
+                "margin-bottom": f"{mbLI:.2f}em",
+            },
+            "li": {
+                "text-align": defaultAlign,
+                "line-height": f"{lHeight}%",
+            },
             ".title": {
                 "font-size": f"{fSz0:.2f}em",
                 "font-weight": f"{hW}",
@@ -373,6 +405,14 @@ class ToHtml(Tokenizer):
     #  Protected Functions (Shared with EPub)
     ##
 
+    def _blockDir(self, text: str) -> str:
+        """Return a direction attribute for LTR text in RTL documents.
+        Text without strong characters inherits RTL.
+        """
+        if self._isRTL and textDirection(unescape(text)) == "ltr":
+            return " dir='ltr'"
+        return ""
+
     def _genInlineStyles(self, tStyle: BlockFmt) -> str:
         """Generate inline styles for a block of text."""
         aStyle = []
@@ -385,7 +425,7 @@ class ToHtml(Tokenizer):
         elif tStyle & BlockFmt.JUSTIFY:
             aStyle.append("text-align: justify;")
 
-        if tStyle & BlockFmt.PBB:
+        if tStyle & BlockFmt.BREAK_B:
             aStyle.append("page-break-before: always;")
         if tStyle & BlockFmt.PBA:
             aStyle.append("page-break-after: always;")

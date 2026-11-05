@@ -2,8 +2,9 @@
 novelWriter - Exception Handling
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -116,7 +117,7 @@ class ErrorMessage(QDialog):
         self.setSizeGripEnabled(True)
         self.resize(800, 400)
 
-    def setMessage(self, exType: type, exValue: BaseException, exTrace: TracebackType) -> None:
+    def setMessage(self, exType: type[BaseException], exValue: BaseException, exTrace: TracebackType | None) -> None:
         """Generate a message and append session data, error info and
         error traceback.
         """
@@ -173,7 +174,7 @@ class ErrorMessage(QDialog):
         self.close()
 
 
-def exceptionHandler(exType: type, exValue: BaseException, exTrace: TracebackType) -> None:
+def exceptionHandler(exType: type[BaseException], exValue: BaseException, exTrace: TracebackType | None) -> None:
     """Catch unhandled global exceptions."""
     from traceback import print_tb
 

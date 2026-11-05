@@ -2,8 +2,9 @@
 novelWriter - Custom Widget: Config Layout
 ==========================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,12 +24,22 @@ from __future__ import annotations
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPalette
-from PyQt6.QtWidgets import QAbstractButton, QFrame, QHBoxLayout, QLabel, QLayout, QScrollArea, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import (
+    QAbstractButton,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QLayout,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
 
 from novelwriter import SHARED
+from novelwriter.common import qtVisualAlign
 from novelwriter.constants import nwUnicode
 from novelwriter.enum import nwState
-from novelwriter.types import QtFontNormal, QtFontSemiBold, QtHexArgb, QtScrollAsNeeded
+from novelwriter.types import QtAlignLeftMiddle, QtFontNormal, QtFontSemiBold, QtHexArgb, QtScrollAsNeeded
 
 DEFAULT_SCALE = 0.9
 
@@ -91,6 +102,7 @@ class NScrollableForm(QScrollArea):
         self._indent = 12
 
         self._sections: dict[int, QLabel] = {}
+        self._editableLabel: dict[str, QLabel] = {}
         self._editableHelp: dict[str, NColorLabel] = {}
         self._editableUnit: dict[str, QLabel] = {}
         self._index: dict[str, QWidget] = {}
@@ -124,6 +136,11 @@ class NScrollableForm(QScrollArea):
         """Set the text color for the help text."""
         self._helpCol = color
         self._fontScale = scale
+
+    def setLabelText(self, key: str, text: str) -> None:
+        """Set the text for the label."""
+        if qLabel := self._editableLabel.get(key):
+            qLabel.setText(text)
 
     def setHelpText(self, key: str, text: str) -> None:
         """Set the text for the help label."""
@@ -160,6 +177,7 @@ class NScrollableForm(QScrollArea):
     def addGroupLabel(self, label: str, identifier: int | None = None) -> None:
         """Add a text label to separate groups of settings."""
         qLabel = QLabel(label, self)
+        qLabel.setAlignment(qtVisualAlign(self, QtAlignLeftMiddle))
         qLabel.setFont(SHARED.theme.guiFontB)
         qLabel.setContentsMargins(0, 4, 0, 4)
         if not self._first:
@@ -195,11 +213,14 @@ class NScrollableForm(QScrollArea):
             qWidget.setLayout(wBox)
         else:
             qWidget = widget
+        qWidget.setAccessibleName(label)
 
         qLabel = QLabel(label or "", self)
+        qLabel.setAlignment(qtVisualAlign(self, QtAlignLeftMiddle))
         qLabel.setIndent(self._indent)
         qLabel.setBuddy(qWidget)
-        qWidget.setAccessibleName(label)
+        if editable:
+            self._editableLabel[editable] = qLabel
 
         if helpText:
             qHelp = NColorLabel(
@@ -210,6 +231,7 @@ class NScrollableForm(QScrollArea):
                 wrap=True,
                 indent=self._indent,
             )
+            qHelp.setAlignment(qtVisualAlign(self, QtAlignLeftMiddle))
             qHelp.setBuddy(qWidget)
             qWidget.setAccessibleDescription(helpText)
             labelBox = QVBoxLayout()
@@ -259,6 +281,7 @@ class NColorLabel(QLabel):
     """
 
     HELP_SCALE = DEFAULT_SCALE
+    NORMAL_SCALE = 1.0
     HEADER_SCALE = 1.25
 
     _state = None

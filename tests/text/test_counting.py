@@ -2,8 +2,9 @@
 novelWriter - Text Counter Tests
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2021 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -146,6 +147,11 @@ def testTextCounting_standardCounter():
     assert wC == 9
     assert pC == 4
 
+    # List Items
+    assert standardCounter("* One item\n* Two items\n\nText") == (21, 5, 2)
+    assert standardCounter("> * Not an item") == (13, 4, 1)
+    assert standardCounter("#. One item\n#. Two items\n\nText") == (21, 5, 2)
+
     # Formatting Codes, Upper Case (Old Implementation)
     cC, wC, pC = standardCounter(
         "Some text\n\n"
@@ -212,3 +218,6 @@ def testTextCounting_bodyTextCounter():
     assert wC == 14
     assert cC == 91
     assert sC == 81
+
+    # Ordered list items are counted, but not their markers
+    assert bodyTextCounter("#. One item\n#. Two items\n# Heading\n") == (4, 17, 15)

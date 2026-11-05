@@ -2,8 +2,9 @@
 novelWriter - QTextDocument to Text Converter Tests
 ===================================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@ from novelwriter.core.project import NWProject
 from novelwriter.formats.fromqdoc import FromQTextDocument
 from novelwriter.formats.tohtml import ToHtml
 from novelwriter.formats.toqdoc import ToQTextDocument
+
+from tests.mocked import MockGuiMain
 
 
 @pytest.mark.core
@@ -84,6 +87,44 @@ def testFromQTextDocument_General():
     result = FromQTextDocument(document).convertText()
     assert result == "First\n\n\nSecond\n"
 
+    # Right-to-left text defaults to right alignment instead. Qt treats
+    # CSS alignment as relative to the text direction
+    document = QTextDocument()
+    document.setHtml(
+        '<p dir="rtl">Default</p>'
+        '<p dir="rtl" align="right">Right</p>'
+        '<p dir="rtl" align="left">Left</p>'
+        '<p dir="rtl" align="center">Centre</p>'
+        '<p dir="rtl" style="text-align:right">Relative</p>'
+        '<p align="left">\u05e9\u05dc\u05d5\u05dd</p>'
+    )
+    result = FromQTextDocument(document).convertText()
+    assert result == "Default\n\nRight\n\nLeft <<\n\n>> Centre <<\n\nRelative <<\n\n\u05e9\u05dc\u05d5\u05dd <<\n"
+
+
+@pytest.mark.core
+def testFromQTextDocument_Lists():
+    """Test conversion of unordered and ordered lists."""
+    html = (
+        "<p>Before</p>"
+        "<ul><li>One</li><li><b>Two</b></li><li><br></li></ul>"
+        "<ol><li>First</li><li>Second</li></ol>"
+        '<ul style="list-style-type:square"><li>Outer'
+        '<ol style="list-style-type:lower-alpha"><li>Inner</li></ol></li>'
+        "<li>Last</li></ul>"
+        "<p>After</p>"
+    )
+    document = QTextDocument()
+    document.setHtml(html)
+    assert FromQTextDocument(document).convertText() == (
+        "Before\n\n* One\n* **Two**\n\n#. First\n#. Second\n\n* Outer\n\n#. Inner\n\n* Last\n\nAfter\n"
+    )
+
+    # A list at the end of the document
+    document = QTextDocument()
+    document.setHtml("<ol><li>Only</li></ol>")
+    assert FromQTextDocument(document).convertText() == "#. Only\n"
+
 
 @pytest.mark.core
 def testFromQTextDocument_MergeSplitFragments():
@@ -118,7 +159,7 @@ def testFromQTextDocument_MergeSplitFragments():
 
 
 @pytest.mark.core
-def testFromQTextDocument_MarkdownVsShortcode(mockGUI):
+def testFromQTextDocument_MarkdownVsShortcode(mockGUI: MockGuiMain):
     """Test the edge cases that decide whether a format is written
     as Markdown or as a novelWriter shortcode: Markdown is only used
     when the formatted run sits on two clean word edges. Also checks
@@ -210,7 +251,7 @@ def testFromQTextDocument_MarkdownVsShortcode(mockGUI):
 
 
 @pytest.mark.core
-def testFromQTextDocument_MarkdownNestingRoundTrip(mockGUI):
+def testFromQTextDocument_MarkdownNestingRoundTrip(mockGUI: MockGuiMain):
     """Test that every non-empty combination of bold, italic and
     strike survives a full round trip: HTML to FromQTextDocument to
     novelWriter text to the real tokenizer (ToQTextDocument) to the
@@ -253,7 +294,7 @@ def testFromQTextDocument_MarkdownNestingRoundTrip(mockGUI):
 
 
 @pytest.mark.core
-def testFromQTextDocument_DocumentRoundTrip(mockGUI):
+def testFromQTextDocument_DocumentRoundTrip(mockGUI: MockGuiMain):
     """Test a round trip of novelWriter text through ToQTextDocument
     and back again through FromQTextDocument.
     """
@@ -273,6 +314,12 @@ def testFromQTextDocument_DocumentRoundTrip(mockGUI):
         ">> Right aligned text.\n"
         "\n"
         ">> Centered text. <<\n"
+        "\n"
+        "* Bullet one\n"
+        "* Bullet two\n"
+        "\n"
+        "#. Number one\n"
+        "#. Number two\n"
     )
 
     toDoc._text = text

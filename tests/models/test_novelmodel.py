@@ -2,8 +2,9 @@
 novelWriter - Novel Model Tests
 ===============================
 
-This file is a part of novelWriter
-Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,29 +22,33 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from PyQt6.QtCore import QModelIndex
 from PyQt6.QtTest import QAbstractItemModelTester
 
+from novelwriter import CONFIG
 from novelwriter.core.indexdata import IndexHeading
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwNovelExtra
+from novelwriter.guimain import GuiMain
 from novelwriter.models.novelmodel import NovelModel
-from novelwriter.types import QtDisplayRole
+from novelwriter.types import QtAccessibleTextRole, QtDisplayRole
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
 
 
 @pytest.mark.core
-def testNovelModel_ModelTest(nwGUI):
+def testNovelModel_ModelTest(nwGUI: GuiMain):
     """Run the Qt model tester on the model."""
     model = NovelModel()
     QAbstractItemModelTester(model)
 
 
 @pytest.mark.core
-def testNovelModel_Interface(nwGUI, fncPath, mockRnd):
+def testNovelModel_Interface(nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test the novel model interface."""
     project = NWProject()
     mockRnd.reset()
@@ -75,7 +80,7 @@ def testNovelModel_Interface(nwGUI, fncPath, mockRnd):
 
 
 @pytest.mark.core
-def testNovelModel_Extra(nwGUI, fncPath, mockRnd):
+def testNovelModel_Extra(nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test the novel model extra column."""
     project = NWProject()
     mockRnd.reset()
@@ -138,7 +143,7 @@ def testNovelModel_Extra(nwGUI, fncPath, mockRnd):
 
 
 @pytest.mark.core
-def testNovelModel_Data(nwGUI, fncPath, mockRnd):
+def testNovelModel_Data(nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test the novel model data methods."""
     project = NWProject()
     mockRnd.reset()
@@ -184,6 +189,24 @@ def testNovelModel_Data(nwGUI, fncPath, mockRnd):
         "A Section",
         "Another Section",
     ]
+    assert model.data(model.createIndex(1, 0), QtAccessibleTextRole) == "Heading 2 (Chapter): New Chapter"
+
+    # Section counts are added to the scene and chapter
+    CONFIG.useCharCount = False
+    sceneCount = scene["T0001"].wordCount  # type: ignore
+    chapterCount = chapter["T0001"].wordCount  # type: ignore
+    scene["T0002"].setCounts((50, 10, 1))  # type: ignore
+    scene["T0003"].setCounts((25, 5, 1))  # type: ignore
+    assert model.refresh(scene) is True
+    counts = [model.data(model.createIndex(i, 1), QtDisplayRole) for i in range(5)]
+    assert counts[1:] == [f"{chapterCount + sceneCount + 15}", f"{sceneCount + 15}", "10", "5"]
+
+    # Without sub counts, only the refreshed rows are updated
+    CONFIG.novelViewSubCounts = False
+    assert model.refresh(scene) is True
+    counts = [model.data(model.createIndex(i, 1), QtDisplayRole) for i in range(5)]
+    assert counts[2:] == [f"{sceneCount}", "10", "5"]
+    CONFIG.novelViewSubCounts = True
 
     # Remove new headings
     del scene._headings["T0002"]

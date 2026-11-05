@@ -2,8 +2,9 @@
 novelWriter - Init File
 =======================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -49,9 +50,9 @@ __license__    = "GPLv3"
 __author__     = "Veronica Berglyd Olsen"
 __maintainer__ = "Veronica Berglyd Olsen"
 __email__      = "code@vkbo.net"
-__version__    = "26.2.2"
-__hexversion__ = "0x260202f0"
-__date__       = "2026-10-11"
+__version__    = "26.3b1"
+__hexversion__ = "0x260300b1"
+__date__       = "2026-10-20"
 __status__     = "Stable"
 __domain__     = "novelwriter.io"
 # fmt: on

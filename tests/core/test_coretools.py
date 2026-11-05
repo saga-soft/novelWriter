@@ -2,8 +2,9 @@
 novelWriter - Core Tools Tests
 ==============================
 
-This file is a part of novelWriter
-Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -33,17 +34,26 @@ import pytest
 from novelwriter import CONFIG
 from novelwriter.constants import nwFiles, nwItemClass
 from novelwriter.core.coretools import DocDuplicator, DocMerger, DocSplitter, ProjectBuilder
+from novelwriter.core.item import ProjectItem
 from novelwriter.core.project import NWProject
+from novelwriter.core.tree import ProjectTree
 from novelwriter.enum import nwBuildFmt
 from novelwriter.manuscript.buildsettings import BuildSettings
 from novelwriter.manuscript.docbuild import DocumentBuilder
 
-from tests.helpers import NWD_IGNORE, XML_IGNORE, C, buildTestProject, cmpFiles
-from tests.mocked import causeOSError
+from tests.helpers import NWD_IGNORE, XML_IGNORE, C, MockRnd, TstPaths, buildTestProject, cmpFiles
+from tests.mocked import MockGuiMain, causeOSError
 
 
 @pytest.mark.core
-def testCoreTools_DocMerger(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd, ipsumText):
+def testCoreTools_DocMerger(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    tstPaths: TstPaths,
+    mockRnd: MockRnd,
+    ipsumText: list[str],
+):
     """Test the DocMerger utility."""
     project = NWProject()
     mockRnd.reset()
@@ -152,7 +162,13 @@ def testCoreTools_DocMerger(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd, ip
 
 
 @pytest.mark.core
-def testCoreTools_DocSplitter(monkeypatch, mockGUI, fncPath, mockRnd, ipsumText):
+def testCoreTools_DocSplitter(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+    ipsumText: list[str],
+):
     """Test the DocSplitter utility."""
     project = NWProject()
     mockRnd.reset()
@@ -327,7 +343,13 @@ def testCoreTools_DocSplitter(monkeypatch, mockGUI, fncPath, mockRnd, ipsumText)
 
 
 @pytest.mark.core
-def testCoreTools_DocDuplicator(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd):
+def testCoreTools_DocDuplicator(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    tstPaths: TstPaths,
+    mockRnd: MockRnd,
+):
     """Test the DocDuplicator utility."""
     project = NWProject()
     mockRnd.reset()
@@ -489,7 +511,7 @@ def testCoreTools_DocDuplicator(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd
         original = type(project.tree).duplicate
         state = {"count": 0}
 
-        def flaky(self, handle, pHandle, after):
+        def flaky(self: ProjectTree, handle: str, pHandle: str | None, after: bool) -> ProjectItem | None:
             state["count"] += 1
             return None if state["count"] == 1 else original(self, handle, pHandle, after)
 
@@ -501,7 +523,12 @@ def testCoreTools_DocDuplicator(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd
 
 
 @pytest.mark.core
-def testCoreTools_ProjectBuilderWrapper(monkeypatch, caplog, fncPath, mockGUI):
+def testCoreTools_ProjectBuilderWrapper(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    fncPath: Path,
+    mockGUI: MockGuiMain,
+):
     """Test the wrapper function of the project builder."""
     builder = ProjectBuilder()
 
@@ -529,7 +556,13 @@ def testCoreTools_ProjectBuilderWrapper(monkeypatch, caplog, fncPath, mockGUI):
 
 
 @pytest.mark.core
-def testCoreTools_ProjectBuilderA(monkeypatch, fncPath, tstPaths, mockGUI, mockRnd):
+def testCoreTools_ProjectBuilderA(
+    monkeypatch: pytest.MonkeyPatch,
+    fncPath: Path,
+    tstPaths: TstPaths,
+    mockGUI: MockGuiMain,
+    mockRnd: MockRnd,
+):
     """Create a new project from a project dictionary, with chapters."""
     monkeypatch.setattr("uuid.uuid4", lambda *a: uuid.UUID("d0f3fe10-c6e6-4310-8bfd-181eb4224eed"))
 
@@ -577,7 +610,13 @@ def testCoreTools_ProjectBuilderA(monkeypatch, fncPath, tstPaths, mockGUI, mockR
 
 
 @pytest.mark.core
-def testCoreTools_ProjectBuilderB(monkeypatch, fncPath, tstPaths, mockGUI, mockRnd):
+def testCoreTools_ProjectBuilderB(
+    monkeypatch: pytest.MonkeyPatch,
+    fncPath: Path,
+    tstPaths: TstPaths,
+    mockGUI: MockGuiMain,
+    mockRnd: MockRnd,
+):
     """Create a new project from a project dictionary, without chapters."""
     monkeypatch.setattr("uuid.uuid4", lambda *a: uuid.UUID("d0f3fe10-c6e6-4310-8bfd-181eb4224eed"))
 
@@ -625,7 +664,12 @@ def testCoreTools_ProjectBuilderB(monkeypatch, fncPath, tstPaths, mockGUI, mockR
 
 
 @pytest.mark.core
-def testCoreTools_ProjectBuilderNoScenesAndRoots(monkeypatch, fncPath, mockGUI, mockRnd):
+def testCoreTools_ProjectBuilderNoScenesAndRoots(
+    monkeypatch: pytest.MonkeyPatch,
+    fncPath: Path,
+    mockGUI: MockGuiMain,
+    mockRnd: MockRnd,
+):
     """Create a new project with chapters but no scenes, and check handling
     of invalid root entries and disabled notes.
     """
@@ -669,7 +713,13 @@ def testCoreTools_ProjectBuilderNoScenesAndRoots(monkeypatch, fncPath, mockGUI, 
 
 
 @pytest.mark.core
-def testCoreTools_ProjectBuilderCopyPlain(monkeypatch, caplog, mockGUI, prjLipsum, fncPath):
+def testCoreTools_ProjectBuilderCopyPlain(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    mockGUI: MockGuiMain,
+    prjLipsum: Path,
+    fncPath: Path,
+):
     """Create a new project copied from existing project."""
     srcPath = prjLipsum / nwFiles.PROJ_FILE
     dstPath = fncPath / "lipsum"
@@ -738,7 +788,13 @@ def testCoreTools_ProjectBuilderCopyPlain(monkeypatch, caplog, mockGUI, prjLipsu
 
 
 @pytest.mark.core
-def testCoreTools_ProjectBuilderCopyZipped(monkeypatch, caplog, mockGUI, fncPath, mockRnd):
+def testCoreTools_ProjectBuilderCopyZipped(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+):
     """Create a new project copied from existing zipped project."""
     # Create a project
     origPath = fncPath / "original"
@@ -813,7 +869,12 @@ def testCoreTools_ProjectBuilderCopyZipped(monkeypatch, caplog, mockGUI, fncPath
 
 
 @pytest.mark.core
-def testCoreTools_ProjectBuilderSample(monkeypatch, mockGUI, fncPath, tstPaths):
+def testCoreTools_ProjectBuilderSample(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    tstPaths: TstPaths,
+):
     """Create a new sample project."""
     data = {
         "name": "Test Sample",

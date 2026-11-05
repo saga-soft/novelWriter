@@ -2,8 +2,9 @@
 novelWriter - Config Class
 ==========================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,6 +43,7 @@ from PyQt6.QtCore import (
     QRect,
     QStandardPaths,
     QSysInfo,
+    Qt,
     QTranslator,
 )
 from PyQt6.QtGui import QFont, QFontDatabase, QFontMetrics
@@ -56,17 +58,19 @@ from novelwriter.common import (
     formatTimeStamp,
     joinLines,
     languageName,
+    minmax,
     processDialogSymbols,
     safeExists,
     safeIsDir,
+    safeIsFile,
     simplified,
     uniqueCompact,
 )
-from novelwriter.constants import nwFiles, nwQuotes, nwUnicode, trStats
+from novelwriter.constants import nwConst, nwFiles, nwQuotes, nwUnicode, trStats
 from novelwriter.enum import nwTheme
 from novelwriter.error import formatException, logException
 from novelwriter.formats.configparser import NConfigParser
-from novelwriter.formats.tomlparser import NTomlParser
+from novelwriter.formats.tomlparser import NTomlParser, T_ConfigMap
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -81,6 +85,12 @@ DEF_GUI_DARK = "default_dark"
 DEF_GUI_LIGHT = "default_light"
 DEF_ICONS = "material_rounded_normal"
 DEF_TREECOL = "theme"
+
+# Maps the current location of an option to its old location
+MOVED_CONFIGS: T_ConfigMap = {
+    ("Main", "hideFocusFooter"): ("Editor", "hideFocusFooter"),
+    ("Editor", "allowOpenDialog"): ("Editor", "allowOpenDial"),
+}
 
 
 class Config:
@@ -114,7 +124,7 @@ class Config:
         "_recentPaths",
         "_recentProjects",
         "_splash",
-        "allowOpenDial",
+        "allowOpenDialog",
         "altDialogClose",
         "altDialogOpen",
         "appHandle",
@@ -131,6 +141,7 @@ class Config:
         "buildFormat",
         "buildTime",
         "buildType",
+        "cleanFocusHeader",
         "countUnit",
         "cursorWidth",
         "darkTheme",
@@ -143,6 +154,8 @@ class Config:
         "doReplaceDots",
         "doReplaceSQuote",
         "dottedModCodes",
+        "editShowLineEndings",
+        "editShowTabsNSpaces",
         "emphLabels",
         "fmtApostrophe",
         "fmtDQuoteClose",
@@ -154,7 +167,10 @@ class Config:
         "fmtSQuoteOpen",
         "focusWidth",
         "fontWinSize",
+        "forceUnixLineEndings",
+        "goalInFocusMode",
         "guiFont",
+        "guiForceRTL",
         "guiLocale",
         "hasEnchant",
         "hideFocusFooter",
@@ -180,13 +196,14 @@ class Config:
         "narratorBreak",
         "narratorDialog",
         "nativeFont",
+        "novelViewSubCounts",
         "osDarwin",
         "osLinux",
         "osType",
         "osUnknown",
         "osWindows",
-        "outlinePanePos",
         "prefsWinSize",
+        "rtlMode",
         "scaleHeadings",
         "scrollPastEnd",
         "searchAuto",
@@ -204,15 +221,14 @@ class Config:
         "showDetailsPanel",
         "showEditToolBar",
         "showFullPath",
-        "showLineEndings",
         "showMultiSpaces",
         "showSessionTime",
-        "showTabsNSpaces",
         "showViewerPanel",
         "singleStarBold",
         "spellLanguage",
         "stopWhenIdle",
-        "tabWidth",
+        "storyPanePos",
+        "tabSize",
         "textFont",
         "textMargin",
         "textWidth",
@@ -225,6 +241,7 @@ class Config:
         "verQtString",
         "verQtValue",
         "viewComments",
+        "viewFirstLineIndent",
         "viewNotes",
         "viewPanePos",
         "viewSynopsis",
@@ -297,6 +314,7 @@ class Config:
 
         # General GUI Settings
         self.guiLocale = self._qLocale.name()
+        self.guiForceRTL = False  # User setting to force RTL layout
         self.lightTheme = DEF_GUI_LIGHT  # Light GUI theme
         self.darkTheme = DEF_GUI_DARK  # Dark GUI theme
         self.themeMode = nwTheme.AUTO  # Colour theme mode
@@ -305,9 +323,11 @@ class Config:
         self.hideHScroll = False  # Hide horizontal scroll bars on main widgets
         self.lastNotes = "0x0"  # The latest release notes that have been shown
         self.nativeFont = True  # Use native font dialog
+        self.goalInFocusMode = False  # Show project goal when in focus mode
         self.useCharCount = False  # Use character count as primary count
         self.countUnit = "words"  # Primary count unit
         self.vimMode = False  # Enable Vim mode
+        self.rtlMode = False  # RTL layout, from the language or the forced setting
 
         # Icons
         self.iconTheme = DEF_ICONS  # Icons theme
@@ -321,8 +341,8 @@ class Config:
         self.fontWinSize = [700, 550]  # Last size of the Font dialog
         self.mainPanePos = [300, 800]  # Last position of the main window splitter
         self.viewPanePos = [500, 150]  # Last position of the document viewer splitter
-        self.outlinePanePos = [500, 150]  # Last position of the outline panel splitter
         self.searchPanePos = [150, 500]  # Last position of the project search splitter
+        self.storyPanePos = [300, 800]  # Last position of the story panel splitter
         self.moveMainWin = True  # Move main window to the screen middle on startup
 
         # Project Settings
@@ -333,24 +353,24 @@ class Config:
         self.backupInterval = "session"  # Backup interval
         self.askBeforeBackup = True  # Flag for asking before running automatic backup
         self.askBeforeExit = True  # Flag for asking before exiting the app
+        self.forceUnixLineEndings = False  # Always use LF line endings, never CRLF
 
-        # Text Editor Settings
+        # Text Document Settings
         self.textFont = QFont()  # Editor font
         self.textWidth = 700  # Editor text width
         self.textMargin = 40  # Editor/viewer text margin
-        self.tabWidth = 40  # Editor tabulator width
-        self.lineHeight = 1.15  # Editor line height
+        self.tabSize = 2.0  # Text tab size in em
+        self.lineHeight = 1.15  # Text line height
         self.cursorWidth = 1  # Editor cursor width
         self.lineHighlight = False  # Highlight current line in editor
 
         self.focusWidth = 800  # Focus Mode text width
         self.hideFocusFooter = False  # Hide document footer in Focus Mode
+        self.cleanFocusHeader = False  # Hide most header content in Focus Mode
         self.showFullPath = True  # Show full document path in editor header
         self.autoSelect = True  # Auto-select word when applying format with no selection
 
         self.doJustify = False  # Justify text
-        self.showTabsNSpaces = False  # Show tabs and spaces in editor
-        self.showLineEndings = False  # Show line endings in editor
         self.showMultiSpaces = False  # Highlight multiple spaces in the text
         self.scaleHeadings = True  # Use a larger size for headings
         self.singleStarBold = False  # Allow single asterisk bold
@@ -366,7 +386,7 @@ class Config:
         self.scrollPastEnd = True  # Scroll past end of document, and centre cursor
 
         self.dialogStyle = 2  # Quote type to use for dialogue
-        self.allowOpenDial = True  # Allow open-ended dialogue quotes
+        self.allowOpenDialog = True  # Allow open-ended dialogue quotes
         self.dialogLine = ""  # Symbol to use for dialogue line
         self.narratorBreak = ""  # Symbol to use for narrator break
         self.narratorDialog = ""  # Symbol for alternating between dialogue and narrator
@@ -396,6 +416,7 @@ class Config:
         self.spellLanguage = "en"
 
         # State
+        self.novelViewSubCounts = True  # Count notes of sub elements in novel view
         self.showDetailsPanel = True  # The panel for the item details is visible
         self.showViewerPanel = True  # The panel for the viewer is visible
         self.showEditToolBar = False  # The document editor toolbar visibility
@@ -403,6 +424,9 @@ class Config:
         self.viewComments = True  # Comments are shown in the viewer
         self.viewSynopsis = True  # Synopsis is shown in the viewer
         self.viewNotes = True  # Notes are shown in the viewer
+        self.viewFirstLineIndent = False  # Enable first line indent in the viewer
+        self.editShowTabsNSpaces = False  # Show tabs and spaces in the editor
+        self.editShowLineEndings = False  # Show line endings in the editor
 
         # Search Box States
         self.searchAuto = False
@@ -493,6 +517,11 @@ class Config:
     def lastAuthor(self) -> str:
         """Return the last author name used."""
         return self._lastAuthor
+
+    @property
+    def lineEnding(self) -> str | None:
+        """Return the project file line ending."""
+        return "\n" if self.forceUnixLineEndings else None
 
     ##
     #  Getters
@@ -603,6 +632,11 @@ class Config:
                 font = QFontDatabase.systemFont(QFontDatabase.SystemFont.GeneralFont)
             self.textFont = fontMatcher(font)
             logger.debug("Text font set to: %s", describeFont(self.textFont))
+
+        # Copy to avoid changing the font passed in, and skip pixel sized fonts
+        if (size := self.textFont.pointSizeF()) > 0.0:
+            self.textFont = QFont(self.textFont)
+            self.textFont.setPointSizeF(minmax(size, nwConst.TEXT_FONT_MIN_SIZE, nwConst.TEXT_FONT_MAX_SIZE))
 
     def setPrimaryCount(self, useCharCount: bool) -> None:
         """Set the primary count unit. This also updates the unit label."""
@@ -771,6 +805,9 @@ class Config:
 
         # Refresh translated values
         self.setPrimaryCount(self.useCharCount)
+        if self.guiForceRTL:
+            nwApp.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        self.rtlMode = nwApp.layoutDirection() == Qt.LayoutDirection.RightToLeft
 
     def loadConfig(self, splash: NSplashScreen | None = None) -> bool:
         """Load preferences from file and replace default settings."""
@@ -782,10 +819,10 @@ class Config:
 
         if safeExists(path := self._confPath / nwFiles.CONF_FILE):
             confPath = path
-            parser = NTomlParser()
+            parser = NTomlParser(confMap=MOVED_CONFIGS)
         elif safeExists(path := self._confPath / nwFiles.CONF_FILE_OLD):
             confPath = path
-            parser = NConfigParser()
+            parser = NConfigParser(confMap=MOVED_CONFIGS)
             convertOld = True
         else:
             # Initial file, so we just create one from defaults
@@ -814,10 +851,14 @@ class Config:
         self.iconColTree = parser.getStr(sec, "iconColTree", self.iconColTree)
         self.iconColDocs = parser.getBool(sec, "iconColDocs", self.iconColDocs)
         self.guiLocale = parser.getStr(sec, "localisation", self.guiLocale)
+        self.guiForceRTL = parser.getBool(sec, "forceRTL", self.guiForceRTL)
         self.hideVScroll = parser.getBool(sec, "hideVScroll", self.hideVScroll)
         self.hideHScroll = parser.getBool(sec, "hideHScroll", self.hideHScroll)
         self.lastNotes = parser.getStr(sec, "lastNotes", self.lastNotes)
         self.nativeFont = parser.getBool(sec, "nativeFont", self.nativeFont)
+        self.hideFocusFooter = parser.getBool(sec, "hideFocusFooter", self.hideFocusFooter)
+        self.cleanFocusHeader = parser.getBool(sec, "cleanFocusHeader", self.cleanFocusHeader)
+        self.goalInFocusMode = parser.getBool(sec, "goalInFocusMode", self.goalInFocusMode)
         self.useCharCount = parser.getBool(sec, "useCharCount", self.useCharCount)
         self.vimMode = parser.getBool(sec, "vimMode", self.vimMode)
 
@@ -829,8 +870,8 @@ class Config:
         self.fontWinSize = parser.getIntList(sec, "fontSelect", self.fontWinSize)
         self.mainPanePos = parser.getIntList(sec, "mainPane", self.mainPanePos)
         self.viewPanePos = parser.getIntList(sec, "viewPane", self.viewPanePos)
-        self.outlinePanePos = parser.getIntList(sec, "outlinePane", self.outlinePanePos)
         self.searchPanePos = parser.getIntList(sec, "searchPane", self.searchPanePos)
+        self.storyPanePos = parser.getIntList(sec, "storyPane", self.storyPanePos)
         self.moveMainWin = parser.getBool(sec, "moveMainWin", self.moveMainWin)
 
         # Project
@@ -843,6 +884,7 @@ class Config:
         self.backupInterval = parser.getStr(sec, "backupInterval", self.backupInterval)
         self.askBeforeBackup = parser.getBool(sec, "askBeforeBackup", self.askBeforeBackup)
         self.askBeforeExit = parser.getBool(sec, "askBeforeExit", self.askBeforeExit)
+        self.forceUnixLineEndings = parser.getBool(sec, "forceUnixLineEndings", self.forceUnixLineEndings)
         self._lastAuthor = simplified(parser.getStr(sec, "lastAuthor", self._lastAuthor))
 
         # Editor
@@ -850,12 +892,11 @@ class Config:
         self.setTextFont(parser.getStr(sec, "textFont", ""))
         self.textWidth = parser.getInt(sec, "width", self.textWidth)
         self.textMargin = parser.getInt(sec, "margin", self.textMargin)
-        self.tabWidth = parser.getInt(sec, "tabWidth", self.tabWidth)
+        self.tabSize = parser.getFloat(sec, "tabSize", self.tabSize)
         self.lineHeight = parser.getFloat(sec, "lineHeight", self.lineHeight)
         self.cursorWidth = parser.getInt(sec, "cursorWidth", self.cursorWidth)
         self.lineHighlight = parser.getBool(sec, "lineHighlight", self.lineHighlight)
         self.focusWidth = parser.getInt(sec, "focusWidth", self.focusWidth)
-        self.hideFocusFooter = parser.getBool(sec, "hideFocusFooter", self.hideFocusFooter)
         self.doJustify = parser.getBool(sec, "justify", self.doJustify)
         self.autoSelect = parser.getBool(sec, "autoSelect", self.autoSelect)
         self.doReplace = parser.getBool(sec, "autoReplace", self.doReplace)
@@ -874,15 +915,13 @@ class Config:
         self.fmtPadAfter = uniqueCompact(parser.getStr(sec, "fmtPadAfter", self.fmtPadAfter))
         self.fmtPadThin = parser.getBool(sec, "fmtPadThin", self.fmtPadThin)
         self.spellLanguage = parser.getStr(sec, "spellCheck", self.spellLanguage)
-        self.showTabsNSpaces = parser.getBool(sec, "showTabsNSpaces", self.showTabsNSpaces)
-        self.showLineEndings = parser.getBool(sec, "showLineEndings", self.showLineEndings)
         self.showMultiSpaces = parser.getBool(sec, "showMultiSpaces", self.showMultiSpaces)
         self.scaleHeadings = parser.getBool(sec, "scaleHeadings", self.scaleHeadings)
         self.singleStarBold = parser.getBool(sec, "singleStarBold", self.singleStarBold)
         self.incNotesWCount = parser.getBool(sec, "incNotesWCount", self.incNotesWCount)
         self.showFullPath = parser.getBool(sec, "showFullPath", self.showFullPath)
         self.dialogStyle = parser.getInt(sec, "dialogStyle", self.dialogStyle)
-        self.allowOpenDial = parser.getBool(sec, "allowOpenDial", self.allowOpenDial)
+        self.allowOpenDialog = parser.getBool(sec, "allowOpenDialog", self.allowOpenDialog)
         dialogLine = parser.getStr(sec, "dialogLine", self.dialogLine)
         narratorBreak = parser.getStr(sec, "narratorBreak", self.narratorBreak)
         narratorDialog = parser.getStr(sec, "narratorDialog", self.narratorDialog)
@@ -895,6 +934,7 @@ class Config:
 
         # State
         sec = "State"
+        self.novelViewSubCounts = parser.getBool(sec, "novelViewSubCounts", self.novelViewSubCounts)
         self.showDetailsPanel = parser.getBool(sec, "showDetailsPanel", self.showDetailsPanel)
         self.showViewerPanel = parser.getBool(sec, "showViewerPanel", self.showViewerPanel)
         self.showEditToolBar = parser.getBool(sec, "showEditToolBar", self.showEditToolBar)
@@ -902,6 +942,9 @@ class Config:
         self.viewComments = parser.getBool(sec, "viewComments", self.viewComments)
         self.viewSynopsis = parser.getBool(sec, "viewSynopsis", self.viewSynopsis)
         self.viewNotes = parser.getBool(sec, "viewNotes", self.viewNotes)
+        self.viewFirstLineIndent = parser.getBool(sec, "viewFirstLineIndent", self.viewFirstLineIndent)
+        self.editShowTabsNSpaces = parser.getBool(sec, "editShowTabsNSpaces", self.editShowTabsNSpaces)
+        self.editShowLineEndings = parser.getBool(sec, "editShowLineEndings", self.editShowLineEndings)
         self.searchAuto = parser.getBool(sec, "searchAuto", self.searchAuto)
         self.searchCase = parser.getBool(sec, "searchCase", self.searchCase)
         self.searchWord = parser.getBool(sec, "searchWord", self.searchWord)
@@ -958,10 +1001,14 @@ class Config:
             "iconColTree": self.iconColTree,
             "iconColDocs": self.iconColDocs,
             "localisation": self.guiLocale,
+            "forceRTL": self.guiForceRTL,
             "hideVScroll": self.hideVScroll,
             "hideHScroll": self.hideHScroll,
             "lastNotes": self.lastNotes,
             "nativeFont": self.nativeFont,
+            "hideFocusFooter": self.hideFocusFooter,
+            "cleanFocusHeader": self.cleanFocusHeader,
+            "goalInFocusMode": self.goalInFocusMode,
             "useCharCount": self.useCharCount,
             "vimMode": self.vimMode,
         }
@@ -973,8 +1020,8 @@ class Config:
             "fontSelect": self.fontWinSize,
             "mainPane": self.mainPanePos,
             "viewPane": self.viewPanePos,
-            "outlinePane": self.outlinePanePos,
             "searchPane": self.searchPanePos,
+            "storyPane": self.storyPanePos,
             "moveMainWin": self.moveMainWin,
         }
 
@@ -987,6 +1034,7 @@ class Config:
             "backupInterval": self.backupInterval,
             "askBeforeBackup": self.askBeforeBackup,
             "askBeforeExit": self.askBeforeExit,
+            "forceUnixLineEndings": self.forceUnixLineEndings,
             "lastAuthor": self._lastAuthor,
         }
 
@@ -994,12 +1042,11 @@ class Config:
             "textFont": self.textFont,
             "width": self.textWidth,
             "margin": self.textMargin,
-            "tabWidth": self.tabWidth,
+            "tabSize": self.tabSize,
             "lineHeight": self.lineHeight,
             "cursorWidth": self.cursorWidth,
             "lineHighlight": self.lineHighlight,
             "focusWidth": self.focusWidth,
-            "hideFocusFooter": self.hideFocusFooter,
             "justify": self.doJustify,
             "autoSelect": self.autoSelect,
             "autoReplace": self.doReplace,
@@ -1018,15 +1065,13 @@ class Config:
             "fmtPadAfter": self.fmtPadAfter,
             "fmtPadThin": self.fmtPadThin,
             "spellCheck": self.spellLanguage,
-            "showTabsNSpaces": self.showTabsNSpaces,
-            "showLineEndings": self.showLineEndings,
             "showMultiSpaces": self.showMultiSpaces,
             "scaleHeadings": self.scaleHeadings,
             "singleStarBold": self.singleStarBold,
             "incNotesWCount": self.incNotesWCount,
             "showFullPath": self.showFullPath,
             "dialogStyle": self.dialogStyle,
-            "allowOpenDial": self.allowOpenDial,
+            "allowOpenDialog": self.allowOpenDialog,
             "dialogLine": self.dialogLine,
             "narratorBreak": self.narratorBreak,
             "narratorDialog": self.narratorDialog,
@@ -1039,6 +1084,7 @@ class Config:
         }
 
         config["State"] = {
+            "novelViewSubCounts": self.novelViewSubCounts,
             "showDetailsPanel": self.showDetailsPanel,
             "showViewerPanel": self.showViewerPanel,
             "showEditToolBar": self.showEditToolBar,
@@ -1046,6 +1092,9 @@ class Config:
             "viewComments": self.viewComments,
             "viewSynopsis": self.viewSynopsis,
             "viewNotes": self.viewNotes,
+            "viewFirstLineIndent": self.viewFirstLineIndent,
+            "editShowTabsNSpaces": self.editShowTabsNSpaces,
+            "editShowLineEndings": self.editShowLineEndings,
             "searchAuto": self.searchAuto,
             "searchCase": self.searchCase,
             "searchWord": self.searchWord,
@@ -1130,6 +1179,10 @@ class RecentProjects:
         self._data: dict[str, dict[str, str | int]] = {}
         self._map: dict[str, str] = {}
 
+    ##
+    #  Methods
+    ##
+
     def loadCache(self) -> bool:
         """Load the cache file for recent projects."""
         self._data = {}
@@ -1173,11 +1226,19 @@ class RecentProjects:
             (str(k), str(e["title"]), checkInt(e["words"], 0), checkInt(e["time"], 0)) for k, e in self._data.items()
         ]
 
+    def findCopy(self, path: str | Path, puuid: str) -> str | None:
+        """Return the path of another existing project with the same UUID."""
+        if (other := self._otherPath(str(path), puuid)) and safeIsFile(Path(other) / nwFiles.PROJ_FILE):
+            return other
+        return None
+
     def update(self, path: str | Path, data: ProjectData, saved: float | int) -> None:
         """Add or update recent cache information on a given project."""
         try:
-            if (remove := self._map.get(data.uuid)) and (remove != str(path)):
-                self.remove(remove)
+            # A project with the same UUID at another path has been moved, unless it still exists
+            if (other := self._otherPath(str(path), data.uuid)) and not safeIsFile(Path(other) / nwFiles.PROJ_FILE):
+                self.remove(other)
+
             self._setEntry(
                 data.uuid,
                 str(path),
@@ -1186,6 +1247,7 @@ class RecentProjects:
                 sum(data.currCounts[2:]),
                 int(saved),
             )
+
             self.saveCache()
         except Exception:
             pass
@@ -1195,6 +1257,16 @@ class RecentProjects:
         if self._data.pop(str(path), None) is not None:
             logger.debug("Removed recent: %s", path)
             self.saveCache()
+
+    ##
+    #  Internal Functions
+    ##
+
+    def _otherPath(self, path: str, puuid: str) -> str | None:
+        """Return another recorded path for the same project UUID."""
+        if (other := self._map.get(puuid)) and other != path and self._data.get(other, {}).get("uuid") == puuid:
+            return other
+        return None
 
     def _setEntry(self, puuid: str, path: str, title: str, words: int, chars: int, saved: int) -> None:
         """Set an entry in the recent projects record."""
@@ -1212,7 +1284,7 @@ class RecentProjects:
 class RecentPaths:
     """A record of recently used file paths."""
 
-    KEYS: Final[list[str]] = ["default", "project", "import", "outline", "stats"]
+    KEYS: Final[list[str]] = ["default", "project", "import", "story", "stats"]
 
     def __init__(self, config: Config) -> None:
         self._conf = config

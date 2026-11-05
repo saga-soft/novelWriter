@@ -2,8 +2,9 @@
 novelWriter - GUI Novel Tree
 ============================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,8 +43,8 @@ from PyQt6.QtWidgets import (
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import minmax, qtAddAction, qtAddMenu, qtWeakLambda
-from novelwriter.constants import nwKeyWords, nwLabels, trConst
-from novelwriter.enum import nwChange, nwDocMode, nwNovelExtra, nwOutline
+from novelwriter.constants import nwKeyWords, nwLabels, trConst, trLabel
+from novelwriter.enum import nwChange, nwDocMode, nwNovelExtra, nwStdLabel
 from novelwriter.extensions.modified import NFlatIconButton, NTreeView
 from novelwriter.extensions.novelselector import NovelSelector
 from novelwriter.models.novelmodel import NovelModel
@@ -222,6 +223,11 @@ class GuiNovelToolBar(QWidget):
         self.aLastColSize = qtAddAction(self.mLastCol, self.tr("Column Size"))
         self.aLastColSize.triggered.connect(self._selectLastColumnSize)
 
+        self.aSubCounts = qtAddAction(self.mMore, self.tr("Include Sub-Heading Counts"))
+        self.aSubCounts.setCheckable(True)
+        self.aSubCounts.setChecked(CONFIG.novelViewSubCounts)
+        self.aSubCounts.triggered.connect(self._setSubCounts)
+
         self.tbMore = NFlatIconButton(self, iSz, "more_vertical:default")
         self.tbMore.setToolTip(self.tr("More Options"))
         self.tbMore.setMenu(self.mMore)
@@ -336,6 +342,12 @@ class GuiNovelToolBar(QWidget):
         if isOk:
             self.novelView.novelTree.setLastColSize(newSize)
             self.novelView.novelTree.resizeColumns()
+
+    @pyqtSlot(bool)
+    def _setSubCounts(self, state: bool) -> None:
+        """Set whether to include the counts of child headings."""
+        CONFIG.novelViewSubCounts = state
+        self.forceRefreshNovelTree()
 
     ##
     #  Internal Functions
@@ -558,7 +570,7 @@ class GuiNovelTree(NTreeView):
         if head := SHARED.project.index.getItemHeading(tHandle, sTitle):
             logger.debug("Generating meta data tooltip for '%s:%s'", tHandle, sTitle)
             if synopsis := head.synopsis:
-                label = trConst(nwLabels.OUTLINE_COLS[nwOutline.SYNOP])
+                label = trLabel(nwStdLabel.SYNOPSIS)
                 synopsis = f"<p><b>{label}:</b> {synopsis}</p>"
 
             lines: list[str] = []

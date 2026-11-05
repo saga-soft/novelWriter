@@ -2,8 +2,9 @@
 novelWriter - EPUB Converter
 ============================
 
-This file is a part of novelWriter
-Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,9 +32,9 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from novelwriter.common import xmlElement, xmlIndent, xmlSubElem
 from novelwriter.constants import nwUnicode
-from novelwriter.formats.shared import BlockTyp
+from novelwriter.formats.shared import BlockFmt, BlockTyp
 from novelwriter.formats.tohtml import ToHtml
-from novelwriter.formats.tokenizer import COMMENT_BLOCKS
+from novelwriter.formats.tokenizer import COMMENT_BLOCKS, LIST_BLOCKS
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -87,7 +88,7 @@ class ToEPub(ToHtml):
     Extend the ToHtml class to write EPub output.
     """
 
-    __slots__ = ("_isFront", "_nextFnIndex", "_section", "_sections")
+    __slots__ = ("_isFront", "_nestedToc", "_nextFnIndex", "_section", "_sections")
 
     def __init__(self, project: NWProject) -> None:
         super().__init__(project)
@@ -97,17 +98,19 @@ class ToEPub(ToHtml):
         self._brTag = "<br />"
         self._nextFnIndex = 1
         self._useAnchors = False
+        self._nestedToc = False
 
     ##
     #  Setters
     ##
 
     def setReplaceUnicode(self, doReplace: bool) -> None:
-        """Set translation map.
-
-        Replace Unicode is ignored for EPub.
-        """
+        """Set translation map. Replace Unicode is ignored for EPub."""
         self._trMap = str.maketrans({"&": "&amp;"})
+
+    def setNestedToC(self, value: bool) -> None:
+        """Set a nested table of contents."""
+        self._nestedToc = value
 
     ##
     #  Class Methods
@@ -116,12 +119,19 @@ class ToEPub(ToHtml):
     def doConvert(self) -> None:
         """Convert the list of text tokens into HTML."""
         for tType, tMeta, tText, tFmt, tStyle in self._blocks:
+            hDir = self._blockDir(tText)
             tText, tFmt = self._processHtmlEntities(tText, tFmt)
-            hStyle = self._genInlineStyles(tStyle)
+            hStyle = hDir + self._genInlineStyles(tStyle)
+
+            if tStyle & BlockFmt.LIST_S:
+                self._section.text.append("<ol>" if tType == BlockTyp.LIST_O else "<ul>")
 
             # Process Text Type
             if tType == BlockTyp.TEXT:
                 self._section.text.append(f"<p{hStyle}>{self._formatText(tText, tFmt)}</p>")
+
+            elif tType in LIST_BLOCKS:
+                self._section.text.append(f"<li{hStyle}>{self._formatText(tText, tFmt)}</li>")
 
             elif tType == BlockTyp.TITLE and self._isFront:
                 tHead = tText.replace("\n", self._brTag)
@@ -132,7 +142,7 @@ class ToEPub(ToHtml):
                 self._sections.append(self._section)
 
                 tHead = tText.replace("\n", self._brTag)
-                self._section.setTitle(tHead, "H1")
+                self._section.setTitle(tHead, "H1", hDir)
                 self._isFront = False
 
             elif tType == BlockTyp.HEAD1:
@@ -140,7 +150,7 @@ class ToEPub(ToHtml):
                 if self._isNovel:
                     self._section = EPubSection(EPubType.CHAPTER)
                     self._sections.append(self._section)
-                    self._section.setTitle(tHead, "H1")
+                    self._section.setTitle(tHead, "H1", hDir)
                     self._isFront = False
                 else:
                     self._section.text.append(f"<h1{hStyle}>{tHead}</h1>")
@@ -175,6 +185,9 @@ class ToEPub(ToHtml):
 
             else:  # pragma: no cover
                 pass
+
+            if tStyle & BlockFmt.LIST_E:
+                self._section.text.append("</ol>" if tType == BlockTyp.LIST_O else "</ul>")
 
     def closeDocument(self) -> None:
         """Run close document tasks."""
@@ -217,7 +230,7 @@ class ToEPub(ToHtml):
             outZip.writestr("OEBPS/nav.xhtml", self._generateNavPage())
             outZip.writestr("OEBPS/styles/stylesheet.css", self._generateStyleSheet())
             for section in self._sections:
-                outZip.writestr(f"OEBPS/xhtml/{section.name}.xhtml", section.sectionToXHtml(lang))
+                outZip.writestr(f"OEBPS/xhtml/{section.name}.xhtml", section.sectionToXHtml(lang, self._isRTL))
 
     ##
     #  EPub Files
@@ -294,7 +307,10 @@ class ToEPub(ToHtml):
             xmlSubElem(xManifest, "item", attrib=attrib)
 
         # Spine
-        xSpine = xmlSubElem(xRoot, "spine", attrib={"toc": "toc"})
+        sAttr = {"toc": "toc"}
+        if self._isRTL:
+            sAttr["page-progression-direction"] = "rtl"
+        xSpine = xmlSubElem(xRoot, "spine", attrib=sAttr)
         for section in self._sections:
             xmlSubElem(xSpine, "itemref", attrib={"idref": section.sectionID})
 
@@ -350,12 +366,13 @@ class ToEPub(ToHtml):
         """Generate the content XHtml page."""
         langCode = self._dLocale.name()
         title = self._localLookup("Contents")
+        hDir = ' dir="rtl"' if self._isRTL else ""
 
         xHtml = ['<?xml version="1.0" encoding="UTF-8"?>']
         xHtml.append("<!DOCTYPE html>")
         xHtml.append(
             '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" '
-            f'lang="{langCode}" xml:lang="{langCode}">'
+            f'lang="{langCode}" xml:lang="{langCode}"{hDir}>'
         )
         xHtml.append("<head>")
         xHtml.append(f"<title>{title}</title>")
@@ -368,15 +385,42 @@ class ToEPub(ToHtml):
         xHtml.append("</header>")
         xHtml.append('<nav epub:type="toc" role="doc-toc" aria-labelledby="toc">')
         xHtml.append('<ol epub:type="list">')
-        xHtml.extend(
-            f'<li><a href="xhtml/{section.name}.xhtml#{section.sectionID}">{title}</a></li>'
-            for section in self._sections
-            if (title := section.title) and section.epubType != EPubType.COVER
-        )
+
+        nested = self._nestedToc and any(s.epubType == EPubType.PART for s in self._sections)
+        inPart = False
+        inList = False
+        for section in self._sections:
+            if not (title := section.title) or section.epubType == EPubType.COVER:
+                continue
+            link = f'<a href="xhtml/{section.name}.xhtml#{section.sectionID}">{title}</a>'
+            if inPart and section.epubType == EPubType.CHAPTER:
+                if not inList:
+                    # A nested list must not be empty, so open it on first child
+                    xHtml.append("<ol>")
+                    inList = True
+                xHtml.append(f"<li>{link}</li>")
+                continue
+            if inList:
+                xHtml.append("</ol>")
+                inList = False
+            if inPart:
+                xHtml.append("</li>")
+                inPart = False
+            if nested and section.epubType == EPubType.PART:
+                xHtml.append(f"<li>{link}")
+                inPart = True
+            else:
+                xHtml.append(f"<li>{link}</li>")
+        if inList:
+            xHtml.append("</ol>")
+        if inPart:
+            xHtml.append("</li>")
+
         xHtml.append("</ol>")
         xHtml.append("</nav>")
         xHtml.append("</body>")
         xHtml.append("</html>")
+
         return "\n".join(xHtml)
 
     def _generateStyleSheet(self) -> str:
@@ -412,8 +456,10 @@ class ToEPub(ToHtml):
 
         if content := self._footnotes.get(key):  # pragma: no branch
             text = self._formatText(*content)
+            hDir = self._blockDir(content[0])
+            link = f"<a href='#fns_{index}'>{index}.</a>"
             self._section.footnotes.append(
-                f"<aside epub:type='footnote' id='fn_{index}'><p><a href='#fns_{index}'>{index}.</a> {text}</p></aside>"
+                f"<aside epub:type='footnote' id='fn_{index}'><p{hDir}>{link} {text}</p></aside>"
             )
 
         return f"<sup><a epub:type='noteref' href='#fn_{index}' id='fns_{index}'>{index}</a></sup>"
@@ -429,7 +475,7 @@ class EPubSection:
     See: https://www.w3.org/TR/epub-ssv/#sec-partitions
     """
 
-    __slots__ = ("_class", "_footnotes", "_id", "_name", "_text", "_title", "_type")
+    __slots__ = ("_class", "_dir", "_footnotes", "_id", "_name", "_text", "_title", "_type")
 
     BODY_TYPE: Final[dict[EPubType, str]] = {
         EPubType.COVER: "cover",
@@ -454,6 +500,7 @@ class EPubSection:
         self._id = ""
         self._title = ""
         self._class = ""
+        self._dir = ""
         self._text: list[str] = []
         self._footnotes: list[str] = []
 
@@ -496,12 +543,13 @@ class EPubSection:
         self._name = name
         self._id = f"sec_{sid}"
 
-    def setTitle(self, title: str, cssClass: str) -> None:
+    def setTitle(self, title: str, cssClass: str, hDir: str = "") -> None:
         """Set the title. This is useful if the title isn't available
         when the section is created.
         """
         self._title = title
         self._class = cssClass
+        self._dir = hDir
 
     ##
     #  Methods
@@ -511,17 +559,18 @@ class EPubSection:
         """Return True if there is text."""
         return self._title != "" or len(self._text) > 0
 
-    def sectionToXHtml(self, langCode: str) -> str:
+    def sectionToXHtml(self, langCode: str, rtl: bool = False) -> str:
         """Pack all content into an XHtml string."""
         eType, eRole = self.SECTION_TYPE.get(self._type, (None, None))
         sType = f' epub:type="{eType}"' if eType else ""
         sRole = f' role="{eRole}"' if eRole else ""
         hClass = f' class="{self._class}"' if self._class else ""
+        hDir = ' dir="rtl"' if rtl else ""
         xHtml = ['<?xml version="1.0" encoding="UTF-8"?>']
         xHtml.append("<!DOCTYPE html>")
         xHtml.append(
             '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" '
-            f'lang="{langCode}" xml:lang="{langCode}">'
+            f'lang="{langCode}" xml:lang="{langCode}"{hDir}>'
         )
         xHtml.append("<head>")
         if self._title:
@@ -533,7 +582,7 @@ class EPubSection:
         xHtml.append(f'<section{sType}{sRole} aria-labelledby="{self._id}">')
         if self._title:
             xHtml.append("<header>")
-            xHtml.append(f'<h1{hClass} id="{self._id}">{self._title}</h1>')
+            xHtml.append(f'<h1{hClass}{self._dir} id="{self._id}">{self._title}</h1>')
             xHtml.append("</header>")
         xHtml.extend(self._text)
         xHtml.append("</section>")

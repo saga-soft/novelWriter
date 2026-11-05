@@ -2,8 +2,9 @@
 novelWriter - Text Counting Functions
 =====================================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -50,10 +51,14 @@ def preProcessText(text: str, keepHeaders: bool = True) -> list[str]:
     for line in text.splitlines():
         line = line.rstrip()
         if line:
-            if line[0] in ignore:
+            if line[0] in ignore and line[:3] != "#. ":
                 continue
             if line[0] == ">":
                 line = line.lstrip(">").lstrip(" ")
+            elif line[:2] == "* ":
+                line = line[2:]
+            elif line[:3] == "#. ":
+                line = line[3:]
         if line:  # Above block can return empty line (Issue #1816)
             if line[-1] == "<":
                 line = line.rstrip("<").rstrip(" ")

@@ -2,8 +2,9 @@
 novelWriter - GUI Editor Hover Card
 ===================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,10 +28,11 @@ import logging
 from enum import Enum
 
 from PyQt6.QtCore import QEvent, QPoint, QRectF, Qt, QTimer, pyqtSignal, pyqtSlot
-from PyQt6.QtGui import QColor, QEnterEvent, QPainter, QPainterPath, QPaintEvent, QPen, QRegion
+from PyQt6.QtGui import QColor, QEnterEvent, QGuiApplication, QPainter, QPainterPath, QPaintEvent, QPen, QRegion
 from PyQt6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 from novelwriter import SHARED
+from novelwriter.common import minmax
 from novelwriter.core.indexdata import TT_NONE
 from novelwriter.enum import nwDocMode
 from novelwriter.extensions.modified import NFlatIconTextButton
@@ -165,13 +167,19 @@ class GuiDocHoverCard(QFrame):
             self._cache.pop(tag, None)
 
     def showAt(self, pos: QPoint, viewportWidth: int, viewportHeight: int) -> None:
-        """Show the hover card with its top-left corner at pos."""
+        """Show the hover card with its leading top corner at pos, kept
+        horizontally within the screen.
+        """
         self._label.setMaximumWidth(min(viewportWidth // 2, 600))
         self._label.setMaximumHeight(min(viewportHeight // 4, 600))
         self._hideTimer.stop()
         self.adjustSize()
         self.setMask(QRegion(self._roundedPath().toFillPolygon().toPolygon()))
-        self.move(pos)
+        xPos = pos.x() - self.width() if self.isRightToLeft() else pos.x()
+        if screen := QGuiApplication.screenAt(pos):
+            area = screen.availableGeometry()
+            xPos = minmax(xPos, area.left(), area.right() + 1 - self.width())
+        self.move(xPos, pos.y())
         self.show()
 
     def scheduleHide(self) -> None:

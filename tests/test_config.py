@@ -2,8 +2,9 @@
 novelWriter - Config Tests
 ==========================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,27 +25,31 @@ from __future__ import annotations
 import datetime
 import json
 import sys
+import tomllib
 
 from pathlib import Path
 from shutil import copyfile
 
 import pytest
 
-from PyQt6.QtCore import QRect
-from PyQt6.QtGui import QFontDatabase
+from PyQt6.QtCore import QRect, Qt
+from PyQt6.QtGui import QFont, QFontDatabase
 
 from novelwriter import CONFIG
-from novelwriter.config import Config, RecentPaths, RecentProjects
-from novelwriter.constants import nwFiles
+from novelwriter.config import MOVED_CONFIGS, Config, RecentPaths, RecentProjects
+from novelwriter.constants import nwConst, nwFiles
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwTheme
+from novelwriter.formats.configparser import NConfigParser
+from novelwriter.formats.tomlparser import NTomlParser, T_TomlConfig
+from novelwriter.guimain import GuiMain
 
-from tests.helpers import cmpFiles, writeFile
+from tests.helpers import TstPaths, cmpFiles, writeFile
 from tests.mocked import MockApp, causeOSError
 
 
 @pytest.mark.base
-def testConfig_Constructor(monkeypatch):
+def testConfig_Constructor(monkeypatch: pytest.MonkeyPatch):
     """Test config constructor."""
     # Linux
     with monkeypatch.context() as mp:
@@ -93,7 +98,7 @@ def testConfig_Constructor(monkeypatch):
 
 
 @pytest.mark.base
-def testConfig_BuildMeta(monkeypatch, caplog, tstPaths):
+def testConfig_BuildMeta(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, tstPaths: TstPaths):
     """Test parsing of the build meta.toml file, both as the checked-in
     placeholder and as stamped by the build scripts for a release.
     """
@@ -142,7 +147,7 @@ def testConfig_BuildMeta(monkeypatch, caplog, tstPaths):
 
 
 @pytest.mark.base
-def testConfig_InitLoadSave(monkeypatch, fncPath, tstPaths):
+def testConfig_InitLoadSave(monkeypatch: pytest.MonkeyPatch, fncPath: Path, tstPaths: TstPaths):
     """Test config initialisation."""
     conf = Config()
 
@@ -222,7 +227,7 @@ def testConfig_InitLoadSave(monkeypatch, fncPath, tstPaths):
 
 
 @pytest.mark.base
-def testConfig_Localisation(fncPath, tstPaths):
+def testConfig_Localisation(fncPath: Path, tstPaths: TstPaths):
     """Test localisation."""
     conf = Config()
     conf.initConfig(confPath=fncPath, dataPath=fncPath)
@@ -240,6 +245,13 @@ def testConfig_Localisation(fncPath, tstPaths):
 
     tstApp = MockApp()
     conf.initLocalisation(tstApp)  # type: ignore
+    assert conf.rtlMode is False
+
+    # Forcing RTL sets the app layout direction
+    conf.guiForceRTL = True
+    conf.initLocalisation(tstApp)  # type: ignore
+    assert tstApp.layoutDirection() == Qt.LayoutDirection.RightToLeft
+    assert conf.rtlMode is True
 
     # Check Lists
     languages = conf.listLanguages(conf.LANG_NW)
@@ -266,7 +278,7 @@ def testConfig_Localisation(fncPath, tstPaths):
 
 
 @pytest.mark.base
-def testConfig_Methods(fncPath):
+def testConfig_Methods(fncPath: Path):
     """Check class methods."""
     conf = Config()
     conf.initConfig(confPath=fncPath, dataPath=fncPath)
@@ -323,7 +335,7 @@ def testConfig_Methods(fncPath):
 
 
 @pytest.mark.base
-def testConfig_Fonts(monkeypatch, fncPath):
+def testConfig_Fonts(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
     """Check the OS-specific default font selection."""
     conf = Config()
     conf.initConfig(confPath=fncPath, dataPath=fncPath)
@@ -343,9 +355,29 @@ def testConfig_Fonts(monkeypatch, fncPath):
         conf.setTextFont(None)
         assert conf.textFont.family() == "Helvetica"
 
+    # Text font size is capped to the zoom range, without changing the font passed in
+    font = QFont(conf.textFont)
+    font.setPointSizeF(2.0)
+    conf.setTextFont(font)
+    assert conf.textFont.pointSizeF() == nwConst.TEXT_FONT_MIN_SIZE
+    assert font.pointSizeF() == 2.0
+
+    font.setPointSizeF(100.0)
+    conf.setTextFont(font.toString())
+    assert conf.textFont.pointSizeF() == nwConst.TEXT_FONT_MAX_SIZE
+
+    font.setPointSizeF(12.0)
+    conf.setTextFont(font)
+    assert conf.textFont.pointSizeF() == 12.0
+
+    # Pixel sized fonts are left as is
+    font.setPixelSize(4)
+    conf.setTextFont(font)
+    assert conf.textFont.pixelSize() == 4
+
 
 @pytest.mark.base
-def testConfig_SettersGetters(fncPath):
+def testConfig_SettersGetters(fncPath: Path):
     """Set various sizes and positions."""
     conf = Config()
     conf.initConfig(confPath=fncPath, dataPath=fncPath)
@@ -388,7 +420,7 @@ def testConfig_SettersGetters(fncPath):
 
 
 @pytest.mark.base
-def testConfig_Internal(monkeypatch, fncPath):
+def testConfig_Internal(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
     """Check internal functions."""
     conf = Config()
     conf.initConfig(confPath=fncPath, dataPath=fncPath)
@@ -408,7 +440,7 @@ def testConfig_Internal(monkeypatch, fncPath):
 
 
 @pytest.mark.base
-def testConfig_RecentCache(monkeypatch, tstPaths, nwGUI):
+def testConfig_RecentCache(monkeypatch: pytest.MonkeyPatch, tstPaths: TstPaths, fncPath: Path, nwGUI: GuiMain):
     """Test recent cache file."""
     cacheFile = tstPaths.cnfDir / nwFiles.RECENT_FILE
     recent = RecentProjects(CONFIG)
@@ -500,10 +532,41 @@ def testConfig_RecentCache(monkeypatch, tstPaths, nwGUI):
     # Entries without a UUID are not mapped
     recent._setEntry("", str(pathOne), "No UUID", 10, 0, 0)
     assert recent._map.get("") is None
+    recent.remove(pathOne)
+
+    # A moved project replaces the old entry
+    pathOld = fncPath / "projOld"
+    pathNew = fncPath / "projNew"
+    recent.update(pathOld, prjTwo.data, 1600002000)
+    assert recent.findCopy(pathNew, prjTwo.data.uuid) is None
+    recent.update(pathNew, prjTwo.data, 1600005600)
+    assert recent.listEntries() == [
+        (str(pathNew), "Proj Two", 200, 1600005600),
+    ]
+    recent.remove(pathNew)
+
+    # A copied project keeps both entries
+    pathOld.mkdir()
+    (pathOld / nwFiles.PROJ_FILE).touch()
+    oldUuid = prjOne.data.uuid
+    recent.update(pathOld, prjOne.data, 1600002000)
+    assert recent.findCopy(pathOld, oldUuid) is None
+    assert recent.findCopy(pathNew, oldUuid) == str(pathOld)
+    recent.update(pathNew, prjOne.data, 1600005600)
+    assert recent.listEntries() == [
+        (str(pathOld), "Proj One", 100, 1600002000),
+        (str(pathNew), "Proj One", 100, 1600005600),
+    ]
+
+    # Once the copy has a new UUID, the original is no longer a copy
+    prjOne.data.setUuid("")
+    recent.update(pathNew, prjOne.data, 1600005600)
+    assert recent.findCopy(pathOld, oldUuid) is None
+    assert len(recent.listEntries()) == 2
 
 
 @pytest.mark.base
-def testConfig_RecentPaths(monkeypatch, tstPaths):
+def testConfig_RecentPaths(monkeypatch: pytest.MonkeyPatch, tstPaths: TstPaths):
     """Test recent paths file."""
     cacheFile = tstPaths.cnfDir / nwFiles.RECENT_PATH
     recent = RecentPaths(CONFIG)
@@ -517,7 +580,7 @@ def testConfig_RecentPaths(monkeypatch, tstPaths):
     recent.setPath("default", tstPaths.cnfDir / "default")
     recent.setPath("project", tstPaths.cnfDir / "project")
     recent.setPath("import", tstPaths.cnfDir / "import")
-    recent.setPath("outline", tstPaths.cnfDir / "outline")
+    recent.setPath("story", tstPaths.cnfDir / "story")
     recent.setPath("stats", tstPaths.cnfDir / "stats")
 
     # Set invalid path
@@ -527,7 +590,7 @@ def testConfig_RecentPaths(monkeypatch, tstPaths):
     assert recent.getPath("default") == str(tstPaths.cnfDir / "default")
     assert recent.getPath("project") == str(tstPaths.cnfDir / "project")
     assert recent.getPath("import") == str(tstPaths.cnfDir / "import")
-    assert recent.getPath("outline") == str(tstPaths.cnfDir / "outline")
+    assert recent.getPath("story") == str(tstPaths.cnfDir / "story")
     assert recent.getPath("stats") == str(tstPaths.cnfDir / "stats")
 
     # Check invalid path
@@ -538,7 +601,7 @@ def testConfig_RecentPaths(monkeypatch, tstPaths):
         "default": str(tstPaths.cnfDir / "default"),
         "project": str(tstPaths.cnfDir / "project"),
         "import": str(tstPaths.cnfDir / "import"),
-        "outline": str(tstPaths.cnfDir / "outline"),
+        "story": str(tstPaths.cnfDir / "story"),
         "stats": str(tstPaths.cnfDir / "stats"),
     }
 
@@ -577,7 +640,7 @@ def testConfig_RecentPaths(monkeypatch, tstPaths):
 
 
 @pytest.mark.base
-def testConfig_IOError(monkeypatch):
+def testConfig_IOError(monkeypatch: pytest.MonkeyPatch):
     """Test handling of I/O errors when using pathlib."""
     with monkeypatch.context() as mp:
         mp.setattr(Path, "iterdir", causeOSError)
@@ -598,7 +661,7 @@ def testConfig_IOError(monkeypatch):
 
 
 @pytest.mark.base
-def testConfig_ConvertOldConfig(fncPath, tstPaths):
+def testConfig_ConvertOldConfig(fncPath: Path, tstPaths: TstPaths):
     """Test that an old ini-format config file is converted to the new
     TOML format when loaded.
     """
@@ -626,7 +689,7 @@ def testConfig_ConvertOldConfig(fncPath, tstPaths):
     assert conf.autoSaveDoc == 30
     assert conf.backupInterval == "session"
     assert conf.textWidth == 700
-    assert conf.tabWidth == 40
+    assert conf.tabSize == 2.0
     assert conf.dialogStyle == 2
     assert conf.spellLanguage == "en"
     assert conf.userIdleTime == 300
@@ -640,3 +703,38 @@ def testConfig_ConvertOldConfig(fncPath, tstPaths):
     assert newConf.mainWinSize == conf.mainWinSize
     assert newConf.dialogStyle == conf.dialogStyle
     assert newConf.spellLanguage == conf.spellLanguage
+
+
+@pytest.mark.base
+def testConfig_MovedConfigs(fncPath: Path):
+    """Test that moved config options are saved to their new location
+    and read from their old location as a fallback.
+    """
+    conf = Config()
+    conf.initConfig(confPath=fncPath, dataPath=fncPath)
+    assert conf.saveConfig() is True
+    saved = tomllib.loads((fncPath / nwFiles.CONF_FILE).read_text(encoding="utf-8"))
+
+    for (newSec, newOpt), (oldSec, oldOpt) in MOVED_CONFIGS.items():
+        assert newSec is not None
+        assert newOpt in saved[newSec]
+        assert oldOpt not in saved.get(oldSec, {})
+
+        data: T_TomlConfig = {oldSec: {oldOpt: "old"}}
+
+        toml = NTomlParser(confMap=MOVED_CONFIGS)
+        toml.readString(toml.writeString(data))
+        assert toml.getStr(newSec, newOpt, "") == "old"
+
+        ini = NConfigParser(confMap=MOVED_CONFIGS)
+        ini.read_dict(data)
+        assert ini.getStr(newSec, newOpt, "") == "old"
+
+        # The new location takes precedence
+        data.setdefault(newSec, {})[newOpt] = "new"
+
+        toml.readString(toml.writeString(data))
+        assert toml.getStr(newSec, newOpt, "") == "new"
+
+        ini.read_dict(data)
+        assert ini.getStr(newSec, newOpt, "") == "new"

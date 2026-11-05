@@ -11,6 +11,8 @@ on:
 concurrency:
   group: auto-approve-${{ github.event.pull_request.number }}
 
+permissions: {}
+
 jobs:
   approve:
     name: Approve Owner PRs

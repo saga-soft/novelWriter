@@ -2,8 +2,9 @@
 novelWriter - Project Item Tests
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +24,8 @@ from __future__ import annotations
 
 import copy
 
+from pathlib import Path
+
 import pytest
 
 from PyQt6.QtGui import QIcon
@@ -32,11 +35,12 @@ from novelwriter.core.item import ProjectItem
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwItemClass, nwItemLayout, nwItemType
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
+from tests.mocked import MockGuiMain
 
 
 @pytest.mark.core
-def testProjectItem_Setters(mockGUI, mockRnd, fncPath):
+def testProjectItem_Setters(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test all the simple setters for the ProjectItem class."""
     project = NWProject()
     mockRnd.reset()
@@ -198,7 +202,7 @@ def testProjectItem_Setters(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectItem_DailyProgress(mockGUI, mockRnd, fncPath):
+def testProjectItem_DailyProgress(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test the dailyProgress getter. It must report word or character
     based counts depending on the project's target count mode, and
     report zero for items not eligible for the project goal.
@@ -232,7 +236,7 @@ def testProjectItem_DailyProgress(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectItem_Methods(mockGUI, mockRnd, fncPath):
+def testProjectItem_Methods(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test the simple methods of the ProjectItem class."""
     project = NWProject()
     mockRnd.reset()
@@ -375,7 +379,7 @@ def testProjectItem_Methods(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectItem_Duplicate(mockGUI, mockRnd, fncPath):
+def testProjectItem_Duplicate(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test that duplicating an item copies every attribute of the
     source item, except the handle, which must be unique and is
     therefore provided separately. This loops over the class' declared
@@ -413,7 +417,7 @@ def testProjectItem_Duplicate(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectItem_TypeSetter(mockGUI):
+def testProjectItem_TypeSetter(mockGUI: MockGuiMain):
     """Test the setter for all the nwItemType values for the ProjectItem
     class.
     """
@@ -440,7 +444,7 @@ def testProjectItem_TypeSetter(mockGUI):
 
 
 @pytest.mark.core
-def testProjectItem_ClassSetter(mockGUI):
+def testProjectItem_ClassSetter(mockGUI: MockGuiMain):
     """Test the setter for all the nwItemClass values for the
     ProjectItem class.
     """
@@ -556,7 +560,7 @@ def testProjectItem_ClassSetter(mockGUI):
 
 
 @pytest.mark.core
-def testProjectItem_LayoutSetter(mockGUI):
+def testProjectItem_LayoutSetter(mockGUI: MockGuiMain):
     """Test the setter for all the nwItemLayout values for the
     ProjectItem class.
     """
@@ -583,7 +587,7 @@ def testProjectItem_LayoutSetter(mockGUI):
 
 
 @pytest.mark.core
-def testProjectItem_ClassDefaults(mockGUI):
+def testProjectItem_ClassDefaults(mockGUI: MockGuiMain):
     """Test the setter for the default values for the ProjectItem class."""
     project = NWProject()
     item = ProjectItem(project, "0000000000000")
@@ -636,7 +640,7 @@ def testProjectItem_ClassDefaults(mockGUI):
 
 
 @pytest.mark.core
-def testProjectItem_PackUnpack(mockGUI, caplog, mockRnd):
+def testProjectItem_PackUnpack(mockGUI: MockGuiMain, caplog: pytest.LogCaptureFixture, mockRnd: MockRnd):
     """Test packing and unpacking entries for the ProjectItem class."""
     project = NWProject()
     project.data.itemStatus.add(None, "New", "#646464", "SQUARE", 0)

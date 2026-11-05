@@ -2,8 +2,9 @@
 novelWriter - Quotes Dialog Tests
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,13 +26,15 @@ import pytest
 
 from PyQt6.QtCore import QItemSelectionModel
 from PyQt6.QtWidgets import QListWidgetItem
+from pytestqt.qtbot import QtBot
 
 from novelwriter.dialogs.quotes import GuiQuoteSelect
+from novelwriter.guimain import GuiMain
 from novelwriter.types import QtAccepted, QtRejected
 
 
 @pytest.mark.gui
-def testGuiQuoteSelect_Main(qtbot, monkeypatch, nwGUI):
+def testGuiQuoteSelect_Main(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain):
     """Test the quote symbols dialog."""
     monkeypatch.setattr(GuiQuoteSelect, "exec", lambda *a: None)
 

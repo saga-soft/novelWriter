@@ -2,8 +2,9 @@
 novelWriter - Item Model Tests
 ==============================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,10 +22,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from PyQt6.QtCore import QMimeData, QModelIndex, Qt
 from PyQt6.QtTest import QAbstractItemModelTester
+from pytestqt.qtbot import QtBot
 
 from novelwriter.common import decodeMimeHandles, encodeMimeHandles
 from novelwriter.constants import nwConst
@@ -34,11 +38,12 @@ from novelwriter.enum import nwItemLayout, nwItemType
 from novelwriter.models.itemmodel import INV_ROOT, NODE_FLAGS, ProjectModel, ProjectNode
 from novelwriter.types import QtDisplayRole, QtToolTipRole
 
-from tests.helpers import buildTestProject
+from tests.helpers import MockRnd, buildTestProject
+from tests.mocked import MockGuiMain
 
 
 @pytest.mark.core
-def testProjectNode_Root(mockGUI):
+def testProjectNode_Root(mockGUI: MockGuiMain):
     """Test the project node class for the root."""
     project = NWProject()
     root = ProjectNode(ProjectItem(project, INV_ROOT))
@@ -59,7 +64,7 @@ def testProjectNode_Root(mockGUI):
 
 
 @pytest.mark.core
-def testProjectNode_Children(mockGUI, mockRnd, fncPath):
+def testProjectNode_Children(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test the project node class for children."""
     project = NWProject()
     mockRnd.reset()
@@ -131,7 +136,7 @@ def testProjectNode_Children(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectNode_Modify(mockGUI, mockRnd, fncPath):
+def testProjectNode_Modify(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test modifying project nodes."""
     project = NWProject()
     mockRnd.reset()
@@ -228,7 +233,7 @@ def testProjectNode_Modify(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectNode_Data(mockGUI, mockRnd, fncPath):
+def testProjectNode_Data(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test data access from project nodes."""
     project = NWProject()
     mockRnd.reset()
@@ -267,7 +272,7 @@ def testProjectNode_Data(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectModel_ModelTest(mockGUI):
+def testProjectModel_ModelTest(mockGUI: MockGuiMain):
     """Run the Qt model tester on the model."""
     project = NWProject()
     model = ProjectModel(project.tree)
@@ -275,7 +280,7 @@ def testProjectModel_ModelTest(mockGUI):
 
 
 @pytest.mark.core
-def testProjectModel_Interface(mockGUI, mockRnd, fncPath):
+def testProjectModel_Interface(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test the model interface for the project model."""
     project = NWProject()
     mockRnd.reset()
@@ -323,7 +328,7 @@ def testProjectModel_Interface(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectModel_DragNDrop(mockGUI, mockRnd, fncPath):
+def testProjectModel_DragNDrop(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test drag and drop for the project model."""
     project = NWProject()
     mockRnd.reset()
@@ -430,7 +435,7 @@ def testProjectModel_DragNDrop(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectModel_Data(mockGUI, mockRnd, fncPath):
+def testProjectModel_Data(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test data access for the project model."""
     project = NWProject()
     mockRnd.reset()
@@ -499,7 +504,7 @@ def testProjectModel_Data(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectModel_Edit(qtbot, mockGUI, mockRnd, fncPath):
+def testProjectModel_Edit(qtbot: QtBot, mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test editing the project model."""
     project = NWProject()
     mockRnd.reset()
@@ -576,6 +581,7 @@ def testProjectModel_Edit(qtbot, mockGUI, mockRnd, fncPath):
     # Remove Child
     with qtbot.waitSignal(model.rowsAboutToBeRemoved) as signal:
         child = model.removeChild(novelIdx, titleIdx.row())
+    assert signal.args is not None
     assert signal.args[0].internalPointer().item.itemName == "Novel"
     assert signal.args[1] == 0
     assert signal.args[2] == 0
@@ -600,6 +606,7 @@ def testProjectModel_Edit(qtbot, mockGUI, mockRnd, fncPath):
     # Insert Child
     with qtbot.waitSignal(model.rowsAboutToBeInserted) as signal:
         model.insertChild(child, novelIdx, 1)
+    assert signal.args is not None
     assert signal.args[0].internalPointer().item.itemName == "Novel"
     assert signal.args[1] == 1
     assert signal.args[2] == 1
@@ -621,6 +628,7 @@ def testProjectModel_Edit(qtbot, mockGUI, mockRnd, fncPath):
     # Move it back with internal move
     with qtbot.waitSignal(model.rowsAboutToBeMoved) as signal:
         model.internalMove(titleIdx, -1)
+    assert signal.args is not None
     assert signal.args[0].internalPointer().item.itemName == "Novel"
     assert signal.args[1] == 1
     assert signal.args[2] == 1
@@ -684,7 +692,7 @@ def testProjectModel_Edit(qtbot, mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectModel_Other(qtbot, mockGUI, mockRnd, fncPath):
+def testProjectModel_Other(qtbot: QtBot, mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test other methods of the project model."""
     project = NWProject()
     mockRnd.reset()
@@ -763,7 +771,7 @@ def testProjectModel_Other(qtbot, mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectModel_DeepMoveMaintainsLineage(mockGUI, mockRnd, fncPath):
+def testProjectModel_DeepMoveMaintainsLineage(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Check deep descendant parent/root metadata after subtree move."""
     project = NWProject()
     mockRnd.reset()

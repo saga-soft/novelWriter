@@ -2,8 +2,9 @@
 novelWriter - Manuscript Tool Tests
 ===================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@ from __future__ import annotations
 
 import sys
 
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -31,20 +33,28 @@ from PyQt6.QtCore import QUrl, pyqtSlot
 from PyQt6.QtGui import QAction, QDesktopServices
 from PyQt6.QtPrintSupport import QPrintPreviewDialog
 from PyQt6.QtWidgets import QListWidgetItem
+from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
-from novelwriter.constants import nwHeadFmt, nwStats
+from novelwriter.constants import nwHeadFmt, nwProblems, nwStats
 from novelwriter.core.project import NWProject
+from novelwriter.guimain import GuiMain
 from novelwriter.manuscript.buildsettings import BuildSettings
 from novelwriter.manuscript.manusbuild import GuiManuscriptBuild
 from novelwriter.manuscript.manuscript import GuiManuscript
 from novelwriter.manuscript.manussettings import GuiBuildSettings
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
 
 
 @pytest.mark.gui
-def testGuiManuscript_Init(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
+def testGuiManuscript_Init(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the init/main functionality of the GuiManuscript dialog."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
@@ -83,7 +93,7 @@ def testGuiManuscript_Init(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiManuscript_Builds(qtbot, nwGUI, projPath):
+def testGuiManuscript_Builds(qtbot: QtBot, nwGUI: GuiMain, projPath: Path):
     """Test the handling of builds in the GuiManuscript dialog."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
@@ -216,12 +226,18 @@ def testGuiManuscript_Builds(qtbot, nwGUI, projPath):
 
 
 @pytest.mark.gui
-def testGuiManuscript_Features(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
+def testGuiManuscript_Features(
+    monkeypatch: pytest.MonkeyPatch,
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test other features of the GuiManuscript dialog."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
 
-    nwGUI.openDocument(C.hTitlePage)
+    nwGUI.docPanes.openDocument(C.hTitlePage)
     nwGUI.docEditor.setPlainText(
         "#! My Novel\n\n"
         "# Part One\n\n"
@@ -238,7 +254,7 @@ def testGuiManuscript_Features(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
         "#### Section\n\n"
         "Text\n\n"
     )
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
     # qtbot.stop()
 
     manus = GuiManuscript(nwGUI)
@@ -345,6 +361,70 @@ def testGuiManuscript_Features(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
     # Tests are too fast to trigger this one, so we trigger it manually to ensure it isn't failing
     manus.docPreview._postUpdate()
 
+    # Problems
+    # ========
+
+    tabs = manus.detailsTabs
+    problems = manus.buildProblems
+    assert tabs.isTabVisible(tabs.indexOf(problems)) is False
+    assert problems.hasProblems() is False
+
+    # Missing auto-replace keys show the tab
+    SHARED.project.data.setAutoReplace({"A": "B"}, False)
+    SHARED.project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\nText <A> <X>\n\n")
+    manus._generatePreview()
+    assert tabs.isTabVisible(tabs.indexOf(problems)) is True
+    assert tabs.currentWidget() is not problems
+    assert problems.hasProblems() is True
+    assert problems.problemCount() == 1
+    assert manus.docPreview.ageLabel.text().endswith(", Problems: 1")
+
+    parent = problems.listView.topLevelItem(0)
+    assert parent is not None
+    assert parent.text(0) == "Missing Auto-Replace Keys (1)"
+    assert parent.isExpanded() is True
+    child = parent.child(0)
+    assert child is not None
+    assert child.text(0) == "<X> in New Scene"
+
+    # Clicking an entry navigates, but clicking the category does not
+    with qtbot.assertNotEmitted(problems.problemEntryClicked):
+        problems._onItemClick(parent, 0)
+    with qtbot.waitSignal(problems.problemEntryClicked) as signal:
+        problems._onItemClick(child, 0)
+        assert signal.args == ["problem_0"]
+    assert manus.docPreview.source() == QUrl("#problem_0")
+
+    # The anchor exists in the preview document
+    names = []
+    preview = manus.docPreview.document()
+    assert preview is not None
+    block = preview.begin()
+    while block.isValid():
+        it = block.begin()
+        while not it.atEnd():
+            names.extend(it.fragment().charFormat().anchorNames())
+            it += 1
+        block = block.next()
+    assert "problem_0" in names
+
+    # Without a problem anchor, the heading anchor is used, and an unknown handle has no document name
+    problems.updateProblems({nwProblems.MISSING_AUTO_KEYS: [("Y", "0000000000000:T0001", "")]})
+    parent = problems.listView.topLevelItem(0)
+    assert parent is not None
+    child = parent.child(0)
+    assert child is not None
+    assert child.text(0) == "<Y>"
+    assert child.data(0, problems.D_ANCHOR) == "0000000000000:T0001"
+
+    # Fixing the problems hides the tab again
+    SHARED.project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\nText <A>\n\n")
+    manus._generatePreview()
+    assert tabs.isTabVisible(tabs.indexOf(problems)) is False
+    assert problems.hasProblems() is False
+    assert problems.problemCount() == 0
+    assert "Problems" not in manus.docPreview.ageLabel.text()
+
     # Builds
     # ======
 
@@ -396,7 +476,7 @@ def testGuiManuscript_Features(monkeypatch, qtbot, nwGUI, projPath, mockRnd):
 
 @pytest.mark.gui
 @pytest.mark.skipif(sys.platform.startswith("darwin"), reason="Not running on Darwin")
-def testGuiManuscript_Print(monkeypatch, qtbot, nwGUI, projPath):
+def testGuiManuscript_Print(monkeypatch: pytest.MonkeyPatch, qtbot: QtBot, nwGUI: GuiMain, projPath: Path):
     """Test the print feature of the GuiManuscript dialog."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)

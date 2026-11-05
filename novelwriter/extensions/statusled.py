@@ -2,8 +2,9 @@
 novelWriter - Custom Widget: Status LED
 =======================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ logger = logging.getLogger(__name__)
 class StatusLED(QAbstractButton):
     """Custom: LED Style Indicator."""
 
-    __slots__ = ("_color", "_negative", "_neutral", "_postitve", "_state")
+    __slots__ = ("_color", "_label", "_negative", "_neutral", "_postitve", "_state", "_texts")
 
     def __init__(self, sW: int, sH: int, parent: QWidget | None = None) -> None:
         super().__init__(parent=parent)
@@ -43,6 +44,8 @@ class StatusLED(QAbstractButton):
         self._negative = QtBlack
         self._color = QtBlack
         self._state = None
+        self._label = ""
+        self._texts = ("", "")
         self.setFixedWidth(sW)
         self.setFixedHeight(sH)
 
@@ -58,15 +61,28 @@ class StatusLED(QAbstractButton):
         self._negative = negative
         self.setState(self._state)
 
+    def setLabels(self, label: str, positive: str, negative: str) -> None:
+        """Set the label and the texts for the status values, used for
+        the tooltip and accessible name.
+        """
+        self._label = label
+        self._texts = (positive, negative)
+        self.setState(self._state)
+
     def setState(self, state: bool | None) -> None:
         """Set the colour state."""
         if state is True:
             self._color = self._postitve
+            text = f"{self._label}: {self._texts[0]}"
         elif state is False:
             self._color = self._negative
+            text = f"{self._label}: {self._texts[1]}"
         else:
             self._color = self._neutral
+            text = self._label
         self._state = state
+        self.setToolTip(text)
+        self.setAccessibleName(text)
         self.update()
 
     def paintEvent(self, event: QPaintEvent) -> None:

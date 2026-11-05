@@ -2,8 +2,9 @@
 novelWriter - Custom Widget: Expandable Panel
 =============================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -77,6 +78,7 @@ class NExpandablePanel(QWidget):
     def setTitle(self, title: str) -> None:
         """Set the title of the panel."""
         self._ep_label.setText(title)
+        self._ep_toggle.setAccessibleName(title)
 
     def setExpanded(self, expanded: bool) -> None:
         """Set the expanded state of the panel."""

@@ -23,6 +23,7 @@ For all counts, the following rules apply.
 #. Any line starting with ``%`` or ``@`` is ignored.
 #. Trailing white spaces are ignored, including line breaks.
 #. Leading ``>`` and trailing ``<`` are ignored with any spaces next to them.
+#. Leading list markers ``*`` and ``#.`` are ignored.
 #. Valid shortcodes and other commands wrapped in brackets ``[]`` are ignored.
 #. In-line Markdown syntax in text paragraphs is treated as part of the text.
 

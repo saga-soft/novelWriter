@@ -2,8 +2,9 @@
 novelWriter - Project Storage Tests
 ===================================
 
-This file is a part of novelWriter
-Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,27 +25,30 @@ from __future__ import annotations
 import json
 import logging
 
+from datetime import datetime
 from pathlib import Path
 from zipfile import ZipFile
 
 import pytest
 
-from novelwriter import CONFIG
+from novelwriter import CONFIG, __hexversion__, __version__
+from novelwriter.common import formatTimeStamp
 from novelwriter.constants import nwFiles
 from novelwriter.core.document import ProjectDocument
 from novelwriter.core.project import NWProject
-from novelwriter.core.projectxml import ProjectXMLReader, ProjectXMLWriter
+from novelwriter.core.projectxml import FILE_REVISION, FILE_VERSION, ProjectXMLReader, ProjectXMLWriter
 from novelwriter.core.storage import (
+    MANIFEST_VERSION,
     ProjectStorage,
     ProjectStorageCreate,
     ProjectStorageOpen,
     _LegacyDocuments,
     _LegacyStorage,
 )
-from novelwriter.enum import nwItemClass, nwItemLayout
+from novelwriter.enum import nwItemClass, nwItemLayout, nwProjectKind
 
-from tests.helpers import C, buildTestProject
-from tests.mocked import causeOSError
+from tests.helpers import C, MockRnd, TstPaths, buildTestProject
+from tests.mocked import MockGuiMain, causeOSError
 
 
 class MockProject:
@@ -52,7 +56,7 @@ class MockProject:
 
 
 @pytest.mark.core
-def testProjectStorage_CreateNewProject(mockGUI, fncPath):
+def testProjectStorage_CreateNewProject(mockGUI: MockGuiMain, fncPath: Path):
     """Test creating a project in a folder."""
     project = NWProject()
 
@@ -93,7 +97,12 @@ def testProjectStorage_CreateNewProject(mockGUI, fncPath):
 
 
 @pytest.mark.core
-def testProjectStorage_InitProjectStorage(monkeypatch, mockGUI, fncPath, mockRnd):
+def testProjectStorage_InitProjectStorage(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+):
     """Test initialising a project in a folder."""
     project = NWProject()
 
@@ -178,7 +187,7 @@ def testProjectStorage_InitProjectStorage(monkeypatch, mockGUI, fncPath, mockRnd
 
 
 @pytest.mark.core
-def testProjectStorage_InitProjectStorage_Invalid(monkeypatch, mockGUI, fncPath):
+def testProjectStorage_InitProjectStorage_Invalid(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path):
     """Test initialising a project in an invalid folder."""
     project = NWProject()
 
@@ -222,17 +231,22 @@ def testProjectStorage_InitProjectStorage_Invalid(monkeypatch, mockGUI, fncPath)
 
 
 @pytest.mark.core
-def testProjectStorage_LockFile(monkeypatch, fncPath):
+def testProjectStorage_LockFile(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
     """Test the project lock file."""
     monkeypatch.setattr("novelwriter.core.storage.time", lambda: 1000.0)
 
     storage = ProjectStorage(MockProject())  # type: ignore
     assert storage.isOpen() is False
 
-    # Project not open, so cannot read/write lock file
-    assert storage._readLockFile() is None
-    assert storage._writeLockFile() is False
-    assert storage._clearLockFile() is False
+    # Project not open, so cannot read/write/clear lock file
+    storage._readLockFile()
+    assert storage.lockStatus is None
+    storage._writeLockFile()
+    storage._lockedBy = ["a", "b", "c", "d"]
+    storage._clearLockFile()
+    assert storage.lockStatus == ["a", "b", "c", "d"]
+    assert not (fncPath / nwFiles.PROJ_LOCK).exists()
+    storage._lockedBy = None
 
     # Set a path to work with
     lockFilePath = fncPath / nwFiles.PROJ_LOCK
@@ -245,11 +259,11 @@ def testProjectStorage_LockFile(monkeypatch, fncPath):
     # Write lockfile fails
     with monkeypatch.context() as mp:
         mp.setattr("pathlib.Path.write_text", causeOSError)
-        assert storage._writeLockFile() is False
+        storage._writeLockFile()
         assert not lockFilePath.exists()
 
     # Successful write
-    assert storage._writeLockFile() is True
+    storage._writeLockFile()
     assert lockFilePath.exists()
     assert lockFilePath.read_text().split(";")[3] == "1000"
 
@@ -277,42 +291,140 @@ def testProjectStorage_LockFile(monkeypatch, fncPath):
     # Fail to remove lockfile
     with monkeypatch.context() as mp:
         mp.setattr("pathlib.Path.unlink", causeOSError)
-        assert storage._clearLockFile() is False
+        storage._clearLockFile()
         assert lockFilePath.exists()
 
     # Successful remove
-    assert storage._clearLockFile() is True
+    storage._clearLockFile()
     assert not lockFilePath.exists()
 
 
 @pytest.mark.core
-def testProjectStorage_ZipIt(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd):
+def testProjectStorage_Manifest(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
+    """Test the project manifest file."""
+    storage = ProjectStorage(MockProject())  # type: ignore
+    manifestPath = fncPath / nwFiles.MANIFEST_FILE
+
+    # Project not open, so no manifest is written or read
+    assert storage.runPostSaveTasks(1000.0) is True
+    storage._writeManifest(nwProjectKind.PROJECT, 1000.0)
+    assert not manifestPath.exists()
+    storage._readManifest()
+    assert storage.kind == nwProjectKind.PROJECT
+    assert storage.timeStamp is None
+
+    # Set a path to work with
+    storage._manifestPath = manifestPath
+    storage._openMode = ProjectStorage.MODE_INPLACE
+
+    # Write manifest fails
+    with monkeypatch.context() as mp:
+        mp.setattr("pathlib.Path.write_text", causeOSError)
+        assert storage.runPostSaveTasks(1000.0) is True
+        assert not manifestPath.exists()
+
+    # Successful write
+    assert storage.runPostSaveTasks(1000.0) is True
+    manifest = json.loads(manifestPath.read_text(encoding="utf-8"))
+    assert manifest == {
+        "format": "novelWriter Project",
+        "formatVersion": MANIFEST_VERSION,
+        "projectVersion": f"{FILE_VERSION}-{FILE_REVISION}",
+        "kind": "project",
+        "timeStamp": formatTimeStamp(1000.0),
+        "appVersion": __version__,
+        "hexVersion": __hexversion__,
+    }
+
+    # Read a backup manifest
+    storage._writeManifest(nwProjectKind.BACKUP, 1000.0)
+    storage._readManifest()
+    assert storage.kind == nwProjectKind.BACKUP
+    assert storage.timeStamp == datetime.fromtimestamp(1000.0)
+
+    # Saving turns it into a project
+    assert storage.runPostSaveTasks(1000.0) is True
+    assert storage.kind == nwProjectKind.PROJECT
+    storage._readManifest()
+    assert storage.kind == nwProjectKind.PROJECT
+
+    # Invalid manifests are read as a project
+    manifestPath.write_text("{", encoding="utf-8")
+    storage._readManifest()
+    assert storage.kind == nwProjectKind.PROJECT
+    assert storage.timeStamp is None
+
+    manifestPath.write_text('{"kind": "foo", "timeStamp": "bar"}', encoding="utf-8")
+    storage._readManifest()
+    assert storage.kind == nwProjectKind.PROJECT
+    assert storage.timeStamp is None
+
+    # An invalid time stamp keeps the kind
+    manifestPath.write_text('{"kind": "backup"}', encoding="utf-8")
+    storage._readManifest()
+    assert storage.kind == nwProjectKind.BACKUP
+    assert storage.timeStamp is None
+
+    # Clearing resets the values
+    storage._writeManifest(nwProjectKind.BACKUP, 1000.0)
+    storage._readManifest()
+    assert storage.kind == nwProjectKind.BACKUP
+    storage.clear()
+    assert storage.kind == nwProjectKind.PROJECT
+    assert storage.timeStamp is None
+
+
+@pytest.mark.core
+def testProjectStorage_ZipIt(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    tstPaths: TstPaths,
+    mockRnd: MockRnd,
+):
     """Test making a zip archive of a project."""
     zipFile = tstPaths.tmpDir / "project.zip"
 
     project = NWProject()
     storage = project.storage
-    assert storage.zipIt(zipFile) is False
+    assert storage.zipIt(zipFile, 1000.0) is False
 
     # Make a project
     mockRnd.reset()
     buildTestProject(project, fncPath)
 
-    # Fail to create archive
+    # Fail to list content
+    with monkeypatch.context() as mp:
+        mp.setattr("pathlib.Path.iterdir", causeOSError)
+        assert storage.zipIt(zipFile, 1000.0) is False
+        assert not zipFile.exists()
+
+    # Fail to create archive, and fail to clean up
     with monkeypatch.context() as mp:
         mp.setattr("novelwriter.core.storage.ZipFile.write", causeOSError)
-        assert storage.zipIt(zipFile) is False
+        mp.setattr("pathlib.Path.unlink", causeOSError)
+        assert storage.zipIt(zipFile, 1000.0) is False
+        assert zipFile.exists()
+
+    # Fail to create archive, and clean up
+    with monkeypatch.context() as mp:
+        mp.setattr("novelwriter.core.storage.ZipFile.write", causeOSError)
+        assert storage.zipIt(zipFile, 1000.0) is False
+        assert not zipFile.exists()
 
     # Add a stray file that should not be included
     strayFile = fncPath / "content" / "not-a-handle.txt"
     strayFile.write_text("stray")
 
     # Create archive
-    assert storage.zipIt(zipFile) is True
+    assert storage.zipIt(zipFile, 1000.0) is True
 
     # Check content
     with ZipFile(zipFile, mode="r") as archive:
         names = archive.namelist()
+        manifest = json.loads(archive.read(nwFiles.MANIFEST_FILE))
+        assert manifest["kind"] == "backup"
+        assert manifest["timeStamp"] == formatTimeStamp(1000.0)
         assert nwFiles.PROJ_FILE in names
         assert f"meta/{nwFiles.OPTS_FILE}" in names
         assert f"meta/{nwFiles.INDEX_FILE}" in names
@@ -325,7 +437,7 @@ def testProjectStorage_ZipIt(monkeypatch, mockGUI, fncPath, tstPaths, mockRnd):
 
 
 @pytest.mark.core
-def testProjectStorage_LegacyDataFolder(monkeypatch, fncPath):
+def testProjectStorage_LegacyDataFolder(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
     """Test project file format 1.0 folder structure conversion."""
     project = MockProject()
     storage = ProjectStorage(project)  # type: ignore
@@ -393,7 +505,7 @@ def testProjectStorage_LegacyDataFolder(monkeypatch, fncPath):
 
 
 @pytest.mark.core
-def testProjectStorage_FindOldDocuments(fncPath):
+def testProjectStorage_FindOldDocuments(fncPath: Path):
     """Test scanning the content folder for old .nwd document files."""
     project = MockProject()
     storage = ProjectStorage(project)  # type: ignore
@@ -412,7 +524,7 @@ def testProjectStorage_FindOldDocuments(fncPath):
 
 
 @pytest.mark.core
-def testProjectStorage_RunPostXMLTasks(monkeypatch, fncPath):
+def testProjectStorage_RunPostXMLTasks(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
     """Test running the post-XML-load document conversion tasks."""
     project = MockProject()
     storage = ProjectStorage(project)  # type: ignore
@@ -445,7 +557,7 @@ def testProjectStorage_RunPostXMLTasks(monkeypatch, fncPath):
 
 
 @pytest.mark.core
-def testLegacyDocuments_ConvertDocuments(monkeypatch, fncPath):
+def testLegacyDocuments_ConvertDocuments(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
     """Test conversion of old .nwd document files to .md with a TOML header."""
     project = MockProject()
     storage = ProjectStorage(project)  # type: ignore
@@ -541,7 +653,7 @@ def testLegacyDocuments_ConvertDocuments(monkeypatch, fncPath):
 
 
 @pytest.mark.core
-def testLegacyDocuments_ParseOldDocumentMeta(caplog):
+def testLegacyDocuments_ParseOldDocumentMeta(caplog: pytest.LogCaptureFixture):
     """Test parsing of individual old-format meta data lines."""
     caplog.set_level(logging.DEBUG, logger="novelwriter")
     legacy = _LegacyDocuments(MockProject())  # type: ignore
@@ -589,7 +701,7 @@ def testLegacyDocuments_ParseOldDocumentMeta(caplog):
 
 
 @pytest.mark.core
-def testProjectStorage_DeprecatedFiles(monkeypatch, fncPath):
+def testProjectStorage_DeprecatedFiles(monkeypatch: pytest.MonkeyPatch, fncPath: Path):
     """Test cleanup of deprecated files."""
     project = MockProject()
     storage = ProjectStorage(project)  # type: ignore
@@ -630,15 +742,11 @@ def testProjectStorage_DeprecatedFiles(monkeypatch, fncPath):
 
 
 @pytest.mark.core
-def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
+def testProjectStorage_OldFormatConvert(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path):
     """Test cleanup of deprecated files that needs to be converted."""
     project = NWProject()
     buildTestProject(project, fncPath)
     legacy = _LegacyStorage(project)
-
-    # The build project functions saves the project, so we must delete
-    # the old gui options file
-    (fncPath / "meta" / nwFiles.OPTS_FILE).unlink()
 
     # Word List
     wordListOld: Path = fncPath / "meta" / "wordlist.txt"
@@ -666,31 +774,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
     assert sessLogOld.exists() is True
     assert sessLogNew.exists() is False
 
-    # Options File
-    optionsOld: Path = fncPath / "meta" / "guiOptions.json"
-    optionsNew: Path = fncPath / "meta" / nwFiles.OPTS_FILE
-
-    optionsOld.write_text(
-        json.dumps(
-            {
-                "GuiProjectSettings": {
-                    "winWidth": 570,
-                    "winHeight": 375,
-                },
-                "GuiOutline": {
-                    "headerOrder": ["TITLE", "LEVEL", "LABEL", "LINE"],
-                    "columnWidth": {"TITLE": 325, "LEVEL": 40, "LABEL": 267, "LINE": 40},
-                    "columnHidden": {"TITLE": False, "LEVEL": True, "LABEL": False, "LINE": True},
-                },
-            },
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
-
-    assert optionsOld.exists() is True
-    assert optionsNew.exists() is False
-
     # Check Failure
     with monkeypatch.context() as mp:
         mp.setattr("builtins.open", causeOSError)
@@ -699,8 +782,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
         assert wordListNew.exists() is False
         assert sessLogOld.exists() is True
         assert sessLogNew.exists() is False
-        assert optionsOld.exists() is True
-        assert optionsNew.exists() is False
 
     # Check Success
     legacy.deprecatedFiles(fncPath)
@@ -708,8 +789,6 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
     assert wordListNew.exists() is True
     assert sessLogOld.exists() is False
     assert sessLogNew.exists() is True
-    assert optionsOld.exists() is False
-    assert optionsNew.exists() is True
 
     # Check Word List
     data = json.loads(wordListNew.read_text(encoding="utf-8"))
@@ -740,24 +819,3 @@ def testProjectStorage_OldFormatConvert(monkeypatch, mockGUI, fncPath):
         "cnotes": 0,
         "idle": 20,
     }
-
-    # Check Options File
-    data = json.loads(optionsNew.read_text(encoding="utf-8"))
-    assert data["novelWriter.guiOptions"]["GuiProjectSettings"] == {
-        "winWidth": 570,
-        "winHeight": 375,
-    }
-    assert data["novelWriter.guiOptions"]["GuiOutline"]["columnState"] == {
-        "TITLE": [False, 325],
-        "LEVEL": [True, 40],
-        "LABEL": [False, 267],
-        "LINE": [True, 40],
-    }
-
-    # An old options file without a GuiOutline section is converted as-is
-    otherOld = fncPath / "meta" / "otherOptions.json"
-    otherNew = fncPath / "meta" / "otherOptions.new.json"
-    otherOld.write_text(json.dumps({"GuiProjectSettings": {"winWidth": 100}}), encoding="utf-8")
-    legacy._convertOldOptionsFile(otherOld, otherNew)
-    data = json.loads(otherNew.read_text(encoding="utf-8"))
-    assert data["novelWriter.guiOptions"] == {"GuiProjectSettings": {"winWidth": 100}}

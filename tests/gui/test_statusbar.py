@@ -2,8 +2,9 @@
 novelWriter - GUI Status Bar Tests
 ==================================
 
-This file is a part of novelWriter
-Copyright (C) 2021 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2021 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,16 +24,27 @@ from __future__ import annotations
 
 import time
 
+from pathlib import Path
+
 import pytest
+
+from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.core.project import NWProject
+from novelwriter.guimain import GuiMain
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
 
 
 @pytest.mark.gui
-def testGuiStatusBar_Main(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiStatusBar_Main(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the various features of the status bar."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
@@ -51,10 +63,14 @@ def testGuiStatusBar_Main(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     # Project Status
     status.setProjectStatus(None)
     assert status.projIcon.state is None
+    assert status.projIcon.accessibleName() == "Project"
     status.setProjectStatus(False)
     assert status.projIcon.state is False
+    assert status.projIcon.accessibleName() == "Project: Unsaved"
     status.setProjectStatus(True)
     assert status.projIcon.state is True
+    assert status.projIcon.accessibleName() == "Project: Saved"
+    assert status.projIcon.toolTip() == "Project: Saved"
 
     # Document Status
     status.setDocumentStatus(None)
@@ -63,6 +79,7 @@ def testGuiStatusBar_Main(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     assert status.docIcon.state is False
     status.setDocumentStatus(True)
     assert status.docIcon.state is True
+    assert status.docIcon.accessibleName() == "Editor: Saved"
 
     # Idle Status
     CONFIG.stopWhenIdle = False
@@ -155,6 +172,50 @@ def testGuiStatusBar_Main(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
         mp.setattr(SHARED, "question", lambda *a, **k: True)
         status._resetDailyProgress()
     assert SHARED.project.data.dailyProgress == 0
+
+    # Focus Mode hides the statusbar by default
+    status.setFocusMode(True)
+    assert status.isVisible() is False
+    status.setFocusMode(False)
+    assert status.isVisible() is True
+
+    # Focus Mode with goals only shows the goals
+    CONFIG.goalInFocusMode = True
+    status.setFocusMode(True)
+    assert status.isVisible() is True
+    assert status.dayProg.isVisible() is True
+    assert status.projProg.isVisible() is True
+    assert status.messageBox.isVisible() is False
+    assert status.langText.isVisible() is False
+    assert status.statsText.isVisible() is False
+    assert status.timeText.isVisible() is False
+
+    # Without goals, the statusbar is hidden
+    SHARED.project.data.setDailyTarget(0, False)
+    SHARED.project.data.setProjectTarget(0, None, False)
+    status.updateGoals(100, 50)
+    assert status.isVisible() is False
+    SHARED.project.data.setProjectTarget(2000, None, False)
+    status.updateGoals(100, 50)
+    assert status.isVisible() is True
+
+    # Changing the setting in Focus Mode is applied
+    CONFIG.goalInFocusMode = False
+    status.initSettings()
+    assert status.isVisible() is False
+    CONFIG.goalInFocusMode = True
+    status.initSettings()
+    assert status.isVisible() is True
+
+    # Leaving Focus Mode respects the hidden timer
+    CONFIG.showSessionTime = False
+    status.setFocusMode(False)
+    assert status.isVisible() is True
+    assert status.messageBox.isVisible() is True
+    assert status.langText.isVisible() is True
+    assert status.statsText.isVisible() is True
+    assert status.timeIcon.isVisible() is True
+    assert status.timeText.isVisible() is False
 
     # Set message
     status.messageBox.setMessage("Hi!", "info", 10000)

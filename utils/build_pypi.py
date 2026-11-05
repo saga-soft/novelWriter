@@ -2,8 +2,9 @@
 novelWriter - PyPI Build
 ========================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ def pypi(args: argparse.Namespace) -> None:
     """Build sdist and wheel packages for PyPI."""
     log("")
     log("[b]Build PyPI Packages[e]")
-    log("[b]====================[e]")
+    log("[b]===================[e]")
     log("")
 
     bldDir = ROOT_DIR / "dist_pypi"

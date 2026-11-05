@@ -2,8 +2,9 @@
 novelWriter - Dictionary Downloader Tests
 =========================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,15 +30,17 @@ import pytest
 
 from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtWidgets import QFileDialog
+from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
+from novelwriter.guimain import GuiMain
 from novelwriter.tools.dictionaries import GuiDictionaries
 
 from tests.mocked import causeException, causeOSError
 
 
 @pytest.mark.gui
-def testGuiDictionaries_Main(qtbot, monkeypatch, nwGUI, fncPath):
+def testGuiDictionaries_Main(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain, fncPath: Path):
     """Test the Dictionaries downloader tool."""
     # Must also create the enchant folder, see issue #1874
     enchPath = fncPath / "enchant"

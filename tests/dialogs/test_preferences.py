@@ -2,8 +2,9 @@
 novelWriter - Preferences Dialog Test
 =====================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,11 +22,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from PyQt6.QtCore import QEvent, Qt
 from PyQt6.QtGui import QAction, QFont, QFontDatabase, QKeyEvent
 from PyQt6.QtWidgets import QFileDialog
+from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.config import DEF_GUI_DARK, DEF_GUI_LIGHT, DEF_TREECOL
@@ -35,15 +39,16 @@ from novelwriter.dialogs.preferences import GuiNeedsUpdate, GuiPreferences
 from novelwriter.dialogs.quotes import GuiQuoteSelect
 from novelwriter.extensions.modified import NFontDialog
 from novelwriter.gui.theme import ThemeEntry
+from novelwriter.guimain import GuiMain
 from novelwriter.types import QtKeyEscape, QtModNone
 
-from tests.helpers import checkDialogFreedOnClose
+from tests.helpers import TstPaths, checkDialogFreedOnClose
 
 KEY_DELAY = 1
 
 
 @pytest.mark.gui
-def testGuiPreferences_Main(qtbot, monkeypatch, nwGUI, tstPaths):
+def testGuiPreferences_Main(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain, tstPaths: TstPaths):
     """Test the preferences dialog loading."""
     monkeypatch.setattr(SpellEnchant, "listDictionaries", lambda *a: [("en", "English [en]")])
     monkeypatch.setattr(GuiPreferences, "exec", lambda *a: None)
@@ -90,7 +95,7 @@ def testGuiPreferences_Main(qtbot, monkeypatch, nwGUI, tstPaths):
 
 
 @pytest.mark.gui
-def testGuiPreferences_Actions(qtbot, monkeypatch, nwGUI):
+def testGuiPreferences_Actions(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain):
     """Test the preferences dialog actions."""
     monkeypatch.setattr(SpellEnchant, "listDictionaries", lambda *a: [("en", "English [en]")])
     prefs = GuiPreferences(nwGUI)
@@ -103,14 +108,17 @@ def testGuiPreferences_Actions(qtbot, monkeypatch, nwGUI):
     old = -1
     with qtbot.waitSignal(vBar.valueChanged) as value:
         prefs.sidebar.button(1).click()
+        assert value.args is not None
         assert value.args[0] > old
         old = value.args[0]
     with qtbot.waitSignal(vBar.valueChanged) as value:
         prefs.sidebar.button(2).click()
+        assert value.args is not None
         assert value.args[0] > old
         old = value.args[0]
     with qtbot.waitSignal(vBar.valueChanged) as value:
         prefs.sidebar.button(3).click()
+        assert value.args is not None
         assert value.args[0] > old
         old = value.args[0]
 
@@ -118,12 +126,14 @@ def testGuiPreferences_Actions(qtbot, monkeypatch, nwGUI):
     prefs.searchText.setText("Display language")
     with qtbot.waitSignal(vBar.valueChanged) as value:
         prefs._gotoSearch()
+        assert value.args is not None
         assert value.args[0] < old
 
     # Check Save Button
     prefs.show()
     with qtbot.waitSignal(prefs.newPreferencesReady) as signal:
         prefs.btnSave.click()
+        assert signal.args is not None
         assert len(signal.args) == 1
         assert isinstance(signal.args[0], GuiNeedsUpdate)
 
@@ -148,7 +158,13 @@ def testGuiPreferences_Actions(qtbot, monkeypatch, nwGUI):
 
 
 @pytest.mark.gui
-def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
+def testGuiPreferences_Settings(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    fncPath: Path,
+    tstPaths: TstPaths,
+):
     """Test the preferences dialog settings."""
     spelling = [("en", "English [en]"), ("de", "Deutch [de]")]
     monkeypatch.setattr(SpellEnchant, "listDictionaries", lambda *a: spelling)
@@ -180,17 +196,21 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
         prefs.nativeFont.setChecked(True)  # Use OS font dialog
         prefs.guiFontButton.click()
 
+    prefs.guiForceRTL.setChecked(True)
     prefs.hideVScroll.setChecked(True)
     prefs.hideHScroll.setChecked(True)
     prefs.useCharCount.setChecked(True)
+    prefs.incNotesWCount.setChecked(False)
 
     assert CONFIG.guiLocale != "en_US"
+    assert CONFIG.guiForceRTL is False
     assert CONFIG.lightTheme == "default_light"
     assert CONFIG.darkTheme == "default_dark"
     assert CONFIG.guiFont.family() != ""
     assert CONFIG.hideVScroll is False
     assert CONFIG.hideHScroll is False
     assert CONFIG.useCharCount is False
+    assert CONFIG.incNotesWCount is True
 
     # Document Style
     with monkeypatch.context() as mp:
@@ -203,11 +223,15 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
         prefs.textFontButton.click()
 
     prefs.showFullPath.setChecked(False)
-    prefs.incNotesWCount.setChecked(False)
+    prefs.hideFocusFooter.setChecked(True)
+    prefs.cleanFocusHeader.setChecked(True)
+    prefs.goalInFocusMode.setChecked(True)
 
     assert CONFIG.textFont.family() != ""
     assert CONFIG.showFullPath is True
-    assert CONFIG.incNotesWCount is True
+    assert CONFIG.hideFocusFooter is False
+    assert CONFIG.cleanFocusHeader is False
+    assert CONFIG.goalInFocusMode is False
 
     # Project View
     prefs.iconColTree.setCurrentData("faded", "default")
@@ -259,18 +283,16 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
     # Text Flow
     prefs.textWidth.stepDown()
     prefs.focusWidth.stepDown()
-    prefs.hideFocusFooter.setChecked(True)
     prefs.doJustify.setChecked(True)
     prefs.textMargin.stepUp()
-    prefs.tabWidth.stepUp()
+    prefs.tabSize.stepUp()
     prefs.lineHeight.stepUp()
 
     assert CONFIG.textWidth == 700
     assert CONFIG.focusWidth == 800
-    assert CONFIG.hideFocusFooter is False
     assert CONFIG.doJustify is False
     assert CONFIG.textMargin == 40
-    assert CONFIG.tabWidth == 40
+    assert CONFIG.tabSize == 2.0
     assert CONFIG.lineHeight == 1.15
 
     # Text Editing
@@ -280,8 +302,6 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
     prefs.scaleHeadings.setChecked(False)
     prefs.singleStarBold.setChecked(True)
     prefs.lineHighlight.setChecked(False)
-    prefs.showTabsNSpaces.setChecked(True)
-    prefs.showLineEndings.setChecked(True)
 
     assert CONFIG.spellLanguage != "de"
     assert CONFIG.autoSelect is True
@@ -289,8 +309,6 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
     assert CONFIG.scaleHeadings is True
     assert CONFIG.singleStarBold is False
     assert CONFIG.lineHighlight is True
-    assert CONFIG.showTabsNSpaces is False
-    assert CONFIG.showLineEndings is False
 
     # Editor Scrolling
     prefs.scrollPastEnd.setChecked(False)
@@ -303,7 +321,7 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
 
     # Text Highlighting
     prefs.dialogStyle.setCurrentData(3, 0)
-    prefs.allowOpenDial.setChecked(False)
+    prefs.allowOpenDialog.setChecked(False)
     prefs.dialogLine.setText(nwUnicode.U_EMDASH)
     prefs.narratorBreak.setCurrentData(nwUnicode.U_EMDASH, "")
     prefs.narratorDialog.setCurrentData(nwUnicode.U_EMDASH, "")
@@ -318,7 +336,7 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
     assert prefs.dialogLine.text() == f"{nwUnicode.U_ENDASH} {nwUnicode.U_EMDASH}"
 
     assert CONFIG.dialogStyle == 2
-    assert CONFIG.allowOpenDial is True
+    assert CONFIG.allowOpenDialog is True
     assert CONFIG.dialogLine == ""
     assert CONFIG.narratorBreak == ""
     assert CONFIG.narratorDialog == ""
@@ -389,6 +407,11 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
 
     prefs.vimMode.setChecked(True)
 
+    # Advanced
+    assert CONFIG.forceUnixLineEndings is False
+
+    prefs.forceUnixLineEndings.setChecked(True)
+
     # Save Settings
     with monkeypatch.context() as mp:
         mp.setattr(QFontDatabase, "families", lambda *a: ["TestFont"])
@@ -416,14 +439,18 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
     assert CONFIG.lightTheme == "theme1"
     assert CONFIG.darkTheme == "theme3"
     assert CONFIG.guiFont == QFont()
+    assert CONFIG.guiForceRTL is True
     assert CONFIG.hideVScroll is True
     assert CONFIG.hideHScroll is True
     assert CONFIG.useCharCount is True
+    assert CONFIG.incNotesWCount is False
 
     # Document Style
     assert CONFIG.textFont == QFont()
     assert CONFIG.showFullPath is False
-    assert CONFIG.incNotesWCount is False
+    assert CONFIG.hideFocusFooter is True
+    assert CONFIG.cleanFocusHeader is True
+    assert CONFIG.goalInFocusMode is True
 
     # Project View
     assert CONFIG.iconColTree == "faded"
@@ -449,10 +476,9 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
     # Text Flow
     assert CONFIG.textWidth == 690
     assert CONFIG.focusWidth == 790
-    assert CONFIG.hideFocusFooter is True
     assert CONFIG.doJustify is True
     assert CONFIG.textMargin == 41
-    assert CONFIG.tabWidth == 41
+    assert CONFIG.tabSize == 2.1
     assert CONFIG.lineHeight == 1.2
 
     # Text Editing
@@ -462,8 +488,6 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
     assert CONFIG.scaleHeadings is False
     assert CONFIG.singleStarBold is True
     assert CONFIG.lineHighlight is False
-    assert CONFIG.showTabsNSpaces is True
-    assert CONFIG.showLineEndings is True
 
     # Editor Scrolling
     assert CONFIG.scrollPastEnd is False
@@ -472,7 +496,7 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
 
     # Text Highlighting
     assert CONFIG.dialogStyle == 3
-    assert CONFIG.allowOpenDial is False
+    assert CONFIG.allowOpenDialog is False
     assert CONFIG.dialogLine == f"{nwUnicode.U_ENDASH}{nwUnicode.U_EMDASH}"
     assert CONFIG.narratorBreak == nwUnicode.U_EMDASH
     assert CONFIG.narratorDialog == nwUnicode.U_EMDASH
@@ -505,11 +529,14 @@ def testGuiPreferences_Settings(qtbot, monkeypatch, nwGUI, fncPath, tstPaths):
         "This changes how the editor accepts input.",
     ]
 
+    # Advanced
+    assert CONFIG.forceUnixLineEndings is True
+
     # qtbot.stop()
 
 
 @pytest.mark.gui
-def testGuiPreferences_MemoryLeakRegression(qtbot, monkeypatch, nwGUI):
+def testGuiPreferences_MemoryLeakRegression(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain):
     """Test that the dialog is freed when it is closed."""
     monkeypatch.setattr(SpellEnchant, "listDictionaries", lambda *a: [("en", "English [en]")])
     checkDialogFreedOnClose(qtbot, lambda: GuiPreferences(nwGUI))

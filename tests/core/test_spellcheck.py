@@ -2,8 +2,9 @@
 novelWriter - Spell Check Tests
 ===============================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,11 +33,11 @@ from novelwriter.core.project import NWProject
 from novelwriter.core.spellcheck import FakeEnchant, SpellEnchant, UserDictionary
 
 from tests.helpers import buildTestProject
-from tests.mocked import causeOSError
+from tests.mocked import MockGuiMain, causeOSError
 
 
 @pytest.mark.core
-def testUserDictionary_Main(monkeypatch, mockGUI, fncPath):
+def testUserDictionary_Main(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path):
     """Test the UserDictionary class."""
     project = NWProject()
     buildTestProject(project, fncPath)
@@ -105,7 +106,7 @@ def testUserDictionary_Main(monkeypatch, mockGUI, fncPath):
 
 
 @pytest.mark.core
-def testFakeEnchant_Main(monkeypatch, mockGUI, fncPath):
+def testFakeEnchant_Main(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path):
     """Test the FakeEnchant spell checker fallback."""
     project = NWProject()
     buildTestProject(project, fncPath)
@@ -138,7 +139,7 @@ def testFakeEnchant_Main(monkeypatch, mockGUI, fncPath):
 
 
 @pytest.mark.core
-def testSpellEnchant_Main(monkeypatch, mockGUI, fncPath):
+def testSpellEnchant_Main(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path):
     """Test the pyenchant spell checker."""
     project = NWProject()
     buildTestProject(project, fncPath)
@@ -219,7 +220,7 @@ def testSpellEnchant_Main(monkeypatch, mockGUI, fncPath):
 
 
 @pytest.mark.core
-def testSpellEnchant_Cache(monkeypatch, mockGUI, fncPath):
+def testSpellEnchant_Cache(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path):
     """Test the spell checker word cache."""
     project = NWProject()
     buildTestProject(project, fncPath)

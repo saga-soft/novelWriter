@@ -2,8 +2,9 @@
 novelWriter - Search Model Tests
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,18 +22,22 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from PyQt6.QtCore import QModelIndex
 from PyQt6.QtGui import QBrush
 from PyQt6.QtTest import QAbstractItemModelTester
+from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
 from novelwriter.core.project import NWProject
 from novelwriter.models.searchmodel import SearchNode, SearchResultModel
-from novelwriter.types import QtDisplayRole, QtForegroundRole, QtUserRole
+from novelwriter.types import QtAccessibleTextRole, QtDisplayRole, QtForegroundRole, QtUserRole
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
+from tests.mocked import MockGuiMain
 
 
 @pytest.mark.core
@@ -63,7 +68,7 @@ def testSearchNode_Basics():
 
 
 @pytest.mark.core
-def testSearchModel_ModelTest(mockGUI, mockRnd, fncPath):
+def testSearchModel_ModelTest(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Run the Qt model tester on the model."""
     project = NWProject()
     mockRnd.reset()
@@ -85,7 +90,7 @@ def testSearchModel_ModelTest(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testSearchModel_Interface(mockGUI, mockRnd, fncPath):
+def testSearchModel_Interface(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test the search result model and node data access."""
     project = NWProject()
     mockRnd.reset()
@@ -125,6 +130,8 @@ def testSearchModel_Interface(mockGUI, mockRnd, fncPath):
     assert model.data(model.index(0, 1, root), QtDisplayRole) == "(1)"
     assert model.data(sceneIdx, QtDisplayRole) == "New Scene"
     assert model.data(model.index(1, 1, root), QtDisplayRole) == "(2+)"
+    assert model.data(model.index(0, 1, root), QtAccessibleTextRole) == "1 matches"
+    assert model.data(model.index(1, 1, root), QtAccessibleTextRole) == "2+ matches"
     assert model.data(model.index(1, 1, root), QtForegroundRole) == QBrush(SHARED.theme.accentText)
     assert model.handle(titleIdx) == title.itemHandle
     assert model.handle(sceneIdx) == scene.itemHandle
@@ -159,7 +166,7 @@ def testSearchModel_Interface(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testSearchModel_Edit(qtbot, mockGUI, mockRnd, fncPath):
+def testSearchModel_Edit(qtbot: QtBot, mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):
     """Test inserting, updating, and clearing search results."""
     project = NWProject()
     mockRnd.reset()

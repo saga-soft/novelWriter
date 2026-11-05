@@ -2,8 +2,9 @@
 novelWriter - Shared Data Class
 ===============================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -35,7 +36,6 @@ from PyQt6.QtWidgets import QApplication, QFileDialog, QGridLayout, QMessageBox,
 
 from novelwriter.common import appendIfSet, formatFileFilter, joinLines
 from novelwriter.constants import nwFiles
-from novelwriter.core.spellcheck import SpellEnchant
 from novelwriter.enum import nwChange, nwItemClass, nwStandardButton
 from novelwriter.types import QtSizeExpanding, QtSizeMinimum
 
@@ -43,6 +43,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from novelwriter.core.project import NWProject
+    from novelwriter.core.spellcheck import SpellEnchant
     from novelwriter.core.status import T_StatusKind
     from novelwriter.gui.theme import GuiTheme
     from novelwriter.guimain import GuiMain
@@ -211,9 +212,9 @@ class SharedData(QObject):
     def closeDocument(self, tHandle: str | None = None) -> None:
         """Close the document editor, optionally a specific document."""
         if tHandle is None or tHandle == self.mainGui.docEditor.docHandle:
-            self.mainGui.closeDocument()
+            self.mainGui.docPanes.closeDocument()
         if tHandle is None or tHandle == self.mainGui.docViewer.docHandle:
-            self.mainGui.closeViewerPanel()
+            self.mainGui.docPanes.closeViewerPanel()
 
     def saveEditor(self, tHandle: str | None = None) -> None:
         """Save the editor content, optionally a specific document."""
@@ -478,6 +479,7 @@ class SharedData(QObject):
     def _resetProject(self) -> None:
         """Create a new project and spell checking instance."""
         from novelwriter.core.project import NWProject
+        from novelwriter.core.spellcheck import SpellEnchant
 
         if isinstance(self._project, NWProject):
             self._project.clear()

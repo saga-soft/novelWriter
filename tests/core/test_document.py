@@ -2,8 +2,9 @@
 novelWriter - Project Document Tests
 ====================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +24,9 @@ from __future__ import annotations
 
 import os
 
+from pathlib import Path
+from typing import Any
+
 import pytest
 
 from novelwriter.core.document import MAX_META_LINES, DocumentMeta, ProjectDocument
@@ -30,12 +34,17 @@ from novelwriter.core.project import NWProject
 from novelwriter.enum import nwItemClass, nwItemLayout
 from novelwriter.formats.tomlparser import NTomlParser
 
-from tests.helpers import MOCK_TIME, C, buildTestProject, readFile, writeFile
-from tests.mocked import causeOSError
+from tests.helpers import MOCK_TIME, C, MockRnd, buildTestProject, readFile, writeFile
+from tests.mocked import MockGuiMain, causeOSError
 
 
 @pytest.mark.core
-def testProjectDocument_LoadSave(monkeypatch, mockGUI, fncPath, mockRnd):
+def testProjectDocument_LoadSave(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+):
     """Test loading and saving a document with the ProjectDocument class."""
     monkeypatch.setattr("novelwriter.core.document.time", lambda: MOCK_TIME)
 
@@ -173,7 +182,7 @@ def testProjectDocument_LoadSave(monkeypatch, mockGUI, fncPath, mockRnd):
     # Cause stat() to fail right after a successful write
     origStat = type(docPath).stat
 
-    def failDocStat(path, *a, **kw):
+    def failDocStat(path: Path, *a: Any, **kw: Any) -> os.stat_result:
         if path == docPath:
             raise OSError("Mock OSError")
         return origStat(path, *a, **kw)
@@ -262,7 +271,7 @@ def testProjectDocument_LoadSave(monkeypatch, mockGUI, fncPath, mockRnd):
 
 
 @pytest.mark.core
-def testProjectDocument_Methods(monkeypatch, mockGUI, fncPath, mockRnd):
+def testProjectDocument_Methods(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test other methods of the ProjectDocument class."""
     monkeypatch.setattr("novelwriter.core.document.time", lambda: MOCK_TIME)
 

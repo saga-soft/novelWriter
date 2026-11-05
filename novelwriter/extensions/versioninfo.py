@@ -2,8 +2,9 @@
 novelWriter - Custom Widget: Version Info
 =========================================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,8 +35,9 @@ from PyQt6.QtGui import QDesktopServices
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 from novelwriter import CONFIG, SHARED, __date__, __domain__, __version__
-from novelwriter.common import formatLink, formatVersion
+from novelwriter.common import formatLink, formatVersion, qtVisualAlign
 from novelwriter.constants import nwConst
+from novelwriter.types import QtAlignLeftMiddle
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +80,7 @@ class VersionInfoWidget(QWidget):
         self._lblNotes.linkActivated.connect(self._processLink)
 
         self._lblRelease = QLabel(self._trLatest.format(formatLink("#update", trCheck)), self)
+        self._lblRelease.setAlignment(qtVisualAlign(self, QtAlignLeftMiddle))
         self._lblRelease.linkActivated.connect(self._processLink)
 
         # Assemble
