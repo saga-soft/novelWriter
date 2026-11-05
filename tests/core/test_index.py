@@ -430,9 +430,9 @@ def testIndex_ScanText(monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain, fncPath:
     assert index.scanText(xHandle, "Just some text\n#####\n#### Hello World!") is True
     assert xItem.mainHeading == "H4"
 
-    # A page with no valid heading at all leaves the main heading unchanged
+    # A page with no valid heading resets the main heading (issue #3132)
     assert index.scanText(xHandle, "Just some text\n#####\n") is True
-    assert xItem.mainHeading == "H4"
+    assert xItem.mainHeading == "H0"
 
     # Make some usable items
     tHandle = project.newFile("Title", C.hNovelRoot)
@@ -471,6 +471,14 @@ def testIndex_ScanText(monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain, fncPath:
 
     # A keyword line before any heading has been set is ignored
     assert index.scanText(pHandle, "@char: Jane\n# Page\n")
+
+    # Removing the heading resets the main heading (issue #3132)
+    sItem = project.tree[sHandle]
+    assert sItem is not None
+    assert index.scanText(sHandle, "### Scene\n")
+    assert sItem.mainHeading == "H3"
+    assert index.scanText(sHandle, "Scene\n")
+    assert sItem.mainHeading == "H0"
 
     # Title Indexing
     # ==============

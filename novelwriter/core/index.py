@@ -356,6 +356,7 @@ class Index:
             return False
 
         logger.debug("Indexing item with handle '%s'", tHandle)
+        tItem.setMainHeading("H0")
         if tItem.isInactiveClass():
             self._scanInactive(tItem, text)
         else:
