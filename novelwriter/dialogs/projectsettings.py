@@ -311,7 +311,7 @@ class _SettingsPage(NScrollableForm):
         self.spellLang = NComboBox(self)
         self.spellLang.setMinimumWidth(200)
         self.spellLang.addItem(self.tr("Default"), "None")
-        if CONFIG.hasEnchant:
+        if CONFIG.hasSpellCheck:
             for tag, language in SHARED.spelling.listDictionaries():
                 self.spellLang.addItem(language, tag)
         self.addRow(

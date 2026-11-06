@@ -30,7 +30,7 @@ from PyQt6.QtGui import QTextCharFormat, QTextCursor, QTextDocument
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.core.item import ProjectItem
-from novelwriter.core.spellcheck import SpellEnchant
+from novelwriter.core.spellcheck import SpellChecker
 from novelwriter.editor.highlighter import BLOCK_META, BLOCK_TITLE, GuiDocHighlighter
 from novelwriter.editor.textblock import TextBlockData
 from novelwriter.enum import nwItemClass, nwItemLayout, nwItemType, nwTheme
@@ -521,7 +521,7 @@ def testGuiDocHighlighter_Text(monkeypatch: pytest.MonkeyPatch, syntax: GuiDocHi
     # Settings
     syntax._tHandle = T_HANDLE
     syntax._isNovel = True
-    monkeypatch.setattr(SpellEnchant, "checkWord", lambda *a: False)
+    monkeypatch.setattr(SpellChecker, "checkWord", lambda *a: False)
 
     colHidden = theme.syntaxTheme.hidden.getRgb()
     colEmph = theme.syntaxTheme.emph.getRgb()
@@ -651,7 +651,7 @@ def testGuiDocHighlighter_Lists(monkeypatch: pytest.MonkeyPatch, syntax: GuiDocH
     # Settings
     syntax._tHandle = T_HANDLE
     syntax._isNovel = True
-    monkeypatch.setattr(SpellEnchant, "checkWord", lambda *a: False)
+    monkeypatch.setattr(SpellChecker, "checkWord", lambda *a: False)
 
     colHidden = theme.syntaxTheme.hidden.getRgb()
     colEmph = theme.syntaxTheme.emph.getRgb()
@@ -708,7 +708,7 @@ def testGuiDocHighlighter_MaxBlockLength(monkeypatch: pytest.MonkeyPatch, syntax
     entirely: no syntax highlighting, and no spell/format checking.
     """
     monkeypatch.setattr("novelwriter.editor.highlighter.MAX_BLOCK_LENGTH", 30)
-    monkeypatch.setattr(SpellEnchant, "checkWord", lambda *a: False)
+    monkeypatch.setattr(SpellChecker, "checkWord", lambda *a: False)
 
     doc = syntax.document()
     assert doc is not None

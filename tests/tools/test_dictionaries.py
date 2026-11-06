@@ -25,7 +25,6 @@ from __future__ import annotations
 from pathlib import Path
 from zipfile import ZipFile
 
-import enchant
 import pytest
 
 from PyQt6.QtGui import QDesktopServices
@@ -37,6 +36,8 @@ from novelwriter.guimain import GuiMain
 from novelwriter.tools.dictionaries import GuiDictionaries
 
 from tests.mocked import causeException, causeOSError
+
+enchant = pytest.importorskip("enchant")
 
 
 @pytest.mark.gui
