@@ -2,8 +2,9 @@
 novelWriter - Manuscript Tool Tests
 ===================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -373,15 +374,10 @@ def testGuiManuscript_Features(
     SHARED.project.storage.getDocument(C.hSceneDoc).writeDocument("### New Scene\n\nText <A> <X>\n\n")
     manus._generatePreview()
     assert tabs.isTabVisible(tabs.indexOf(problems)) is True
-    assert tabs.currentWidget() is problems
+    assert tabs.currentWidget() is not problems
     assert problems.hasProblems() is True
     assert problems.problemCount() == 1
     assert manus.docPreview.ageLabel.text().endswith(", Problems: 1")
-
-    # The tab isn't selected again if it was already visible
-    tabs.setCurrentWidget(manus.buildOutline)
-    manus._generatePreview()
-    assert tabs.currentWidget() is manus.buildOutline
 
     parent = problems.listView.topLevelItem(0)
     assert parent is not None

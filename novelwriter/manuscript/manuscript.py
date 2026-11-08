@@ -2,8 +2,9 @@
 novelWriter - GUI Manuscript Tool
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -424,13 +425,9 @@ class GuiManuscript(NToolDialog):
             self.buildStats.updateStats(buildObj.textStats, withDialog)
             self.buildProblems.updateProblems(buildObj.textProblems)
 
-            pIndex = self.detailsTabs.indexOf(self.buildProblems)
-            hasProblems = self.buildProblems.hasProblems()
-            if hasProblems and not self.detailsTabs.isTabVisible(pIndex):
-                self.detailsTabs.setTabVisible(pIndex, True)
-                self.detailsTabs.setCurrentIndex(pIndex)
-            elif not hasProblems:
-                self.detailsTabs.setTabVisible(pIndex, False)
+            self.detailsTabs.setTabVisible(
+                self.detailsTabs.indexOf(self.buildProblems), self.buildProblems.hasProblems()
+            )
             self.docPreview.setProblemCount(self.buildProblems.problemCount())
 
             self._updateCountsLabel(buildObj.textStats, withDialog)

@@ -2,8 +2,9 @@
 novelWriter - GUI Main Menu Tests
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -522,6 +523,14 @@ def testGuiMainMenu_Insert(
 
     mainMenu.aInsThinNBSpace.activate(QAction.ActionEvent.Trigger)
     assert docEditor.getText() == nwUnicode.U_THNBSP
+    docEditor.clear()
+
+    mainMenu.aInsEnSpace.activate(QAction.ActionEvent.Trigger)
+    assert docEditor.getText() == nwUnicode.U_ENSP
+    docEditor.clear()
+
+    mainMenu.aInsEmSpace.activate(QAction.ActionEvent.Trigger)
+    assert docEditor.getText() == nwUnicode.U_EMSP
     docEditor.clear()
 
     # Insert Keywords

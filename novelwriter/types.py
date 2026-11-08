@@ -2,8 +2,9 @@
 novelWriter - Types and Flags
 =============================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -129,6 +130,8 @@ QtKeyUp = Qt.Key.Key_Up
 QtKeyDown = Qt.Key.Key_Down
 QtKeyPageUp = Qt.Key.Key_PageUp
 QtKeyPageDown = Qt.Key.Key_PageDown
+QtKeyHome = Qt.Key.Key_Home
+QtKeyEnd = Qt.Key.Key_End
 QtKeyTab = Qt.Key.Key_Tab
 QtKeyEscape = Qt.Key.Key_Escape
 QtKeyBackspace = Qt.Key.Key_Backspace
@@ -169,6 +172,8 @@ QtMoveUp = QTextCursor.MoveOperation.Up
 QtMoveDown = QTextCursor.MoveOperation.Down
 QtMoveEndOfLine = QTextCursor.MoveOperation.EndOfLine
 QtMoveStartOfLine = QTextCursor.MoveOperation.StartOfLine
+QtMoveEndOfBlock = QTextCursor.MoveOperation.EndOfBlock
+QtMoveStartOfBlock = QTextCursor.MoveOperation.StartOfBlock
 QtMoveEnd = QTextCursor.MoveOperation.End
 QtMoveStart = QTextCursor.MoveOperation.Start
 QtMoveNextWord = QTextCursor.MoveOperation.NextWord

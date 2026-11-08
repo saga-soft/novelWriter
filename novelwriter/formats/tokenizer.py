@@ -2,8 +2,9 @@
 novelWriter - Text Tokenizer
 ============================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -530,16 +531,6 @@ class Tokenizer(ABC):
     def setLineForMargin(self, value: bool) -> None:
         """Enable using empty lines for margins."""
         self._lineMargins = value
-        self._marginTitle = (0.0, 0.0) if value else nwStyles.T_MARGIN["H0"]
-        self._marginHead1 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H1"]
-        self._marginHead2 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H2"]
-        self._marginHead3 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H3"]
-        self._marginHead4 = (0.0, 0.0) if value else nwStyles.T_MARGIN["H4"]
-        self._marginText = (0.0, 0.0) if value else nwStyles.T_MARGIN["TT"]
-        self._marginList = (0.0, 0.0) if value else nwStyles.T_MARGIN["LI"]
-        self._marginMeta = (0.0, 0.0) if value else nwStyles.T_MARGIN["MT"]
-        self._marginFoot = (0.0, 0.0) if value else nwStyles.T_MARGIN["FT"]
-        self._marginSep = (0.0, 0.0) if value else nwStyles.T_MARGIN["SP"]
 
     def setLinkHeadings(self, state: bool) -> None:
         """Enable or disable adding an anchor before headings."""
@@ -602,6 +593,18 @@ class Tokenizer(ABC):
         self._classes["tag"] = self._theme.tag
         self._classes["keyword"] = self._theme.keyword
         self._classes["optional"] = self._theme.optional
+
+        if self._lineMargins:
+            self._marginTitle = (0.0, 0.0)
+            self._marginHead1 = (0.0, 0.0)
+            self._marginHead2 = (0.0, 0.0)
+            self._marginHead3 = (0.0, 0.0)
+            self._marginHead4 = (0.0, 0.0)
+            self._marginText = (0.0, 0.0)
+            self._marginList = (0.0, 0.0)
+            self._marginMeta = (0.0, 0.0)
+            self._marginFoot = (0.0, 0.0)
+            self._marginSep = (0.0, 0.0)
 
         data = self._project.data
         self._replaceNoCase = data.autoReplaceIgnoreCase

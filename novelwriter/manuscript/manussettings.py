@@ -2,8 +2,9 @@
 novelWriter - GUI Build Settings
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1524,6 +1525,18 @@ class _FormattingTab(NScrollableForm):
 
         self.addRow(self._build.getLabel("doc.metaLanguage"), [self.lblMetaLanguage, 8, self.metaLanguage])
 
+        # EPUB Document
+        # =============
+
+        title = self._build.getLabel("epub")
+        section += 1
+        self._sidebar.addButton(title, section)
+        self.addGroupLabel(title, section)
+
+        self.nestedToc = NSwitch(self, height=iPx)
+
+        self.addRow(self._build.getLabel("epub.nestedToc"), self.nestedToc)
+
         # HTML Document
         # =============
 
@@ -1597,8 +1610,6 @@ class _FormattingTab(NScrollableForm):
     def loadContent(self) -> None:
         """Populate the widgets."""
         # Text Content
-        # ============
-
         self.incBodyText.setChecked(self._build.getBool("text.includeBodyText"))
         self.incSynopsis.setChecked(self._build.getBool("text.includeSynopsis"))
         self.incComments.setChecked(self._build.getBool("text.includeComments"))
@@ -1610,8 +1621,6 @@ class _FormattingTab(NScrollableForm):
         self._updateIgnoredKeywords()
 
         # Text Format
-        # ===========
-
         font = QFont()
         font.fromString(self._build.getStr("format.textFont"))
         self._textFont = fontMatcher(font)
@@ -1629,23 +1638,17 @@ class _FormattingTab(NScrollableForm):
         self.showDialogue.setChecked(self._build.getBool("format.showDialogue"))
 
         # Heading Format
-        # ==============
-
         self.colorHeadings.setChecked(self._build.getBool("format.colorHeadings"))
         self.boldHeadings.setChecked(self._build.getBool("format.boldHeadings"))
         self.upperHeadings.setChecked(self._build.getBool("format.upperHeadings"))
         self.showStatus.setChecked(self._build.getBool("format.showStatus"))
 
         # First Line Indent
-        # =================
-
         self.firstIndent.setChecked(self._build.getBool("format.firstLineIndent"))
         self.indentWidth.setValue(self._build.getFloat("format.firstIndentWidth"))
         self.indentFirstPar.setChecked(self._build.getBool("format.indentFirstPar"))
 
         # Text Margins
-        # ============
-
         self.titleSize.setValue(self._build.getFloat("format.titleSize"))
         self.h1Size.setValue(self._build.getFloat("format.h1Size"))
         self.h2Size.setValue(self._build.getFloat("format.h2Size"))
@@ -1673,8 +1676,6 @@ class _FormattingTab(NScrollableForm):
         self._updateTextMarginState()
 
         # Page Layout
-        # ===========
-
         pageUnit = self._build.getStr("format.pageUnit")
         index = self.pageUnit.findData(pageUnit)
         if index >= 0:
@@ -1703,8 +1704,6 @@ class _FormattingTab(NScrollableForm):
         self.pageSize.currentIndexChanged.connect(self._changePageSize)
 
         # Document
-        # ========
-
         self.metaLanguage.setText(processLangCode(self._build.getStr("doc.metaLanguage")))
         self.pageHeader.setText(self._build.getStr("doc.pageHeader"))
         self.pageHeader.setCursorPosition(0)
@@ -1712,9 +1711,10 @@ class _FormattingTab(NScrollableForm):
         self.pageHeaderEven.setCursorPosition(0)
         self.pageCountOffset.setValue(self._build.getInt("doc.pageCountOffset"))
 
-        # HTML Document
-        # =============
+        # EPUB Document
+        self.nestedToc.setChecked(self._build.getBool("epub.nestedToc"))
 
+        # HTML Document
         self.htmlAddStyles.setChecked(self._build.getBool("html.addStyles"))
         self.htmlPreserveTabs.setChecked(self._build.getBool("html.preserveTabs"))
 
@@ -1800,6 +1800,9 @@ class _FormattingTab(NScrollableForm):
         self._build.setValue("doc.pageCountOffset", self.pageCountOffset.value())
 
         self.metaLanguage.setText(metaLanguage)
+
+        # EPUB Document
+        self._build.setValue("epub.nestedToc", self.nestedToc.isChecked())
 
         # HTML Document
         self._build.setValue("html.addStyles", self.htmlAddStyles.isChecked())

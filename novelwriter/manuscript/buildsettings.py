@@ -2,8 +2,9 @@
 novelWriter - Build Settings
 ============================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -138,6 +139,8 @@ SETTINGS_TEMPLATE: dict[str, tuple[type, T_BuildValue]] = {
     "doc.pageCountOffset":     (int, 0),
     "doc.metaLanguage":        (str, ""),
 
+    "epub.nestedToc":          (bool, False),
+
     "html.addStyles":          (bool, True),
     "html.preserveTabs":       (bool, False),
 }
@@ -163,7 +166,7 @@ SETTINGS_LABELS = {
     "text.includeNotes":       QT_TRANSLATE_NOOP("Builds", "Include manuscript notes"),
     "text.includeKeywords":    QT_TRANSLATE_NOOP("Builds", "Include tags and references"),
     "text.ignoredKeywords":    QT_TRANSLATE_NOOP("Builds", "Ignore these keys"),
-    "text.addNoteHeadings":    QT_TRANSLATE_NOOP("Builds", "Add titles for note root folders"),
+    "text.addNoteHeadings":    QT_TRANSLATE_NOOP("Builds", "Insert note root folder labels as titles"),
 
     "format.grpFormat":        QT_TRANSLATE_NOOP("Builds", "Text Format"),
     "format.textFont":         QT_TRANSLATE_NOOP("Builds", "Text font"),
@@ -212,6 +215,9 @@ SETTINGS_LABELS = {
     "doc.pageHeaderEven":      QT_TRANSLATE_NOOP("Builds", "Page header for even pages"),
     "doc.pageCountOffset":     QT_TRANSLATE_NOOP("Builds", "Page counter offset"),
     "doc.metaLanguage":        QT_TRANSLATE_NOOP("Builds", "Override document language"),
+
+    "epub":                    QT_TRANSLATE_NOOP("Builds", "EPUB Options"),
+    "epub.nestedToc":          QT_TRANSLATE_NOOP("Builds", "Nested table of contents"),
 
     "html":                    QT_TRANSLATE_NOOP("Builds", "HTML Options"),
     "html.addStyles":          QT_TRANSLATE_NOOP("Builds", "Add CSS styles"),

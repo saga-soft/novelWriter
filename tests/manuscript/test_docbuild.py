@@ -2,8 +2,9 @@
 novelWriter - Manuscript Builder Tests
 ======================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -378,6 +379,47 @@ def testDocumentBuilder_DocX(mockGUI: MockGuiMain, prjLipsum: Path, fncPath: Pat
 
     assert docFile.is_file()
     assert zipfile.is_zipfile(docFile)
+
+
+@pytest.mark.core
+def testDocumentBuilder_EPub(mockGUI: MockGuiMain, prjLipsum: Path, fncPath: Path):
+    """Test building an EPub manuscript."""
+    project = NWProject()
+    project.openProject(prjLipsum)
+
+    build = BuildSettings()
+    build.unpack(BUILD_CONF)
+    build.setValue("epub.nestedToc", True)
+
+    docBuild = DocumentBuilder(project, build)
+    docBuild.queueAll()
+
+    assert len(docBuild) == 19
+
+    # Check Build
+    # ===========
+
+    docFile = fncPath / "Lorem Ipsum.epub"
+
+    count = 0
+    error = []
+    for _, success in docBuild.iterBuildDocument(docFile, nwBuildFmt.EPUB):
+        count += 1 if success else 0
+        if docBuild.error:
+            error.append(docBuild.error)
+
+    assert count == 19
+    assert error == []
+
+    assert docFile.is_file()
+    assert zipfile.is_zipfile(docFile)
+    with zipfile.ZipFile(docFile, mode="r") as zipObj:
+        navText = zipObj.read("OEBPS/nav.xhtml").decode("utf-8")
+    assert (
+        '<li><a href="xhtml/part1.xhtml#sec_3">Part: Act One</a>\n'
+        "<ol>\n"
+        '<li><a href="xhtml/chapter2.xhtml#sec_4">Chapter: Chapter One</a></li>\n'
+    ) in navText
 
 
 @pytest.mark.core

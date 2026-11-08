@@ -2,8 +2,9 @@
 novelWriter - GUI Main Menu
 ===========================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -84,9 +85,23 @@ class GuiMainMenu(QMenuBar):
         self._buildToolsMenu()
         self._buildHelpMenu()
 
+        self.updateVimModeKeys()
         self.installEventFilter(StatusTipFilter(mainGui))
 
         logger.debug("Ready: GuiMainMenu")
+
+    ##
+    #  Methods
+    ##
+
+    def updateVimModeKeys(self) -> None:
+        """Update shortcuts that depend on vim mode state."""
+        if CONFIG.vimMode:
+            self.aViewDoc.setShortcuts([])
+            self.aCloseView.setShortcuts([])
+        else:
+            self.aViewDoc.setShortcut("Ctrl+R")
+            self.aCloseView.setShortcut("Ctrl+Shift+R")
 
     ##
     #  Public Slots
@@ -262,12 +277,10 @@ class GuiMainMenu(QMenuBar):
 
         # Document > Preview
         self.aViewDoc = qtAddAction(self.docuMenu, self.tr("View Document"))
-        self.aViewDoc.setShortcut("Ctrl+R")
         self.aViewDoc.triggered.connect(qtWeakLambda(self.mainGui.docPanes.viewDocument, None))
 
         # Document > Close Preview
         self.aCloseView = qtAddAction(self.docuMenu, self.tr("Close Document View"))
-        self.aCloseView.setShortcut("Ctrl+Shift+R")
         self.aCloseView.triggered.connect(self.mainGui.docPanes.closeDocViewer)
 
         # Document > Separator
@@ -524,6 +537,14 @@ class GuiMainMenu(QMenuBar):
         self.aInsThinNBSpace.setShortcut("Ctrl+K, Ctrl+Space")
         self.aInsThinNBSpace.triggered.connect(qtWeakLambda(self._emitDocInsertText, nwUnicode.U_THNBSP))
         self.mainGui.addAction(self.aInsThinNBSpace)
+
+        # Insert > En Space
+        self.aInsEnSpace = qtAddAction(self.mInsSpace, self.tr("En Space"))
+        self.aInsEnSpace.triggered.connect(qtWeakLambda(self._emitDocInsertText, nwUnicode.U_ENSP))
+
+        # Insert > Em Space
+        self.aInsEmSpace = qtAddAction(self.mInsSpace, self.tr("Em Space"))
+        self.aInsEmSpace.triggered.connect(qtWeakLambda(self._emitDocInsertText, nwUnicode.U_EMSP))
 
         # Insert > Symbols
         self.mInsSymbol = qtAddMenu(self.insMenu, self.tr("Other Symbols"))

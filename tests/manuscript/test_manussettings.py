@@ -2,8 +2,9 @@
 novelWriter - Manuscript Build Settings Dialog Tests
 ====================================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1088,6 +1089,8 @@ def testGuiBuildSettings_FormatOutput(qtbot: QtBot, nwGUI: GuiMain):
     build.setValue("doc.pageHeaderEven", nwHeadFmt.DOC_AUTO_EVEN)
     build.setValue("doc.pageCountOffset", 0)
 
+    build.setValue("epub.nestedToc", False)
+
     build.setValue("html.addStyles", False)
     build.setValue("html.preserveTabs", False)
 
@@ -1114,6 +1117,8 @@ def testGuiBuildSettings_FormatOutput(qtbot: QtBot, nwGUI: GuiMain):
     assert fmtTab.pageHeaderEven.isEnabled() is True
     assert fmtTab.btnPageHeaderEven.isEnabled() is True
 
+    assert fmtTab.nestedToc.isChecked() is False
+
     assert fmtTab.htmlAddStyles.isChecked() is False
     assert fmtTab.htmlPreserveTabs.isChecked() is False
 
@@ -1127,6 +1132,7 @@ def testGuiBuildSettings_FormatOutput(qtbot: QtBot, nwGUI: GuiMain):
     assert fmtTab.lblMetaLanguage.text() == "British English"
 
     # Toggle all
+    fmtTab.nestedToc.setChecked(True)
     fmtTab.htmlAddStyles.setChecked(True)
     fmtTab.htmlPreserveTabs.setChecked(True)
 
@@ -1139,6 +1145,8 @@ def testGuiBuildSettings_FormatOutput(qtbot: QtBot, nwGUI: GuiMain):
     assert sBuild.getStr("doc.pageHeaderEven") == "Even Stuff"
     assert sBuild.getInt("doc.pageCountOffset") == 1
     assert sBuild.getStr("doc.metaLanguage") == "en-GB"
+
+    assert sBuild.getBool("epub.nestedToc") is True
 
     assert sBuild.getBool("html.addStyles") is True
     assert sBuild.getBool("html.preserveTabs") is True

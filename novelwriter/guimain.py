@@ -2,8 +2,9 @@
 novelWriter - GUI Main Window
 =============================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -774,6 +775,8 @@ class GuiMain(QMainWindow):
 
         if update.theme:
             self.refreshThemeColors(syntax=update.syntax, force=True)
+        if update.vim:
+            self.mainMenu.updateVimModeKeys()
         self.docPanes.applySettings(update)
         if update.viewport:
             self.projView.initViewport()

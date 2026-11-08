@@ -2,8 +2,9 @@
 novelWriter - Text Tokenizer Tests
 ==================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -193,6 +194,31 @@ def testTokenizer_Setters(mockGUI: MockGuiMain):
     assert tokens._boldHeads is False
     assert tokens._hFormatter._upper is True
     assert tokens._showStatus is True
+
+    # Disabled line margins must not reset custom margins (Issue #3136)
+    tokens.setLineForMargin(False)
+    tokens.initDocument()
+    assert tokens._marginTitle == (2.0, 2.0)
+    assert tokens._marginHead1 == (2.0, 2.0)
+    assert tokens._marginHead2 == (2.0, 2.0)
+    assert tokens._marginHead3 == (2.0, 2.0)
+    assert tokens._marginHead4 == (2.0, 2.0)
+    assert tokens._marginText == (2.0, 2.0)
+    assert tokens._marginMeta == (2.0, 2.0)
+    assert tokens._marginSep == (2.0, 2.0)
+
+    # Enabled line margins clear all margins
+    tokens.setLineForMargin(True)
+    tokens.initDocument()
+    assert tokens._marginTitle == (0.0, 0.0)
+    assert tokens._marginHead1 == (0.0, 0.0)
+    assert tokens._marginHead2 == (0.0, 0.0)
+    assert tokens._marginHead3 == (0.0, 0.0)
+    assert tokens._marginHead4 == (0.0, 0.0)
+    assert tokens._marginText == (0.0, 0.0)
+    assert tokens._marginMeta == (0.0, 0.0)
+    assert tokens._marginFoot == (0.0, 0.0)
+    assert tokens._marginSep == (0.0, 0.0)
 
     # Properties
     assert tokens.textStats == {}
