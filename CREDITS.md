@@ -12,6 +12,7 @@ Larger contributions were made by:
 * Internationalisation: Bruno Meneguello
 * Setup and Packaging: Rachel Powers
 * Vim Mode: Alexis Dumelie
+* Maintainer for macOS: Konstantin Kostov-Gerry
 
 For other contributions, see the project's [Contributors](https://github.com/saga-soft/novelWriter/graphs/contributors) page.
 
