@@ -29,7 +29,6 @@ from typing import TYPE_CHECKING
 
 from PyQt6.QtCore import QSizeF, QTimer, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QTextBlock, QTextBlockFormat, QTextCursor, QTextDocument
-from PyQt6.QtWidgets import QApplication
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.constants import nwConst
@@ -146,7 +145,6 @@ class GuiTextDocument(QTextDocument):
         self.setUndoRedoEnabled(True)
         self.blockSignals(False)
         self._syntax.rehighlight()
-        QApplication.processEvents()
 
         self.markLayoutBusy()
 

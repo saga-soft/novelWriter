@@ -32,7 +32,7 @@ import pytest
 
 from PyQt6.QtCore import QModelIndex, QRect, Qt
 from PyQt6.QtGui import QAction, QPainter, QPixmap
-from PyQt6.QtWidgets import QStyleOptionViewItem
+from PyQt6.QtWidgets import QStyle, QStyleOptionViewItem
 from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
@@ -42,7 +42,7 @@ from novelwriter.core.project import NWProject
 from novelwriter.core.projectsearch import DocSearch, T_SearchResults
 from novelwriter.enum import nwChange, nwDocMode, nwView
 from novelwriter.guimain import GuiMain
-from novelwriter.types import QtDisplayRole, QtKeyDown, QtKeyReturn, QtKeyUp, QtTransparent
+from novelwriter.types import QtDisplayRole, QtKeyDown, QtKeyReturn, QtKeyUp, QtSelected, QtTransparent
 
 from tests.helpers import C, MockRnd, buildTestProject
 
@@ -479,6 +479,15 @@ def testGuiProjectSearch_DelegatePaint(nwGUI: GuiMain, fncPath: Path, mockRnd: M
     painter = QPainter(pixmap)
     delegate.paint(painter, option, matchIdx)
     painter.end()
+
+    # A selected entry fills the background with the selection colour
+    option.state = QtSelected
+    pixmap.fill(QtTransparent)
+    painter = QPainter(pixmap)
+    delegate.paint(painter, option, matchIdx)
+    painter.end()
+    assert pixmap.toImage().pixelColor(1, 1) == delegate._rectColS
+    option.state = QStyle.StateFlag.State_None
 
     # The highlight follows the text layout and the view direction
     def matchSpan(text: str, direction: Qt.LayoutDirection) -> tuple[int, int]:

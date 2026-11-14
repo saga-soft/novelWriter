@@ -522,7 +522,7 @@ def testToHtml_CloseTags(mockGUI: MockGuiMain):
     html.doConvert()
     assert html._pages[-1] == (
         "<p>Text <strong><em><del><span style='text-decoration: underline;'><mark><sup><sub>"
-        "text text text.</strong></em></del></span></mark></sup></sub></p>\n"
+        "text text text.</sub></sup></mark></span></del></em></strong></p>\n"
     )
 
     # Double Shortcodes
@@ -531,7 +531,7 @@ def testToHtml_CloseTags(mockGUI: MockGuiMain):
     html.doConvert()
     assert html._pages[-1] == (
         "<p>Text <strong><em><del><span style='text-decoration: underline;'><mark><sup><sub>"
-        "text text text.</strong></em></del></span></mark></sup></sub></p>\n"
+        "text text text.</sub></sup></mark></span></del></em></strong></p>\n"
     )
 
     # Redundant Close Shortcodes

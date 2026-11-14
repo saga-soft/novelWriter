@@ -1134,10 +1134,10 @@ def testGuiDocEditor_UpdateSyntaxColors(
     docEditor.highlightSearchSelections([blockPos], [blockPos + 1])
     assert len(docEditor._searchSelections) == 1
 
-    # Build the current line highlight selection
+    # Build the current line highlight
     CONFIG.lineHighlight = True
     docEditor.setCursorPosition(blockPos)
-    assert docEditor._selection.cursor.position() == blockPos
+    assert docEditor._lineRect.isValid()
 
     # Change the theme colours and refresh the syntax colours only,
     # without moving the cursor or editing the document
@@ -1168,9 +1168,32 @@ def testGuiDocEditor_UpdateSyntaxColors(
     )
     assert searchSel.format.background().color() == QColor(4, 5, 6)
 
-    lineSel = docEditor.extraSelections()[0]
-    assert lineSel.cursor.hasSelection() is False
-    assert lineSel.format.background().color() == QColor(7, 8, 9)
+    assert docEditor._lineColor == QColor(7, 8, 9)
+
+    # The line highlight is painted from the current layout
+    viewport = docEditor.viewport()
+    assert viewport is not None
+    viewport.repaint()
+    assert docEditor._lineRect.isValid()
+
+    # No line highlight when the block has no layout lines
+    docEditor.textCursor().block().clearLayout()
+    assert docEditor._currentLineRect().isValid() is False
+
+    # No line highlight when disabled
+    CONFIG.lineHighlight = False
+    docEditor._cursorMoved()
+    viewport.repaint()
+    assert docEditor._lineRect.isValid() is False
+    CONFIG.lineHighlight = True
+
+    # No line highlight on an empty document
+    docEditor.clearEditor()
+    docEditor._cursorMoved()
+    assert docEditor._lineRect.isValid() is False
+
+    docEditor.insertPlainText("Text")
+    assert docEditor._lineRect.isValid()
 
 
 @pytest.mark.gui

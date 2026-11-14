@@ -1260,6 +1260,60 @@ def testTokenizer_ExtractFormats(mockGUI: MockGuiMain, singleBold: bool):
     assert text == "Text with a highlight in it."
     assert fmt == [(10, TextFmt.M_B, ""), (21, TextFmt.M_E, "")]
 
+    # Shortcodes
+    # ==========
+
+    # Plain bold
+    text, fmt = tokens._extractFormats("Text with [b]bold[/b] in it.")
+    assert text == "Text with bold in it."
+    assert fmt == [(10, TextFmt.B_B, ""), (14, TextFmt.B_E, "")]
+
+    # Plain italics
+    text, fmt = tokens._extractFormats("Text with [i]italics[/i] in it.")
+    assert text == "Text with italics in it."
+    assert fmt == [(10, TextFmt.I_B, ""), (17, TextFmt.I_E, "")]
+
+    # Plain strikethrough
+    text, fmt = tokens._extractFormats("Text with [s]strikethrough[/s] in it.")
+    assert text == "Text with strikethrough in it."
+    assert fmt == [(10, TextFmt.D_B, ""), (23, TextFmt.D_E, "")]
+
+    # Plain underline
+    text, fmt = tokens._extractFormats("Text with [u]underline[/u] in it.")
+    assert text == "Text with underline in it."
+    assert fmt == [(10, TextFmt.U_B, ""), (19, TextFmt.U_E, "")]
+
+    # Plain mark
+    text, fmt = tokens._extractFormats("Text with [m]highlight[/m] in it.")
+    assert text == "Text with highlight in it."
+    assert fmt == [(10, TextFmt.M_B, ""), (19, TextFmt.M_E, "")]
+
+    # Plain superscript
+    text, fmt = tokens._extractFormats("Text with super[sup]script[/sup] in it.")
+    assert text == "Text with superscript in it."
+    assert fmt == [(15, TextFmt.SUP_B, ""), (21, TextFmt.SUP_E, "")]
+
+    # Plain subscript
+    text, fmt = tokens._extractFormats("Text with sub[sub]script[/sub] in it.")
+    assert text == "Text with subscript in it."
+    assert fmt == [(13, TextFmt.SUB_B, ""), (19, TextFmt.SUB_E, "")]
+
+
+@pytest.mark.core
+@pytest.mark.parametrize("singleBold", [True, False])
+def testTokenizer_NestedFormats(mockGUI: MockGuiMain, singleBold: bool):
+    """Test the extraction of nested and overlapping formats in the
+    Tokenizer class. This test is run twice, with single and with double
+    asterisk support for bold.
+    """
+    CONFIG.singleStarBold = singleBold
+
+    project = NWProject()
+    tokens = BareTokenizer(project)
+
+    # Markdown
+    # ========
+
     # Nested bold/italics
     text, fmt = tokens._extractFormats("Text with **bold and _italics_** in it.")
     assert text == "Text with bold and italics in it."
@@ -1308,41 +1362,6 @@ def testTokenizer_ExtractFormats(mockGUI: MockGuiMain, singleBold: bool):
     # Shortcodes
     # ==========
 
-    # Plain bold
-    text, fmt = tokens._extractFormats("Text with [b]bold[/b] in it.")
-    assert text == "Text with bold in it."
-    assert fmt == [(10, TextFmt.B_B, ""), (14, TextFmt.B_E, "")]
-
-    # Plain italics
-    text, fmt = tokens._extractFormats("Text with [i]italics[/i] in it.")
-    assert text == "Text with italics in it."
-    assert fmt == [(10, TextFmt.I_B, ""), (17, TextFmt.I_E, "")]
-
-    # Plain strikethrough
-    text, fmt = tokens._extractFormats("Text with [s]strikethrough[/s] in it.")
-    assert text == "Text with strikethrough in it."
-    assert fmt == [(10, TextFmt.D_B, ""), (23, TextFmt.D_E, "")]
-
-    # Plain underline
-    text, fmt = tokens._extractFormats("Text with [u]underline[/u] in it.")
-    assert text == "Text with underline in it."
-    assert fmt == [(10, TextFmt.U_B, ""), (19, TextFmt.U_E, "")]
-
-    # Plain mark
-    text, fmt = tokens._extractFormats("Text with [m]highlight[/m] in it.")
-    assert text == "Text with highlight in it."
-    assert fmt == [(10, TextFmt.M_B, ""), (19, TextFmt.M_E, "")]
-
-    # Plain superscript
-    text, fmt = tokens._extractFormats("Text with super[sup]script[/sup] in it.")
-    assert text == "Text with superscript in it."
-    assert fmt == [(15, TextFmt.SUP_B, ""), (21, TextFmt.SUP_E, "")]
-
-    # Plain subscript
-    text, fmt = tokens._extractFormats("Text with sub[sub]script[/sub] in it.")
-    assert text == "Text with subscript in it."
-    assert fmt == [(13, TextFmt.SUB_B, ""), (19, TextFmt.SUB_E, "")]
-
     # Nested bold/italics
     text, fmt = tokens._extractFormats("Text with [b]bold and [i]italics[/i][/b] in it.")
     assert text == "Text with bold and italics in it."
@@ -1372,6 +1391,39 @@ def testTokenizer_ExtractFormats(mockGUI: MockGuiMain, singleBold: bool):
         (31, TextFmt.I_B, ""),
         (38, TextFmt.B_E, ""),
         (41, TextFmt.I_E, ""),
+    ]
+
+    # Redundant Formats
+    # =================
+
+    # Markdown italics inside shortcode italics
+    text, fmt = tokens._extractFormats("Text with [i]some _nested_ italics[/i] in it.")
+    assert text == "Text with some nested italics in it."
+    assert fmt == [(10, TextFmt.I_B, ""), (29, TextFmt.I_E, "")]
+
+    # Shortcode bold inside shortcode bold
+    text, fmt = tokens._extractFormats("Text with [b]outer [b]inner[/b] bold[/b] in it.")
+    assert text == "Text with outer inner bold in it."
+    assert fmt == [(10, TextFmt.B_B, ""), (26, TextFmt.B_E, "")]
+
+    # Stray closer is dropped
+    text, fmt = tokens._extractFormats("Text with stray[/i] closer.")
+    assert text == "Text with stray closer."
+    assert fmt == []
+
+    # Extra closer after a closed pair is dropped
+    text, fmt = tokens._extractFormats("Text with [u]under[/u]line[/u] in it.")
+    assert text == "Text with underline in it."
+    assert fmt == [(10, TextFmt.U_B, ""), (15, TextFmt.U_E, "")]
+
+    # Unclosed openers are closed at the end
+    text, fmt = tokens._extractFormats("Text with [i]unclosed [s]strikethrough.")
+    assert text == "Text with unclosed strikethrough."
+    assert fmt == [
+        (10, TextFmt.I_B, ""),
+        (19, TextFmt.D_B, ""),
+        (33, TextFmt.D_E, ""),
+        (33, TextFmt.I_E, ""),
     ]
 
     # URLs and Markdown Links

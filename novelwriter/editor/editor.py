@@ -26,6 +26,7 @@ import bisect
 import logging
 
 from enum import Enum, IntFlag
+from math import ceil
 from time import time
 
 from PyQt6 import sip
@@ -33,8 +34,10 @@ from PyQt6.QtCore import (
     QEvent,
     QMimeData,
     QPoint,
+    QPointF,
     QPropertyAnimation,
     QRect,
+    QRectF,
     Qt,
     QTimer,
     QUrl,
@@ -50,6 +53,8 @@ from PyQt6.QtGui import (
     QInputMethodEvent,
     QKeyEvent,
     QMouseEvent,
+    QPainter,
+    QPaintEvent,
     QPalette,
     QResizeEvent,
     QShortcut,
@@ -57,7 +62,6 @@ from PyQt6.QtGui import (
     QTextCharFormat,
     QTextCursor,
     QTextDocument,
-    QTextFormat,
     QTextOption,
     QWheelEvent,
 )
@@ -199,6 +203,7 @@ class GuiDocEditor(QTextEdit):
         "_lastEdit",
         "_lastFind",
         "_lineColor",
+        "_lineRect",
         "_nextLine",
         "_nwDocument",
         "_nwItem",
@@ -210,7 +215,6 @@ class GuiDocEditor(QTextEdit):
         "_selCacheFormat",
         "_selCacheSpell",
         "_selCounter",
-        "_selection",
         "_spellErrFormat",
         "_spellPassNotify",
         "_spellSelections",
@@ -293,7 +297,7 @@ class GuiDocEditor(QTextEdit):
         self._lastFind = None  # Position of the last found search word
         self._doReplace = False  # Switch to temporarily disable auto-replace
         self._lineColor = QtTransparent
-        self._selection = QTextEdit.ExtraSelection()
+        self._lineRect = QRectF()  # Line highlight in document coordinates
 
         # Search Variables
         self._searchFormat = QTextCharFormat()
@@ -571,8 +575,6 @@ class GuiDocEditor(QTextEdit):
         self._hoverCard.updateTheme()
 
         self._lineColor = syntax.line
-        self._selection.format.setBackground(self._lineColor)
-        self._selection.format.setProperty(QTextFormat.Property.FullWidthSelection, True)
 
         self._spellErrFormat = QTextCharFormat()
         self._spellErrFormat.setUnderlineColor(syntax.spell)
@@ -1402,6 +1404,17 @@ class GuiDocEditor(QTextEdit):
         self._timerCheck.start()
         super().resizeEvent(event)
 
+    def paintEvent(self, event: QPaintEvent) -> None:
+        """Paint the current line highlight behind the text."""
+        if CONFIG.lineHighlight:
+            # Painting the rect instead of using extra selection avoids issue #3141
+            self._lineRect = self._currentLineRect()
+            if self._lineRect.isValid() and (viewport := self.viewport()):
+                painter = QPainter(viewport)
+                painter.fillRect(self._lineRect.translated(self._contentOffset()), self._lineColor)
+                painter.end()
+        super().paintEvent(event)
+
     def inputMethodEvent(self, event: QInputMethodEvent) -> None:
         """Handle text being input from CJK input methods."""
         super().inputMethodEvent(event)
@@ -1621,10 +1634,15 @@ class GuiDocEditor(QTextEdit):
             # An underline was suppressed at the previous cursor
             # position, so the underlines must be refreshed
             self._timerCheck.start()
-        if CONFIG.lineHighlight:
-            self._selection.cursor = self.textCursor()
-            self._selection.cursor.clearSelection()
-            self._applyExtraSelections()
+        if (
+            (CONFIG.lineHighlight or self._lineRect.isValid())
+            and (rect := self._currentLineRect()) != self._lineRect
+            and (viewport := self.viewport())
+        ):
+            offset = self._contentOffset()
+            viewport.update(self._lineRect.translated(offset).toAlignedRect())
+            viewport.update(rect.translated(offset).toAlignedRect())
+            self._lineRect = rect
 
     @pyqtSlot()
     def _showHoverCard(self) -> None:
@@ -2797,17 +2815,32 @@ class GuiDocEditor(QTextEdit):
         self._timerHover.stop()
         self._hoverCard.hide()
 
-    def _applyExtraSelections(self) -> None:
-        """Set the editor's extra selections from the line highlight
-        and the cached spell and format error markers.
+    def _contentOffset(self) -> QPointF:
+        """Return the offset from document to viewport coordinates."""
+        hBar = self.horizontalScrollBar()
+        vBar = self.verticalScrollBar()
+        return QPointF(-hBar.value() if hBar else 0, -vBar.value() if vBar else 0)
+
+    def _currentLineRect(self) -> QRectF:
+        """Return the cursor's line rectangle in document coordinates,
+        spanning the full viewport width, or an empty rectangle if the
+        line has no layout.
         """
-        selections = []
-        if CONFIG.lineHighlight:
-            selections.append(self._selection)
-        selections.extend(self._searchSelections)
-        selections.extend(self._spellSelections)
-        selections.extend(self._formatSelections)
-        self.setExtraSelections(selections)
+        if not CONFIG.lineHighlight or self._qDocument.isEmpty() or not (viewport := self.viewport()):
+            return QRectF()
+        cursor = self.textCursor()
+        layout = cursor.block().layout()
+        line = layout.lineForTextPosition(cursor.positionInBlock()) if layout else None
+        if not (layout and line and line.isValid()):
+            return QRectF()
+        top = layout.position().y() + line.y()
+        return QRectF(-self._contentOffset().x(), top, viewport.width(), ceil(top + line.height()) - top)
+
+    def _applyExtraSelections(self) -> None:
+        """Set the editor's extra selections from the cached search,
+        spell and format markers.
+        """
+        self.setExtraSelections(self._searchSelections + self._spellSelections + self._formatSelections)
 
     def _beginCheckPass(self) -> None:
         """Spell and format check the visible blocks, and start a chunked

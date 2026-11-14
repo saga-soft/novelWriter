@@ -101,6 +101,22 @@ COMMENT_BLOCKS = (BlockTyp.COMMENT, BlockTyp.SUMMARY, BlockTyp.NOTE)
 META_BLOCKS = (BlockTyp.COMMENT, BlockTyp.SUMMARY, BlockTyp.NOTE, BlockTyp.KEYWORD)
 SKIP_INDENT = [*HEADING_BLOCKS, BlockTyp.SEP, BlockTyp.SKIP, BlockTyp.HRULE]
 LIST_BLOCKS = (BlockTyp.LIST_U, BlockTyp.LIST_O)
+PAIRED_FMT = {
+    TextFmt.B_B: (TextFmt.B_B, TextFmt.B_E),
+    TextFmt.B_E: (TextFmt.B_B, TextFmt.B_E),
+    TextFmt.I_B: (TextFmt.I_B, TextFmt.I_E),
+    TextFmt.I_E: (TextFmt.I_B, TextFmt.I_E),
+    TextFmt.D_B: (TextFmt.D_B, TextFmt.D_E),
+    TextFmt.D_E: (TextFmt.D_B, TextFmt.D_E),
+    TextFmt.U_B: (TextFmt.U_B, TextFmt.U_E),
+    TextFmt.U_E: (TextFmt.U_B, TextFmt.U_E),
+    TextFmt.M_B: (TextFmt.M_B, TextFmt.M_E),
+    TextFmt.M_E: (TextFmt.M_B, TextFmt.M_E),
+    TextFmt.SUP_B: (TextFmt.SUP_B, TextFmt.SUP_E),
+    TextFmt.SUP_E: (TextFmt.SUP_B, TextFmt.SUP_E),
+    TextFmt.SUB_B: (TextFmt.SUB_B, TextFmt.SUB_E),
+    TextFmt.SUB_E: (TextFmt.SUB_B, TextFmt.SUB_E),
+}
 B_EMPTY: T_Block = (BlockTyp.EMPTY, "", "", [], BlockFmt.NONE)
 PAGE_BREAKS = {
     0: BlockFmt.NONE,
@@ -1478,7 +1494,30 @@ class Tokenizer(ABC):
                     formats = [(p + pos - end if p > pos else p, f, m) for p, f, m in formats]
                 formats.insert(0, (pos, fmt, meta))
 
-        return result, formats
+        # Drop nested and unmatched paired formats, since writers treat them as toggles
+        # The depth dict holds open formats, in the order they were opened
+        depth: dict[tuple[TextFmt, TextFmt], int] = {}
+        cleaned = []
+        for pos, fmt, meta in formats:
+            if pair := PAIRED_FMT.get(fmt):
+                if fmt == pair[0]:
+                    depth[pair] = depth.get(pair, 0) + 1
+                    if depth[pair] > 1:
+                        continue
+                elif pair in depth:
+                    depth[pair] -= 1
+                    if depth[pair] > 0:
+                        continue
+                    del depth[pair]
+                else:
+                    continue
+            cleaned.append((pos, fmt, meta))
+
+        # Close formats left open at the end of the text, in reverse order
+        end = len(result)
+        cleaned.extend((end, pair[1], "") for pair in reversed(depth))
+
+        return result, cleaned
 
 
 class HeadingFormatter:

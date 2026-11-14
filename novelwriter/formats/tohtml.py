@@ -42,38 +42,33 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-# Each opener tag, with the id of its corresponding closer and tag format
-HTML_OPENER: dict[int, tuple[int, str]] = {
-    TextFmt.B_B: (TextFmt.B_E, "<strong>"),
-    TextFmt.I_B: (TextFmt.I_E, "<em>"),
-    TextFmt.D_B: (TextFmt.D_E, "<del>"),
-    TextFmt.U_B: (TextFmt.U_E, "<span style='text-decoration: underline;'>"),
-    TextFmt.M_B: (TextFmt.M_E, "<mark>"),
-    TextFmt.SUP_B: (TextFmt.SUP_E, "<sup>"),
-    TextFmt.SUB_B: (TextFmt.SUB_E, "<sub>"),
-    TextFmt.COL_B: (TextFmt.COL_E, "<span style='color: {0}'>"),
-    TextFmt.ANM_B: (TextFmt.ANM_E, "<a name='{0}'>"),
-    TextFmt.ARF_B: (TextFmt.ARF_E, "<a href='{0}'>"),
-    TextFmt.HRF_B: (TextFmt.HRF_E, "<a href='{0}'>"),
+HTML_OPENER: dict[int, str] = {
+    TextFmt.B_B: "<strong>",
+    TextFmt.I_B: "<em>",
+    TextFmt.D_B: "<del>",
+    TextFmt.U_B: "<span style='text-decoration: underline;'>",
+    TextFmt.M_B: "<mark>",
+    TextFmt.SUP_B: "<sup>",
+    TextFmt.SUB_B: "<sub>",
+    TextFmt.COL_B: "<span style='color: {0}'>",
+    TextFmt.ANM_B: "<a name='{0}'>",
+    TextFmt.ARF_B: "<a href='{0}'>",
+    TextFmt.HRF_B: "<a href='{0}'>",
 }
 
-# Each closer tag, with the id of its corresponding opener and tag format
-HTML_CLOSER: dict[int, tuple[int, str]] = {
-    TextFmt.B_E: (TextFmt.B_B, "</strong>"),
-    TextFmt.I_E: (TextFmt.I_B, "</em>"),
-    TextFmt.D_E: (TextFmt.D_B, "</del>"),
-    TextFmt.U_E: (TextFmt.U_B, "</span>"),
-    TextFmt.M_E: (TextFmt.M_B, "</mark>"),
-    TextFmt.SUP_E: (TextFmt.SUP_B, "</sup>"),
-    TextFmt.SUB_E: (TextFmt.SUB_B, "</sub>"),
-    TextFmt.COL_E: (TextFmt.COL_B, "</span>"),
-    TextFmt.ANM_E: (TextFmt.ANM_B, "</a>"),
-    TextFmt.ARF_E: (TextFmt.ARF_B, "</a>"),
-    TextFmt.HRF_E: (TextFmt.HRF_B, "</a>"),
+HTML_CLOSER: dict[int, str] = {
+    TextFmt.B_E: "</strong>",
+    TextFmt.I_E: "</em>",
+    TextFmt.D_E: "</del>",
+    TextFmt.U_E: "</span>",
+    TextFmt.M_E: "</mark>",
+    TextFmt.SUP_E: "</sup>",
+    TextFmt.SUB_E: "</sub>",
+    TextFmt.COL_E: "</span>",
+    TextFmt.ANM_E: "</a>",
+    TextFmt.ARF_E: "</a>",
+    TextFmt.HRF_E: "</a>",
 }
-
-# Empty HTML tag record
-HTML_NONE = (0, "")
 
 
 class ToHtml(Tokenizer):
@@ -453,29 +448,22 @@ class ToHtml(Tokenizer):
         """Apply formatting tags to text."""
         temp = text
 
-        # Build a list of all html tags that need to be inserted in the text.
-        # This is done in the forward direction, and a tag is only opened if it
-        # isn't already open, and only closed if it has previously been opened.
+        # Build a list of all html tags that need to be inserted in the text
         tags: list[tuple[int, str]] = []
-        state = dict.fromkeys(HTML_OPENER, False)
         plain = not self._cssStyles
         for pos, fmt, data in tFmt:
             if plain and fmt in (TextFmt.COL_B, TextFmt.COL_E):
                 # We ignore colour tags if CSS is off
                 continue
-            if m := HTML_OPENER.get(fmt):
-                if not state.get(fmt, True):
-                    if fmt == TextFmt.COL_B and (color := self._classes.get(data)):
-                        tags.append((pos, m[1].format(color.name(QtHexRgb))))
-                    elif fmt in (TextFmt.ANM_B, TextFmt.ARF_B, TextFmt.HRF_B):
-                        tags.append((pos, m[1].format(data or "#")))
-                    else:
-                        tags.append((pos, m[1]))
-                    state[fmt] = True
-            elif m := HTML_CLOSER.get(fmt):
-                if state.get(m[0], False):
-                    tags.append((pos, m[1]))
-                    state[m[0]] = False
+            if tag := HTML_OPENER.get(fmt):
+                if fmt == TextFmt.COL_B and (color := self._classes.get(data)):
+                    tags.append((pos, tag.format(color.name(QtHexRgb))))
+                elif fmt in (TextFmt.ANM_B, TextFmt.ARF_B, TextFmt.HRF_B):
+                    tags.append((pos, tag.format(data or "#")))
+                else:
+                    tags.append((pos, tag))
+            elif tag := HTML_CLOSER.get(fmt):
+                tags.append((pos, tag))
             elif fmt == TextFmt.FNOTE:
                 if data in self._footnotes:
                     tags.append((pos, self._genFootnoteReferences(data)))
@@ -484,14 +472,6 @@ class ToHtml(Tokenizer):
             elif fmt == TextFmt.FIELD and (field := data.partition(":")[2]):
                 self._usedFields.append((len(self._pages), field))
                 tags.append((pos, f"{{{{{field}}}}}"))
-
-        # Check all format types and close any tag that is still open. This
-        # ensures that unclosed tags don't spill over to the next paragraph.
-        end = len(text)
-        for opener, active in state.items():
-            if active:
-                closer = HTML_OPENER.get(opener, HTML_NONE)[0]
-                tags.append((end, HTML_CLOSER.get(closer, HTML_NONE)[1]))
 
         # Insert all tags at their correct position, starting from the back.
         # The reverse order ensures that the positions are not shifted while we
