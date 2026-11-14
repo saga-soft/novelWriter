@@ -100,6 +100,9 @@ def appImage(args: argparse.Namespace) -> None:
 
     log("[b]Copying or generating additional files ...[e]")
     copyPackageFiles(outDir)
+    (outDir / "data").mkdir(exist_ok=True)
+    shutil.copyfile(SETUP_DIR / "description_short.txt", outDir / "data" / "description_short.txt")
+    log("[cg]Copied:[e] data/description_short.txt")
 
     # Write Metadata
     writeFile(imgDir / "novelwriter.appdata.xml", appdataXml())
