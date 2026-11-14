@@ -1346,10 +1346,15 @@ def testTokenizer_NestedFormats(mockGUI, singleBold):
     assert text == "Text with underline in it."
     assert fmt == [(10, TextFmt.U_B, ""), (15, TextFmt.U_E, "")]
 
-    # Unclosed opener is kept
-    text, fmt = tokens._extractFormats("Text with [s]unclosed strikethrough.")
+    # Unclosed openers are closed at the end
+    text, fmt = tokens._extractFormats("Text with [i]unclosed [s]strikethrough.")
     assert text == "Text with unclosed strikethrough."
-    assert fmt == [(10, TextFmt.D_B, "")]
+    assert fmt == [
+        (10, TextFmt.I_B, ""),
+        (19, TextFmt.D_B, ""),
+        (33, TextFmt.I_E, ""),
+        (33, TextFmt.D_E, ""),
+    ]
 
 
 @pytest.mark.core

@@ -86,14 +86,21 @@ COMMENT_BLOCKS = (BlockTyp.COMMENT, BlockTyp.SUMMARY, BlockTyp.NOTE)
 META_BLOCKS = (BlockTyp.COMMENT, BlockTyp.SUMMARY, BlockTyp.NOTE, BlockTyp.KEYWORD)
 SKIP_INDENT = [*HEADING_BLOCKS, BlockTyp.SEP, BlockTyp.SKIP, BlockTyp.HRULE]
 PAIRED_FMT = {
-    TextFmt.B_B: TextFmt.B_B, TextFmt.B_E: TextFmt.B_B,
-    TextFmt.I_B: TextFmt.I_B, TextFmt.I_E: TextFmt.I_B,
-    TextFmt.D_B: TextFmt.D_B, TextFmt.D_E: TextFmt.D_B,
-    TextFmt.U_B: TextFmt.U_B, TextFmt.U_E: TextFmt.U_B,
-    TextFmt.M_B: TextFmt.M_B, TextFmt.M_E: TextFmt.M_B,
-    TextFmt.SUP_B: TextFmt.SUP_B, TextFmt.SUP_E: TextFmt.SUP_B,
-    TextFmt.SUB_B: TextFmt.SUB_B, TextFmt.SUB_E: TextFmt.SUB_B,
-}  # fmt: skip
+    TextFmt.B_B: (TextFmt.B_B, TextFmt.B_E),
+    TextFmt.B_E: (TextFmt.B_B, TextFmt.B_E),
+    TextFmt.I_B: (TextFmt.I_B, TextFmt.I_E),
+    TextFmt.I_E: (TextFmt.I_B, TextFmt.I_E),
+    TextFmt.D_B: (TextFmt.D_B, TextFmt.D_E),
+    TextFmt.D_E: (TextFmt.D_B, TextFmt.D_E),
+    TextFmt.U_B: (TextFmt.U_B, TextFmt.U_E),
+    TextFmt.U_E: (TextFmt.U_B, TextFmt.U_E),
+    TextFmt.M_B: (TextFmt.M_B, TextFmt.M_E),
+    TextFmt.M_E: (TextFmt.M_B, TextFmt.M_E),
+    TextFmt.SUP_B: (TextFmt.SUP_B, TextFmt.SUP_E),
+    TextFmt.SUP_E: (TextFmt.SUP_B, TextFmt.SUP_E),
+    TextFmt.SUB_B: (TextFmt.SUB_B, TextFmt.SUB_E),
+    TextFmt.SUB_E: (TextFmt.SUB_B, TextFmt.SUB_E),
+}
 B_EMPTY: T_Block = (BlockTyp.EMPTY, "", "", [], BlockFmt.NONE)
 
 
@@ -1298,18 +1305,22 @@ class Tokenizer(ABC):
         depth = dict.fromkeys(PAIRED_FMT.values(), 0)
         cleaned = []
         for pos, fmt, meta in formats:
-            if key := PAIRED_FMT.get(fmt):
-                if fmt == key:
-                    depth[key] += 1
-                    if depth[key] > 1:
+            if pair := PAIRED_FMT.get(fmt):
+                if fmt == pair[0]:
+                    depth[pair] += 1
+                    if depth[pair] > 1:
                         continue
-                elif depth[key] > 0:
-                    depth[key] -= 1
-                    if depth[key] > 0:
+                elif depth[pair] > 0:
+                    depth[pair] -= 1
+                    if depth[pair] > 0:
                         continue
                 else:
                     continue
             cleaned.append((pos, fmt, meta))
+
+        # Close formats left open at the end of the text
+        end = len(result)
+        cleaned.extend((end, pair[1], "") for pair, count in depth.items() if count > 0)
 
         return result, cleaned
 
