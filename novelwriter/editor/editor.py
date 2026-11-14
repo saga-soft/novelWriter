@@ -2974,7 +2974,7 @@ class GuiDocEditor(QTextEdit):
         and the cached spell and format error markers.
         """
         selections = []
-        if CONFIG.lineHighlight:
+        if CONFIG.lineHighlight and not self._qDocument.isEmpty():
             selections.append(self._selection)
         selections.extend(self._searchSelections)
         selections.extend(self._spellSelections)

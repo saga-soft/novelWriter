@@ -1037,6 +1037,14 @@ def testGuiDocEditor_UpdateSyntaxColors(qtbot, monkeypatch, nwGUI, projPath, moc
     assert lineSel.cursor.hasSelection() is False
     assert lineSel.format.background().color() == QColor(7, 8, 9)
 
+    # No line highlight on an empty document
+    docEditor.clearEditor()
+    docEditor._cursorMoved()
+    assert docEditor.extraSelections() == []
+
+    docEditor.insertPlainText("Text")
+    assert len(docEditor.extraSelections()) == 1
+
 
 @pytest.mark.gui
 def testGuiDocEditor_Actions(qtbot, nwGUI, projPath, ipsumText, mockRnd):
