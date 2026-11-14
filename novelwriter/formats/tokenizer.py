@@ -1302,25 +1302,27 @@ class Tokenizer(ABC):
                 formats.insert(0, (pos, fmt, meta))
 
         # Drop nested and unmatched paired formats, since writers treat them as toggles
-        depth = dict.fromkeys(PAIRED_FMT.values(), 0)
+        # The depth dict holds open formats, in the order they were opened
+        depth: dict[tuple[TextFmt, TextFmt], int] = {}
         cleaned = []
         for pos, fmt, meta in formats:
             if pair := PAIRED_FMT.get(fmt):
                 if fmt == pair[0]:
-                    depth[pair] += 1
+                    depth[pair] = depth.get(pair, 0) + 1
                     if depth[pair] > 1:
                         continue
-                elif depth[pair] > 0:
+                elif pair in depth:
                     depth[pair] -= 1
                     if depth[pair] > 0:
                         continue
+                    del depth[pair]
                 else:
                     continue
             cleaned.append((pos, fmt, meta))
 
-        # Close formats left open at the end of the text
+        # Close formats left open at the end of the text, in reverse order
         end = len(result)
-        cleaned.extend((end, pair[1], "") for pair, count in depth.items() if count > 0)
+        cleaned.extend((end, pair[1], "") for pair in reversed(depth))
 
         return result, cleaned
 

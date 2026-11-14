@@ -1352,8 +1352,8 @@ def testTokenizer_NestedFormats(mockGUI, singleBold):
     assert fmt == [
         (10, TextFmt.I_B, ""),
         (19, TextFmt.D_B, ""),
-        (33, TextFmt.I_E, ""),
         (33, TextFmt.D_E, ""),
+        (33, TextFmt.I_E, ""),
     ]
 
 

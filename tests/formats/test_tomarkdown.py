@@ -182,6 +182,24 @@ def testToMarkdown_ConvertParagraphs(mockGUI):
     md.doConvert()
     assert md._pages[-1] == ("Some **bold**, _italic_, strike, underline, mark, superscript, subscript here\n\n")
 
+    # Nested Italics
+    md._text = "Some [i]italic _nested_ text[/i] here\n"
+    md.tokenizeText()
+    md.doConvert()
+    assert md._pages[-1] == "Some _italic nested text_ here\n\n"
+
+    # Unclosed Shortcodes
+    md._text = "Some [b]unclosed [i]bold and italic\n"
+    md.tokenizeText()
+    md.doConvert()
+    assert md._pages[-1] == "Some **unclosed _bold and italic_**\n\n"
+
+    # Redundant Close Shortcodes
+    md._text = "Some stray[/b] closer\n"
+    md.tokenizeText()
+    md.doConvert()
+    assert md._pages[-1] == "Some stray closer\n\n"
+
     # Text w/Hard Break
     md._text = "Line one\nLine two\nLine three\n"
     md.tokenizeText()
