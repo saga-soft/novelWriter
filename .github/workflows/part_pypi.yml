@@ -1,0 +1,66 @@
+name: Part PyPI
+
+on:
+  workflow_call:
+    inputs:
+      publish:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  buildPackage:
+    name: Build PyPI Package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v7
+
+      - name: Download Assets Artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: nw-assets
+          path: novelwriter/assets
+
+      - name: Install UV and Python
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          python-version: "3.14"
+          enable-cache: true
+
+      - name: Build Package
+        run: uv run pkgutils.py build-pypi
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: nw-pypi
+          path: |
+            dist_pypi/*.whl
+            dist_pypi/*.tar.gz
+          if-no-files-found: error
+          retention-days: 14
+
+  publishPackage:
+    name: Publish to PyPI
+    needs: buildPackage
+    if: ${{ inputs.publish }}
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Download Package Artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: nw-pypi
+          path: dist_pypi
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v10.2.0
+
+      - name: Publish Package
+        run: uv publish dist_pypi/*
