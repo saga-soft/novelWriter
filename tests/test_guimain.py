@@ -1381,26 +1381,20 @@ def testGuiMain_OpenClose(qtbot, monkeypatch, nwGUI: GuiMain, projPath, fncPath,
 def testGuiMain_OpenDocument_ReentrancyGuard(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     """Test that openDocument ignores a re-entrant call made while a
     document switch is already in progress.
-
-    This models what happens holding F3 with project-wide loop search
-    enabled: loadText calls QApplication.processEvents while a switch
-    is still in progress, and if that dispatches an already-queued
-    key-repeat event, it can re-trigger another document switch before
-    the first one has finished.
     """
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
 
     reentered = []
-    realProcessEvents = QApplication.processEvents
+    realLoadText = nwGUI.docEditor.loadText
 
-    def reentrantProcessEvents(*args, **kwargs):
+    def reentrantLoadText(*args, **kwargs):
         if not reentered:
             reentered.append(True)
             assert nwGUI.openDocument(C.hChapterDoc) is False
-        return realProcessEvents(*args, **kwargs)
+        return realLoadText(*args, **kwargs)
 
-    monkeypatch.setattr(QApplication, "processEvents", staticmethod(reentrantProcessEvents))
+    monkeypatch.setattr(nwGUI.docEditor, "loadText", reentrantLoadText)
 
     assert nwGUI.openDocument(C.hSceneDoc) is True
     assert reentered == [True]
