@@ -1401,6 +1401,7 @@ class GuiDocEditor(QTextEdit):
     def paintEvent(self, event: QPaintEvent) -> None:
         """Paint the current line highlight behind the text."""
         if CONFIG.lineHighlight:
+            # Painting the rect instead of using extra selection avoids issue #3141
             self._lineRect = self._currentLineRect()
             if self._lineRect.isValid() and (viewport := self.viewport()):
                 painter = QPainter(viewport)
