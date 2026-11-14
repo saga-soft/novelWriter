@@ -17,6 +17,14 @@
     "cls_trash",
     "cls_world",
 
+    "key_pov",
+    "key_focus",
+    "key_mention",
+
+    "cmn_general",
+    "cmn_note",
+    "cmn_story",
+
     "prj_folder",
     "prj_document",
     "prj_title",
@@ -24,15 +32,22 @@
     "prj_scene",
     "prj_note",
 
+    "fmt_align_center",
+    "fmt_align_left",
+    "fmt_align_right",
     "fmt_bold",
     "fmt_italic",
+    "fmt_link",
+    "fmt_list_o",
+    "fmt_list_o_rtl",
+    "fmt_list_u",
     "fmt_mark",
     "fmt_size",
     "fmt_strike",
     "fmt_subscript",
     "fmt_superscript",
-    "fmt_underline",
     "fmt_toolbar",
+    "fmt_underline",
 
     "search",
     "search_auto",
@@ -51,12 +66,11 @@
     "unfold-show",
 
     "sb_build",
-    "sb_details",
     "sb_novel",
-    "sb_outline",
     "sb_project",
     "sb_search",
     "sb_stats",
+    "sb_story",
 
     "theme_light",
     "theme_dark",
@@ -105,11 +119,12 @@
     "font",
     "import",
     "language",
-    "lines",
     "link",
     "list",
     "margin_bottom",
+    "margin_inner",
     "margin_left",
+    "margin_outer",
     "margin_right",
     "margin_top",
     "maximise",
@@ -130,5 +145,7 @@
     "timer_off",
     "timer",
     "unchecked",
-    "view"
+    "view",
+    "zoom_in",
+    "zoom_out"
 ]

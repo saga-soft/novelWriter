@@ -2,8 +2,9 @@
 novelWriter - GUI Item Details Panel
 ====================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ from PyQt6.QtCore import pyqtSlot
 from PyQt6.QtWidgets import QGridLayout, QLabel, QWidget
 
 from novelwriter import CONFIG, SHARED
-from novelwriter.common import elide
+from novelwriter.common import elide, qtVisualAlign
 from novelwriter.constants import nwLabels, nwStats, trConst, trStats
 from novelwriter.enum import nwChange
 from novelwriter.extensions.expandpanel import NExpandablePanel
@@ -62,80 +63,80 @@ class GuiItemDetails(NExpandablePanel):
         # Label
         self.labelName = QLabel(self.tr("Label"), self)
         self.labelName.setFont(fntLabel)
-        self.labelName.setAlignment(QtAlignLeftBase)
+        self.labelName.setAlignment(qtVisualAlign(self, QtAlignLeftBase))
 
         self.labelIcon = QLabel("", self)
-        self.labelIcon.setAlignment(QtAlignRightBase)
+        self.labelIcon.setAlignment(qtVisualAlign(self, QtAlignRightBase))
 
         self.labelData = QLabel("", self)
         self.labelData.setFont(fntValue)
-        self.labelData.setAlignment(QtAlignLeftBase)
+        self.labelData.setAlignment(qtVisualAlign(self, QtAlignLeftBase))
         self.labelData.setWordWrap(True)
 
         # Status
         self.statusName = QLabel(self.tr("Status"), self)
         self.statusName.setFont(fntLabel)
-        self.statusName.setAlignment(QtAlignLeft)
+        self.statusName.setAlignment(qtVisualAlign(self, QtAlignLeft))
 
         self.statusIcon = QLabel("", self)
-        self.statusIcon.setAlignment(QtAlignRightMiddle)
+        self.statusIcon.setAlignment(qtVisualAlign(self, QtAlignRightMiddle))
 
         self.statusData = QLabel("", self)
         self.statusData.setFont(fntValue)
-        self.statusData.setAlignment(QtAlignLeft)
+        self.statusData.setAlignment(qtVisualAlign(self, QtAlignLeft))
         self.statusData.setWordWrap(True)
 
         # Class
         self.className = QLabel(self.tr("Class"), self)
         self.className.setFont(fntLabel)
-        self.className.setAlignment(QtAlignLeft)
+        self.className.setAlignment(qtVisualAlign(self, QtAlignLeft))
 
         self.classIcon = QLabel("", self)
-        self.classIcon.setAlignment(QtAlignRightMiddle)
+        self.classIcon.setAlignment(qtVisualAlign(self, QtAlignRightMiddle))
 
         self.classData = QLabel("", self)
         self.classData.setFont(fntValue)
-        self.classData.setAlignment(QtAlignLeft)
+        self.classData.setAlignment(qtVisualAlign(self, QtAlignLeft))
 
         # Layout
         self.usageName = QLabel(self.tr("Usage"), self)
         self.usageName.setFont(fntLabel)
-        self.usageName.setAlignment(QtAlignLeft)
+        self.usageName.setAlignment(qtVisualAlign(self, QtAlignLeft))
 
         self.usageIcon = QLabel("", self)
-        self.usageIcon.setAlignment(QtAlignRightMiddle)
+        self.usageIcon.setAlignment(qtVisualAlign(self, QtAlignRightMiddle))
 
         self.usageData = QLabel("", self)
         self.usageData.setFont(fntValue)
-        self.usageData.setAlignment(QtAlignLeft)
+        self.usageData.setAlignment(qtVisualAlign(self, QtAlignLeft))
         self.usageData.setWordWrap(True)
 
         # Character Count
         self.cCountName = QLabel(trStats1, self)
         self.cCountName.setFont(fntLabel)
-        self.cCountName.setAlignment(QtAlignRight)
+        self.cCountName.setAlignment(qtVisualAlign(self, QtAlignRight))
 
         self.cCountData = QLabel("", self)
         self.cCountData.setFont(fntValue)
-        self.cCountData.setAlignment(QtAlignRight)
+        self.cCountData.setAlignment(qtVisualAlign(self, QtAlignRight))
 
         # Word Count
         self.wCountName = QLabel(trStats2, self)
         self.wCountName.setFont(fntLabel)
-        self.wCountName.setAlignment(QtAlignRight)
+        self.wCountName.setAlignment(qtVisualAlign(self, QtAlignRight))
 
         self.wCountData = QLabel("", self)
         self.wCountData.setFont(fntValue)
-        self.wCountData.setAlignment(QtAlignRight)
+        self.wCountData.setAlignment(qtVisualAlign(self, QtAlignRight))
 
         # Paragraph Count
         self.pCountName = QLabel(trStats3, self)
         self.pCountName.setFont(fntLabel)
-        self.pCountName.setAlignment(QtAlignRight)
+        self.pCountName.setAlignment(qtVisualAlign(self, QtAlignRight))
 
         self.pCountData = QLabel("", self)
         self.pCountData.setFont(fntValue)
-        self.pCountData.setAlignment(QtAlignRight)
+        self.pCountData.setAlignment(qtVisualAlign(self, QtAlignRight))
 
         # Assemble
         self.mainBox = QGridLayout()

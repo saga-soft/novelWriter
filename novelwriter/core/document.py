@@ -2,8 +2,9 @@
 novelWriter - Project Document
 ==============================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING, TextIO
 
+from novelwriter import CONFIG
 from novelwriter.common import formatTimeStamp, isHandle, safeExists, safeIsFile, stripUnsafe
 from novelwriter.enum import nwItemClass, nwItemLayout
 from novelwriter.error import formatException, logException
@@ -294,7 +296,7 @@ class ProjectDocument:
             docMeta = f"+++\n{toml}\n+++\n"
 
         try:
-            with open(docTemp, mode="w", encoding="utf-8") as outFile:
+            with open(docTemp, mode="w", encoding="utf-8", newline=CONFIG.lineEnding) as outFile:
                 outFile.write(docMeta)
                 outFile.write(text)
         except Exception as exc:

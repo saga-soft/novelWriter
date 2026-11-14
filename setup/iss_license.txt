@@ -43,12 +43,12 @@ Copyright: Google Inc
 Website: <https://fonts.google.com/icons>
 License: Apache 2.0 <https://www.apache.org/licenses/LICENSE-2.0.txt>
 
-Remix Icon
-Copyright: Remix Icon
-Website: <https://remixicon.com>
-License: Apache 2.0 <https://www.apache.org/licenses/LICENSE-2.0.txt>
+Lucide
+Copyright: Cole Bemis, Lucide Contributors
+Website: <https://lucide.dev>
+License: ISC <https://opensource.org/license/isc-license-txt>
 
-Font Awesome
-Copyright: Fonticons Inc
-Website: <https://fontawesome.com>
-License: CC BY 4.0 <https://creativecommons.org/licenses/by/4.0/>
+Fluent UI System Icons
+Copyright: Microsoft Corporation
+Website: <https://github.com/microsoft/fluentui-system-icons>
+License: MIT <https://opensource.org/license/mit>

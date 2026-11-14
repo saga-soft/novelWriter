@@ -2,8 +2,9 @@
 novelWriter - Manuscript Builder Tests
 ======================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -39,8 +40,8 @@ from novelwriter.formats.toraw import ToRaw
 from novelwriter.manuscript.buildsettings import BuildSettings
 from novelwriter.manuscript.docbuild import DocumentBuilder
 
-from tests.helpers import ODT_IGNORE, C, buildTestProject, cmpFiles
-from tests.mocked import causeException, causeOSError
+from tests.helpers import ODT_IGNORE, C, MockRnd, TstPaths, buildTestProject, cmpFiles
+from tests.mocked import MockGuiMain, causeException, causeOSError
 
 BUILD_CONF = {
     "name": "Test Build",
@@ -80,7 +81,13 @@ BUILD_CONF = {
 
 
 @pytest.mark.core
-def testDocumentBuilder_OpenDocument(monkeypatch, mockGUI, prjLipsum, fncPath, tstPaths):
+def testDocumentBuilder_OpenDocument(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    prjLipsum: Path,
+    fncPath: Path,
+    tstPaths: TstPaths,
+):
     """Test building an open document manuscript."""
     project = NWProject()
     project.openProject(prjLipsum)
@@ -186,7 +193,13 @@ def testDocumentBuilder_OpenDocument(monkeypatch, mockGUI, prjLipsum, fncPath, t
 
 
 @pytest.mark.core
-def testDocumentBuilder_HTML(monkeypatch, mockGUI, prjLipsum, fncPath, tstPaths):
+def testDocumentBuilder_HTML(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    prjLipsum: Path,
+    fncPath: Path,
+    tstPaths: TstPaths,
+):
     """Test building an HTML manuscript."""
     project = NWProject()
     project.openProject(prjLipsum)
@@ -262,7 +275,13 @@ def testDocumentBuilder_HTML(monkeypatch, mockGUI, prjLipsum, fncPath, tstPaths)
 
 
 @pytest.mark.core
-def testDocumentBuilder_Markdown(monkeypatch, mockGUI, prjLipsum, fncPath, tstPaths):
+def testDocumentBuilder_Markdown(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    prjLipsum: Path,
+    fncPath: Path,
+    tstPaths: TstPaths,
+):
     """Test building an Markdown manuscript."""
     project = NWProject()
     project.openProject(prjLipsum)
@@ -330,7 +349,7 @@ def testDocumentBuilder_Markdown(monkeypatch, mockGUI, prjLipsum, fncPath, tstPa
 
 
 @pytest.mark.core
-def testDocumentBuilder_DocX(mockGUI, prjLipsum, fncPath):
+def testDocumentBuilder_DocX(mockGUI: MockGuiMain, prjLipsum: Path, fncPath: Path):
     """Test building a Word manuscript."""
     project = NWProject()
     project.openProject(prjLipsum)
@@ -363,7 +382,48 @@ def testDocumentBuilder_DocX(mockGUI, prjLipsum, fncPath):
 
 
 @pytest.mark.core
-def testDocumentBuilder_PDF(mockGUI, prjLipsum, fncPath):
+def testDocumentBuilder_EPub(mockGUI: MockGuiMain, prjLipsum: Path, fncPath: Path):
+    """Test building an EPub manuscript."""
+    project = NWProject()
+    project.openProject(prjLipsum)
+
+    build = BuildSettings()
+    build.unpack(BUILD_CONF)
+    build.setValue("epub.nestedToc", True)
+
+    docBuild = DocumentBuilder(project, build)
+    docBuild.queueAll()
+
+    assert len(docBuild) == 19
+
+    # Check Build
+    # ===========
+
+    docFile = fncPath / "Lorem Ipsum.epub"
+
+    count = 0
+    error = []
+    for _, success in docBuild.iterBuildDocument(docFile, nwBuildFmt.EPUB):
+        count += 1 if success else 0
+        if docBuild.error:
+            error.append(docBuild.error)
+
+    assert count == 19
+    assert error == []
+
+    assert docFile.is_file()
+    assert zipfile.is_zipfile(docFile)
+    with zipfile.ZipFile(docFile, mode="r") as zipObj:
+        navText = zipObj.read("OEBPS/nav.xhtml").decode("utf-8")
+    assert (
+        '<li><a href="xhtml/part1.xhtml#sec_3">Part: Act One</a>\n'
+        "<ol>\n"
+        '<li><a href="xhtml/chapter2.xhtml#sec_4">Chapter: Chapter One</a></li>\n'
+    ) in navText
+
+
+@pytest.mark.core
+def testDocumentBuilder_PDF(mockGUI: MockGuiMain, prjLipsum: Path, fncPath: Path):
     """Test building a PDF manuscript."""
     project = NWProject()
     project.openProject(prjLipsum)
@@ -395,7 +455,7 @@ def testDocumentBuilder_PDF(mockGUI, prjLipsum, fncPath):
 
 
 @pytest.mark.core
-def testDocumentBuilder_NWD(mockGUI, prjLipsum, fncPath, tstPaths):
+def testDocumentBuilder_NWD(mockGUI: MockGuiMain, prjLipsum: Path, fncPath: Path, tstPaths: TstPaths):
     """Test building a NWD manuscript."""
     project = NWProject()
     project.openProject(prjLipsum)
@@ -450,7 +510,7 @@ def testDocumentBuilder_NWD(mockGUI, prjLipsum, fncPath, tstPaths):
 
 
 @pytest.mark.core
-def testDocumentBuilder_Custom(mockGUI, fncPath: Path, mockRnd):
+def testDocumentBuilder_Custom(mockGUI: MockGuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test custom builds and some error handling."""
     project = NWProject()
     buildTestProject(project, fncPath)
@@ -529,7 +589,7 @@ def testDocumentBuilder_Custom(mockGUI, fncPath: Path, mockRnd):
 
 
 @pytest.mark.core
-def testDocumentBuilder_IterBuild(mockGUI, fncPath: Path, mockRnd):
+def testDocumentBuilder_IterBuild(mockGUI: MockGuiMain, fncPath: Path, mockRnd: MockRnd):
     """Test iter build wrapper."""
     project = NWProject()
     buildTestProject(project, fncPath)

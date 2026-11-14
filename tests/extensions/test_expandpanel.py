@@ -2,8 +2,9 @@
 novelWriter - ExpandPanel Extension Tests
 =========================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,16 +26,18 @@ import pytest
 
 from PyQt6.QtGui import QPalette
 from PyQt6.QtWidgets import QWIDGETSIZE_MAX, QLabel, QVBoxLayout
+from pytestqt.qtbot import QtBot
 
 from novelwriter.extensions.expandpanel import NExpandablePanel, NExpandablePanelGroup
 from novelwriter.extensions.modified import NSplitterHandle
 from novelwriter.types import QtMouseLeft
 
 from tests.helpers import SimpleDialog
+from tests.mocked import MockGuiMain
 
 
 @pytest.mark.gui
-def testNExpandablePanel_Main(qtbot, mockGUI):
+def testNExpandablePanel_Main(qtbot: QtBot, mockGUI: MockGuiMain):
     """Test the NExpandablePanel class."""
     dialog = SimpleDialog()
     panel = NExpandablePanel(dialog)
@@ -53,6 +56,7 @@ def testNExpandablePanel_Main(qtbot, mockGUI):
 
     # Set a title
     panel.setTitle("My Panel")
+    assert panel._ep_toggle.accessibleName() == "My Panel"
     assert panel._ep_label.text() == "My Panel"
 
     # Set the content layout
@@ -115,7 +119,7 @@ def testNExpandablePanel_Main(qtbot, mockGUI):
 
 
 @pytest.mark.gui
-def testNExpandablePanelGroup_Main(qtbot, mockGUI):
+def testNExpandablePanelGroup_Main(qtbot: QtBot, mockGUI: MockGuiMain):
     """Test the NExpandablePanelGroup class."""
     dialog = SimpleDialog()
     group = NExpandablePanelGroup(dialog)

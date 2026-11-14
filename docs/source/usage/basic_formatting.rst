@@ -7,11 +7,7 @@ Basic Formatting
 .. _Markdown: https://en.wikipedia.org/wiki/Markdown
 
 The basic text formatting syntax of novelWriter is based on Markdown_. It is only a subset of the
-Markdown syntax though. Lists, images, and links are not supported.
-
-That said, URLs in the text should automatically be highlighted and become clickable. However, only
-URLs starting with "http" or "https" are recognised. In the editor, you must hold down the
-:kbd:`Ctrl` key when clicking a URL to follow it.
+Markdown syntax though. Images are not supported, and list support is limited.
 
 
 .. _docs_usage_basics_paragraphs:
@@ -102,6 +98,65 @@ In general, the following rules apply:
 .. tip::
 
    novelWriter supports standard escape syntax for the emphasis markup characters in case the
-   editor misunderstands your intended usage of them. That is, ``\*``, ``\_`` and ``\~`` will
-   generate a plain ``*``, ``_`` and ``~``, respectively, without interpreting them as part of the
-   markup.
+   editor misunderstands your intended usage of them. That is, ``\*``, ``\_``, ``\#`` and ``\~``
+   will generate a plain ``*``, ``_``, ``#`` and ``~``, respectively, without interpreting them as
+   part of the markup.
+
+
+.. _docs_usage_basics_links:
+
+Markdown Links
+==============
+
+Bare URLs in the text should automatically be highlighted and become clickable. However, only
+URLs starting with "http", "https" or "file" are recognised. In the editor, you must hold down the
+:kbd:`Ctrl` key when clicking a URL to follow it.
+
+You can also use Markdown URL formatting to make them clickable text.
+
+:bdg-info:`Example`
+
+.. code-block:: md
+
+   Text with a [link](https://example.com) in it.
+
+   It can also link to a [local file](file:///path/to/a/file) on your computer.
+
+
+.. note::
+
+   A link can't contain spaces or parentheses. Replace them with ``%20``, ``%28`` and ``%29``. The
+   link dialog from the link button in the format toolbar does this for you.
+
+
+.. _docs_usage_basics_lists:
+
+Markdown Lists
+==============
+
+novelWriter supports single level lists with either bullet or numbered style. Nested lists are not
+currently supported. The editor will highlight the list marker when it is correctly used. When you
+press :kbd:`Enter` on a list item, the next line gets the same marker. Pressing :kbd:`Enter` on an
+empty item removes the marker and ends the list.
+
+List items in the same list must be kept together. An empty line closes the list object, so you
+must add a blank line before starting the next text paragraph. A blank line before the list is not
+strictly required, but recommended for clarity.
+
+Numbered lists always start at 1 and count up until the list ends. A new list starts at 1 again.
+
+:bdg-info:`Example`
+
+.. code-block:: md
+
+   Bullet point list:
+
+   * List item 1
+   * List item 2
+   * List item 3
+
+   Numbered list:
+
+   #. List item 1
+   #. List item 2
+   #. List item 3

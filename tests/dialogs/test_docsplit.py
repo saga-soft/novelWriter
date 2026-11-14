@@ -2,8 +2,9 @@
 novelWriter - Split Dialog Tests
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,19 +22,30 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
+
+from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
 from novelwriter.core.project import NWProject
 from novelwriter.dialogs.docsplit import GuiDocSplit
 from novelwriter.dialogs.editlabel import GuiEditLabel
+from novelwriter.guimain import GuiMain
 from novelwriter.types import QtAccepted, QtRejected
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
 
 
 @pytest.mark.gui
-def testGuiDocSplit_Main(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocSplit_Main(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the split document tool."""
     monkeypatch.setattr(GuiEditLabel, "getLabel", lambda *a, text: (text, True))
     monkeypatch.setattr(GuiDocSplit, "exec", lambda *a: None)

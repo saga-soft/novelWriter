@@ -2,8 +2,9 @@
 novelWriter - GUI Doc Merge Dialog
 ==================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,6 +23,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import logging
+
+from typing import Any
 
 from PyQt6.QtCore import Qt, pyqtSlot
 from PyQt6.QtWidgets import (
@@ -57,7 +60,7 @@ class GuiDocMerge(NDialog):
         self.setObjectName("GuiDocMerge")
         self.setWindowTitle(self.tr("Merge Documents"))
 
-        self._data = {}
+        self._data: dict[str, Any] = {}
 
         self.headLabel = QLabel(self.tr("Documents to Merge"), self)
         self.headLabel.setFont(SHARED.theme.guiFontB)

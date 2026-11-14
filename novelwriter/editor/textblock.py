@@ -2,8 +2,9 @@
 novelWriter - GUI Text Block Data
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ from novelwriter import SHARED
 from novelwriter.text.patterns import REGEX_PATTERNS
 
 RX_URL = REGEX_PATTERNS.url
+RX_LINK = REGEX_PATTERNS.markdownLink
 RX_WORDS = REGEX_PATTERNS.wordSplit
 RX_FMT_SC = REGEX_PATTERNS.shortcodePlain
 RX_FMT_SV = REGEX_PATTERNS.shortcodeValue
@@ -112,8 +114,9 @@ class TextBlockData(QTextBlockUserData):
 
     def checkData(self) -> tuple[str, str, int, list[int] | None]:
         """Return a snapshot of the text for external spell and format
-        checking. The spell text has shortcodes and URLs stripped, while
-        the format text is the raw, unmodified block text.
+        checking. The spell text has shortcodes, URLs and Markdown link
+        syntax stripped, while the format text is the raw, unmodified
+        block text.
         """
         return self._text, self._rawText, self._offset, self._utf16Map
 
@@ -147,7 +150,18 @@ class TextBlockData(QTextBlockUserData):
                         pad = " " * (e - s)
                         text = f"{text[:s]}{pad}{text[e:]}"
 
-        if "http" in text:
+        if "](" in text:
+            # Strip Markdown links
+            for res in RX_LINK.finditer(text, offset):
+                if (s := res.start(0)) >= 0 and (e := res.end(0)) >= 0:  # pragma: no branch
+                    ts, te = res.start(2), res.end(2)
+                    text = f"{text[:s]}{' ' * (ts - s)}{text[ts:te]}{' ' * (e - te)}{text[e:]}"
+                    if utf16Map:
+                        s = utf16Map[s]
+                        e = utf16Map[e]
+                    self._metaData.append((s, e, res.group(4), "link"))
+
+        if "://" in text:
             # Strip URLs
             for res in RX_URL.finditer(text, offset):
                 if (s := res.start(0)) >= 0 and (e := res.end(0)) >= 0:  # pragma: no branch

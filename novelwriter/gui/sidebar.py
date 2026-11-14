@@ -2,8 +2,9 @@
 novelWriter - GUI Main Window Side Bar
 ======================================
 
-This file is a part of novelWriter
-Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ logger = logging.getLogger(__name__)
 class GuiSideBar(QWidget):
     """GUI: Main Window SideBar."""
 
-    requestViewChange = pyqtSignal(nwView)
+    requestViewChange = pyqtSignal(nwView, bool)
 
     def __init__(self, mainGui: GuiMain) -> None:
         super().__init__(parent=mainGui)
@@ -60,35 +61,31 @@ class GuiSideBar(QWidget):
 
         # Buttons
         self.tbProject = NFlatIconButton(self, iSz, "sb_project:sidebar", 0.25)
-        self.tbProject.setToolTip("{0} [Ctrl+T]".format(self.tr("Project Tree View")))
+        self.tbProject.setToolTip(self.tr("Project Tree View"), "Ctrl+T")
         self.tbProject.clicked.connect(qtWeakLambda(self._emitViewChange, nwView.PROJECT))
 
         self.tbNovel = NFlatIconButton(self, iSz, "sb_novel:sidebar", 0.25)
-        self.tbNovel.setToolTip("{0} [Ctrl+T]".format(self.tr("Novel Tree View")))
+        self.tbNovel.setToolTip(self.tr("Novel Tree View"), "Ctrl+T")
         self.tbNovel.clicked.connect(qtWeakLambda(self._emitViewChange, nwView.NOVEL))
 
         self.tbSearch = NFlatIconButton(self, iSz, "sb_search:sidebar", 0.25)
-        self.tbSearch.setToolTip("{0} [Ctrl+Shift+F]".format(self.tr("Project Search")))
+        self.tbSearch.setToolTip(self.tr("Project Search"), "Ctrl+Shift+F")
         self.tbSearch.clicked.connect(qtWeakLambda(self._emitViewChange, nwView.SEARCH))
 
-        self.tbOutline = NFlatIconButton(self, iSz, "sb_outline:sidebar", 0.25)
-        self.tbOutline.setToolTip("{0} [Ctrl+Shift+T]".format(self.tr("Novel Outline View")))
-        self.tbOutline.clicked.connect(qtWeakLambda(self._emitViewChange, nwView.OUTLINE))
+        self.tbStory = NFlatIconButton(self, iSz, "sb_story:sidebar", 0.25)
+        self.tbStory.setToolTip(self.tr("Story View"), "Ctrl+Shift+T")
+        self.tbStory.clicked.connect(qtWeakLambda(self._emitViewChange, nwView.STORY))
 
         self.tbTheme = NFlatIconButton(self, iSz, "", 0.25)
         self.tbTheme.setToolTip(self.tr("Switch Colour Theme"))
         self.tbTheme.clicked.connect(self._cycleColorTheme)
 
-        self.tbDetails = NFlatIconButton(self, iSz, "sb_details:sidebar", 0.25)
-        self.tbDetails.setToolTip("{0} [Shift+F6]".format(self.tr("Novel Details")))
-        self.tbDetails.clicked.connect(self.mainGui.showNovelDetailsDialog)
-
         self.tbStats = NFlatIconButton(self, iSz, "sb_stats:sidebar", 0.25)
-        self.tbStats.setToolTip("{0} [F6]".format(self.tr("Writing Statistics")))
+        self.tbStats.setToolTip(self.tr("Writing Statistics"), "F6")
         self.tbStats.clicked.connect(self.mainGui.showWritingStatsDialog)
 
         self.tbBuild = NFlatIconButton(self, iSz, "sb_build:sidebar", 0.25)
-        self.tbBuild.setToolTip("{0} [F5]".format(self.tr("Manuscript Build")))
+        self.tbBuild.setToolTip(self.tr("Manuscript Build"), "F5")
         self.tbBuild.clicked.connect(self.mainGui.showBuildManuscriptDialog)
 
         # Settings Menu
@@ -108,10 +105,9 @@ class GuiSideBar(QWidget):
         self.outerBox.addWidget(self.tbProject)
         self.outerBox.addWidget(self.tbNovel)
         self.outerBox.addWidget(self.tbSearch)
-        self.outerBox.addWidget(self.tbOutline)
+        self.outerBox.addWidget(self.tbStory)
         self.outerBox.addWidget(self.tbBuild)
         self.outerBox.addStretch(1)
-        self.outerBox.addWidget(self.tbDetails)
         self.outerBox.addWidget(self.tbStats)
         self.outerBox.addWidget(self.tbTheme)
         self.outerBox.addWidget(self.tbSettings)
@@ -131,9 +127,8 @@ class GuiSideBar(QWidget):
             self.tbProject.refreshTheme()
             self.tbNovel.refreshTheme()
             self.tbSearch.refreshTheme()
-            self.tbOutline.refreshTheme()
+            self.tbStory.refreshTheme()
             self.tbBuild.refreshTheme()
-            self.tbDetails.refreshTheme()
             self.tbStats.refreshTheme()
             self.tbTheme.refreshTheme()
             self.tbSettings.refreshTheme()
@@ -162,7 +157,7 @@ class GuiSideBar(QWidget):
     @pyqtSlot(nwView)
     def _emitViewChange(self, view: nwView) -> None:
         """Forward a view change request."""
-        self.requestViewChange.emit(view)
+        self.requestViewChange.emit(view, True)
 
     ##
     #  Internal Functions
@@ -178,6 +173,7 @@ class _PopRightMenu(QMenu):
     def event(self, event: QEvent) -> bool:
         """Overload the show event and move the menu popup location."""
         if event.type() == QEvent.Type.Show and isinstance(parent := self.parent(), QWidget):
-            offset = QPoint(parent.width(), parent.height() - self.height())
+            xPos = -self.width() if parent.isRightToLeft() else parent.width()
+            offset = QPoint(xPos, parent.height() - self.height())
             self.move(parent.mapToGlobal(offset))
         return super().event(event)

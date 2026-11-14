@@ -4,7 +4,10 @@
     <style:font-face style:name="Liberation Serif" style:font-pitch="variable" />
   </office:font-face-decls>
   <office:automatic-styles>
-    <style:style style:name="P1" style:family="paragraph" style:parent-style-name="Heading_20_1">
+    <style:style style:name="P1" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="First_20_Page">
+      <style:paragraph-properties fo:text-align="center" />
+    </style:style>
+    <style:style style:name="P2" style:family="paragraph" style:parent-style-name="Heading_20_1">
       <style:paragraph-properties fo:break-before="page" />
     </style:style>
     <style:style style:name="T1" style:family="text">
@@ -30,7 +33,7 @@
         <text:user-field-decl office:value-type="float" office:value="1231" text:name="ManuscriptTextWordChars" />
         <text:user-field-decl office:value-type="float" office:value="27" text:name="ManuscriptTitleWordChars" />
       </text:user-field-decls>
-      <text:p text:style-name="Title">My Novel</text:p>
+      <text:p text:style-name="P1">My Novel</text:p>
       <text:p text:style-name="Text_20_body">
         <text:span text:style-name="T1">Word Count: </text:span>
         <text:span text:style-name="T1">
@@ -39,9 +42,9 @@
         <text:line-break />
         <text:user-field-get style:data-style-name="N0" text:name="ManuscriptParagraphCount">0</text:user-field-get> paragrphs<text:line-break />Web: <text:a xlink:type="simple" xlink:href="http://example.com" text:style-name="T2">http://example.com</text:a>
       </text:p>
-      <text:h text:style-name="P1" text:outline-level="1">Chapter One</text:h>
+      <text:h text:style-name="P2" text:outline-level="1">Chapter One</text:h>
       <text:p text:style-name="Text_20_body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc maximus justo non dictum commodo. Curabitur lacinia tempor orci vel luctus. Phasellus porta metus eu massa luctus, eget euismod risus rhoncus. Vestibulum sed arcu nisi. Maecenas pretium facilisis velit, vel semper lacus aliquam sit amet. Vestibulum vulputate neque ligula, rhoncus blandit turpis consequat id. Mauris sagittis vehicula imperdiet. Duis sed nunc pretium, ornare purus vel, sodales augue. Maecenas a suscipit risus. Quisque volutpat justo eleifend est ullamcorper fermentum. Donec ullamcorper et tortor a laoreet. Nam id risus nisi. Vivamus non imperdiet erat, sit amet imperdiet felis. Mauris vitae neque et est aliquam scelerisque non non ipsum.</text:p>
-      <text:h text:style-name="P1" text:outline-level="1">Chapter Two</text:h>
+      <text:h text:style-name="P2" text:outline-level="1">Chapter Two</text:h>
       <text:p text:style-name="Text_20_body">Nullam laoreet lorem nec malesuada vehicula. Vivamus tempus sodales lectus sed viverra. Aenean lacinia sollicitudin quam, quis tempus eros suscipit id. Duis sed rutrum nisi, ut pulvinar magna. Nam et cursus tortor. Phasellus ac odio tellus. Nullam in iaculis ipsum. Vivamus ante sem, ultricies sed varius quis, tristique nec tellus. Nullam eu urna vitae lacus hendrerit gravida. Quisque pulvinar erat ex, id efficitur velit sodales vitae. Proin vestibulum, sapien eget mattis euismod, tortor quam viverra risus, at congue mauris tortor eu nunc. Mauris pellentesque elit leo, quis eleifend sem placerat a. Vivamus iaculis dui eget tellus volutpat, ac varius nisi facilisis.<text:note text:id="ftn1" text:note-class="footnote">
           <text:note-citation>1</text:note-citation>
           <text:note-body>

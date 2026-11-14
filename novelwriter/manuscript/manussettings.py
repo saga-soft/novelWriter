@@ -2,8 +2,9 @@
 novelWriter - GUI Build Settings
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -49,10 +50,17 @@ from PyQt6.QtWidgets import (
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import describeFont, fontMatcher, languageName, processLangCode, qtAddAction, qtLambda
-from novelwriter.constants import nwHeadFmt, nwKeyWords, nwLabels, nwStyles, nwUnicode, trConst
-from novelwriter.enum import nwStandardButton, nwToolButton
+from novelwriter.constants import nwHeadFmt, nwKeyWords, nwLabels, nwStyles, nwUnicode, trConst, trUnit
+from novelwriter.enum import nwStandardButton, nwStdUnit, nwToolButton
 from novelwriter.extensions.configlayout import NColorLabel, NFixedPage, NScrollableForm, NScrollablePage
-from novelwriter.extensions.modified import NComboBox, NDoubleSpinBox, NIconButton, NSpinBox, NToolDialog
+from novelwriter.extensions.modified import (
+    NComboBox,
+    NDoubleSpinBox,
+    NHRadioGroup,
+    NIconButton,
+    NSpinBox,
+    NToolDialog,
+)
 from novelwriter.extensions.pagedsidebar import NPagedSideBar
 from novelwriter.extensions.switch import NSwitch
 from novelwriter.extensions.switchbox import NSwitchBox
@@ -789,53 +797,51 @@ class _HeadingsTab(NScrollablePage):
         self.layoutMatrix.addWidget(QLabel(trCentre, self), 0, 1)
         self.layoutMatrix.addWidget(QLabel(trBreak, self), 0, 2)
 
+        breakTypes = {k: trConst(v) for k, v in nwLabels.BREAK_TYPES.items()}
+
         # Title Layout
         trLabel = self._build.getLabel("headings.styleTitle")
         self.lblTitle = QLabel(trLabel, self)
         self.centerTitle = NSwitch(self, height=iPx)
         self.centerTitle.setAccessibleName(f"{trLabel}: {trCentre}")
-        self.breakTitle = NSwitch(self, height=iPx)
-        self.breakTitle.setAccessibleName(f"{trLabel}: {trBreak}")
+        self.breakTitle = NHRadioGroup(self, trLabel, breakTypes)
 
         self.layoutMatrix.addWidget(self.lblTitle, 1, 0)
         self.layoutMatrix.addWidget(self.centerTitle, 1, 1, QtAlignCenter)
-        self.layoutMatrix.addWidget(self.breakTitle, 1, 2, QtAlignCenter)
+        self.layoutMatrix.addWidget(self.breakTitle, 1, 2)
 
         # Partition Layout
         trLabel = self._build.getLabel("headings.stylePart")
         self.lblPart = QLabel(trLabel, self)
         self.centerPart = NSwitch(self, height=iPx)
         self.centerPart.setAccessibleName(f"{trLabel}: {trCentre}")
-        self.breakPart = NSwitch(self, height=iPx)
-        self.breakPart.setAccessibleName(f"{trLabel}: {trBreak}")
+        self.breakPart = NHRadioGroup(self, trLabel, breakTypes)
 
         self.layoutMatrix.addWidget(self.lblPart, 2, 0)
         self.layoutMatrix.addWidget(self.centerPart, 2, 1, QtAlignCenter)
-        self.layoutMatrix.addWidget(self.breakPart, 2, 2, QtAlignCenter)
+        self.layoutMatrix.addWidget(self.breakPart, 2, 2)
 
         # Chapter Layout
         trLabel = self._build.getLabel("headings.styleChapter")
         self.lblChapter = QLabel(trLabel, self)
         self.centerChapter = NSwitch(self, height=iPx)
         self.centerChapter.setAccessibleName(f"{trLabel}: {trCentre}")
-        self.breakChapter = NSwitch(self, height=iPx)
-        self.breakChapter.setAccessibleName(f"{trLabel}: {trBreak}")
+        self.breakChapter = NHRadioGroup(self, trLabel, breakTypes)
 
         self.layoutMatrix.addWidget(self.lblChapter, 3, 0)
         self.layoutMatrix.addWidget(self.centerChapter, 3, 1, QtAlignCenter)
-        self.layoutMatrix.addWidget(self.breakChapter, 3, 2, QtAlignCenter)
+        self.layoutMatrix.addWidget(self.breakChapter, 3, 2)
 
         # Scene Layout
         trLabel = self._build.getLabel("headings.styleScene")
         self.lblScene = QLabel(trLabel, self)
         self.centerScene = NSwitch(self, height=iPx)
         self.centerScene.setAccessibleName(f"{trLabel}: {trCentre}")
-        self.breakScene = NSwitch(self, height=iPx)
-        self.breakScene.setAccessibleName(f"{trLabel}: {trBreak}")
+        self.breakScene = NHRadioGroup(self, trLabel, breakTypes)
 
         self.layoutMatrix.addWidget(self.lblScene, 4, 0)
         self.layoutMatrix.addWidget(self.centerScene, 4, 1, QtAlignCenter)
-        self.layoutMatrix.addWidget(self.breakScene, 4, 2, QtAlignCenter)
+        self.layoutMatrix.addWidget(self.breakScene, 4, 2)
 
         self.layoutMatrix.setColumnStretch(3, 1)
 
@@ -893,10 +899,10 @@ class _HeadingsTab(NScrollablePage):
         self.centerChapter.setChecked(self._build.getBool("headings.centerChapter"))
         self.centerScene.setChecked(self._build.getBool("headings.centerScene"))
 
-        self.breakTitle.setChecked(self._build.getBool("headings.breakTitle"))
-        self.breakPart.setChecked(self._build.getBool("headings.breakPart"))
-        self.breakChapter.setChecked(self._build.getBool("headings.breakChapter"))
-        self.breakScene.setChecked(self._build.getBool("headings.breakScene"))
+        self.breakTitle.setCheckedId(self._build.getInt("headings.breakTitle"))
+        self.breakPart.setCheckedId(self._build.getInt("headings.breakPart"))
+        self.breakChapter.setCheckedId(self._build.getInt("headings.breakChapter"))
+        self.breakScene.setCheckedId(self._build.getInt("headings.breakScene"))
 
     def saveContent(self) -> None:
         """Save choices back into build object."""
@@ -912,10 +918,10 @@ class _HeadingsTab(NScrollablePage):
         self._build.setValue("headings.centerChapter", self.centerChapter.isChecked())
         self._build.setValue("headings.centerScene", self.centerScene.isChecked())
 
-        self._build.setValue("headings.breakTitle", self.breakTitle.isChecked())
-        self._build.setValue("headings.breakPart", self.breakPart.isChecked())
-        self._build.setValue("headings.breakChapter", self.breakChapter.isChecked())
-        self._build.setValue("headings.breakScene", self.breakScene.isChecked())
+        self._build.setValue("headings.breakTitle", max(self.breakTitle.checkedId(), 0))
+        self._build.setValue("headings.breakPart", max(self.breakPart.checkedId(), 0))
+        self._build.setValue("headings.breakChapter", max(self.breakChapter.checkedId(), 0))
+        self._build.setValue("headings.breakScene", max(self.breakScene.checkedId(), 0))
 
     ##
     #  Internal Functions
@@ -1055,6 +1061,8 @@ class _FormattingTab(NScrollableForm):
         iPx = SHARED.theme.baseIconHeight
         iSz = SHARED.theme.baseIconSize
 
+        trEm = trUnit(nwStdUnit.EM)
+
         # Text Content
         # ============
 
@@ -1123,7 +1131,12 @@ class _FormattingTab(NScrollableForm):
         # Line Height
         self.lineHeight = NDoubleSpinBox(self, minVal=0.75, maxVal=3.0, step=0.05, prec=2)
         self.lineHeight.setFixedNumbersWidth(4)
-        self.addRow(self._build.getLabel("format.lineHeight"), self.lineHeight, unit="em")
+        self.addRow(self._build.getLabel("format.lineHeight"), self.lineHeight, unit=trEm)
+
+        # Tab Size
+        self.tabSize = NDoubleSpinBox(self, minVal=0.0, maxVal=19.9, step=0.1, prec=2)
+        self.tabSize.setFixedNumbersWidth(5)
+        self.addRow(self._build.getLabel("format.tabSize"), self.tabSize, unit=trEm)
 
         # Text Options
         self.justifyText = NSwitch(self, height=iPx)
@@ -1151,10 +1164,12 @@ class _FormattingTab(NScrollableForm):
         self.colorHeadings = NSwitch(self, height=iPx)
         self.boldHeadings = NSwitch(self, height=iPx)
         self.upperHeadings = NSwitch(self, height=iPx)
+        self.showStatus = NSwitch(self, height=iPx)
 
         self.addRow(self._build.getLabel("format.colorHeadings"), self.colorHeadings)
         self.addRow(self._build.getLabel("format.boldHeadings"), self.boldHeadings)
         self.addRow(self._build.getLabel("format.upperHeadings"), self.upperHeadings)
+        self.addRow(self._build.getLabel("format.showStatus"), self.showStatus)
 
         # First Line Indent
         # =================
@@ -1167,11 +1182,11 @@ class _FormattingTab(NScrollableForm):
         self.firstIndent = NSwitch(self, height=iPx)
         self.indentFirstPar = NSwitch(self, height=iPx)
 
-        self.indentWidth = NDoubleSpinBox(self, minVal=0.1, maxVal=9.9, step=0.1, prec=1)
-        self.indentWidth.setFixedNumbersWidth(4)
+        self.indentWidth = NDoubleSpinBox(self, minVal=0.1, maxVal=19.9, step=0.1, prec=2)
+        self.indentWidth.setFixedNumbersWidth(5)
 
         self.addRow(self._build.getLabel("format.firstLineIndent"), self.firstIndent)
-        self.addRow(self._build.getLabel("format.firstIndentWidth"), self.indentWidth, unit="em")
+        self.addRow(self._build.getLabel("format.firstIndentWidth"), self.indentWidth, unit=trEm)
         self.addRow(self._build.getLabel("format.indentFirstPar"), self.indentFirstPar)
 
         # Size & Margins
@@ -1344,6 +1359,23 @@ class _FormattingTab(NScrollableForm):
             button=self.btnTextProps,
         )
 
+        # List
+        self.listMarginT = NDoubleSpinBox(self, minVal=0.0, maxVal=10.0, step=0.1)
+        self.listMarginT.setFixedNumbersWidth(4)
+        self.listMarginB = NDoubleSpinBox(self, minVal=0.0, maxVal=10.0, step=0.1)
+        self.listMarginB.setFixedNumbersWidth(4)
+        self.btnListProps = SHARED.theme.getIconButton(nwToolButton.REVERT, self)
+        self.btnListProps.clicked.connect(self._resetListProps)
+
+        self.pixLIT = QLabel(self)
+        self.pixLIB = QLabel(self)
+
+        self.addRow(
+            self._build.getLabel("format.listMargin"),
+            [self.pixLIT, self.listMarginT, iSp, self.pixLIB, self.listMarginB],
+            button=self.btnListProps,
+        )
+
         # Separator
         self.sepMarginT = NDoubleSpinBox(self, minVal=0.0, maxVal=10.0, step=0.1)
         self.sepMarginT.setFixedNumbersWidth(4)
@@ -1377,7 +1409,7 @@ class _FormattingTab(NScrollableForm):
 
         # Unit
         self.pageUnit = NComboBox(self)
-        for key, name in nwLabels.UNIT_NAME.items():
+        for key, name in nwLabels.PAGE_UNIT_NAME.items():
             self.pageUnit.addItem(trConst(name), key)
 
         self.addRow(self._build.getLabel("format.pageUnit"), self.pageUnit)
@@ -1422,13 +1454,29 @@ class _FormattingTab(NScrollableForm):
         self.pixPMR = QLabel(self)
 
         self.addRow(
-            self._build.getLabel("format.pageMargins"),
+            self._build.getLabel("format.pageMarginsTB"),
             [self.pixPMT, self.topMargin, iSp, self.pixPMB, self.bottomMargin],
         )
         self.addRow(
             "",
             [self.pixPML, self.leftMargin, iSp, self.pixPMR, self.rightMargin],
+            editable="pageMarginsHorizontal",
         )
+
+        # Page Gutter
+        self.gutterMargin = NDoubleSpinBox(self)
+        self.gutterMargin.setFixedNumbersWidth(5)
+
+        self.addRow(
+            self._build.getLabel("format.gutterMargin"),
+            self.gutterMargin,
+        )
+
+        # Double Pages
+        self.doublePages = NSwitch(self, height=iPx)
+        self.doublePages.clicked.connect(self._updateDoublePagesState)
+
+        self.addRow(self._build.getLabel("format.doublePages"), self.doublePages)
 
         # Document Style
         # ==============
@@ -1450,6 +1498,17 @@ class _FormattingTab(NScrollableForm):
             stretch=(1, 1),
         )
 
+        self.pageHeaderEven = QLineEdit(self)
+        self.pageHeaderEven.setMinimumWidth(200)
+        self.btnPageHeaderEven = SHARED.theme.getIconButton(nwToolButton.REVERT, self)
+        self.btnPageHeaderEven.clicked.connect(self._resetPageHeaderEven)
+        self.addRow(
+            self._build.getLabel("doc.pageHeaderEven"),
+            self.pageHeaderEven,
+            button=self.btnPageHeaderEven,
+            stretch=(1, 1),
+        )
+
         self.pageCountOffset = NSpinBox(self, minVal=0, maxVal=999)
         self.pageCountOffset.setFixedNumbersWidth(4)
         self.addRow(self._build.getLabel("doc.pageCountOffset"), self.pageCountOffset)
@@ -1465,6 +1524,18 @@ class _FormattingTab(NScrollableForm):
         self.metaLanguage.textChanged.connect(self._refreshMetaLang)
 
         self.addRow(self._build.getLabel("doc.metaLanguage"), [self.lblMetaLanguage, 8, self.metaLanguage])
+
+        # EPUB Document
+        # =============
+
+        title = self._build.getLabel("epub")
+        section += 1
+        self._sidebar.addButton(title, section)
+        self.addGroupLabel(title, section)
+
+        self.nestedToc = NSwitch(self, height=iPx)
+
+        self.addRow(self._build.getLabel("epub.nestedToc"), self.nestedToc)
 
         # HTML Document
         # =============
@@ -1522,6 +1593,8 @@ class _FormattingTab(NScrollableForm):
         self.pixH4B.setPixmap(bMargin)
         self.pixTTT.setPixmap(tMargin)
         self.pixTTB.setPixmap(bMargin)
+        self.pixLIT.setPixmap(tMargin)
+        self.pixLIB.setPixmap(bMargin)
         self.pixSPT.setPixmap(tMargin)
         self.pixSPB.setPixmap(bMargin)
         self.pixPMT.setPixmap(tMargin)
@@ -1529,8 +1602,7 @@ class _FormattingTab(NScrollableForm):
 
         self.pixPSH.setPixmap(SHARED.theme.getPixmap("fit_height", iPx, iPx))
         self.pixPSW.setPixmap(SHARED.theme.getPixmap("fit_width", iPx, iPx))
-        self.pixPML.setPixmap(SHARED.theme.getPixmap("margin_left", iPx, iPx))
-        self.pixPMR.setPixmap(SHARED.theme.getPixmap("margin_right", iPx, iPx))
+        self._updateDoublePagesState()
 
         self.pageSize.updateStyle()
         self.pageUnit.updateStyle()
@@ -1538,8 +1610,6 @@ class _FormattingTab(NScrollableForm):
     def loadContent(self) -> None:
         """Populate the widgets."""
         # Text Content
-        # ============
-
         self.incBodyText.setChecked(self._build.getBool("text.includeBodyText"))
         self.incSynopsis.setChecked(self._build.getBool("text.includeSynopsis"))
         self.incComments.setChecked(self._build.getBool("text.includeComments"))
@@ -1551,8 +1621,6 @@ class _FormattingTab(NScrollableForm):
         self._updateIgnoredKeywords()
 
         # Text Format
-        # ===========
-
         font = QFont()
         font.fromString(self._build.getStr("format.textFont"))
         self._textFont = fontMatcher(font)
@@ -1561,6 +1629,7 @@ class _FormattingTab(NScrollableForm):
         self.textFont.setCursorPosition(0)
 
         self.lineHeight.setValue(self._build.getFloat("format.lineHeight"))
+        self.tabSize.setValue(self._build.getFloat("format.tabSize"))
         self.justifyText.setChecked(self._build.getBool("format.justifyText"))
         self.justifyOnBreak.setChecked(self._build.getBool("format.justifyOnBreak"))
         self.stripUnicode.setChecked(self._build.getBool("format.stripUnicode"))
@@ -1569,22 +1638,17 @@ class _FormattingTab(NScrollableForm):
         self.showDialogue.setChecked(self._build.getBool("format.showDialogue"))
 
         # Heading Format
-        # ==============
-
         self.colorHeadings.setChecked(self._build.getBool("format.colorHeadings"))
         self.boldHeadings.setChecked(self._build.getBool("format.boldHeadings"))
         self.upperHeadings.setChecked(self._build.getBool("format.upperHeadings"))
+        self.showStatus.setChecked(self._build.getBool("format.showStatus"))
 
         # First Line Indent
-        # =================
-
         self.firstIndent.setChecked(self._build.getBool("format.firstLineIndent"))
         self.indentWidth.setValue(self._build.getFloat("format.firstIndentWidth"))
         self.indentFirstPar.setChecked(self._build.getBool("format.indentFirstPar"))
 
         # Text Margins
-        # ============
-
         self.titleSize.setValue(self._build.getFloat("format.titleSize"))
         self.h1Size.setValue(self._build.getFloat("format.h1Size"))
         self.h2Size.setValue(self._build.getFloat("format.h2Size"))
@@ -1603,6 +1667,8 @@ class _FormattingTab(NScrollableForm):
         self.h4MarginB.setValue(self._build.getFloat("format.h4MarginB"))
         self.textMarginT.setValue(self._build.getFloat("format.textMarginT"))
         self.textMarginB.setValue(self._build.getFloat("format.textMarginB"))
+        self.listMarginT.setValue(self._build.getFloat("format.listMarginT"))
+        self.listMarginB.setValue(self._build.getFloat("format.listMarginB"))
         self.sepMarginT.setValue(self._build.getFloat("format.sepMarginT"))
         self.sepMarginB.setValue(self._build.getFloat("format.sepMarginB"))
         self.lineForMargin.setChecked(self._build.getBool("format.lineForMargin"))
@@ -1610,13 +1676,11 @@ class _FormattingTab(NScrollableForm):
         self._updateTextMarginState()
 
         # Page Layout
-        # ===========
-
         pageUnit = self._build.getStr("format.pageUnit")
         index = self.pageUnit.findData(pageUnit)
         if index >= 0:
             self.pageUnit.setCurrentIndex(index)
-            self._unitScale = nwLabels.UNIT_SCALE.get(pageUnit, 1.0)
+            self._unitScale = nwLabels.PAGE_UNIT_SCALE.get(pageUnit, 1.0)
             self._changeUnit(index)
 
         self.pageWidth.setValue(self._build.getFloat("format.pageWidth"))
@@ -1625,6 +1689,10 @@ class _FormattingTab(NScrollableForm):
         self.bottomMargin.setValue(self._build.getFloat("format.bottomMargin"))
         self.leftMargin.setValue(self._build.getFloat("format.leftMargin"))
         self.rightMargin.setValue(self._build.getFloat("format.rightMargin"))
+        self.gutterMargin.setValue(self._build.getFloat("format.gutterMargin"))
+        self.doublePages.setChecked(self._build.getBool("format.doublePages"))
+
+        self._updateDoublePagesState()
 
         pageSize = self._build.getStr("format.pageSize")
         index = self.pageSize.findData(pageSize)
@@ -1636,16 +1704,17 @@ class _FormattingTab(NScrollableForm):
         self.pageSize.currentIndexChanged.connect(self._changePageSize)
 
         # Document
-        # ========
-
         self.metaLanguage.setText(processLangCode(self._build.getStr("doc.metaLanguage")))
         self.pageHeader.setText(self._build.getStr("doc.pageHeader"))
-        self.pageCountOffset.setValue(self._build.getInt("doc.pageCountOffset"))
         self.pageHeader.setCursorPosition(0)
+        self.pageHeaderEven.setText(self._build.getStr("doc.pageHeaderEven"))
+        self.pageHeaderEven.setCursorPosition(0)
+        self.pageCountOffset.setValue(self._build.getInt("doc.pageCountOffset"))
+
+        # EPUB Document
+        self.nestedToc.setChecked(self._build.getBool("epub.nestedToc"))
 
         # HTML Document
-        # =============
-
         self.htmlAddStyles.setChecked(self._build.getBool("html.addStyles"))
         self.htmlPreserveTabs.setChecked(self._build.getBool("html.preserveTabs"))
 
@@ -1665,6 +1734,7 @@ class _FormattingTab(NScrollableForm):
         # Text Format
         self._build.setValue("format.textFont", self._textFont.toString())
         self._build.setValue("format.lineHeight", self.lineHeight.value())
+        self._build.setValue("format.tabSize", self.tabSize.value())
 
         self._build.setValue("format.justifyText", self.justifyText.isChecked())
         self._build.setValue("format.justifyOnBreak", self.justifyOnBreak.isChecked())
@@ -1677,6 +1747,7 @@ class _FormattingTab(NScrollableForm):
         self._build.setValue("format.colorHeadings", self.colorHeadings.isChecked())
         self._build.setValue("format.boldHeadings", self.boldHeadings.isChecked())
         self._build.setValue("format.upperHeadings", self.upperHeadings.isChecked())
+        self._build.setValue("format.showStatus", self.showStatus.isChecked())
 
         # First Line Indent
         self._build.setValue("format.firstLineIndent", self.firstIndent.isChecked())
@@ -1702,6 +1773,8 @@ class _FormattingTab(NScrollableForm):
         self._build.setValue("format.h4MarginB", self.h4MarginB.value())
         self._build.setValue("format.textMarginT", self.textMarginT.value())
         self._build.setValue("format.textMarginB", self.textMarginB.value())
+        self._build.setValue("format.listMarginT", self.listMarginT.value())
+        self._build.setValue("format.listMarginB", self.listMarginB.value())
         self._build.setValue("format.sepMarginT", self.sepMarginT.value())
         self._build.setValue("format.sepMarginB", self.sepMarginB.value())
         self._build.setValue("format.lineForMargin", self.lineForMargin.isChecked())
@@ -1715,15 +1788,21 @@ class _FormattingTab(NScrollableForm):
         self._build.setValue("format.bottomMargin", self.bottomMargin.value())
         self._build.setValue("format.leftMargin", self.leftMargin.value())
         self._build.setValue("format.rightMargin", self.rightMargin.value())
+        self._build.setValue("format.gutterMargin", self.gutterMargin.value())
+        self._build.setValue("format.doublePages", self.doublePages.isChecked())
 
         # Documents
         metaLanguage = processLangCode(self.metaLanguage.text())
 
         self._build.setValue("doc.metaLanguage", metaLanguage)
         self._build.setValue("doc.pageHeader", self.pageHeader.text())
+        self._build.setValue("doc.pageHeaderEven", self.pageHeaderEven.text())
         self._build.setValue("doc.pageCountOffset", self.pageCountOffset.value())
 
         self.metaLanguage.setText(metaLanguage)
+
+        # EPUB Document
+        self._build.setValue("epub.nestedToc", self.nestedToc.isChecked())
 
         # HTML Document
         self._build.setValue("html.addStyles", self.htmlAddStyles.isChecked())
@@ -1746,7 +1825,7 @@ class _FormattingTab(NScrollableForm):
     def _changeUnit(self, index: int) -> None:
         """Process current unit change to recalculate sizes."""
         newUnit = self.pageUnit.itemData(index)
-        newScale = nwLabels.UNIT_SCALE.get(newUnit, 1.0)
+        newScale = nwLabels.PAGE_UNIT_SCALE.get(newUnit, 1.0)
         reScale = self._unitScale / newScale
 
         pageWidth = self.pageWidth.value() * reScale
@@ -1755,6 +1834,7 @@ class _FormattingTab(NScrollableForm):
         bottomMargin = self.bottomMargin.value() * reScale
         leftMargin = self.leftMargin.value() * reScale
         rightMargin = self.rightMargin.value() * reScale
+        gutterMargin = self.gutterMargin.value() * reScale
 
         isMM = newUnit == "mm"
         nDec = 1 if isMM else 2
@@ -1799,6 +1879,11 @@ class _FormattingTab(NScrollableForm):
         self.rightMargin.setMaximum(mMax)
         self.rightMargin.setValue(rightMargin)
 
+        self.gutterMargin.setDecimals(nDec)
+        self.gutterMargin.setSingleStep(nStep)
+        self.gutterMargin.setMaximum(mMax)
+        self.gutterMargin.setValue(gutterMargin)
+
         self._unitScale = newScale
         self._changePageSize(self.pageSize.currentIndex())
 
@@ -1823,10 +1908,29 @@ class _FormattingTab(NScrollableForm):
             self.pageSize.setCurrentIndex(index)
 
     @pyqtSlot()
+    def _updateDoublePagesState(self) -> None:
+        """Update widgets that depend on double-sided pages."""
+        state = self.doublePages.isChecked()
+        self.pageHeaderEven.setEnabled(state)
+        self.btnPageHeaderEven.setEnabled(state)
+        iPx = SHARED.theme.baseIconHeight
+        self.pixPML.setPixmap(SHARED.theme.getPixmap("margin_inner" if state else "margin_left", iPx, iPx))
+        self.pixPMR.setPixmap(SHARED.theme.getPixmap("margin_outer" if state else "margin_right", iPx, iPx))
+        self.setLabelText(
+            "pageMarginsHorizontal", self._build.getLabel("format.pageMarginsIO" if state else "format.pageMarginsLR")
+        )
+
+    @pyqtSlot()
     def _resetPageHeader(self) -> None:
         """Reset the document header format to default."""
-        self.pageHeader.setText(nwHeadFmt.DOC_AUTO)
+        self.pageHeader.setText(nwHeadFmt.DOC_AUTO_ODD)
         self.pageHeader.setCursorPosition(0)
+
+    @pyqtSlot()
+    def _resetPageHeaderEven(self) -> None:
+        """Reset the document header format to default."""
+        self.pageHeaderEven.setText(nwHeadFmt.DOC_AUTO_EVEN)
+        self.pageHeaderEven.setCursorPosition(0)
 
     @pyqtSlot()
     def _resetTitleProps(self) -> None:
@@ -1865,13 +1969,19 @@ class _FormattingTab(NScrollableForm):
 
     @pyqtSlot()
     def _resetTextProps(self) -> None:
-        """Reset the text size and margins to default."""
+        """Reset the text margins to default."""
         self.textMarginT.setValue(nwStyles.T_MARGIN["TT"][0])
         self.textMarginB.setValue(nwStyles.T_MARGIN["TT"][1])
 
     @pyqtSlot()
+    def _resetListProps(self) -> None:
+        """Reset the list margins to default."""
+        self.listMarginT.setValue(nwStyles.T_MARGIN["LI"][0])
+        self.listMarginB.setValue(nwStyles.T_MARGIN["LI"][1])
+
+    @pyqtSlot()
     def _resetSepProps(self) -> None:
-        """Reset the separator size and margins to default."""
+        """Reset the separator margins to default."""
         self.sepMarginT.setValue(nwStyles.T_MARGIN["SP"][0])
         self.sepMarginB.setValue(nwStyles.T_MARGIN["SP"][1])
 

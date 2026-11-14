@@ -2,8 +2,9 @@
 novelWriter - GUI Side Bar Tests
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,29 +24,33 @@ from __future__ import annotations
 
 import pytest
 
+from PyQt6.QtCore import QPoint, Qt
+from pytestqt.qtbot import QtBot
+
 from novelwriter import CONFIG
 from novelwriter.constants import nwLabels
 from novelwriter.enum import nwTheme, nwView
+from novelwriter.guimain import GuiMain
 
 
 @pytest.mark.gui
-def testGuiSideBar_ViewChange(qtbot, nwGUI):
+def testGuiSideBar_ViewChange(qtbot: QtBot, nwGUI: GuiMain):
     """Test the view change buttons on the side bar."""
     sidebar = nwGUI.sideBar
     buttons = [
         (sidebar.tbProject, nwView.PROJECT),
         (sidebar.tbNovel, nwView.NOVEL),
         (sidebar.tbSearch, nwView.SEARCH),
-        (sidebar.tbOutline, nwView.OUTLINE),
+        (sidebar.tbStory, nwView.STORY),
     ]
     for button, view in buttons:
         with qtbot.waitSignal(sidebar.requestViewChange, timeout=1000) as signal:
             button.click()
-        assert signal.args == [view]
+        assert signal.args == [view, True]
 
 
 @pytest.mark.gui
-def testGuiSideBar_CycleColourTheme(monkeypatch, nwGUI):
+def testGuiSideBar_CycleColourTheme(monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain):
     """Test theme cycle feature on the side bar."""
     CONFIG.themeMode = nwTheme.AUTO
     sidebar = nwGUI.sideBar
@@ -67,3 +72,21 @@ def testGuiSideBar_CycleColourTheme(monkeypatch, nwGUI):
         sidebar._cycleColorTheme()
         assert CONFIG.themeMode == nwTheme.AUTO
         assert sidebar.tbTheme.toolTip() == nwLabels.THEME_MODE_LABEL[nwTheme.AUTO]
+
+
+@pytest.mark.gui
+def testGuiSideBar_MenuPosition(qtbot: QtBot, nwGUI: GuiMain):
+    """Test that the settings menu opens away from the side bar."""
+    button = nwGUI.sideBar.tbSettings
+    menu = nwGUI.sideBar.mSettings
+
+    # LTR opens to the right of the button
+    menu.show()
+    assert menu.x() == button.mapToGlobal(QPoint(button.width(), 0)).x()
+    menu.hide()
+
+    # RTL opens to the left of the button
+    button.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+    menu.show()
+    assert menu.x() == button.mapToGlobal(QPoint(-menu.width(), 0)).x()
+    menu.hide()

@@ -2,8 +2,9 @@
 novelWriter - Text Pattern Functions
 ====================================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,8 +43,10 @@ class RegExPatterns:
     _rxBold2 = re.compile(nwRegEx.FMT_B2)
     _rxStrike = re.compile(nwRegEx.FMT_ST)
     _rxMark = re.compile(nwRegEx.FMT_HL)
+    _rxLink = re.compile(nwRegEx.FMT_LN)
     _rxSCPlain = re.compile(nwRegEx.FMT_SC)
     _rxSCValue = re.compile(nwRegEx.FMT_SV)
+    _rxAutoRep = re.compile(nwRegEx.AUTO_REP)
 
     @property
     def url(self) -> re.Pattern:
@@ -81,6 +84,11 @@ class RegExPatterns:
         return self._rxMark
 
     @property
+    def markdownLink(self) -> re.Pattern:
+        """Markdown link style."""
+        return self._rxLink
+
+    @property
     def shortcodePlain(self) -> re.Pattern:
         """Plain shortcode style."""
         return self._rxSCPlain
@@ -89,6 +97,11 @@ class RegExPatterns:
     def shortcodeValue(self) -> re.Pattern:
         """Plain shortcode style."""
         return self._rxSCValue
+
+    @property
+    def autoReplace(self) -> re.Pattern:
+        """Auto-replace key."""
+        return self._rxAutoRep
 
     @property
     def dialogStyle(self) -> re.Pattern | None:
@@ -104,7 +117,7 @@ class RegExPatterns:
                     rx.append(f"(?:\\B{qO}[^{qO}]+{qC}\\B(?={qO}|\\s*))")
                 else:
                     rx.append(f"(?:{qO}[^{qO}]+{qC})")
-                if CONFIG.allowOpenDial:
+                if CONFIG.allowOpenDialog:
                     rx.append(f"(?:{qO}.+?$)")
             if CONFIG.dialogStyle in (2, 3):
                 qO = CONFIG.fmtDQuoteOpen.strip()[:1]
@@ -115,7 +128,7 @@ class RegExPatterns:
                     rx.append(f"(?:\\B{qO}[^{qO}]+{qC}\\B(?={qO}|\\s*))")
                 else:
                     rx.append(f"(?:{qO}[^{qO}]+{qC})")
-                if CONFIG.allowOpenDial:
+                if CONFIG.allowOpenDialog:
                     rx.append(f"(?:{qO}.+?$)")
             return re.compile("|".join(rx))
         return None

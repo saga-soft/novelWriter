@@ -2,8 +2,9 @@
 novelWriter - GUI Editor Search
 ===============================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -71,12 +72,14 @@ class GuiDocEditSearch(QFrame):
 
         self.searchBox = QLineEdit(self)
         self.searchBox.setPlaceholderText(self.tr("Search for"))
+        self.searchBox.setAccessibleName(self.searchBox.placeholderText())
         self.searchBox.returnPressed.connect(self._doSearch)
         self.searchBox.textEdited.connect(self._editSearchText)
         self.searchBox.installEventFilter(self)
 
         self.replaceBox = QLineEdit(self)
         self.replaceBox.setPlaceholderText(self.tr("Replace with"))
+        self.replaceBox.setAccessibleName(self.replaceBox.placeholderText())
         self.replaceBox.returnPressed.connect(self._doReplace)
         self.replaceBox.textEdited.connect(self._editReplaceText)
         self.replaceBox.installEventFilter(self)
@@ -133,6 +136,7 @@ class GuiDocEditSearch(QFrame):
         # =======
 
         self.showReplace = NFlatIconButton(self, iSz, "toggle-unfold:default")
+        self.showReplace.setAccessibleName(self.replaceBox.placeholderText())
         self.showReplace.toggled.connect(self._doToggleReplace)
 
         self.searchButton = NFlatIconButton(self, iSz, "search:action")

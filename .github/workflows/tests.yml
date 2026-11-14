@@ -32,12 +32,13 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install System Packages
+        timeout-minutes: 5
         run: |
           sudo apt update
           sudo apt install qttools5-dev-tools
 
       - name: Install UV and Python
-        uses: astral-sh/setup-uv@v10.0.1
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           python-version: ${{ matrix.python-version }}
           enable-cache: true
@@ -76,12 +77,8 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v7
 
-      - name: Install System Packages
-        run: |
-          brew install enchant
-
       - name: Install UV and Python
-        uses: astral-sh/setup-uv@v10.0.1
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           python-version: "3.14"
           enable-cache: true
@@ -123,7 +120,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install UV and Python
-        uses: astral-sh/setup-uv@v10.0.1
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           python-version: "3.14"
           enable-cache: true
@@ -171,7 +168,7 @@ jobs:
           merge-multiple: true
 
       - name: Install UV
-        uses: astral-sh/setup-uv@v10.0.1
+        uses: astral-sh/setup-uv@v10.2.0
 
       - name: Combine Coverage Data
         run: |
@@ -223,7 +220,7 @@ jobs:
           merge-multiple: true
 
       - name: Install UV
-        uses: astral-sh/setup-uv@v10.0.1
+        uses: astral-sh/setup-uv@v10.2.0
 
       - name: Combine Coverage Data
         run: |
@@ -250,6 +247,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Install System Packages
+        timeout-minutes: 5
         run: |
           sudo apt update
           sudo apt install \
@@ -279,6 +277,7 @@ jobs:
       contents: read
     steps:
       - name: Install System Packages
+        timeout-minutes: 5
         run: |
           dnf -y update
           dnf -y install \

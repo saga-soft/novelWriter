@@ -2,8 +2,9 @@
 novelWriter - GUI Main Window Status Bar
 ========================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ from PyQt6.QtWidgets import QApplication, QHBoxLayout, QLabel, QStatusBar, QWidg
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import formatPercent, formatTime, languageName
-from novelwriter.constants import nwConst, nwLabels, nwStats, trStats
+from novelwriter.constants import nwConst, nwLabels, nwStats, trConst, trStats
 from novelwriter.extensions.modified import NClickableLabel, NFlatIconButton
 from novelwriter.extensions.progressbars import NColorRangeProgress
 from novelwriter.extensions.statusled import StatusLED
@@ -54,6 +55,7 @@ class GuiMainStatus(QStatusBar):
         self._refTime = -1.0
         self._userIdle = False
         self._debugInfo = False
+        self._focusMode = False
 
         iPx = SHARED.theme.baseIconHeight
         iSz = SHARED.theme.baseIconSize
@@ -95,18 +97,22 @@ class GuiMainStatus(QStatusBar):
         self.addPermanentWidget(self.langIcon)
         self.addPermanentWidget(self.langText)
 
-        # The Editor Status
+        # The Editor and Project Status
+        trSaved = trConst(nwLabels.SAVED_NAME[True])
+        trUnsaved = trConst(nwLabels.SAVED_NAME[False])
+
         self.docIcon = StatusLED(iPx, iPx, self)
         self.docText = QLabel(self.tr("Editor"), self)
         self.docIcon.setContentsMargins(0, 0, 0, 0)
+        self.docIcon.setLabels(self.docText.text(), trSaved, trUnsaved)
         self.docText.setContentsMargins(0, 0, 8, 0)
         self.addPermanentWidget(self.docIcon)
         self.addPermanentWidget(self.docText)
 
-        # The Project Status
         self.projIcon = StatusLED(iPx, iPx, self)
         self.projText = QLabel(self.tr("Project"), self)
         self.projIcon.setContentsMargins(0, 0, 0, 0)
+        self.projIcon.setLabels(self.projText.text(), trSaved, trUnsaved)
         self.projText.setContentsMargins(0, 0, 8, 0)
         self.addPermanentWidget(self.projIcon)
         self.addPermanentWidget(self.projText)
@@ -152,6 +158,7 @@ class GuiMainStatus(QStatusBar):
         else:
             self._trStatsCount = trStats(nwLabels.STATS_DISPLAY[nwStats.WORDS])
             self._trStatsTip = self.tr("Total word count (session change)")
+        self._updateVisibility()
 
     def initProjectSettings(self) -> None:
         """Apply project settings."""
@@ -209,6 +216,23 @@ class GuiMainStatus(QStatusBar):
         """Set the document status colour icon."""
         self.docIcon.setState(state)
 
+    def setFocusMode(self, focusMode: bool) -> None:
+        """Update the statusbar when in Focus Mode."""
+        self._focusMode = focusMode
+        isVisible = not focusMode
+        self.messageBox.setVisible(isVisible)
+        self.langIcon.setVisible(isVisible)
+        self.langText.setVisible(isVisible)
+        self.docIcon.setVisible(isVisible)
+        self.docText.setVisible(isVisible)
+        self.projIcon.setVisible(isVisible)
+        self.projText.setVisible(isVisible)
+        self.statsIcon.setVisible(isVisible)
+        self.statsText.setVisible(isVisible)
+        self.timeIcon.setVisible(isVisible)
+        self.timeText.setVisible(isVisible and CONFIG.showSessionTime)
+        self._updateVisibility()
+
     def setUserIdle(self, idle: bool) -> None:
         """Change the idle status icon."""
         if not CONFIG.stopWhenIdle:
@@ -248,6 +272,8 @@ class GuiMainStatus(QStatusBar):
             self.projProg.setToolTip(self.tr("Project Progress: {0}/{1}").format(f"{pProg:n}", f"{projTarget:n}"))
         else:
             self.projProg.setVisible(False)
+
+        self._updateVisibility()
 
     def updateTime(self, idleTime: float = 0.0) -> None:
         """Update the session clock."""
@@ -306,6 +332,15 @@ class GuiMainStatus(QStatusBar):
         if SHARED.question(self.tr("Do you want to reset the daily progress count?")):
             SHARED.project.data.resetDailyProgress()
             self.initProjectSettings()
+
+    ##
+    #  Internal Functions
+    ##
+
+    def _updateVisibility(self) -> None:
+        """Hide the statusbar in Focus Mode unless a goal is shown."""
+        hasGoal = not (self.dayProg.isHidden() and self.projProg.isHidden())
+        self.setVisible(not self._focusMode or (CONFIG.goalInFocusMode and hasGoal))
 
     ##
     #  Debug

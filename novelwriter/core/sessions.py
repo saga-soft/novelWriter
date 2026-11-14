@@ -2,8 +2,9 @@
 novelWriter - Project Session Log
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@ from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING
 
-from novelwriter import SHARED
+from novelwriter import CONFIG, SHARED
 from novelwriter.common import formatTimeStamp
 from novelwriter.constants import nwFiles
 from novelwriter.error import logException
@@ -91,10 +92,10 @@ class SessionLog:
 
         try:
             if not sessFile.exists():
-                with open(sessFile, mode="w", encoding="utf-8") as fObj:
+                with open(sessFile, mode="w", encoding="utf-8", newline=CONFIG.lineEnding) as fObj:
                     fObj.write(self.createInitial(iWTotal))
 
-            with open(sessFile, mode="a+", encoding="utf-8") as fObj:
+            with open(sessFile, mode="a+", encoding="utf-8", newline=CONFIG.lineEnding) as fObj:
                 fObj.write(
                     self.createRecord(
                         start=formatTimeStamp(self._start),

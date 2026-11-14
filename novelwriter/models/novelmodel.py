@@ -2,8 +2,9 @@
 novelWriter - Novel Model
 =========================
 
-This file is a part of novelWriter
-Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2025 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -48,14 +49,15 @@ logger = logging.getLogger(__name__)
 C_FACTOR = 0x0100
 R_HANDLE = 0xFF01
 R_KEY = 0xFF02
+R_STATS = 0xFF03
 
-T_NodeData = str | QIcon | QPixmap | Qt.AlignmentFlag | None
+T_NodeData = str | tuple[int, int] | QIcon | QPixmap | Qt.AlignmentFlag | None
 
 
 class NovelModel(QAbstractTableModel):
     """Core: Novel Model Class."""
 
-    __slots__ = ("_columns", "_extraKey", "_extraLabel", "_more", "_rows")
+    __slots__ = ("_columns", "_extraKey", "_extraLabel", "_levels", "_more", "_rows")
 
     def __init__(self) -> None:
         super().__init__()
@@ -64,6 +66,7 @@ class NovelModel(QAbstractTableModel):
         self._columns = 3
         self._extraKey = ""
         self._extraLabel = ""
+        self._levels = {k: trConst(v) for k, v in nwStyles.T_LABEL.items()}
 
     def __del__(self) -> None:  # pragma: no cover
         """Class destructor."""
@@ -192,7 +195,28 @@ class NovelModel(QAbstractTableModel):
             del self._rows[current[0] : current[-1] + 1]
             self.endRemoveRows()
 
+        if CONFIG.novelViewSubCounts:
+            self.updateCounts()
+            self.dataChanged.emit(self.createIndex(0, 1), self.createIndex(len(self._rows) - 1, 1))
+
         return True
+
+    def updateCounts(self) -> None:
+        """Add the counts of the following lower level headings to each
+        heading, if enabled. Data changes must be handled by the caller.
+        """
+        if CONFIG.novelViewSubCounts:
+            stats: list[tuple[int, int]] = [row[R_STATS] for row in self._rows]  # type: ignore
+            totals = [count for _, count in stats]
+            scopes: list[int] = []
+            for i, (level, count) in enumerate(stats):
+                while scopes and stats[scopes[-1]][0] >= level:
+                    scopes.pop()
+                for j in scopes:
+                    totals[j] += count
+                scopes.append(i)
+            for row, total in zip(self._rows, totals, strict=True):
+                self._setCount(row, total)
 
     ##
     #  Internal Functions
@@ -201,17 +225,14 @@ class NovelModel(QAbstractTableModel):
     def _generateEntry(self, handle: str, key: str, head: IndexHeading) -> dict[int, T_NodeData]:
         """Generate a cache entry."""
         iLevel = nwStyles.H_LEVEL.get(head.level, 0)
-        countValue = f"{head.mainCount:n}"
-        countInfo = f"{countValue} {CONFIG.countUnit}"
 
-        data = {}
+        data: dict[int, T_NodeData] = {}
         data[C_FACTOR * 0 | QtToolTipRole] = head.title
         data[C_FACTOR * 0 | QtDisplayRole] = head.title
+        data[C_FACTOR * 0 | QtAccessibleTextRole] = f"{self._levels.get(head.level, '')}: {head.title}"
         data[C_FACTOR * 0 | QtDecorationRole] = SHARED.theme.getHeaderDecoration(iLevel)
-        data[C_FACTOR * 1 | QtDisplayRole] = countValue
-        data[C_FACTOR * 1 | QtToolTipRole] = countInfo
-        data[C_FACTOR * 1 | QtAccessibleTextRole] = countInfo
         data[C_FACTOR * 1 | QtTextAlignmentRole] = QtAlignRight
+        self._setCount(data, head.mainCount)
         if self._columns == 3:
             data[C_FACTOR * 2 | QtDecorationRole] = self._more
         else:
@@ -223,4 +244,13 @@ class NovelModel(QAbstractTableModel):
             data[C_FACTOR * 3 | QtDecorationRole] = self._more
         data[R_HANDLE] = handle
         data[R_KEY] = key
+        data[R_STATS] = (iLevel, head.mainCount)
         return data
+
+    def _setCount(self, data: dict[int, T_NodeData], count: int) -> None:
+        """Set the count values of a cache entry."""
+        countValue = f"{count:n}"
+        countInfo = f"{countValue} {CONFIG.countUnit}"
+        data[C_FACTOR * 1 | QtDisplayRole] = countValue
+        data[C_FACTOR * 1 | QtToolTipRole] = countInfo
+        data[C_FACTOR * 1 | QtAccessibleTextRole] = countInfo

@@ -2,8 +2,9 @@
 novelWriter - Test Suite Helpers
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,7 +27,8 @@ import gc
 import weakref
 import xml.etree.ElementTree as ET
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -36,6 +38,10 @@ from PyQt6.QtWidgets import QDialog, QVBoxLayout, QWidget
 from novelwriter import logger
 
 if TYPE_CHECKING:
+    import pytest
+
+    from pytestqt.qtbot import QtBot
+
     from novelwriter.core.project import NWProject
 
 XML_IGNORE = ("<novelWriterXML ", "<project ", "<dailyTarget ")
@@ -47,6 +53,8 @@ MOCK_TIME = datetime(2019, 5, 10, 18, 52, 0).timestamp()
 
 
 class C:
+    """Constants from the test project when the random generator is mocked."""
+
     # Import and status items from test project when random generator is mocked
     sNew = "s000000"
     sNote = "s000001"
@@ -69,6 +77,34 @@ class C:
     hChapterDir = "000000000000d"
     hChapterDoc = "000000000000e"
     hSceneDoc = "000000000000f"
+
+
+@dataclass(frozen=True)
+class TstPaths:
+    """Paths used by the test suite."""
+
+    testDir: Path
+    filesDir: Path
+    refDir: Path
+    outDir: Path
+    tmpDir: Path
+    cnfDir: Path
+
+
+class MockRnd:
+    """Mock random generator counting upwards from 0 for predictable handles."""
+
+    def __init__(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        self._monkeypatch = monkeypatch
+        self.reset()
+
+    def _rnd(self, n: int) -> Iterator[int]:
+        yield from range(n)
+
+    def reset(self) -> None:
+        """Restart the sequence from 0."""
+        gen = self._rnd(1000)
+        self._monkeypatch.setattr("random.getrandbits", lambda *a: next(gen))
 
 
 def cmpFiles(
@@ -122,7 +158,7 @@ def cmpFiles(
     return False
 
 
-def xmlToText(xElem):
+def xmlToText(xElem: ET.Element) -> str:
     """Get the text content of an XML element."""
     text = ET.tostring(xElem, encoding="utf-8", xml_declaration=False).decode()
     bits = text.partition(">")
@@ -131,17 +167,17 @@ def xmlToText(xElem):
     return f"{node[0]}{rest}{bits[1]}{bits[2]}"
 
 
-def readFile(file: Path):
+def readFile(file: Path) -> str:
     """Return the content of a file as a string."""
     return file.read_text(encoding="utf-8")
 
 
-def writeFile(file: Path, data: str):
+def writeFile(file: Path, data: str) -> None:
     """Write the contents of a string to a file."""
     file.write_text(data, encoding="utf-8")
 
 
-def clearLogHandlers():
+def clearLogHandlers() -> None:
     """Clear all log handlers."""
     for handler in logger.handlers:
         logger.removeHandler(handler)
@@ -191,7 +227,7 @@ def buildTestProject(project: NWProject, path: Path) -> None:
     project._tree._ready = True
 
 
-def checkDialogFreedOnClose(qtbot, factory: Callable[[], QDialog]) -> None:
+def checkDialogFreedOnClose(qtbot: QtBot, factory: Callable[[], QDialog]) -> None:
     """Check that a dialog is freed by reference count alone when it is
     closed. This guards against PyQt6 reference loops where a closure
     connected to a signal captures the dialog that owns the sender, in
@@ -231,6 +267,8 @@ def checkWidgetFreedOnRelease(factory: Callable[[], QWidget]) -> None:
 
 
 class SimpleDialog(QDialog):
+    """Dialog for showing a single widget in tests."""
+
     def __init__(self, widget: QWidget | None = None) -> None:
         super().__init__()
         self._widget = widget
@@ -245,6 +283,7 @@ class SimpleDialog(QDialog):
         return self._widget
 
     def addWidget(self, widget: QWidget) -> None:
+        """Add a widget to the dialog."""
         self._widget = widget
         layout = self.layout()
         assert layout is not None

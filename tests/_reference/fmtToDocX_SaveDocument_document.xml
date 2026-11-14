@@ -70,13 +70,11 @@
         <w:rPr />
         <w:t>“There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain…”</w:t>
       </w:r>
-      <w:r>
-        <w:br w:type="page" />
-      </w:r>
     </w:p>
     <w:p>
       <w:pPr>
         <w:pStyle w:val="MetaText" />
+        <w:pageBreakBefore />
       </w:pPr>
       <w:r>
         <w:rPr>
@@ -99,7 +97,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -109,19 +107,17 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
         <w:t>The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from “de Finibus Bonorum et Malorum” by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.</w:t>
       </w:r>
-      <w:r>
-        <w:br w:type="page" />
-      </w:r>
     </w:p>
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Heading1" />
+        <w:pageBreakBefore />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -178,7 +174,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -192,13 +188,11 @@
           <w:t>http://lipsum.com</w:t>
         </w:r>
       </w:hyperlink>
-      <w:r>
-        <w:br w:type="page" />
-      </w:r>
     </w:p>
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Title" />
+        <w:pageBreakBefore />
         <w:jc w:val="center" />
       </w:pPr>
       <w:r>
@@ -215,13 +209,11 @@
         <w:rPr />
         <w:t>“Fusce maximus felis libero”</w:t>
       </w:r>
-      <w:r>
-        <w:br w:type="page" />
-      </w:r>
     </w:p>
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Heading1" />
+        <w:pageBreakBefore />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -422,7 +414,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -432,7 +424,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -442,7 +434,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -452,7 +444,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -572,7 +564,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -582,7 +574,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -592,7 +584,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -602,7 +594,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -612,19 +604,17 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
         <w:t>Ut et consequat enim, quis ornare nibh. In lectus neque, mollis et suscipit et, vestibulum vitae augue. Praesent id ante sit amet odio venenatis placerat a at erat. Sed sed metus sed nisi dictum varius. Integer tincidunt fermentum purus ac porta. Fusce porttitor non risus eget tristique. Donec augue nunc, maximus at fermentum vel, varius et neque. Ut sed consectetur mauris. Quisque ipsum enim, porttitor vitae imperdiet sit amet, tempor et mauris. Aliquam malesuada tincidunt lectus quis blandit. Sed commodo orci felis, quis ultrices tellus facilisis sed. Nunc vel varius est. Duis ullamcorper eu metus in pulvinar. Morbi at sapien dictum, rutrum mauris eget, interdum tellus.</w:t>
       </w:r>
-      <w:r>
-        <w:br w:type="page" />
-      </w:r>
     </w:p>
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Heading1" />
+        <w:pageBreakBefore />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -825,7 +815,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -835,7 +825,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -845,7 +835,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -855,7 +845,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -975,7 +965,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -985,7 +975,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -995,7 +985,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -1005,7 +995,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -1015,7 +1005,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -1135,7 +1125,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -1145,7 +1135,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -1155,7 +1145,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -1165,19 +1155,17 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
         <w:t>Integer egestas maximus leo eu facilisis. Nunc rhoncus dignissim lectus eu lacinia. Praesent lacinia urna porttitor aliquam condimentum. Nulla eu eros dictum, dictum nunc vitae, sagittis nibh. Integer ante neque, consequat nec sollicitudin id, consectetur vitae dolor. Nullam volutpat sem orci, quis viverra magna auctor a. Suspendisse potenti. Maecenas commodo sed neque pellentesque vehicula. Sed luctus nisl risus, elementum semper purus interdum vel. Ut pulvinar, massa sit amet venenatis placerat, nunc lacus hendrerit odio, non aliquet nunc risus eu lectus. Maecenas feugiat semper ligula, id lobortis sem porta eu. Integer posuere elit magna, at mollis eros bibendum et. Ut imperdiet purus vel nulla aliquam maximus. Morbi sodales purus tellus, a rhoncus sem rutrum sit amet. Quisque risus sem, laoreet nec convallis nec, rutrum vitae justo.</w:t>
       </w:r>
-      <w:r>
-        <w:br w:type="page" />
-      </w:r>
     </w:p>
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Title" />
+        <w:pageBreakBefore />
         <w:jc w:val="center" />
       </w:pPr>
       <w:r>
@@ -1284,7 +1272,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -1294,19 +1282,17 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
         <w:t>Nullam scelerisque velit et tortor congue vestibulum a at nisi. Vivamus sodales ut turpis a convallis. In dignissim nibh at luctus sodales. Etiam sit amet rhoncus massa. Phasellus ligula magna, sollicitudin non imperdiet sit amet, volutpat vel magna. Nunc vestibulum tempor lectus, sit amet porta nunc hendrerit in. Curabitur non odio sit amet massa tincidunt facilisis. Integer et luctus nunc, eget euismod leo. Praesent faucibus metus sed purus convallis scelerisque. Fusce viverra lorem et placerat malesuada. In at elit malesuada, ullamcorper risus vitae, sodales dolor. Donec quis elementum lectus. Quisque eu eros at dui imperdiet euismod ut id neque.</w:t>
       </w:r>
-      <w:r>
-        <w:br w:type="page" />
-      </w:r>
     </w:p>
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Title" />
+        <w:pageBreakBefore />
         <w:jc w:val="center" />
       </w:pPr>
       <w:r>
@@ -1379,19 +1365,17 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
         <w:t>Mauris ut erat eu lorem malesuada egestas vel vel urna. Maecenas ac semper quam. Maecenas aliquet metus non interdum mattis. Proin consectetur molestie ligula. Aliquam sollicitudin pulvinar urna a pellentesque. Suspendisse ultrices, est mattis scelerisque porta, nisi nisi laoreet nisl, non condimentum quam ante a velit. Proin scelerisque justo augue, nec laoreet ligula egestas at. Etiam enim quam, ultrices non accumsan hendrerit, elementum vel ligula. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam efficitur odio libero, in vestibulum arcu aliquam at. Cras non vehicula augue. Integer lobortis, est vitae aliquam facilisis, metus ligula aliquet eros, at porttitor sem tortor eget massa. Aliquam varius scelerisque neque sed gravida. Aenean eleifend lorem id ante elementum sollicitudin. Proin commodo massa a quam volutpat, mollis fermentum turpis efficitur.</w:t>
       </w:r>
-      <w:r>
-        <w:br w:type="page" />
-      </w:r>
     </w:p>
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Title" />
+        <w:pageBreakBefore />
         <w:jc w:val="center" />
       </w:pPr>
       <w:r>
@@ -1474,7 +1458,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />
@@ -1484,7 +1468,7 @@
     <w:p>
       <w:pPr>
         <w:pStyle w:val="Normal" />
-        <w:ind w:firstLine="335" />
+        <w:ind w:firstLine="480" />
       </w:pPr>
       <w:r>
         <w:rPr />

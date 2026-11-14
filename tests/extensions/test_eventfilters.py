@@ -2,8 +2,9 @@
 novelWriter - Wheel Event Filter Tests
 ======================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,11 +33,14 @@ from novelwriter.types import QtModNone, QtModShift
 
 
 class MockWidget(QWidget):
+    """Mock widget that counts wheel events."""
+
     def __init__(self):
         super().__init__(None)
         self.count = 0
 
     def wheelEvent(self, event: QWheelEvent) -> None:
+        """Count the wheel event."""
         self.count += 1
 
 

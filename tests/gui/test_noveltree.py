@@ -2,8 +2,9 @@
 novelWriter - GUI Novel View Tests
 ==================================
 
-This file is a part of novelWriter
-Copyright (C) 2021 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2021 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,19 +28,27 @@ import pytest
 
 from PyQt6.QtCore import QModelIndex, QPoint
 from PyQt6.QtWidgets import QInputDialog, QToolTip
+from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.core.project import NWProject
 from novelwriter.dialogs.editlabel import GuiEditLabel
 from novelwriter.enum import nwFocus, nwItemType, nwNovelExtra, nwView
+from novelwriter.guimain import GuiMain
 from novelwriter.models.novelmodel import NovelModel
 from novelwriter.types import QtDisplayRole
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
 
 
 @pytest.mark.gui
-def testGuiNovelView_Content(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiNovelView_Content(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test navigating the novel tree."""
     monkeypatch.setattr(GuiEditLabel, "getLabel", lambda *a, text: (text, True))
 
@@ -77,21 +86,25 @@ def testGuiNovelView_Content(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     CONFIG.hideVScroll = True
     CONFIG.hideHScroll = True
     novelView.initViewport()
-    assert not novelTree.verticalScrollBar().isVisible()
-    assert not novelTree.horizontalScrollBar().isVisible()
+    vBar = novelTree.verticalScrollBar()
+    hBar = novelTree.horizontalScrollBar()
+    assert vBar is not None
+    assert hBar is not None
+    assert not vBar.isVisible()
+    assert not hBar.isVisible()
 
     CONFIG.hideVScroll = False
     CONFIG.hideHScroll = False
     novelView.initViewport()
-    assert novelTree.verticalScrollBar().isEnabled()
-    assert novelTree.horizontalScrollBar().isEnabled()
+    assert vBar.isEnabled()
+    assert hBar.isEnabled()
 
     # Populate Tree
     # =============
     root = QModelIndex()
 
     novelView.setTreeFocus()
-    nwGUI._changeView(nwView.NOVEL)
+    nwGUI.changeView(nwView.NOVEL)
 
     # Clear tree
     novelView.setCurrentNovel(None)
@@ -109,6 +122,18 @@ def testGuiNovelView_Content(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
 
     nwGUI.rebuildIndex()  # This should update the word count to the edited scene
     assert model.data(model.createIndex(2, 1), QtDisplayRole) == "10"  # Word Count
+
+    # Child counts are included in the parent headings, if enabled
+    chapter = SHARED.project.index.getItemHeading(C.hChapterDoc, "T0001")
+    assert chapter is not None
+    assert novelBar.aSubCounts.isChecked() is True
+    assert model.data(model.createIndex(1, 1), QtDisplayRole) == f"{chapter.mainCount + 10}"
+    novelBar.aSubCounts.trigger()
+    assert CONFIG.novelViewSubCounts is False
+    assert model.data(model.createIndex(1, 1), QtDisplayRole) == f"{chapter.mainCount}"
+    novelBar.aSubCounts.trigger()
+    assert CONFIG.novelViewSubCounts is True
+    assert model.data(model.createIndex(1, 1), QtDisplayRole) == f"{chapter.mainCount + 10}"
 
     # Extra Column
     # ============
@@ -168,7 +193,7 @@ def testGuiNovelView_Content(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
 
     toolTip = ""
 
-    def showText(pos, text):
+    def showText(pos: QPoint, text: str) -> None:
         nonlocal toolTip
         toolTip = text
 
@@ -205,14 +230,14 @@ def testGuiNovelView_Content(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     assert novelBar._refresh == {C.hNovelRoot: False}
 
     # Add a document while tree in focus
-    nwGUI._changeView(nwView.PROJECT)
+    nwGUI.changeView(nwView.PROJECT)
     assert novelBar._active is False
     nwGUI.projView.projTree.setSelectedHandle(C.hChapterDir)
     nwGUI.projView.projTree.newTreeItem(nwItemType.FILE, hLevel=3)
     assert novelBar._refresh == {C.hNovelRoot: True}
 
     # Switch back and check that the refresh status is reset
-    nwGUI._changeView(nwView.NOVEL)
+    nwGUI.changeView(nwView.NOVEL)
     assert novelBar._refresh == {C.hNovelRoot: False}
 
     # Close

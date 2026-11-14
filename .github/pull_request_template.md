@@ -1,16 +1,13 @@
-<!--
-Please check the following before you make a pull request:
-
-* The branch you are making the pull request from (in your own fork) has a unique and descriptive
-  name. Do not make a pull request directly from your copy of `main` or `release`.
-* Make sure your contribution follows the style guide and other requirements mentioned in the
-  CONTRIBUTING.md file in the repository.
-* Fill in the Summary section below, and if relevant, mention the issue numbers related to the PR.
--->
-
 ### Summary
 
 ### Related Issue(s)
+
+<!-- i.e. Closes #1234 -->
+
+### Submitter's Checklist
+
+* [ ] I am familiar with, and have followed, the [Contributing Guide](https://github.com/saga-soft/novelWriter/blob/main/CONTRIBUTING.md)
+* [ ] I am familiar with, and have followed, the [AI Policy](https://github.com/saga-soft/novelWriter/blob/main/AI_POLICY.md)
 
 ### Reviewer's Checklist
 

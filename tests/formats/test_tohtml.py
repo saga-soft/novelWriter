@@ -2,8 +2,9 @@
 novelWriter - HTML Format Tests
 ===============================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +24,8 @@ from __future__ import annotations
 
 import json
 
+from pathlib import Path
+
 import pytest
 
 from novelwriter import CONFIG
@@ -32,9 +35,11 @@ from novelwriter.enum import nwComment
 from novelwriter.formats.shared import BlockFmt, BlockTyp
 from novelwriter.formats.tohtml import ToHtml
 
+from tests.mocked import MockGuiMain
+
 
 @pytest.mark.core
-def testToHtml_ConvertNovelHeaders(mockGUI):
+def testToHtml_ConvertNovelHeaders(mockGUI: MockGuiMain):
     """Test header formats in the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -91,7 +96,7 @@ def testToHtml_ConvertNovelHeaders(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_ConvertNotesHeaders(mockGUI):
+def testToHtml_ConvertNotesHeaders(mockGUI: MockGuiMain):
     """Test header formats in the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -149,7 +154,7 @@ def testToHtml_ConvertNotesHeaders(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_ConvertParagraphs(mockGUI):
+def testToHtml_ConvertParagraphs(mockGUI: MockGuiMain):
     """Test paragraph formats in the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -183,6 +188,35 @@ def testToHtml_ConvertParagraphs(mockGUI):
     html.tokenizeText()
     html.doConvert()
     assert html._pages[-1] == ("<p>Line one<br>Line two<br>Line three</p>\n")
+
+    # Unordered Lists
+    html._text = "Text\n\n* One\n* Two\nmore\n\n* Three\n"
+    html.tokenizeText()
+    html.doConvert()
+    assert html._pages[-1] == (
+        "<p>Text</p>\n"
+        "<ul>\n"
+        "<li style='margin-bottom: 0;'>One</li>\n"
+        "<li style='margin-top: 0;'>Two<br>more</li>\n"
+        "</ul>\n"
+        "<ul>\n"
+        "<li>Three</li>\n"
+        "</ul>\n"
+    )
+
+    # Ordered Lists
+    html._text = "#. One\n#. Two\n* Three\n"
+    html.tokenizeText()
+    html.doConvert()
+    assert html._pages[-1] == (
+        "<ol>\n"
+        "<li style='margin-bottom: 0;'>One</li>\n"
+        "<li style='margin-top: 0;'>Two</li>\n"
+        "</ol>\n"
+        "<ul>\n"
+        "<li>Three</li>\n"
+        "</ul>\n"
+    )
 
     # Synopsis, Short
     html._text = "%synopsis: The synopsis ...\n"
@@ -231,7 +265,7 @@ def testToHtml_ConvertParagraphs(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_ConvertMeta(mockGUI):
+def testToHtml_ConvertMeta(mockGUI: MockGuiMain):
     """Test meta data formats in the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -330,7 +364,7 @@ def testToHtml_ConvertMeta(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_Alignment(mockGUI):
+def testToHtml_Alignment(mockGUI: MockGuiMain):
     """Test paragraph alignment in the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -366,9 +400,37 @@ def testToHtml_Alignment(mockGUI):
     html.doConvert()
     assert html._pages[-1] == ("<p style='text-align: right;'>This is text<br>spanning multiple<br>lines</p>\n")
 
+    # In RTL projects, LTR blocks are marked, and the rest inherit RTL
+    html = ToHtml(project)
+    html.setLanguage(None, True)
+    html.initDocument()
+    html._text = "English text\n\nمتن\n\n1234\n\n>> Right\n"
+    html.tokenizeText()
+    html.doConvert()
+    assert html._pages[-1] == (
+        "<p dir='ltr'>English text</p>\n<p>متن</p>\n<p>1234</p>\n<p dir='ltr' style='text-align: right;'>Right</p>\n"
+    )
+
+    # The default alignment follows the direction of each block
+    css = html._generateStyleSheet()
+    assert any(line.startswith("p {text-align: start;") for line in css)
+
+    # Entities are decoded before checking the direction
+    assert html._blockDir("&amp; متن") == ""
+    assert html._blockDir("&nbsp;Text") == " dir='ltr'"
+
+    # Footnotes follow the same rule
+    html._text = "متن[footnote:a]\n\n%footnote.a: English note.\n\n"
+    html.tokenizeText()
+    html.doConvert()
+    html.closeDocument()
+    assert html._pages[-1] == (
+        "<h3>Footnotes</h3>\n<ol>\n<li id='footnote_1'><p dir='ltr'>English note.</p></li>\n</ol>\n"
+    )
+
 
 @pytest.mark.core
-def testToHtml_Dialog(mockGUI):
+def testToHtml_Dialog(mockGUI: MockGuiMain):
     """Test paragraph formats in the ToHtml class."""
     CONFIG.altDialogOpen = "::"
     CONFIG.altDialogClose = "::"
@@ -400,7 +462,7 @@ def testToHtml_Dialog(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_Footnotes(mockGUI):
+def testToHtml_Footnotes(mockGUI: MockGuiMain):
     """Test paragraph formats in the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -428,7 +490,7 @@ def testToHtml_Footnotes(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_Fields(mockGUI):
+def testToHtml_Fields(mockGUI: MockGuiMain):
     """Test field substitution in the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -445,7 +507,7 @@ def testToHtml_Fields(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_CloseTags(mockGUI):
+def testToHtml_CloseTags(mockGUI: MockGuiMain):
     """Test automatic closing of HTML tags for shortcodes."""
     project = NWProject()
     html = ToHtml(project)
@@ -480,7 +542,7 @@ def testToHtml_CloseTags(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_ConvertDirect(mockGUI):
+def testToHtml_ConvertDirect(mockGUI: MockGuiMain):
     """Test the converter directly using the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -610,7 +672,7 @@ def testToHtml_ConvertDirect(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_SpecialCases(mockGUI):
+def testToHtml_SpecialCases(mockGUI: MockGuiMain):
     """Test some special cases that have caused errors in the past."""
     project = NWProject()
     html = ToHtml(project)
@@ -673,7 +735,7 @@ def testToHtml_SpecialCases(mockGUI):
 
 
 @pytest.mark.core
-def testToHtml_Save(mockGUI, fncPath):
+def testToHtml_Save(mockGUI: MockGuiMain, fncPath: Path):
     """Test the save method of the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -704,7 +766,6 @@ def testToHtml_Save(mockGUI, fncPath):
 
     for i in range(len(docText)):
         html._text = docText[i]
-        html.doPreProcessing()
         html.tokenizeText()
         html.doConvert()
 
@@ -768,12 +829,24 @@ def testToHtml_Save(mockGUI, fncPath):
     assert data["meta"]["novelAuthor"] == ""
     assert data["meta"]["buildTime"] > 0
     assert data["meta"]["buildTimeStr"] != ""
+    assert data["meta"]["direction"] == "ltr"
     assert data["text"]["css"] == hStyle
     assert len(data["text"]["html"]) == len(resText)
 
+    # RTL projects set the document direction
+    html.setLanguage(None, True)
+    saveFile = fncPath / "outFile.htm"
+    html.saveDocument(saveFile)
+    assert "<html lang='en-GB' dir='rtl'>\n" in saveFile.read_text(encoding="utf-8")
+
+    saveFile = fncPath / "outFile.json"
+    html.saveDocument(saveFile)
+    data = json.loads(saveFile.read_text(encoding="utf-8"))
+    assert data["meta"]["direction"] == "rtl"
+
 
 @pytest.mark.core
-def testToHtml_Methods(mockGUI):
+def testToHtml_Methods(mockGUI: MockGuiMain):
     """Test all the other methods of the ToHtml class."""
     project = NWProject()
     html = ToHtml(project)
@@ -783,7 +856,6 @@ def testToHtml_Methods(mockGUI):
     docText = "Text with <brackets> & short\u2013dash, long\u2014dash …\n"
     html._text = docText
     html.setReplaceUnicode(False)
-    html.doPreProcessing()
     html.tokenizeText()
     html.doConvert()
     assert html._pages[-1] == ("<p>Text with &lt;brackets&gt; &amp; short\u2013dash, long\u2014dash …</p>\n")
@@ -792,13 +864,20 @@ def testToHtml_Methods(mockGUI):
     docText = "Text with <brackets> & short\u2013dash, long\u2014dash …\n"
     html._text = docText
     html.setReplaceUnicode(True)
-    html.doPreProcessing()
     html.tokenizeText()
     html.doConvert()
     assert html._pages[-1] == ("<p>Text with &lt;brackets&gt; &amp; short&ndash;dash, long&mdash;dash &hellip;</p>\n")
 
     # Result Size
     assert sum(len(x) for x in html._pages) == 147
+
+    # Auto-Replace values are also encoded
+    project.data.setAutoReplace({"A": "Tom & Jerry\u2014"}, False)
+    html._text = "Text with <A>\n"
+    html.initDocument()
+    html.tokenizeText()
+    html.doConvert()
+    assert html._pages[-1] == "<p>Text with Tom &amp; Jerry&mdash;</p>\n"
 
     # CSS
     # ===

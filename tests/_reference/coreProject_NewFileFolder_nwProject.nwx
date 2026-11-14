@@ -6,7 +6,7 @@
   </project>
   <settings>
     <doBackup>yes</doBackup>
-    <language>None</language>
+    <language rtl="no">None</language>
     <spellChecking auto="no">None</spellChecking>
     <projectTarget date="None" last="10" mode="words">0</projectTarget>
     <dailyTarget auto="no" last="10" date="2026-07-19">0</dailyTarget>
@@ -15,9 +15,9 @@
       <entry key="editor">None</entry>
       <entry key="viewer">None</entry>
       <entry key="novel">None</entry>
-      <entry key="outline">None</entry>
+      <entry key="story">None</entry>
     </lastHandle>
-    <autoReplace />
+    <autoReplace ignoreCase="no" />
     <status>
       <entry key="s000000" count="7" color="faded" shape="STAR">New</entry>
       <entry key="s000001" count="0" color="red" shape="TRIANGLE">Note</entry>

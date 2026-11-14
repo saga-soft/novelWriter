@@ -6,16 +6,17 @@ Spell Check Dictionaries
 
 .. _Enchant: https://rrthomas.github.io/enchant/
 
-Spell checking is provided by the Enchant_ library. Depending on your operating system, it may or
-may not load all installed spell check dictionaries automatically.
+On Linux and Windows, spell checking is provided by the Enchant_ library. Depending on your
+operating system, it may or may not load all installed spell check dictionaries automatically. On
+MacOS, novelWriter uses the spell checker built into the operating system.
 
 
-Linux and MacOS
-===============
+Linux
+=====
 
-On Linux and MacOS, you generally only have to install hunspell, aspell or myspell dictionaries on
-your system like you do for other applications. See your distro or OS documentation for how to do
-this. These dictionaries should show up as available spell check languages in novelWriter.
+On Linux, you generally only have to install hunspell, aspell or myspell dictionaries on your
+system like you do for other applications. See your distro or OS documentation for how to do this.
+These dictionaries should show up as available spell check languages in novelWriter.
 
 
 Windows
@@ -39,7 +40,7 @@ Manual Install
 
 If you prefer to do this manually or want to use a different source than the ones mentioned above,
 You need to get compatible dictionary files for your language. You need two files ending with
-``.aff`` and ``.dic``. These files must then be copied to the following location: 
+``.aff`` and ``.dic``. These files must then be copied to the following location:
 
 ``C:\Users\<USER>\AppData\Local\enchant\hunspell``
 

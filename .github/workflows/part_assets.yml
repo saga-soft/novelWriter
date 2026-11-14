@@ -2,13 +2,6 @@ name: Part Assets
 
 on:
   workflow_call:
-    inputs:
-      icons-free:
-        required: true
-        type: boolean
-      icons-non-free:
-        required: true
-        type: boolean
 
 jobs:
   buildAssets:
@@ -26,7 +19,7 @@ jobs:
           sudo apt-get install -y qttools5-dev-tools latexmk texlive texlive-latex-extra
 
       - name: Install UV and Python
-        uses: astral-sh/setup-uv@v10.0.1
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           python-version: "3.14"
           enable-cache: true
@@ -39,16 +32,6 @@ jobs:
         run: |
           uv run --no-sync pkgutils.py build-assets
 
-      - name: Build Free Icons
-        if: ${{ inputs.icons-free }}
-        run: |
-          uv run --no-sync pkgutils.py icons free
-
-      - name: Build Non-Free Icons
-        if: ${{ inputs.icons-non-free }}
-        run: |
-          uv run --no-sync pkgutils.py icons non-free
-
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -57,6 +40,5 @@ jobs:
             novelwriter/assets/manual*.pdf
             novelwriter/assets/sample.zip
             novelwriter/assets/i18n/*.qm
-            novelwriter/assets/icons/*.icons
           if-no-files-found: error
           retention-days: 14

@@ -2,8 +2,9 @@
 novelWriter - Types and Flags
 =============================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, TypeVar
 
 from PyQt6.QtCore import QAbstractAnimation, Qt
 from PyQt6.QtGui import (
@@ -40,6 +41,7 @@ from PyQt6.QtWidgets import QDialog, QDialogButtonBox, QHeaderView, QSizePolicy,
 # Custom Types
 
 T_MsgSeverity = Literal["info", "warning", "error"]
+T_Num = TypeVar("T_Num", int, float)
 
 # Alignment Flags
 
@@ -70,6 +72,8 @@ QtPageBreakAfter = QTextFormat.PageBreakFlag.PageBreak_AlwaysAfter
 QtPageBreakAuto = QTextFormat.PageBreakFlag.PageBreak_Auto
 
 QtTextUserProperty = QTextFormat.Property.UserProperty
+
+QtLayoutRTL = Qt.LayoutDirection.RightToLeft
 
 QtPropLineHeight = 1  # QTextBlockFormat.LineHeightTypes.ProportionalHeight
 
@@ -126,6 +130,8 @@ QtKeyUp = Qt.Key.Key_Up
 QtKeyDown = Qt.Key.Key_Down
 QtKeyPageUp = Qt.Key.Key_PageUp
 QtKeyPageDown = Qt.Key.Key_PageDown
+QtKeyHome = Qt.Key.Key_Home
+QtKeyEnd = Qt.Key.Key_End
 QtKeyTab = Qt.Key.Key_Tab
 QtKeyEscape = Qt.Key.Key_Escape
 QtKeyBackspace = Qt.Key.Key_Backspace
@@ -166,6 +172,8 @@ QtMoveUp = QTextCursor.MoveOperation.Up
 QtMoveDown = QTextCursor.MoveOperation.Down
 QtMoveEndOfLine = QTextCursor.MoveOperation.EndOfLine
 QtMoveStartOfLine = QTextCursor.MoveOperation.StartOfLine
+QtMoveEndOfBlock = QTextCursor.MoveOperation.EndOfBlock
+QtMoveStartOfBlock = QTextCursor.MoveOperation.StartOfBlock
 QtMoveEnd = QTextCursor.MoveOperation.End
 QtMoveStart = QTextCursor.MoveOperation.Start
 QtMoveNextWord = QTextCursor.MoveOperation.NextWord
@@ -194,6 +202,7 @@ QtSizeMinimumExpanding = QSizePolicy.Policy.MinimumExpanding
 QtHeaderStretch = QHeaderView.ResizeMode.Stretch
 QtHeaderToContents = QHeaderView.ResizeMode.ResizeToContents
 QtHeaderFixed = QHeaderView.ResizeMode.Fixed
+QtHeaderInteractive = QHeaderView.ResizeMode.Interactive
 
 # Scroll Bar Policy
 

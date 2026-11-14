@@ -2,8 +2,9 @@
 novelWriter - Custom Widget: Modified Widgets
 =============================================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,23 +26,27 @@ import logging
 
 from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import QEvent, QModelIndex, QSize, Qt, pyqtSignal, pyqtSlot
-from PyQt6.QtGui import QPainter, QPaintEvent, QPalette
+from PyQt6.QtCore import QEvent, QModelIndex, QRect, QRectF, QSize, Qt, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import QKeySequence, QPainter, QPaintEvent, QPalette
 from PyQt6.QtWidgets import (
     QApplication,
+    QButtonGroup,
     QComboBox,
     QDialog,
     QDialogButtonBox,
     QDoubleSpinBox,
     QFontDialog,
+    QHBoxLayout,
     QLabel,
     QPushButton,
+    QRadioButton,
     QSpinBox,
     QSplitter,
     QSplitterHandle,
+    QStyle,
+    QStyleOptionButton,
     QStyleOptionToolButton,
-    QTabBar,
-    QTabWidget,
+    QStylePainter,
     QToolButton,
     QTreeView,
     QWidget,
@@ -59,6 +64,7 @@ from novelwriter.types import (
     QtMouseLeft,
     QtMouseMiddle,
     QtMouseOver,
+    QtPaintAntiAlias,
     QtRoleAccept,
     QtRoleReject,
     QtToolButtonTextIcon,
@@ -67,7 +73,7 @@ from novelwriter.types import (
 if TYPE_CHECKING:
     from enum import Enum
 
-    from PyQt6.QtGui import QFont, QMouseEvent, QWheelEvent
+    from PyQt6.QtGui import QFont, QKeyEvent, QMouseEvent, QWheelEvent
 
     from novelwriter.guimain import GuiMain
 
@@ -100,6 +106,13 @@ class NToolDialog(NDialog):
         self.setModal(False)
         if CONFIG.osDarwin:  # pragma: no cover
             self.setWindowFlag(Qt.WindowType.Tool)
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        """Close on escape via closeEvent, which QDialog.reject bypasses."""
+        if event.matches(QKeySequence.StandardKey.Cancel):
+            self.close()
+        else:
+            super().keyPressEvent(event)
 
     def activateDialog(self) -> None:
         """Activate dialog on various operating systems."""
@@ -235,6 +248,10 @@ class NComboBox(QComboBox):
         # platforms and allows for scrolling of long lists of items
         self.setStyleSheet("QComboBox {combobox-popup: 0;}")
 
+    def setMinCharsWidth(self, count: int) -> None:
+        """Set a fixed with for a certain amount of characters."""
+        self.setMinimumWidth(count * SHARED.theme.textNWidth + 25)
+
 
 class NSpinBox(QSpinBox):
     """Custom: Modified QSpinBox.
@@ -335,6 +352,64 @@ class NPushButton(QPushButton):
             self.setIcon(SHARED.theme.getIcon(self._icon))
 
 
+class NRadioButton(QRadioButton):
+    """Custom: Modified QRadioButton.
+
+    Draws the radio indicator in the same style as NSwitch.
+    """
+
+    def paintEvent(self, event: QPaintEvent) -> None:
+        """Draw the label with the style, and the indicator directly."""
+        if not (style := self.style()):
+            return
+
+        opt = QStyleOptionButton()
+        self.initStyleOption(opt)
+        rect = QRectF(style.subElementRect(QStyle.SubElement.SE_RadioButtonIndicator, opt, self))
+        opt.rect = style.subElementRect(QStyle.SubElement.SE_RadioButtonContents, opt, self)
+
+        painter = QStylePainter(self)
+        painter.drawControl(QStyle.ControlElement.CE_RadioButtonLabel, opt)
+
+        palette = self.palette()
+        centre = rect.center()
+        radius = 0.5 * min(rect.width(), rect.height()) - 0.5
+
+        painter.setRenderHint(QtPaintAntiAlias, True)
+        painter.setOpacity(1.0 if self.isEnabled() else 0.5)
+        painter.setPen(palette.highlight().color() if self.hasFocus() else palette.mid().color())
+        painter.setBrush(SHARED.theme.accentCol if self.isChecked() else palette.alternateBase())
+        painter.drawEllipse(centre, radius, radius)
+        painter.end()
+
+
+class NHRadioGroup(QWidget):
+    """Custom: Group of Radio Buttons."""
+
+    __slots__ = ("_group", "_layout")
+
+    def __init__(self, parent: QWidget, label: str, data: dict[int, str]) -> None:
+        super().__init__(parent)
+        self._group = QButtonGroup(self)
+        self._layout = QHBoxLayout()
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        for key, text in data.items():
+            button = NRadioButton(text, self)
+            button.setAccessibleName(f"{label}: {text}")
+            self._group.addButton(button, key)
+            self._layout.addWidget(button)
+        self.setLayout(self._layout)
+
+    def setCheckedId(self, index: int) -> None:
+        """Set the currently checked button."""
+        if button := self._group.button(index):
+            button.setChecked(True)
+
+    def checkedId(self) -> int:
+        """Get the current checked button."""
+        return self._group.checkedId()
+
+
 class NIconButton(QToolButton):
     """Custom: Icon Push Button.
 
@@ -361,6 +436,14 @@ class NIconButton(QToolButton):
         """Refresh the icon for theme updates."""
         if self._icon:  # pragma: no branch
             self.setIcon(SHARED.theme.getIcon(self._icon))
+
+    def setToolTip(self, text: str | None, shortcut: str = "") -> None:
+        """Set the tooltip with an optional shortcut, and use the text as
+        the accessible name.
+        """
+        text = text or ""
+        super().setToolTip(f"{text} [{shortcut}]" if shortcut else text)
+        self.setAccessibleName(text)
 
     def sizeHint(self) -> QSize:
         """Pad the size hint to a square the height of a standard QPushButton."""
@@ -392,7 +475,7 @@ class NFlatIconButton(QToolButton):
         """Set an icon from the current theme."""
         self._icon = icon
         if self._iconToggle:
-            self.setIcon(SHARED.theme.getToggleIcon(icon, self.iconSize().width(), self.iconSize().height()))
+            self.setIcon(SHARED.theme.getToggleIcon(icon))
         else:
             self.setIcon(SHARED.theme.getIcon(icon))
 
@@ -400,6 +483,14 @@ class NFlatIconButton(QToolButton):
         """Refresh the icon for theme updates."""
         if self._icon:  # pragma: no branch
             self.setThemeIcon(self._icon)
+
+    def setToolTip(self, text: str | None, shortcut: str = "") -> None:
+        """Set the tooltip with an optional shortcut, and use the text as
+        the accessible name.
+        """
+        text = text or ""
+        super().setToolTip(f"{text} [{shortcut}]" if shortcut else text)
+        self.setAccessibleName(text)
 
     def paintEvent(self, event: QPaintEvent | None) -> None:
         """Paint the icon with a background colour when hovered or checked."""
@@ -450,7 +541,7 @@ class NFlatIconTextButton(QToolButton):
         """Set an icon from the current theme."""
         self._icon = icon
         if self._iconToggle:
-            self.setIcon(SHARED.theme.getToggleIcon(icon, self.iconSize().width(), self.iconSize().height()))
+            self.setIcon(SHARED.theme.getToggleIcon(icon))
         else:
             self.setIcon(SHARED.theme.getIcon(icon))
 
@@ -477,78 +568,27 @@ class NFlatIconTextButton(QToolButton):
             margin = (rect.height() - size.height()) // 2
             x = rect.x() + margin
             y = rect.y() + margin
+            direction = self.layoutDirection()
             if not icon.isNull():  # pragma: no branch
-                icon.paint(painter, x, y, size.width(), size.height(), QtAlignCenter, mode, state)
-            textRect = rect.adjusted(x + size.width() + margin, 0, -margin, 0)
+                iconRect = QStyle.visualRect(direction, rect, QRect(x, y, size.width(), size.height()))
+                icon.paint(painter, iconRect, QtAlignCenter, mode, state)
+            textRect = QStyle.visualRect(direction, rect, rect.adjusted(x + size.width() + margin, 0, -margin, 0))
             painter.setPen(opt.palette.color(QPalette.ColorRole.ButtonText))
             painter.drawText(textRect, QtAlignLeftMiddle, text)
-
-
-class NTabWidget(QTabWidget):
-    """Custom: Modified QTabWidget.
-
-    A tab widget that highlights the currently selected tab's label
-    using the app theme.
-    """
-
-    def __init__(self, parent: QWidget) -> None:
-        super().__init__(parent=parent)
-        self.setTabBar(NTabBar(self))
-        self.setDocumentMode(True)
-
-    def refreshTheme(self) -> None:
-        """Refresh the tab colours for theme updates."""
-        if tabBar := self.tabBar():  # pragma: no branch
-            tabBar.update()
-
-
-class NTabBar(QTabBar):
-    """Custom: Modified QTabBar.
-
-    A tab bar that highlights the currently selected tab's label
-    using the app theme.
-    """
-
-    def __init__(self, parent: QWidget) -> None:
-        super().__init__(parent=parent)
-        self.setDrawBase(False)
-
-    def tabSizeHint(self, index: int) -> QSize:
-        """Reduce the tab height by shrinking the margin above and below the text."""
-        size = super().tabSizeHint(index)
-        return QSize(size.width(), size.height() - 4)
-
-    def paintEvent(self, event: QPaintEvent | None) -> None:
-        """Highlight the currently selected tab with the theme highlight colour."""
-        painter = QPainter(self)
-        palette = self.palette()
-        selected = self.currentIndex()
-
-        for i in range(self.count()):
-            if not self.isTabVisible(i):
-                continue
-
-            rect = self.tabRect(i)
-            rR = rect.right()
-            rL = rect.left()
-            rT = rect.top()
-            if rR < 0 or rL > self.width():
-                continue
-
-            if i == selected:
-                painter.fillRect(rect, SHARED.theme.activeBase)
-                painter.setPen(SHARED.theme.accentText)
-                painter.drawLine(rL, rT, rR, rT)
-            else:
-                painter.setPen(palette.text().color())
-
-            painter.drawText(rect, QtAlignCenter, self.tabText(i))
 
 
 class NClickableLabel(QLabel):
     """Custom: Clickable QLabel."""
 
     mouseClicked = pyqtSignal()
+
+    def setToolTip(self, text: str | None, shortcut: str = "") -> None:
+        """Set the tooltip with an optional shortcut, and use the text as
+        the accessible name.
+        """
+        text = text or ""
+        super().setToolTip(f"{text} [{shortcut}]" if shortcut else text)
+        self.setAccessibleName(text)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """Capture a left mouse click and emit its signal."""

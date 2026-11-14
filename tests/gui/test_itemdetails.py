@@ -2,8 +2,9 @@
 novelWriter - GUI Item Details Tests
 ====================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,19 +22,24 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
+
+from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
 from novelwriter.common import elide
 from novelwriter.constants import nwLabels, trConst
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwChange
+from novelwriter.guimain import GuiMain
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
 
 
 @pytest.mark.gui
-def testGuiItemDetails_Display(qtbot, nwGUI, projPath, mockRnd):
+def testGuiItemDetails_Display(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test that the details panel displays the data of the currently
     selected item, and updates or clears it as expected.
     """
@@ -94,7 +100,7 @@ def testGuiItemDetails_Display(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiItemDetails_DelayedRefresh(qtbot, nwGUI, projPath, mockRnd):
+def testGuiItemDetails_DelayedRefresh(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test that the details panel does not refresh its content while
     collapsed, and instead applies the pending update once expanded.
     """
