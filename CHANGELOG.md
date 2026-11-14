@@ -1,5 +1,36 @@
 # novelWriter Changelog
 
+## Version 2026.2.3 [2026-11-14]
+
+### Release Notes
+
+This is a patch release that fixes a crash in the editor seen in the Flatpak on Fedora, custom
+document margins being ignored in manuscript builds, nested and unclosed formatting producing odd
+results in most manuscript formats, the search highlight extending onto newly typed text, and the
+project tree icon not updating when a document's heading is removed.
+
+See the website for complete [Release Notes](https://novelwriter.io/releases/release_26_2.html).
+
+### Detailed Changelog
+
+**Bugfixes**
+
+* Fixed a crash inside Qt triggered by the current line highlight in the editor, seen in the
+  Flatpak on Fedora. The highlight is now drawn behind the document instead of as a text
+  selection, which also stops it interfering with other highlights. By @vkbo. Issue #3141.
+  PR #3143.
+* Fixed a bug where custom document margins in the manuscript build settings were reset to
+  default for the ODT, DOCX and PDF formats, and in the preview. By @vkbo. Issue #3136. PR #3137.
+* Fixed a bug where nested and unclosed formatting tags were only resolved for HTML and EPUB
+  manuscript formats, which could produce invalid Markdown and unexpected formatting in other
+  formats. By @vkbo. Discussed in #3142. PR #3145.
+* Fixed a bug where typing immediately after a word highlighted by the search tool in the editor
+  would extend the highlight onto the typed text. By @vkbo. Issue #3105. PR #3108.
+* Fixed a bug where removing the heading from a document did not update the index, leaving its
+  icon in the project tree unchanged. By @vkbo. Issue #3132. PR #3135.
+
+----
+
 ## Version 2026.2.2 [2026-10-11]
 
 ### Release Notes
