@@ -414,8 +414,7 @@ class ToHtml(Tokenizer):
         temp = text
 
         # Build a list of all html tags that need to be inserted in the text.
-        # This is done in the forward direction, and a tag is only opened if it
-        # isn't already open, and only closed if it has previously been opened.
+        # This is done in the forward direction, and open tags are tracked.
         tags: list[tuple[int, str]] = []
         state = dict.fromkeys(HTML_OPENER, False)
         plain = not self._cssStyles
@@ -424,18 +423,16 @@ class ToHtml(Tokenizer):
                 # We ignore colour tags if CSS is off
                 continue
             if m := HTML_OPENER.get(fmt):
-                if not state.get(fmt, True):
-                    if fmt == TextFmt.COL_B and (color := self._classes.get(data)):
-                        tags.append((pos, m[1].format(color.name(QtHexRgb))))
-                    elif fmt in (TextFmt.ANM_B, TextFmt.ARF_B, TextFmt.HRF_B):
-                        tags.append((pos, m[1].format(data or "#")))
-                    else:
-                        tags.append((pos, m[1]))
-                    state[fmt] = True
-            elif m := HTML_CLOSER.get(fmt):
-                if state.get(m[0], False):
+                if fmt == TextFmt.COL_B and (color := self._classes.get(data)):
+                    tags.append((pos, m[1].format(color.name(QtHexRgb))))
+                elif fmt in (TextFmt.ANM_B, TextFmt.ARF_B, TextFmt.HRF_B):
+                    tags.append((pos, m[1].format(data or "#")))
+                else:
                     tags.append((pos, m[1]))
-                    state[m[0]] = False
+                state[fmt] = True
+            elif m := HTML_CLOSER.get(fmt):
+                tags.append((pos, m[1]))
+                state[m[0]] = False
             elif fmt == TextFmt.FNOTE:
                 if data in self._footnotes:
                     tags.append((pos, self._genFootnoteReferences(data)))
