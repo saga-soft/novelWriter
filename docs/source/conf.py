@@ -39,8 +39,7 @@ os.environ["TZ"] = "Europe/Oslo"
 time.tzset()
 
 needs_sphinx = "5.0"
-extensions = ["sphinx_design", "sphinx_copybutton"]
-templates_path = ["_templates"]
+extensions = ["sphinx_design"]
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 today_fmt = "%A, %d %B %Y at %H:%M"
@@ -51,27 +50,11 @@ exclude_patterns = []
 
 # -- Options for HTML Output -------------------------------------------------
 
-html_theme = "sphinx_book_theme"
+html_theme = "alabaster"
 html_title = f"Version {release}"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
-html_theme_options = {
-    "logo": {
-        "image_light": "_static/novelwriter-light.png",
-        "image_dark": "_static/novelwriter-dark.png",
-    },
-    "show_toc_level": 2,
-    "show_navbar_depth": 1,
-    "repository_url": "https://github.com/saga-soft/novelwriter",
-    "navigation_with_keys": True,
-    "use_repository_button": True,
-    "use_issues_button": True,
-    "pygments_light_style": "tango",
-    "pygments_dark_style": "dracula",
-}
-html_sidebars = {
-    "**": ["navbar-logo", "sidebar-title", "sbt-sidebar-nav"],
-}
+html_logo = "_static/novelwriter-light.png"
 
 # -- Options for LaTeX Output ------------------------------------------------
 

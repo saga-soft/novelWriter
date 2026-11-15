@@ -42,10 +42,7 @@ build = ["pyyaml", "tzdata; sys_platform == 'win32'", "pyinstaller; sys_platform
 docs = [
     "docutils>=0.17.1",
     "pygments>=2.7",
-    "sphinx-book-theme",
-    "sphinx-copybutton",
     "sphinx-design",
-    "sphinx-favicon",
     "sphinx-intl",
     "sphinx>=5.0",
 ]
