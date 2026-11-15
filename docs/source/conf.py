@@ -50,11 +50,16 @@ exclude_patterns = []
 
 # -- Options for HTML Output -------------------------------------------------
 
-html_theme = "alabaster"
+html_theme = "nature"
 html_title = f"Version {release}"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 html_logo = "_static/novelwriter-light.png"
+html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
+html_theme_options = {
+    "globaltoc_maxdepth": 2,
+    "globaltoc_collapse": True,
+}
 
 # -- Options for LaTeX Output ------------------------------------------------
 
