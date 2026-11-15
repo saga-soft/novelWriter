@@ -7,7 +7,7 @@ name = "novelWriter"
 authors = [{ name = "Veronica Berglyd Olsen", email = "code@vkbo.net" }]
 description = "A plain text editor for planning and writing novels"
 readme = { file = "setup/description_pypi.md", content-type = "text/markdown" }
-license = "GPL-3.0-or-later AND Apache-2.0 AND CC-BY-4.0 AND ISC"
+license = "GPL-3.0-or-later AND Apache-2.0 AND ISC AND MIT"
 license-files = ["LICENSE.md"]
 dynamic = ["version"]
 requires-python = ">=3.11"
@@ -27,7 +27,7 @@ classifiers = [
 ]
 dependencies = [
     "pyqt6>=6.4",
-    "pyenchant>=3.3.0",
+    "pyenchant>=3.3.0; sys_platform != 'darwin'",
     "pyobjc-framework-Cocoa; sys_platform == 'darwin'",
 ]
 
@@ -38,14 +38,11 @@ dev = [
     { include-group = "test" },
     { include-group = "lint" },
 ]
-build = ["pyyaml", "tzdata; sys_platform == 'win32'"]
+build = ["pyyaml", "tzdata; sys_platform == 'win32'", "pyinstaller; sys_platform == 'darwin'"]
 docs = [
     "docutils>=0.17.1",
     "pygments>=2.7",
-    "sphinx-book-theme",
-    "sphinx-copybutton",
     "sphinx-design",
-    "sphinx-favicon",
     "sphinx-intl",
     "sphinx>=5.0",
 ]
@@ -57,6 +54,9 @@ test = [
     "tzdata; sys_platform == 'win32'",
 ]
 lint = ["pyright", "ruff"]
+
+[tool.uv.dependency-groups]
+docs = { requires-python = ">=3.13" }
 
 [project.urls]
 Homepage = "https://novelwriter.io"
@@ -137,8 +137,8 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["ANN", "D101", "D102", "D105", "PLC2701", "RUF069", "SLF", "TC"]
-"utils/*" = ["ANN", "SLF", "TC"]
+"tests/*" = ["ANN201", "ANN202", "ANN204", "ANN205", "PLC2701", "RUF069", "SLF", "TC"]
+"utils/*" = ["SLF", "TC"]
 
 [tool.ruff.lint.pydocstyle]
 ignore-decorators = [
@@ -162,9 +162,11 @@ quote-style = "double"
 preview = true
 
 [tool.pyright]
-include = ["novelwriter"]
+include = ["novelwriter", "tests"]
 reportIncompatibleMethodOverride = false
 pythonVersion = "3.11"
+venvPath = "."
+venv = ".venv"
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
@@ -175,7 +177,6 @@ markers = [
     "base: Base classes tests",
     "core: Core classes tests",
     "gui: GUI classes tests",
-    "opt_assets: Include optional asset tests",
 ]
 
 [tool.coverage.run]

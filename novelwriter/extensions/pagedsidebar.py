@@ -2,8 +2,9 @@
 novelWriter - Custom Widget: Paged SideBar
 ==========================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -171,14 +172,21 @@ class _PagedToolButton(QToolButton):
         painter.drawText(QRectF(12, self._tM, tW, tH), QtAlignLeft, self.text())
 
         tC = self.height() // 2
-        tW = self.width() - self._aH - 12
+        if self.isRightToLeft():
+            aB = self._aH + 12
+            aT = 12
+        else:
+            aB = self.width() - self._aH - 12
+            aT = aB + self._aH
+
         if self.isChecked():
             painter.setBrush(textCol)
+
         painter.drawPolygon(
             QPolygon([
-                QPoint(tW, tC - self._aH),
-                QPoint(tW + self._aH, tC),
-                QPoint(tW, tC + self._aH),
+                QPoint(aB, tC - self._aH),
+                QPoint(aT, tC),
+                QPoint(aB, tC + self._aH),
             ])
         )
         painter.end()

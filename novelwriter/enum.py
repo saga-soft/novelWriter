@@ -2,8 +2,9 @@
 novelWriter - Enums
 ===================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """  # noqa
 
-from enum import Enum
+from enum import Enum, StrEnum
 
 
 class nwItemType(Enum):
@@ -97,39 +98,42 @@ class nwDocAction(Enum):
     MD_BOLD = 7
     MD_STRIKE = 8
     MD_MARK = 9
-    S_QUOTE = 10
-    D_QUOTE = 11
-    SEL_ALL = 12
-    SEL_PARA = 13
-    BLOCK_H1 = 14
-    BLOCK_H2 = 15
-    BLOCK_H3 = 16
-    BLOCK_H4 = 17
-    BLOCK_COM = 18
-    BLOCK_IGN = 19
-    BLOCK_TXT = 20
-    BLOCK_TTL = 21
-    BLOCK_UNN = 22
-    BLOCK_HSC = 23
-    REPL_SNG = 24
-    REPL_DBL = 25
-    RM_BREAKS = 26
-    ALIGN_L = 27
-    ALIGN_C = 28
-    ALIGN_R = 29
-    INDENT_L = 30
-    INDENT_R = 31
-    SC_ITALIC = 32
-    SC_BOLD = 33
-    SC_STRIKE = 34
-    SC_ULINE = 35
-    SC_MARK = 36
-    SC_SUP = 37
-    SC_SUB = 38
-    MOVE_TEXT = 39
-    ZOOM_IN = 40
-    ZOOM_OUT = 41
-    ZOOM_RESET = 42
+    MD_LINK = 10
+    S_QUOTE = 11
+    D_QUOTE = 12
+    SEL_ALL = 13
+    SEL_PARA = 14
+    BLOCK_H1 = 15
+    BLOCK_H2 = 16
+    BLOCK_H3 = 17
+    BLOCK_H4 = 18
+    BLOCK_COM = 19
+    BLOCK_IGN = 20
+    BLOCK_TXT = 21
+    BLOCK_LST_U = 22
+    BLOCK_LST_O = 23
+    BLOCK_TTL = 24
+    BLOCK_UNN = 25
+    BLOCK_HSC = 26
+    REPL_SNG = 27
+    REPL_DBL = 28
+    RM_BREAKS = 29
+    ALIGN_L = 30
+    ALIGN_C = 31
+    ALIGN_R = 32
+    INDENT_L = 33
+    INDENT_R = 34
+    SC_ITALIC = 35
+    SC_BOLD = 36
+    SC_STRIKE = 37
+    SC_ULINE = 38
+    SC_MARK = 39
+    SC_SUP = 40
+    SC_SUB = 41
+    MOVE_TEXT = 42
+    ZOOM_IN = 43
+    ZOOM_OUT = 44
+    ZOOM_RESET = 45
 
 
 class nwDocInsert(Enum):
@@ -156,7 +160,7 @@ class nwView(Enum):
     EDITOR = 0
     PROJECT = 1
     NOVEL = 2
-    OUTLINE = 3
+    STORY = 3
     SEARCH = 4
 
 
@@ -165,7 +169,7 @@ class nwFocus(Enum):
 
     TREE = 1
     DOCUMENT = 2
-    OUTLINE = 3
+    STORY = 3
 
 
 class nwTheme(Enum):
@@ -174,31 +178,6 @@ class nwTheme(Enum):
     AUTO = 0
     LIGHT = 1
     DARK = 2
-
-
-class nwOutline(Enum):
-    """Enum: Project Outline Columns."""
-
-    TITLE = 0
-    LEVEL = 1
-    LABEL = 2
-    LINE = 3
-    STATUS = 4
-    CCOUNT = 5
-    WCOUNT = 6
-    PCOUNT = 7
-    POV = 8
-    FOCUS = 9
-    CHAR = 10
-    PLOT = 11
-    TIME = 12
-    WORLD = 13
-    OBJECT = 14
-    ENTITY = 15
-    CUSTOM = 16
-    STORY = 17
-    MENTION = 18
-    SYNOP = 19
 
 
 class nwNovelExtra(Enum):
@@ -303,3 +282,33 @@ class nwState(Enum):
     NORMAL = 0
     INACTIVE = 1
     ERROR = 2
+
+
+class nwStdLabel(Enum):
+    """Enum: Standard Labels."""
+
+    NOTE = 0
+    STORY = 1
+    STORY_STRUCTURE = 2
+    SYNOPSIS = 3
+
+
+class nwStdUnit(Enum):
+    """Enum: Standard Units."""
+
+    CHARS = 0
+    WORDS = 1
+    LINES = 2
+    PIXELS = 3
+    POINTS = 4
+    EM = 5
+    SECONDS = 6
+    MINUTES = 7
+
+
+class nwProjectKind(StrEnum):
+    """Enum: Project Kind."""
+
+    PROJECT = "project"
+    BACKUP = "backup"
+    TEMPLATE = "template"

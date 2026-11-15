@@ -2,8 +2,9 @@
 novelWriter - GUI Project Tree
 ==============================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -265,17 +266,17 @@ class GuiProjectToolBar(QWidget):
         self.mQuick.triggered.connect(self._onQuickLinkSelected)
 
         self.tbQuick = NFlatIconButton(self, iSz, "bookmarks:action")
-        self.tbQuick.setToolTip("{0} [Ctrl+L]".format(self.tr("Quick Links")))
+        self.tbQuick.setToolTip(self.tr("Quick Links"), "Ctrl+L")
         self.tbQuick.setShortcut("Ctrl+L")
         self.tbQuick.setMenu(self.mQuick)
 
         # Move Buttons
         self.tbMoveU = NFlatIconButton(self, iSz, "chevron_up:action")
-        self.tbMoveU.setToolTip("{0} [Ctrl+Up]".format(self.tr("Move Up")))
+        self.tbMoveU.setToolTip(self.tr("Move Up"), "Ctrl+Up")
         self.tbMoveU.clicked.connect(self.projTree.moveItemUp)
 
         self.tbMoveD = NFlatIconButton(self, iSz, "chevron_down:action")
-        self.tbMoveD.setToolTip("{0} [Ctrl+Down]".format(self.tr("Move Down")))
+        self.tbMoveD.setToolTip(self.tr("Move Down"), "Ctrl+Down")
         self.tbMoveD.clicked.connect(self.projTree.moveItemDown)
 
         # Add Item Menu
@@ -309,7 +310,7 @@ class GuiProjectToolBar(QWidget):
         self._buildRootMenu()
 
         self.tbAdd = NFlatIconButton(self, iSz, "add:add")
-        self.tbAdd.setToolTip("{0} [Ctrl+N]".format(self.tr("Add Item")))
+        self.tbAdd.setToolTip(self.tr("Add Item"), "Ctrl+N")
         self.tbAdd.setShortcut("Ctrl+N")
         self.tbAdd.setMenu(self.mAdd)
 

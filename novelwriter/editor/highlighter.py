@@ -2,8 +2,9 @@
 novelWriter - GUI Syntax Highlighter
 ====================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@ import logging
 import re
 
 from time import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QBrush, QColor, QSyntaxHighlighter, QTextCharFormat, QTextDocument
@@ -63,6 +64,8 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         "_isInactive",
         "_isNovel",
         "_minRules",
+        "_replaceKeys",
+        "_replaceNoCase",
         "_tHandle",
         "_txtRules",
     )
@@ -75,6 +78,8 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         self._tHandle = None
         self._isNovel = False
         self._isInactive = False
+        self._replaceKeys: frozenset[str] = frozenset()
+        self._replaceNoCase = False
 
         self._hStyles: dict[str, QTextCharFormat] = {}
         self._minRules: list[tuple[re.Pattern, dict[int, QTextCharFormat]]] = []
@@ -198,6 +203,19 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         self._txtRules.append((rxRule, hlRule))
         self._cmnRules.append((rxRule, hlRule))
 
+        # Markdown Link
+        rxRule = REGEX_PATTERNS.markdownLink
+        hlRule = {
+            1: self._hStyles["markup"],
+            2: self._hStyles["value"],
+            3: self._hStyles["markup"],
+            4: self._hStyles["link"],
+            5: self._hStyles["markup"],
+        }
+        self._minRules.append((rxRule, hlRule))
+        self._txtRules.append((rxRule, hlRule))
+        self._cmnRules.append((rxRule, hlRule))
+
         # Shortcodes
         rxRule = REGEX_PATTERNS.shortcodePlain
         hlRule = {
@@ -235,15 +253,6 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         self._minRules.append((rxRule, hlRule))
         self._txtRules.append((rxRule, hlRule))
 
-        # Auto-Replace Tags
-        rxRule = re.compile(r"<(\S+?)>")
-        hlRule = {
-            0: self._hStyles["replace"],
-        }
-        self._minRules.append((rxRule, hlRule))
-        self._txtRules.append((rxRule, hlRule))
-        self._cmnRules.append((rxRule, hlRule))
-
     ##
     #  Setters
     ##
@@ -256,7 +265,21 @@ class GuiDocHighlighter(QSyntaxHighlighter):
         if item := SHARED.project.tree[tHandle]:
             self._isNovel = item.isDocumentLayout()
             self._isInactive = item.isInactiveClass()
+        self.updateReplaceKeys()
         logger.debug("Syntax highlighter enabled for item '%s'", tHandle)
+
+    def updateReplaceKeys(self) -> bool:
+        """Update the auto-replace keys, and return True if changed."""
+        noCase = SHARED.project.data.autoReplaceIgnoreCase
+        if noCase:
+            keys = frozenset(k.lower() for k in SHARED.project.data.autoReplace)
+        else:
+            keys = frozenset(SHARED.project.data.autoReplace)
+        if keys != self._replaceKeys or noCase != self._replaceNoCase:
+            self._replaceKeys = keys
+            self._replaceNoCase = noCase
+            return True
+        return False
 
     ##
     #  Methods
@@ -264,7 +287,7 @@ class GuiDocHighlighter(QSyntaxHighlighter):
 
     def rehighlight(self) -> None:
         """Mark the document layout busy before a full rehighlight."""
-        doc: GuiTextDocument = self.document()  # type: ignore[assignment]
+        doc = cast("GuiTextDocument", self.document())
         if hasattr(doc, "markLayoutBusy"):
             doc.markLayoutBusy()
         super().rehighlight()
@@ -404,6 +427,20 @@ class GuiDocHighlighter(QSyntaxHighlighter):
                 self.setFormat(0, pos, self._hStyles["modifier"])
                 self.setFormat(pos, length, self._hStyles["note"])
 
+        elif text.startswith("* ") and text[2:].strip("* "):  # Unordered Lists
+            self.setCurrentBlockState(BLOCK_TEXT)
+            rules = self._cmnRules
+
+            self.setFormat(0, 2, self._hStyles["code"])
+            offset = 2
+
+        elif text.startswith("#. ") and text[3:].strip():  # Ordered Lists
+            self.setCurrentBlockState(BLOCK_TEXT)
+            rules = self._cmnRules
+
+            self.setFormat(0, 3, self._hStyles["code"])
+            offset = 3
+
         elif text.startswith("["):  # Special Command
             self.setCurrentBlockState(BLOCK_TEXT)
             rules = self._txtRules if self._isNovel else self._minRules
@@ -459,6 +496,29 @@ class GuiDocHighlighter(QSyntaxHighlighter):
                                 if not cFmt.property(QtTextUserProperty):
                                     cFmt.merge(hFmt)
                                     self.setFormat(x, 1, cFmt)
+
+            if self._replaceKeys and "<" in text:
+                hFmt = self._hStyles["replace"]
+                keys = self._replaceKeys
+                rxFind = REGEX_PATTERNS.autoReplace.finditer(text, offset)
+                if self._replaceNoCase:
+                    matches = [r for r in rxFind if r.group(1).lower() in keys]
+                else:
+                    matches = [r for r in rxFind if r.group(1) in keys]
+
+                if utf16Map:
+                    for res in matches:
+                        for x in range(res.start(0), res.end(0)):
+                            m = utf16Map[x]
+                            cFmt = self.format(m)
+                            cFmt.merge(hFmt)
+                            self.setFormat(m, utf16Map[x + 1] - m, cFmt)
+                else:
+                    for res in matches:
+                        for x in range(res.start(0), res.end(0)):
+                            cFmt = self.format(x)
+                            cFmt.merge(hFmt)
+                            self.setFormat(x, 1, cFmt)
 
         data = self.currentBlockUserData()
         if not isinstance(data, TextBlockData):

@@ -2,8 +2,9 @@
 novelWriter - GUI Theme and Icons Tests
 =======================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QColor, QFont, QFontDatabase, QIcon, QPalette, QPixmap, QStyleHints
 
 from novelwriter import CONFIG
@@ -44,6 +45,7 @@ from novelwriter.gui.theme import (
 )
 from novelwriter.types import QtIconNormal, QtIconOff, QtIconOn
 
+from tests.helpers import TstPaths
 from tests.mocked import causeOSError
 
 
@@ -161,7 +163,7 @@ def testGuiTheme_GenerateColorRange():
 
 
 @pytest.mark.gui
-def testGuiTheme_ScanThemes(monkeypatch, tstPaths):
+def testGuiTheme_ScanThemes(monkeypatch: pytest.MonkeyPatch, tstPaths: TstPaths):
     """Test the themes scanning."""
     theme = GuiTheme()
     files = []
@@ -204,7 +206,7 @@ def testGuiTheme_ScanThemes(monkeypatch, tstPaths):
 
 
 @pytest.mark.gui
-def testGuiTheme_LoadThemes(monkeypatch):
+def testGuiTheme_LoadThemes(monkeypatch: pytest.MonkeyPatch):
     """Test loading themes."""
     theme = GuiTheme()
     theme.iconCache = MagicMock()
@@ -294,7 +296,7 @@ def testGuiTheme_LoadThemes(monkeypatch):
 
 
 @pytest.mark.gui
-def testGuiTheme_SpecialColors(tstPaths):
+def testGuiTheme_SpecialColors(tstPaths: TstPaths):
     """Test handling special cases for colours."""
     theme = GuiTheme()
     theme.iconCache = MagicMock()
@@ -400,7 +402,7 @@ def testGuiTheme_SpecialColors(tstPaths):
 
 
 @pytest.mark.gui
-def testGuiTheme_Methods(monkeypatch):
+def testGuiTheme_Methods(monkeypatch: pytest.MonkeyPatch):
     """Test other themes methods."""
     theme = GuiTheme()
     theme.iconCache = MagicMock()
@@ -450,7 +452,7 @@ def testGuiTheme_Methods(monkeypatch):
 
 
 @pytest.mark.gui
-def testGuiTheme_ScanIcons(monkeypatch, tstPaths):
+def testGuiTheme_ScanIcons(monkeypatch: pytest.MonkeyPatch, tstPaths: TstPaths):
     """Test the icon theme scanning."""
     theme = GuiTheme()
 
@@ -482,7 +484,7 @@ def testGuiTheme_ScanIcons(monkeypatch, tstPaths):
 
 
 @pytest.mark.gui
-def testGuiTheme_IconThemes(monkeypatch):
+def testGuiTheme_IconThemes(monkeypatch: pytest.MonkeyPatch):
     """Test loading icon theme."""
     CONFIG.lightTheme = DEF_GUI_LIGHT
     CONFIG.themeMode = nwTheme.LIGHT
@@ -520,7 +522,7 @@ def testGuiTheme_IconThemes(monkeypatch):
 
 
 @pytest.mark.gui
-def testGuiTheme_IconThemeUnknownMeta(tstPaths):
+def testGuiTheme_IconThemeUnknownMeta(tstPaths: TstPaths):
     """An unrecognised meta key in an icon theme file is ignored."""
     theme = GuiTheme()
 
@@ -533,6 +535,22 @@ def testGuiTheme_IconThemeUnknownMeta(tstPaths):
     theme.iconCache.loadTheme("test_icons")
     assert theme.iconCache._meta.name == "Test Icons"
 
+    # The icon size is read from the first valid icon
+    theme.iconCache.clear()
+    iconsFile.write_text(
+        "meta:name = Test Icons\nicon:add = some-svg-data\n"
+        'icon:remove = <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" />\n',
+        encoding="utf-8",
+    )
+    theme.iconCache.loadTheme("test_icons")
+    assert theme.iconCache._iconSize == QSize(32, 32)
+
+    # A theme without icons has no icon size
+    theme.iconCache.clear()
+    iconsFile.write_text("meta:name = Test Icons\n", encoding="utf-8")
+    theme.iconCache.loadTheme("test_icons")
+    assert not theme.iconCache._iconSize.isValid()
+
 
 @pytest.mark.gui
 def testGuiTheme_LoadIcons():
@@ -544,6 +562,9 @@ def testGuiTheme_LoadIcons():
     theme = GuiTheme()
     theme.initThemes()
     iconCache = theme.iconCache
+
+    # The icon size is read from the theme
+    assert iconCache._iconSize == QSize(128, 128)
 
     # Load Icons
     # ==========
@@ -558,6 +579,11 @@ def testGuiTheme_LoadIcons():
     assert isinstance(qIcon, QIcon)
     assert qIcon.isNull() is False, "No image data, SVG library may be missing"
 
+    # Icons are cached, and a missing colour is the default colour
+    assert iconCache.getIcon("add:tool") is qIcon
+    assert iconCache.getIcon("add:") is iconCache.getIcon("add")
+    assert iconCache.getIcon("add") is iconCache.getIcon("add:default")
+
     # Load it as a pixmap with a size
     # If this part of the test fails, you may need to set the
     # environment variable: QT_SCALE_FACTOR=1
@@ -566,6 +592,23 @@ def testGuiTheme_LoadIcons():
     assert qPix.isNull() is False
     assert qPix.width() == 50, "If this fails, make sure QT_SCALE_FACTOR=1"
     assert qPix.height() == 50, "If this fails, make sure QT_SCALE_FACTOR=1"
+
+    # Directional icons are mirrored in RTL mode, others are not
+    size = QSize(64, 64)
+    ltrChevron = iconCache._loadIcon("chevron_left").pixmap(size).toImage()
+    ltrAdd = iconCache._loadIcon("add").pixmap(size).toImage()
+    ltrList = iconCache._loadIcon("fmt_list_o").pixmap(size).toImage()
+    CONFIG.rtlMode = True
+    rtlChevron = iconCache._loadIcon("chevron_left").pixmap(size).toImage()
+    rtlAdd = iconCache._loadIcon("add").pixmap(size).toImage()
+    rtlList = iconCache._loadIcon("fmt_list_o").pixmap(size).toImage()
+    assert rtlChevron != ltrChevron
+    assert rtlChevron == ltrChevron.mirrored(True, False)
+    assert rtlAdd == ltrAdd
+
+    # Icons with an RTL variant use it in RTL mode
+    assert rtlList != ltrList
+    assert rtlList == iconCache._loadIcon("fmt_list_o_rtl").pixmap(size).toImage()
 
     # Load app icon
     qIcon = iconCache.getIcon("novelwriter")
@@ -578,7 +621,7 @@ def testGuiTheme_LoadIcons():
     assert qIcon != iconCache._noIcon
 
     # Toggle icon
-    qIcon = iconCache.getToggleIcon("toggle-bullet:tool", 24, 24)
+    qIcon = iconCache.getToggleIcon("toggle-bullet:tool")
     assert isinstance(qIcon, QIcon)
     assert qIcon != iconCache._noIcon
     pOn = qIcon.pixmap(24, 24, QtIconNormal, QtIconOn)
@@ -586,7 +629,7 @@ def testGuiTheme_LoadIcons():
     assert pOn != pOff
 
     # Unknown toggle icon
-    qIcon = iconCache.getToggleIcon("stuff:tool", 24, 24)
+    qIcon = iconCache.getToggleIcon("stuff:tool")
     assert isinstance(qIcon, QIcon)
     assert qIcon == iconCache._noIcon
 
@@ -647,7 +690,7 @@ def testGuiTheme_LoadIcons():
 
 
 @pytest.mark.gui
-def testGuiTheme_LoadDecorations(monkeypatch):
+def testGuiTheme_LoadDecorations(monkeypatch: pytest.MonkeyPatch):
     """Test the icon cache class.
 
     This test requires the image formats library to be installed for Qt6.
@@ -721,7 +764,7 @@ _listContent(THEMES, CONFIG.assetPath("themes"), ".toml")
 
 @pytest.mark.gui
 @pytest.mark.parametrize("theme", [a.stem for a in THEMES])
-def testGuiTheme_CheckTheme(theme):
+def testGuiTheme_CheckTheme(theme: str):
     """Test loading all themes."""
     themes = GuiTheme()
     themes.iconCache = MagicMock()
@@ -863,26 +906,12 @@ def testGuiTheme_CheckTheme(theme):
     assert deprecated == [], "Deprecated options in theme file"
 
 
+@pytest.mark.gui
 @pytest.mark.parametrize(
     "icons",
-    [
-        pytest.param(
-            a.stem,
-            marks=(
-                (pytest.mark.gui,)
-                if a.stem.startswith("material")
-                else (
-                    pytest.mark.gui,
-                    pytest.mark.opt_assets,
-                    pytest.mark.xfail(reason="May be stale from another branch", strict=False),
-                )
-            ),
-        )
-        for a in CONFIG.assetPath("icons").iterdir()
-        if a.is_dir and a.suffix == ".icons"
-    ],
+    [a.stem for a in CONFIG.assetPath("icons").iterdir() if a.is_file() and a.suffix == ".icons"],
 )
-def testGuiTheme_CheckIcons(icons, tstPaths):
+def testGuiTheme_CheckIcons(icons: str, tstPaths: TstPaths):
     """Test loading all icons."""
     keysFile: Path = tstPaths.filesDir / "all_icons.json"
     iconKeys = json.loads(keysFile.read_text(encoding="utf-8"))

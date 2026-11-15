@@ -2,8 +2,9 @@
 novelWriter - App Splash Screen Tests
 =====================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ from novelwriter.splash import NSplashScreen
 
 
 @pytest.mark.gui
-def testSplash_Main(caplog, monkeypatch):
+def testSplash_Main(caplog: pytest.LogCaptureFixture, monkeypatch: pytest.MonkeyPatch):
     """Check the splash screen's initial state, status updates, and painting."""
     monkeypatch.setattr("novelwriter.splash.sleep", lambda *a: None)
     splash = NSplashScreen()

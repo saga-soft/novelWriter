@@ -6,11 +6,11 @@
 /dist/
 /dist_*/
 *.spec
+!/setup/macos/novelWriter.spec
 *.egg-info
 setup.iss
 /novelwriter.desktop
 /novelWriter.pyw
-/setup/macos/Info.plist
 /setup/windows/build
 .flatpak-builder
 .venv
@@ -62,6 +62,7 @@ __pycache__
 # IDE
 .vscode
 .ruff_cache
+.nvimlog
 
 # No AI files
 AGENTS.md

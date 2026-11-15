@@ -2,8 +2,9 @@
 novelWriter - GUI Project Search
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2024 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,8 +28,18 @@ from enum import Enum
 from time import time
 from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import QModelIndex, QRect, Qt, pyqtSignal, pyqtSlot
-from PyQt6.QtGui import QAction, QCursor, QKeyEvent, QPainter, QPalette, QShortcut
+from PyQt6.QtCore import QModelIndex, QPointF, QRect, Qt, pyqtSignal, pyqtSlot
+from PyQt6.QtGui import (
+    QAction,
+    QCursor,
+    QKeyEvent,
+    QPainter,
+    QPalette,
+    QShortcut,
+    QTextCharFormat,
+    QTextLayout,
+    QTextOption,
+)
 from PyQt6.QtWidgets import (
     QAbstractItemView,
     QApplication,
@@ -36,6 +47,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QLineEdit,
+    QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
     QToolBar,
@@ -55,6 +67,7 @@ from novelwriter.extensions.switchbox import NSwitchBox
 from novelwriter.models.searchmodel import SearchNode, SearchResultModel
 from novelwriter.text.autoreplace import LineEditAutoReplace
 from novelwriter.types import (
+    QtAlignLeft,
     QtAlignMiddle,
     QtDisplayRole,
     QtElideRight,
@@ -74,8 +87,6 @@ if TYPE_CHECKING:
     from novelwriter.core.projectsearch import T_SearchResults
 
 logger = logging.getLogger(__name__)
-
-RESULT_FLAGS = int(Qt.TextFlag.TextSingleLine) | int(QtAlignMiddle)
 
 
 class GuiProjectSearch(QWidget):
@@ -150,6 +161,7 @@ class GuiProjectSearch(QWidget):
 
         self.searchText = QLineEdit(self)
         self.searchText.setPlaceholderText(self.tr("Search for"))
+        self.searchText.setAccessibleName(self.searchText.placeholderText())
         self.searchText.addAction(self.searchAction, QLineEdit.ActionPosition.TrailingPosition)
         self.searchText.returnPressed.connect(self._processSearch)
         self.searchText.textEdited.connect(self._editSearchText)
@@ -481,16 +493,30 @@ class _SearchResultDelegate(QStyledItemDelegate):
         sPos = minmax(sPos, 0, len(text))
         ePos = minmax(ePos, sPos, len(text))
 
-        x = rect.x() + 4
-        y = rect.y()
-        h = rect.height()
+        # The layout handles bidirectional text, so the match highlight
+        # lands on the right glyphs, and aligns with the view direction
+        tRect = QStyle.visualRect(option.direction, rect, QRect(rect.x() + 4, rect.y(), avail, rect.height()))
+        tOpt = QTextOption(QStyle.visualAlignment(option.direction, QtAlignLeft))
+        tOpt.setWrapMode(QTextOption.WrapMode.NoWrap)
+        layout = QTextLayout(text, option.font)
+        layout.setTextOption(tOpt)
+        layout.beginLayout()
+        line = layout.createLine()
+        line.setLineWidth(avail)
+        layout.endLayout()
+
+        matches = []
         if ePos > sPos:
-            wPos = metrics.horizontalAdvance(text[:sPos])
-            wMatch = metrics.horizontalAdvance(text[sPos:ePos])
-            painter.fillRect(QRect(x + wPos, y + 1, wMatch, h - 2), self._rectColM)
+            match = QTextLayout.FormatRange()
+            match.start = sPos
+            match.length = ePos - sPos
+            match.format = QTextCharFormat()
+            match.format.setBackground(self._rectColM)
+            matches.append(match)
 
         painter.setPen(self._textColS if selected else self._textColP)
-        painter.drawText(QRect(x, y, rect.right() - x, h), RESULT_FLAGS, text)
+        yPos = tRect.y() + (tRect.height() - line.height()) / 2.0
+        layout.draw(painter, QPointF(tRect.x(), yPos), matches)
 
         painter.restore()
 

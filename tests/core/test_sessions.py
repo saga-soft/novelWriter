@@ -2,8 +2,9 @@
 novelWriter - Session Log Tests
 ===============================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,11 +32,11 @@ from novelwriter.core.project import NWProject
 from novelwriter.core.sessions import SessionLog
 
 from tests.helpers import buildTestProject
-from tests.mocked import causeOSError
+from tests.mocked import MockGuiMain, causeOSError
 
 
 @pytest.mark.core
-def testNWSessionLog_Main(monkeypatch, mockGUI, fncPath):
+def testNWSessionLog_Main(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, fncPath: Path):
     """Test log file handling of the SessionLog class."""
     project = NWProject()
     buildTestProject(project, fncPath)

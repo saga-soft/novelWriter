@@ -2,8 +2,9 @@
 novelWriter - GUI Editor Toolbar
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -76,6 +77,10 @@ class GuiDocToolBar(QWidget):
         self.tbMarkMD.setToolTip(self.tr("Markdown Highlight"))
         self.tbMarkMD.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.MD_MARK))
 
+        self.tbLinkMD = NFlatIconButton(self, iSz, "fmt_link:markdown")
+        self.tbLinkMD.setToolTip(self.tr("Markdown Link"))
+        self.tbLinkMD.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.MD_LINK))
+
         self.tbBold = NFlatIconButton(self, iSz, "fmt_bold:shortcode")
         self.tbBold.setToolTip(self.tr("Shortcode Bold"))
         self.tbBold.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.SC_BOLD))
@@ -104,6 +109,26 @@ class GuiDocToolBar(QWidget):
         self.tbSubscript.setToolTip(self.tr("Shortcode Subscript"))
         self.tbSubscript.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.SC_SUB))
 
+        self.tbListU = NFlatIconButton(self, iSz, "fmt_list_u:action")
+        self.tbListU.setToolTip(self.tr("Format as Bullet List"))
+        self.tbListU.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.BLOCK_LST_U))
+
+        self.tbListO = NFlatIconButton(self, iSz, "fmt_list_o:action")
+        self.tbListO.setToolTip(self.tr("Format as Numbered List"))
+        self.tbListO.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.BLOCK_LST_O))
+
+        self.tbAlignLeft = NFlatIconButton(self, iSz, "fmt_align_left:action")
+        self.tbAlignLeft.setToolTip(self.tr("Align Left"))
+        self.tbAlignLeft.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.ALIGN_L))
+
+        self.tbAlignCenter = NFlatIconButton(self, iSz, "fmt_align_center:action")
+        self.tbAlignCenter.setToolTip(self.tr("Align Centre"))
+        self.tbAlignCenter.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.ALIGN_C))
+
+        self.tbAlignRight = NFlatIconButton(self, iSz, "fmt_align_right:action")
+        self.tbAlignRight.setToolTip(self.tr("Align Right"))
+        self.tbAlignRight.clicked.connect(qtWeakLambda(self._emitDocAction, nwDocAction.ALIGN_R))
+
         # Assemble
         # ========
 
@@ -112,7 +137,8 @@ class GuiDocToolBar(QWidget):
         self.outerBox.addWidget(self.tbItalicMD)
         self.outerBox.addWidget(self.tbStrikeMD)
         self.outerBox.addWidget(self.tbMarkMD)
-        self.outerBox.addSpacing(4)
+        self.outerBox.addWidget(self.tbLinkMD)
+        self.outerBox.addSpacing(8)
         self.outerBox.addWidget(self.tbBold)
         self.outerBox.addWidget(self.tbItalic)
         self.outerBox.addWidget(self.tbStrike)
@@ -120,6 +146,13 @@ class GuiDocToolBar(QWidget):
         self.outerBox.addWidget(self.tbMark)
         self.outerBox.addWidget(self.tbSuperscript)
         self.outerBox.addWidget(self.tbSubscript)
+        self.outerBox.addSpacing(8)
+        self.outerBox.addWidget(self.tbListU)
+        self.outerBox.addWidget(self.tbListO)
+        self.outerBox.addSpacing(8)
+        self.outerBox.addWidget(self.tbAlignLeft)
+        self.outerBox.addWidget(self.tbAlignCenter)
+        self.outerBox.addWidget(self.tbAlignRight)
         self.outerBox.setContentsMargins(4, 4, 4, 4)
         self.outerBox.setSpacing(4)
 
@@ -147,6 +180,7 @@ class GuiDocToolBar(QWidget):
             self.tbItalicMD.refreshTheme()
             self.tbStrikeMD.refreshTheme()
             self.tbMarkMD.refreshTheme()
+            self.tbLinkMD.refreshTheme()
             self.tbBold.refreshTheme()
             self.tbItalic.refreshTheme()
             self.tbStrike.refreshTheme()
@@ -154,6 +188,11 @@ class GuiDocToolBar(QWidget):
             self.tbMark.refreshTheme()
             self.tbSuperscript.refreshTheme()
             self.tbSubscript.refreshTheme()
+            self.tbListU.refreshTheme()
+            self.tbListO.refreshTheme()
+            self.tbAlignLeft.refreshTheme()
+            self.tbAlignCenter.refreshTheme()
+            self.tbAlignRight.refreshTheme()
 
     ##
     #  Private Slots

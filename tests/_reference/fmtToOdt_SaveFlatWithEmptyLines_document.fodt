@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <office:document xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.text">
   <office:meta>
-    <meta:creation-date>2026-06-20T16:21:19</meta:creation-date>
-    <meta:generator>novelWriter/26.2a0</meta:generator>
+    <meta:creation-date>2026-10-18T00:12:06</meta:creation-date>
+    <meta:generator>novelWriter/26.3a0</meta:generator>
     <meta:initial-creator>Jane Smith</meta:initial-creator>
     <meta:editing-cycles>1234</meta:editing-cycles>
     <meta:editing-duration>P42DT12H34M56S</meta:editing-duration>
     <dc:title>Test Project</dc:title>
-    <dc:date>2026-06-20T16:21:19</dc:date>
+    <dc:date>2026-10-18T00:12:06</dc:date>
     <dc:creator>Jane Smith</dc:creator>
   </office:meta>
   <office:settings>
@@ -21,7 +21,7 @@
   </office:font-face-decls>
   <office:styles>
     <style:default-style style:family="paragraph">
-      <style:paragraph-properties style:line-break="strict" style:tab-stop-distance="1.251cm" style:writing-mode="page" />
+      <style:paragraph-properties style:line-break="strict" style:tab-stop-distance="1.270cm" style:writing-mode="page" />
       <style:text-properties style:font-name="Liberation Serif" fo:font-family="Liberation Serif" fo:font-weight="normal" fo:font-style="normal" fo:font-size="12pt" fo:language="en" fo:country="GB" />
     </style:default-style>
     <style:style style:name="Standard" style:family="paragraph" style:class="text">
@@ -50,12 +50,15 @@
       <style:paragraph-properties fo:margin-top="0.000cm" fo:margin-bottom="0.000cm" fo:text-align="center" />
       <style:text-properties style:font-name="Liberation Serif" fo:font-family="Liberation Serif" fo:font-size="30pt" fo:font-weight="bold" />
     </style:style>
+    <style:style style:name="List" style:family="paragraph" style:display-name="List" style:parent-style-name="Text_20_body" style:class="list">
+      <style:paragraph-properties fo:margin-top="0.000cm" fo:margin-bottom="0.000cm" />
+    </style:style>
     <style:style style:name="Separator" style:family="paragraph" style:display-name="Separator" style:parent-style-name="Standard" style:next-style-name="Text_20_body" style:class="text">
       <style:paragraph-properties fo:margin-top="0.000cm" fo:margin-bottom="0.000cm" fo:line-height="115%" fo:text-align="center" />
       <style:text-properties style:font-name="Liberation Serif" fo:font-family="Liberation Serif" fo:font-size="12pt" fo:font-weight="normal" />
     </style:style>
     <style:style style:name="Horizontal_20_Line" style:family="paragraph" style:display-name="Horizontal Line" style:parent-style-name="Standard" style:next-style-name="Text_20_body" style:class="html">
-      <style:paragraph-properties fo:margin-top="0.000cm" fo:margin-bottom="0.000cm" fo:margin-left="2.900cm" fo:margin-right="2.900cm" fo:border-left="none" fo:border-right="none" fo:border-top="none" fo:border-bottom="0.75pt solid #646464" />
+      <style:paragraph-properties fo:margin-top="0.000cm" fo:margin-bottom="0.000cm" fo:margin-left="2.625cm" fo:margin-right="2.625cm" fo:border-left="none" fo:border-right="none" fo:border-top="none" fo:border-bottom="0.75pt solid #646464" />
     </style:style>
     <style:style style:name="Heading_20_1" style:family="paragraph" style:display-name="Heading 1" style:parent-style-name="Heading" style:next-style-name="Text_20_body" style:default-outline-level="1" style:class="text">
       <style:paragraph-properties fo:margin-top="0.000cm" fo:margin-bottom="0.000cm" />
@@ -76,24 +79,136 @@
     <style:style style:name="Header" style:family="paragraph" style:display-name="Header" style:parent-style-name="Header_20_and_20_Footer">
       <style:paragraph-properties fo:text-align="right" />
     </style:style>
+    <style:style style:name="Header_20_Left" style:family="paragraph" style:display-name="Header Left" style:parent-style-name="Header_20_and_20_Footer">
+      <style:paragraph-properties fo:text-align="left" />
+    </style:style>
     <style:style style:name="Footnote" style:family="paragraph" style:display-name="Footnote" style:parent-style-name="Standard" style:class="extra">
       <style:paragraph-properties fo:margin-bottom="0.000cm" fo:margin-left="0.000cm" fo:text-indent="-0.000cm" />
       <style:text-properties fo:font-size="10pt" />
     </style:style>
+    <text:list-style style:name="List_20_Bullet" style:display-name="List Bullet">
+      <text:list-level-style-bullet text:level="1" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.847cm" fo:text-indent="-0.423cm" fo:margin-left="0.847cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+      <text:list-level-style-bullet text:level="2" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.693cm" fo:text-indent="-0.423cm" fo:margin-left="1.693cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+      <text:list-level-style-bullet text:level="3" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.540cm" fo:text-indent="-0.423cm" fo:margin-left="2.540cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+      <text:list-level-style-bullet text:level="4" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="3.387cm" fo:text-indent="-0.423cm" fo:margin-left="3.387cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+      <text:list-level-style-bullet text:level="5" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="4.233cm" fo:text-indent="-0.423cm" fo:margin-left="4.233cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+      <text:list-level-style-bullet text:level="6" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="5.080cm" fo:text-indent="-0.423cm" fo:margin-left="5.080cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+      <text:list-level-style-bullet text:level="7" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="5.927cm" fo:text-indent="-0.423cm" fo:margin-left="5.927cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+      <text:list-level-style-bullet text:level="8" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="6.773cm" fo:text-indent="-0.423cm" fo:margin-left="6.773cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+      <text:list-level-style-bullet text:level="9" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="7.620cm" fo:text-indent="-0.423cm" fo:margin-left="7.620cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+      <text:list-level-style-bullet text:level="10" text:bullet-char="•">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="8.467cm" fo:text-indent="-0.423cm" fo:margin-left="8.467cm" />
+        </style:list-level-properties>
+      </text:list-level-style-bullet>
+    </text:list-style>
+    <text:list-style style:name="Numbering_20_123" style:display-name="Numbering 123">
+      <text:list-level-style-number text:level="1" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.847cm" fo:text-indent="-0.635cm" fo:margin-left="0.847cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+      <text:list-level-style-number text:level="2" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.693cm" fo:text-indent="-0.635cm" fo:margin-left="1.693cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+      <text:list-level-style-number text:level="3" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.540cm" fo:text-indent="-0.635cm" fo:margin-left="2.540cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+      <text:list-level-style-number text:level="4" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="3.387cm" fo:text-indent="-0.635cm" fo:margin-left="3.387cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+      <text:list-level-style-number text:level="5" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="4.233cm" fo:text-indent="-0.635cm" fo:margin-left="4.233cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+      <text:list-level-style-number text:level="6" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="5.080cm" fo:text-indent="-0.635cm" fo:margin-left="5.080cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+      <text:list-level-style-number text:level="7" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="5.927cm" fo:text-indent="-0.635cm" fo:margin-left="5.927cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+      <text:list-level-style-number text:level="8" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="6.773cm" fo:text-indent="-0.635cm" fo:margin-left="6.773cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+      <text:list-level-style-number text:level="9" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="7.620cm" fo:text-indent="-0.635cm" fo:margin-left="7.620cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+      <text:list-level-style-number text:level="10" style:num-suffix="." style:num-format="1">
+        <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+          <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="8.467cm" fo:text-indent="-0.635cm" fo:margin-left="8.467cm" />
+        </style:list-level-properties>
+      </text:list-level-style-number>
+    </text:list-style>
   </office:styles>
   <office:automatic-styles>
-    <style:page-layout style:name="PM1">
-      <style:page-layout-properties fo:page-width="14.800cm" fo:page-height="21.000cm" fo:margin-top="2.000cm" fo:margin-bottom="1.800cm" fo:margin-left="1.700cm" fo:margin-right="1.500cm" />
+    <style:page-layout style:name="PM1" style:page-usage="mirrored">
+      <style:page-layout-properties fo:page-width="14.800cm" fo:page-height="21.000cm" fo:margin-top="2.000cm" fo:margin-bottom="1.800cm" fo:margin-left="2.800cm" fo:margin-right="1.500cm" loext:margin-gutter="1.100cm" />
       <style:header-style>
         <style:header-footer-properties fo:min-height="0.635cm" fo:margin-left="0.000cm" fo:margin-right="0.000cm" fo:margin-bottom="0.212cm" />
       </style:header-style>
     </style:page-layout>
-    <style:style style:name="P1" style:family="paragraph" style:parent-style-name="Text_20_body">
+    <style:page-layout style:name="PM2" style:page-usage="right">
+      <style:page-layout-properties fo:page-width="14.800cm" fo:page-height="21.000cm" fo:margin-top="2.000cm" fo:margin-bottom="1.800cm" fo:margin-left="2.800cm" fo:margin-right="1.500cm" loext:margin-gutter="1.100cm" />
+      <style:header-style>
+        <style:header-footer-properties fo:min-height="0.635cm" fo:margin-left="0.000cm" fo:margin-right="0.000cm" fo:margin-bottom="0.212cm" />
+      </style:header-style>
+    </style:page-layout>
+    <style:style style:name="P1" style:family="paragraph" style:parent-style-name="Text_20_body" style:master-page-name="First_20_Page" />
+    <style:style style:name="P2" style:family="paragraph" style:parent-style-name="Text_20_body">
       <style:paragraph-properties fo:text-align="justify" />
     </style:style>
-    <style:style style:name="P2" style:family="paragraph" style:parent-style-name="Text_20_body">
-      <style:paragraph-properties fo:break-before="page" />
-    </style:style>
+    <style:style style:name="P3" style:family="paragraph" style:parent-style-name="Text_20_body" style:master-page-name="Right_20_Page" />
     <style:style style:name="T1" style:family="text">
       <style:text-properties fo:font-weight="bold" />
     </style:style>
@@ -106,9 +221,19 @@
       <style:header>
         <text:p text:style-name="Header">Test Project / Jane Smith / <text:page-number text:page-adjust="-1">2</text:page-number></text:p>
       </style:header>
-      <style:header-first>
+      <style:header-left>
+        <text:p text:style-name="Header_20_Left"><text:page-number text:page-adjust="-1">2</text:page-number> / Jane Smith / Test Project</text:p>
+      </style:header-left>
+    </style:master-page>
+    <style:master-page style:name="First_20_Page" style:display-name="First Page" style:page-layout-name="PM1" style:next-style-name="Standard">
+      <style:header>
         <text:p text:style-name="Header" />
-      </style:header-first>
+      </style:header>
+    </style:master-page>
+    <style:master-page style:name="Right_20_Page" style:display-name="Right Page" style:page-layout-name="PM2" style:next-style-name="Standard">
+      <style:header>
+        <text:p text:style-name="Header">Test Project / Jane Smith / <text:page-number text:page-adjust="-1">2</text:page-number></text:p>
+      </style:header>
     </style:master-page>
   </office:master-styles>
   <office:body>
@@ -127,20 +252,20 @@
         <text:user-field-decl office:value-type="float" office:value="1231" text:name="ManuscriptTextWordChars" />
         <text:user-field-decl office:value-type="float" office:value="27" text:name="ManuscriptTitleWordChars" />
       </text:user-field-decls>
-      <text:p text:style-name="Text_20_body" />
+      <text:p text:style-name="P1" />
       <text:p text:style-name="Title">My Novel</text:p>
       <text:p text:style-name="Text_20_body" />
-      <text:p text:style-name="P1"><text:span text:style-name="T1">Word Count: </text:span><text:span text:style-name="T1"><text:user-field-get style:data-style-name="N0" text:name="ManuscriptAllWords">0</text:user-field-get></text:span><text:line-break /><text:user-field-get style:data-style-name="N0" text:name="ManuscriptParagraphCount">0</text:user-field-get> paragrphs<text:line-break />Web: <text:a xlink:type="simple" xlink:href="http://example.com" text:style-name="T2">http://example.com</text:a></text:p>
+      <text:p text:style-name="P2"><text:span text:style-name="T1">Word Count: </text:span><text:span text:style-name="T1"><text:user-field-get style:data-style-name="N0" text:name="ManuscriptAllWords">0</text:user-field-get></text:span><text:line-break /><text:user-field-get style:data-style-name="N0" text:name="ManuscriptParagraphCount">0</text:user-field-get> paragrphs<text:line-break />Web: <text:a xlink:type="simple" xlink:href="http://example.com" text:style-name="T2">http://example.com</text:a></text:p>
       <text:p text:style-name="Text_20_body" />
-      <text:p text:style-name="P2" />
+      <text:p text:style-name="P3" />
       <text:h text:style-name="Heading_20_1" text:outline-level="1">Chapter One</text:h>
       <text:p text:style-name="Text_20_body" />
-      <text:p text:style-name="P1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc maximus justo non dictum commodo. Curabitur lacinia tempor orci vel luctus. Phasellus porta metus eu massa luctus, eget euismod risus rhoncus. Vestibulum sed arcu nisi. Maecenas pretium facilisis velit, vel semper lacus aliquam sit amet. Vestibulum vulputate neque ligula, rhoncus blandit turpis consequat id. Mauris sagittis vehicula imperdiet. Duis sed nunc pretium, ornare purus vel, sodales augue. Maecenas a suscipit risus. Quisque volutpat justo eleifend est ullamcorper fermentum. Donec ullamcorper et tortor a laoreet. Nam id risus nisi. Vivamus non imperdiet erat, sit amet imperdiet felis. Mauris vitae neque et est aliquam scelerisque non non ipsum.</text:p>
+      <text:p text:style-name="P2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc maximus justo non dictum commodo. Curabitur lacinia tempor orci vel luctus. Phasellus porta metus eu massa luctus, eget euismod risus rhoncus. Vestibulum sed arcu nisi. Maecenas pretium facilisis velit, vel semper lacus aliquam sit amet. Vestibulum vulputate neque ligula, rhoncus blandit turpis consequat id. Mauris sagittis vehicula imperdiet. Duis sed nunc pretium, ornare purus vel, sodales augue. Maecenas a suscipit risus. Quisque volutpat justo eleifend est ullamcorper fermentum. Donec ullamcorper et tortor a laoreet. Nam id risus nisi. Vivamus non imperdiet erat, sit amet imperdiet felis. Mauris vitae neque et est aliquam scelerisque non non ipsum.</text:p>
       <text:p text:style-name="Text_20_body" />
-      <text:p text:style-name="P2" />
+      <text:p text:style-name="P3" />
       <text:h text:style-name="Heading_20_1" text:outline-level="1">Chapter Two</text:h>
       <text:p text:style-name="Text_20_body" />
-      <text:p text:style-name="P1">Nullam laoreet lorem nec malesuada vehicula. Vivamus tempus sodales lectus sed viverra. Aenean lacinia sollicitudin quam, quis tempus eros suscipit id. Duis sed rutrum nisi, ut pulvinar magna. Nam et cursus tortor. Phasellus ac odio tellus. Nullam in iaculis ipsum. Vivamus ante sem, ultricies sed varius quis, tristique nec tellus. Nullam eu urna vitae lacus hendrerit gravida. Quisque pulvinar erat ex, id efficitur velit sodales vitae. Proin vestibulum, sapien eget mattis euismod, tortor quam viverra risus, at congue mauris tortor eu nunc. Mauris pellentesque elit leo, quis eleifend sem placerat a. Vivamus iaculis dui eget tellus volutpat, ac varius nisi facilisis.<text:note text:id="ftn1" text:note-class="footnote">
+      <text:p text:style-name="P2">Nullam laoreet lorem nec malesuada vehicula. Vivamus tempus sodales lectus sed viverra. Aenean lacinia sollicitudin quam, quis tempus eros suscipit id. Duis sed rutrum nisi, ut pulvinar magna. Nam et cursus tortor. Phasellus ac odio tellus. Nullam in iaculis ipsum. Vivamus ante sem, ultricies sed varius quis, tristique nec tellus. Nullam eu urna vitae lacus hendrerit gravida. Quisque pulvinar erat ex, id efficitur velit sodales vitae. Proin vestibulum, sapien eget mattis euismod, tortor quam viverra risus, at congue mauris tortor eu nunc. Mauris pellentesque elit leo, quis eleifend sem placerat a. Vivamus iaculis dui eget tellus volutpat, ac varius nisi facilisis.<text:note text:id="ftn1" text:note-class="footnote">
           <text:note-citation>1</text:note-citation>
           <text:note-body>
             <text:p text:style-name="Footnote">Lorem ipsum</text:p>

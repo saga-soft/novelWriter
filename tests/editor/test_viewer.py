@@ -2,8 +2,9 @@
 novelWriter - Document Viewer Tests
 ===================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,28 +22,41 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
 
-from PyQt6.QtCore import QEvent, QMimeData, QPointF, Qt, QUrl
-from PyQt6.QtGui import QAction, QDesktopServices, QDragEnterEvent, QDragMoveEvent, QDropEvent, QMouseEvent, QTextCursor
+from PyQt6.QtCore import QEvent, QMimeData, QPoint, QPointF, Qt, QUrl
+from PyQt6.QtGui import (
+    QAction,
+    QDesktopServices,
+    QDragEnterEvent,
+    QDragMoveEvent,
+    QDropEvent,
+    QMouseEvent,
+    QTextCursor,
+    QWheelEvent,
+)
 from PyQt6.QtWidgets import QApplication, QMenu, QTextBrowser
+from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import decodeMimeHandles
-from novelwriter.constants import nwUnicode
+from novelwriter.constants import nwConst, nwUnicode
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwChange, nwDocAction
 from novelwriter.formats.toqdoc import ToQTextDocument
-from novelwriter.types import QtModNone, QtMouseLeft, QtMouseMiddle, QtSelectBlock, QtSelectWord
+from novelwriter.guimain import GuiMain
+from novelwriter.types import QtModCtrl, QtModNone, QtMouseLeft, QtMouseMiddle, QtSelectBlock, QtSelectWord
 
-from tests.helpers import C, buildTestProject
+from tests.helpers import C, MockRnd, buildTestProject
 from tests.mocked import causeException
 
 
 @pytest.mark.gui
-def testGuiDocViewer_OpenAndNavigate(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocViewer_OpenAndNavigate(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test opening documents in the viewer and navigating to them via
     the project tree and the header link.
     """
@@ -53,7 +67,7 @@ def testGuiDocViewer_OpenAndNavigate(qtbot, nwGUI, projPath, mockRnd):
 
     # Select a document in the project tree
     nwGUI.projView.setSelectedHandle(C.hSceneDoc)
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
 
     # Can only open a document
     assert docViewer.loadText(C.hNovelRoot) is False
@@ -80,17 +94,17 @@ def testGuiDocViewer_OpenAndNavigate(qtbot, nwGUI, projPath, mockRnd):
     # Reload the text
     origText = docViewer.toPlainText()
     docViewer.setPlainText("Oops, all gone!")
-    docViewer.docHeader._refreshDocument()
+    docViewer.docHeader.refreshButton.click()
     assert docViewer.toPlainText() == origText
 
     # Open in editor
-    nwGUI.closeDocument()
+    nwGUI.docPanes.closeDocument()
     assert docEditor.docHandle is None
     docViewer.docHeader._editDocument()
     assert docEditor.docHandle == docViewer.docHandle
 
     # With no document handle, editing does nothing
-    nwGUI.closeDocument()
+    nwGUI.docPanes.closeDocument()
     assert docEditor.docHandle is None
     docViewer.docHeader._docHandle = None
     docViewer.docHeader._editDocument()
@@ -98,7 +112,14 @@ def testGuiDocViewer_OpenAndNavigate(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocViewer_Selection(qtbot, monkeypatch, nwGUI, projPath, mockRnd, ipsumText):
+def testGuiDocViewer_Selection(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+    ipsumText: list[str],
+):
     """Test text selection and document actions in the viewer, and the
     context menu these selections feed into.
     """
@@ -107,10 +128,10 @@ def testGuiDocViewer_Selection(qtbot, monkeypatch, nwGUI, projPath, mockRnd, ips
     docEditor = nwGUI.docEditor
     docViewer = nwGUI.docViewer
 
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor.setPlainText(f"### Scene\n\n{ipsumText[0]}\n\n{ipsumText[1]}\n\n")
-    nwGUI.saveDocument()
-    nwGUI.viewDocument(C.hSceneDoc)
+    nwGUI.docPanes.saveDocument()
+    nwGUI.docPanes.viewDocument(C.hSceneDoc)
 
     text = docViewer.toPlainText()
     wordPos = text.index("laoreet")
@@ -170,7 +191,7 @@ def testGuiDocViewer_Selection(qtbot, monkeypatch, nwGUI, projPath, mockRnd, ips
     # Open context menu with a selection
     menuOpened = False
 
-    def mockExec(*a):
+    def mockExec(*a: Any) -> None:
         nonlocal menuOpened
         menuOpened = True
 
@@ -196,13 +217,14 @@ def testGuiDocViewer_Selection(qtbot, monkeypatch, nwGUI, projPath, mockRnd, ips
     # Close document
     docViewer.docHeader._closeDocument()
     assert docViewer.docHandle is None
+    assert docViewer.docFooter.statusText.text() == ""
 
     # Action on no document
     assert docViewer.docAction(nwDocAction.COPY) is False
 
 
 @pytest.mark.gui
-def testGuiDocViewer_Zoom(qtbot, nwGUI, projPath, mockRnd, ipsumText):
+def testGuiDocViewer_Zoom(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd, ipsumText: list[str]):
     """Test zooming the viewer font via docAction, and resetting it
     back to the configured font size.
     """
@@ -211,10 +233,10 @@ def testGuiDocViewer_Zoom(qtbot, nwGUI, projPath, mockRnd, ipsumText):
     docEditor = nwGUI.docEditor
     docViewer = nwGUI.docViewer
 
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor.setPlainText(f"### Scene\n\n{ipsumText[0]}\n\n")
-    nwGUI.saveDocument()
-    nwGUI.viewDocument(C.hSceneDoc)
+    nwGUI.docPanes.saveDocument()
+    nwGUI.docPanes.viewDocument(C.hSceneDoc)
 
     basePt = docViewer.font().pointSizeF()
 
@@ -231,9 +253,117 @@ def testGuiDocViewer_Zoom(qtbot, nwGUI, projPath, mockRnd, ipsumText):
     assert docViewer.docAction(nwDocAction.ZOOM_RESET) is True
     assert docViewer.font().pointSizeF() == basePt
 
+    # Zoom with the footer buttons, and show the font size in the footer
+    docFooter = docViewer.docFooter
+    assert docFooter.zoomLabel.text().startswith(f"{basePt:n}")
+    docFooter.zoomInButton.click()
+    assert docViewer.font().pointSizeF() == basePt + 1
+    assert docFooter.zoomLabel.text().startswith(f"{basePt + 1:n}")
+    docFooter.zoomOutButton.click()
+    assert docViewer.font().pointSizeF() == basePt
+    assert docFooter.zoomLabel.text().startswith(f"{basePt:n}")
+
+    # Clicking the zoom label resets the zoom
+    docFooter.zoomInButton.click()
+    docFooter.zoomInButton.click()
+    assert docViewer.font().pointSizeF() == basePt + 2
+    qtbot.mouseClick(docFooter.zoomLabel, QtMouseLeft)
+    assert docViewer.font().pointSizeF() == basePt
+    assert docFooter.zoomLabel.text().startswith(f"{basePt:n}")
+
+    # Zooming rebuilds the document at the new font size
+    qDoc = docViewer.document()
+    assert docViewer.docAction(nwDocAction.ZOOM_IN) is True
+    assert docViewer.document() is not qDoc
+    assert docViewer.document().defaultFont().pointSizeF() == basePt + 1  # type: ignore
+
+    # The zoom is kept when loading a new document
+    nwGUI.docPanes.viewDocument(C.hSceneDoc)
+    assert docViewer.font().pointSizeF() == basePt + 1
+    assert docViewer.document().defaultFont().pointSizeF() == basePt + 1  # type: ignore
+    assert CONFIG.textFont.pointSizeF() == basePt
+    assert docViewer.docAction(nwDocAction.ZOOM_RESET) is True
+    assert docViewer.document().defaultFont().pointSizeF() == basePt  # type: ignore
+
+    # Zoom with Ctrl+Scroll wheel rebuilds the document after a delay
+    position = QPointF(10, 10)
+    zoomInEvent = QWheelEvent(
+        position,
+        position,
+        QPoint(0, 0),
+        QPoint(0, 240),
+        Qt.MouseButton.NoButton,
+        QtModCtrl,
+        Qt.ScrollPhase.NoScrollPhase,
+        False,
+    )
+    qDoc = docViewer.document()
+    docViewer.wheelEvent(zoomInEvent)
+    assert docViewer.font().pointSizeF() == basePt + 2
+    assert docViewer.document() is qDoc
+    assert docViewer._timerZoom.isActive()
+    qtbot.waitUntil(lambda: docViewer.document() is not qDoc)
+    assert docViewer.document().defaultFont().pointSizeF() == basePt + 2  # type: ignore
+
+    # A no-op Ctrl+Scroll does nothing
+    noopEvent = QWheelEvent(
+        position,
+        position,
+        QPoint(0, 0),
+        QPoint(0, 0),
+        Qt.MouseButton.NoButton,
+        QtModCtrl,
+        Qt.ScrollPhase.NoScrollPhase,
+        False,
+    )
+    docViewer.wheelEvent(noopEvent)
+    assert docViewer.font().pointSizeF() == basePt + 2
+    assert not docViewer._timerZoom.isActive()
+
+    # A regular scroll does not zoom
+    scrollEvent = QWheelEvent(
+        position,
+        position,
+        QPoint(0, 0),
+        QPoint(0, 120),
+        Qt.MouseButton.NoButton,
+        QtModNone,
+        Qt.ScrollPhase.NoScrollPhase,
+        False,
+    )
+    docViewer.wheelEvent(scrollEvent)
+    assert docViewer.font().pointSizeF() == basePt + 2
+
+    # High resolution wheel steps add up to whole points in both directions
+    for dy, size in ((-40, 2), (-40, 2), (-40, 1), (40, 1), (40, 1), (40, 2)):
+        hiResEvent = QWheelEvent(
+            position,
+            position,
+            QPoint(0, 0),
+            QPoint(0, dy),
+            Qt.MouseButton.NoButton,
+            QtModCtrl,
+            Qt.ScrollPhase.NoScrollPhase,
+            False,
+        )
+        docViewer.wheelEvent(hiResEvent)
+        assert docViewer.font().pointSizeF() == basePt + size
+
+    # Zoom is capped at the minimum and maximum size
+    docViewer.zoomOut(100)
+    assert docViewer.font().pointSizeF() == nwConst.TEXT_FONT_MIN_SIZE
+    docViewer.zoomIn(100)
+    assert docViewer.font().pointSizeF() == nwConst.TEXT_FONT_MAX_SIZE
+
 
 @pytest.mark.gui
-def testGuiDocViewer_Links(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocViewer_Links(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test clicking links in the document viewer."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
@@ -243,14 +373,14 @@ def testGuiDocViewer_Links(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     # Create a tagged character to link to
     hBob = "0000000000011"
     text = "### Scene\n\n@char: Bob\n\nSome text mentioning Bob.\n"
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor.setPlainText(text)
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
     cursor = docEditor.textCursor()
     cursor.setPosition(text.index("Bob"))
     docEditor._processTag(cursor, create=True)
 
-    nwGUI.viewDocument(C.hSceneDoc)
+    nwGUI.docPanes.viewDocument(C.hSceneDoc)
 
     # A tag link navigates to the tagged item
     docViewer._linkClicked(QUrl("#tag_bob"))
@@ -259,6 +389,7 @@ def testGuiDocViewer_Links(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
     # Other links should just trigger a navigate call
     with qtbot.waitSignal(docViewer.sourceChanged, timeout=1000) as signal:
         docViewer._linkClicked(QUrl("#somewhere_else"))
+        assert signal.args is not None
         assert signal.args[0].url() == "#somewhere_else"
 
     # Web links should trigger the browser
@@ -268,6 +399,15 @@ def testGuiDocViewer_Links(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
         docViewer._linkClicked(QUrl("http://www.example.com"))
         assert openUrl.called is True
         assert openUrl.call_args[0][0] == QUrl("http://www.example.com")
+
+    # File links should also trigger the browser, see issue with clicking
+    # a "file://" link only working in the editor, not the viewer
+    with monkeypatch.context() as mp:
+        openUrl = MagicMock()
+        mp.setattr(QDesktopServices, "openUrl", openUrl)
+        docViewer._linkClicked(QUrl("file:///tmp/note.txt"))
+        assert openUrl.called is True
+        assert openUrl.call_args[0][0] == QUrl("file:///tmp/note.txt")
 
     # An empty link does nothing
     with monkeypatch.context() as mp:
@@ -285,7 +425,7 @@ def testGuiDocViewer_Links(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocViewer_HoverCard(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocViewer_HoverCard(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test the mouse-driven reference tag hover card in the viewer:
     the debounce timer only starts when hovering a '#tag_' anchor,
     showing the card requires _showHoverCard() to also resolve the
@@ -299,15 +439,15 @@ def testGuiDocViewer_HoverCard(qtbot, nwGUI, projPath, mockRnd):
 
     hBob = "0000000000010"
     text = "### Scene\n\n@char: Bob\n\nSome text mentioning Bob.\n"
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor.setPlainText(text)
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
     cursor = docEditor.textCursor()
     cursor.setPosition(text.index("Bob"))
     docEditor._processTag(cursor, create=True)
     assert hBob in SHARED.project.tree
 
-    nwGUI.viewDocument(C.hSceneDoc)
+    nwGUI.docPanes.viewDocument(C.hSceneDoc)
 
     document = docViewer.document()
     assert document is not None
@@ -381,11 +521,21 @@ def testGuiDocViewer_HoverCard(qtbot, nwGUI, projPath, mockRnd):
     docViewer.updateChangedTags([], [])
     assert docViewer._hoverCard._cache == {"bob": "<p>Cached</p>"}
 
+    # A new or rebuilt index clears the whole cache
+    docViewer.indexHasAppeared()
+    assert docViewer._hoverCard._cache == {}
+
     docViewer._hoverCard.hide()
 
 
 @pytest.mark.gui
-def testGuiDocViewer_MouseNavigation(qtbot, nwGUI, projPath, mockRnd, ipsumText):
+def testGuiDocViewer_MouseNavigation(
+    qtbot: QtBot,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+    ipsumText: list[str],
+):
     """Test navigating the view history with the mouse back/forward
     buttons, including the edge cases at either end of the history.
     """
@@ -396,17 +546,20 @@ def testGuiDocViewer_MouseNavigation(qtbot, nwGUI, projPath, mockRnd, ipsumText)
 
     # Make the scene long enough to produce a visible scroll bar, so
     # that the scroll position is also exercised while navigating
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor.setPlainText("### Scene\n\n" + "\n\n".join(ipsumText))
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
 
-    nwGUI.viewDocument(C.hChapterDoc)
+    nwGUI.docPanes.viewDocument(C.hChapterDoc)
     assert docViewer.docHandle == C.hChapterDoc
-    nwGUI.viewDocument(C.hSceneDoc)
+    nwGUI.docPanes.viewDocument(C.hSceneDoc)
     assert docViewer.docHandle == C.hSceneDoc
-    assert docViewer.verticalScrollBar().isVisible() is True
+    vBar = docViewer.verticalScrollBar()
+    assert vBar is not None
+    assert vBar.isVisible() is True
 
     viewport = docViewer.viewport()
+    assert viewport is not None
     center = viewport.rect().center()
     qtbot.mouseClick(viewport, Qt.MouseButton.BackButton, pos=center, delay=100)
     assert docViewer.docHandle == C.hChapterDoc
@@ -431,9 +584,21 @@ def testGuiDocViewer_MouseNavigation(qtbot, nwGUI, projPath, mockRnd, ipsumText)
     docViewer.navForward()
     assert docViewer.docHandle == C.hSceneDoc
 
+    # Navigate with the header buttons
+    docViewer.docHeader.backButton.click()
+    assert docViewer.docHandle == C.hChapterDoc
+    docViewer.docHeader.forwardButton.click()
+    assert docViewer.docHandle == C.hSceneDoc
+
 
 @pytest.mark.gui
-def testGuiDocViewer_ScrollAndMargins(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocViewer_ScrollAndMargins(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the scroll bar and document margin behaviour of the
     viewer, along with the navigateTo edge cases.
     """
@@ -441,7 +606,7 @@ def testGuiDocViewer_ScrollAndMargins(qtbot, monkeypatch, nwGUI, projPath, mockR
     nwGUI.openProject(projPath)
     docViewer = nwGUI.docViewer
 
-    nwGUI.viewDocument(C.hSceneDoc)
+    nwGUI.docPanes.viewDocument(C.hSceneDoc)
 
     # Scroll bar default on empty document
     docViewer.clear()
@@ -453,8 +618,12 @@ def testGuiDocViewer_ScrollAndMargins(qtbot, monkeypatch, nwGUI, projPath, mockR
     CONFIG.hideVScroll = True
     CONFIG.hideHScroll = True
     docViewer.initViewer()
-    assert docViewer.verticalScrollBar().isVisible() is False
-    assert docViewer.horizontalScrollBar().isVisible() is False
+    vBar = docViewer.verticalScrollBar()
+    hBar = docViewer.horizontalScrollBar()
+    assert vBar is not None
+    assert hBar is not None
+    assert vBar.isVisible() is False
+    assert hBar.isVisible() is False
 
     # Setting the scroll position does nothing when the bar is hidden
     docViewer.setScrollPosition(10)
@@ -471,13 +640,13 @@ def testGuiDocViewer_ScrollAndMargins(qtbot, monkeypatch, nwGUI, projPath, mockR
 
 
 @pytest.mark.gui
-def testGuiDocViewer_HeaderTitle(qtbot, nwGUI, projPath, mockRnd):
+def testGuiDocViewer_HeaderTitle(qtbot: QtBot, nwGUI: GuiMain, projPath: Path, mockRnd: MockRnd):
     """Test the document header title breadcrumb and outline menu."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
     docViewer = nwGUI.docViewer
 
-    nwGUI.viewDocument(C.hChapterDoc)
+    nwGUI.docPanes.viewDocument(C.hChapterDoc)
 
     # Change document title
     nwItem = SHARED.project.tree[C.hChapterDoc]
@@ -516,7 +685,13 @@ def testGuiDocViewer_HeaderTitle(qtbot, nwGUI, projPath, mockRnd):
 
 
 @pytest.mark.gui
-def testGuiDocViewer_FooterAndErrors(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocViewer_FooterAndErrors(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the document footer show/hide toggles for synopsis,
     comments and notes, as well as error handling when rendering
     fails.
@@ -526,36 +701,80 @@ def testGuiDocViewer_FooterAndErrors(qtbot, monkeypatch, nwGUI, projPath, mockRn
     docEditor = nwGUI.docEditor
     docViewer = nwGUI.docViewer
 
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor.setPlainText(
         "### Scene\n\n"
         "%Synopsis: A short synopsis.\n\n"
         "% A plain comment.\n\n"
         "%Note: A note about something.\n\n"
         "Some body text.\n\n"
+        "More body text.\n\n"
     )
-    nwGUI.saveDocument()
+    nwGUI.docPanes.saveDocument()
 
-    nwGUI.viewDocument(C.hSceneDoc)
+    nwGUI.docPanes.viewDocument(C.hSceneDoc)
     fullLength = len(docViewer.toPlainText())
+
+    # The footer shows the document status, counter, and the panel toggle
+    assert (item := SHARED.project.tree[C.hSceneDoc])
+    assert docViewer.docFooter.statusText.text() != ""
+    assert f"{item.mainCount:n}" in docViewer.docFooter.wordsText.text()
+    assert docViewer.docFooter.showHide.isVisible() is True
+    assert nwGUI.docEditor.docFooter.showHide.isVisible() is False
+
+    # Both footers have the same height, set by the button row
+    footerHeight = docViewer.docFooter.sizeHint().height()
+    assert nwGUI.docEditor.docFooter.sizeHint().height() == footerHeight
+    assert footerHeight == docViewer.docFooter.showHide.height() + 8
 
     with qtbot.waitSignal(docViewer.togglePanelVisibility, timeout=1000):
         docViewer.docFooter.showHide.click()
 
-    docViewer.docFooter._doToggleSynopsis(False)
+    docViewer.docFooter.aShowSynopsis.setChecked(False)
     noSynopLength = len(docViewer.toPlainText())
     assert noSynopLength < fullLength
-    docViewer.docFooter._doToggleSynopsis(True)
+    docViewer.docFooter.aShowSynopsis.setChecked(True)
 
-    docViewer.docFooter._doToggleComments(False)
+    docViewer.docFooter.aShowComments.setChecked(False)
     noCommentLength = len(docViewer.toPlainText())
     assert noCommentLength < fullLength
-    docViewer.docFooter._doToggleComments(True)
+    docViewer.docFooter.aShowComments.setChecked(True)
 
-    docViewer.docFooter._doToggleNotes(False)
+    docViewer.docFooter.aShowNotes.setChecked(False)
     noNotesLength = len(docViewer.toPlainText())
     assert noNotesLength < fullLength
-    docViewer.docFooter._doToggleNotes(True)
+    docViewer.docFooter.aShowNotes.setChecked(True)
+
+    # First line indent skips the first paragraph after the heading
+    def textIndent(text: str) -> float:
+        document = docViewer.document()
+        assert document is not None
+        return document.find(text).blockFormat().textIndent()
+
+    assert CONFIG.viewFirstLineIndent is False
+    assert textIndent("More body text.") == 0.0
+    docViewer.docFooter.aUseIndent.setChecked(True)
+    assert CONFIG.viewFirstLineIndent is True
+    assert textIndent("Some body text.") == 0.0
+    assert textIndent("More body text.") > 0.0
+    docViewer.docFooter.aUseIndent.setChecked(False)
+    assert CONFIG.viewFirstLineIndent is False
+    assert textIndent("More body text.") == 0.0
+
+    # The options menu pops up above the button, aligned by direction
+    optsButton = docViewer.docFooter.optsButton
+    optsMenu = docViewer.docFooter.optsMenu
+    buttonPos = optsButton.mapToGlobal(optsButton.rect().topLeft())
+    optsMenu.popup(buttonPos)
+    assert optsMenu.geometry().bottom() < buttonPos.y()
+    assert optsMenu.geometry().left() == buttonPos.x()
+    optsMenu.hide()
+
+    optsButton.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+    optsMenu.popup(buttonPos)
+    assert optsMenu.geometry().right() == buttonPos.x() + optsButton.width() - 1
+    optsMenu.hide()
+    optsButton.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
 
     # Crash the HTML rendering
     with monkeypatch.context() as mp:
@@ -569,17 +788,25 @@ def testGuiDocViewer_FooterAndErrors(qtbot, monkeypatch, nwGUI, projPath, mockRn
 
 
 @pytest.mark.gui
-def testGuiDocViewer_DragAndDrop(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
+def testGuiDocViewer_DragAndDrop(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test drag and drop in the viewer."""
     docViewer = nwGUI.docViewer
 
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
-    assert nwGUI.openDocument(C.hTitlePage) is True
-    assert nwGUI.viewDocument(C.hTitlePage) is True
+    assert nwGUI.docPanes.openDocument(C.hTitlePage) is True
+    nwGUI.docPanes.viewDocument(C.hTitlePage)
     assert docViewer.docHandle == C.hTitlePage
 
-    middle = docViewer.viewport().rect().center()
+    viewport = docViewer.viewport()
+    assert viewport is not None
+    middle = viewport.rect().center()
     action = Qt.DropAction.MoveAction
     mouse = Qt.MouseButton.NoButton
 
@@ -623,7 +850,7 @@ def testGuiDocViewer_DragAndDrop(qtbot, monkeypatch, nwGUI, projPath, mockRnd):
 
     # Drop
     mockDrop = MagicMock()
-    middle = QPointF(docViewer.viewport().rect().center())
+    middle = QPointF(viewport.rect().center())
     docEvent = QDropEvent(middle, action, docMime, mouse, QtModNone)
     noneEvent = QDropEvent(middle, action, noneMime, mouse, QtModNone)
     with monkeypatch.context() as mp:

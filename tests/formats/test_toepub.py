@@ -2,8 +2,9 @@
 novelWriter - EPub Format Tests
 ===============================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@ from __future__ import annotations
 
 import zipfile
 
+from pathlib import Path
 from shutil import copyfile
 
 import pytest
@@ -33,7 +35,8 @@ from novelwriter.enum import nwComment
 from novelwriter.formats.shared import BlockFmt, BlockTyp
 from novelwriter.formats.toepub import EPubType, ToEPub, _mkTag
 
-from tests.helpers import EPUB_IGNORE, cmpFiles
+from tests.helpers import EPUB_IGNORE, TstPaths, cmpFiles
+from tests.mocked import MockGuiMain
 
 
 @pytest.mark.core
@@ -45,7 +48,7 @@ def testFmtToEPub_MkTag():
 
 
 @pytest.mark.core
-def testToEPub_ConvertNovelHeaders(mockGUI):
+def testToEPub_ConvertNovelHeaders(mockGUI: MockGuiMain):
     """Test header formats in the ToEPub class."""
     project = NWProject()
     epub = ToEPub(project)
@@ -106,7 +109,7 @@ def testToEPub_ConvertNovelHeaders(mockGUI):
 
 
 @pytest.mark.core
-def testToEPub_ConvertNotesHeaders(mockGUI):
+def testToEPub_ConvertNotesHeaders(mockGUI: MockGuiMain):
     """Test note header formats in the ToEPub class."""
     project = NWProject()
     epub = ToEPub(project)
@@ -159,7 +162,7 @@ def testToEPub_ConvertNotesHeaders(mockGUI):
 
 
 @pytest.mark.core
-def testToEPub_ConvertParagraphs(mockGUI):
+def testToEPub_ConvertParagraphs(mockGUI: MockGuiMain):
     """Test paragraph formats in the ToEPub class."""
     project = NWProject()
     epub = ToEPub(project)
@@ -193,6 +196,35 @@ def testToEPub_ConvertParagraphs(mockGUI):
     epub.tokenizeText()
     epub.doConvert()
     assert epub._sections[-1].text[-1] == "<p>Line one<br />Line two<br />Line three</p>"
+
+    # Lists
+    epub._text = "Text\n\n* One\n* Two\nmore\n\n* Three\n"
+    epub.tokenizeText()
+    epub.doConvert()
+    assert epub._sections[-1].text[-8:] == [
+        "<p>Text</p>",
+        "<ul>",
+        "<li style='margin-bottom: 0;'>One</li>",
+        "<li style='margin-top: 0;'>Two<br />more</li>",
+        "</ul>",
+        "<ul>",
+        "<li>Three</li>",
+        "</ul>",
+    ]
+
+    # Ordered Lists
+    epub._text = "#. One\n#. Two\n* Three\n"
+    epub.tokenizeText()
+    epub.doConvert()
+    assert epub._sections[-1].text[-7:] == [
+        "<ol>",
+        "<li style='margin-bottom: 0;'>One</li>",
+        "<li style='margin-top: 0;'>Two</li>",
+        "</ol>",
+        "<ul>",
+        "<li>Three</li>",
+        "</ul>",
+    ]
 
     # Synopsis, Short, and plain comments
     nText = len(epub._sections[-1].text)
@@ -242,7 +274,7 @@ def testToEPub_ConvertParagraphs(mockGUI):
 
 
 @pytest.mark.core
-def testToEPub_ConvertMeta(mockGUI):
+def testToEPub_ConvertMeta(mockGUI: MockGuiMain):
     """Test meta data formats in the ToEPub class."""
     project = NWProject()
     epub = ToEPub(project)
@@ -340,7 +372,7 @@ def testToEPub_ConvertMeta(mockGUI):
 
 
 @pytest.mark.core
-def testToEPub_Alignment(mockGUI):
+def testToEPub_Alignment(mockGUI: MockGuiMain):
     """Test paragraph alignment in the ToEPub class."""
     project = NWProject()
     epub = ToEPub(project)
@@ -389,9 +421,30 @@ def testToEPub_Alignment(mockGUI):
         == "<p style='text-align: right;'>This is text<br />spanning multiple<br />lines</p>"
     )
 
+    # In RTL projects, LTR blocks and titles are marked, and the rest
+    # inherit RTL
+    epub = ToEPub(project)
+    epub.setLanguage(None, True)
+    epub.initDocument()
+    epub._isNovel = True
+    epub._text = "## Chapter\n\nEnglish text\n\nمتن\n\n1234\n\n"
+    epub.tokenizeText()
+    epub.doConvert()
+    section = epub._sections[-1]
+    assert section._dir == " dir='ltr'"
+    assert section.text == ["<p dir='ltr'>English text</p>", "<p>متن</p>", "<p>1234</p>"]
+
+    # Footnotes follow the same rule
+    epub._text = "متن[footnote:a]\n\n%footnote.a: English note.\n\n"
+    epub.tokenizeText()
+    epub.doConvert()
+    assert epub._sections[-1].footnotes[-1] == (
+        "<aside epub:type='footnote' id='fn_1'><p dir='ltr'><a href='#fns_1'>1.</a> English note.</p></aside>"
+    )
+
 
 @pytest.mark.core
-def testToEPub_Footnotes(mockGUI):
+def testToEPub_Footnotes(mockGUI: MockGuiMain):
     """Test paragraph formats with footnotes in the ToEPub class."""
     project = NWProject()
     epub = ToEPub(project)
@@ -412,7 +465,7 @@ def testToEPub_Footnotes(mockGUI):
 
 
 @pytest.mark.core
-def testToEPub_CloseDocument(mockGUI, fncPath):
+def testToEPub_CloseDocument(mockGUI: MockGuiMain, fncPath: Path):
     """Test pruning of empty sections and field substitution on close/save."""
     project = NWProject()
     epub = ToEPub(project)
@@ -445,7 +498,7 @@ def testToEPub_CloseDocument(mockGUI, fncPath):
 
 
 @pytest.mark.core
-def testToEPub_ConvertDirect(mockGUI):
+def testToEPub_ConvertDirect(mockGUI: MockGuiMain):
     """Test the converter directly using the ToEPub class."""
     project = NWProject()
     epub = ToEPub(project)
@@ -571,7 +624,84 @@ def testToEPub_ConvertDirect(mockGUI):
 
 
 @pytest.mark.core
-def testToEPub_Save(mockGUI, fncPath, tstPaths, ipsumText):
+def testToEPub_NavPage(mockGUI: MockGuiMain):
+    """Test the nav page table of contents."""
+    project = NWProject()
+
+    def build(*docs: tuple[bool, str]) -> ToEPub:
+        epub = ToEPub(project)
+        epub.initDocument()
+        epub.setPartitionFormat(nwHeadFmt.TITLE)
+        epub.setChapterFormat(nwHeadFmt.TITLE)
+        for isNovel, text in docs:
+            epub._isNovel = isNovel
+            epub._text = text
+            epub.tokenizeText()
+            epub.doConvert()
+        epub.closeDocument()
+        return epub
+
+    def navList(epub: ToEPub) -> str:
+        text = epub._generateNavPage()
+        return text[text.index('<ol epub:type="list">') + 22 : text.index("</nav>") - 6]
+
+    # No parts
+    epub = build((True, "## Chapter One\n\n## Chapter Two\n\n"))
+    epub.setNestedToC(True)
+    assert navList(epub) == (
+        '<li><a href="xhtml/chapter1.xhtml#sec_1">Chapter One</a></li>\n'
+        '<li><a href="xhtml/chapter2.xhtml#sec_2">Chapter Two</a></li>\n'
+    )
+
+    # With parts, ending inside a part
+    text = (
+        "## Prologue\n\n# Part One\n\n## Chapter One\n\n## Chapter Two\n\n"
+        "# Part Two\n\n# Part Three\n\n## Chapter Three\n\n"
+    )
+    epub = build((True, text))
+    assert navList(epub) == (
+        '<li><a href="xhtml/chapter1.xhtml#sec_1">Prologue</a></li>\n'
+        '<li><a href="xhtml/part1.xhtml#sec_2">Part One</a></li>\n'
+        '<li><a href="xhtml/chapter2.xhtml#sec_3">Chapter One</a></li>\n'
+        '<li><a href="xhtml/chapter3.xhtml#sec_4">Chapter Two</a></li>\n'
+        '<li><a href="xhtml/part2.xhtml#sec_5">Part Two</a></li>\n'
+        '<li><a href="xhtml/part3.xhtml#sec_6">Part Three</a></li>\n'
+        '<li><a href="xhtml/chapter4.xhtml#sec_7">Chapter Three</a></li>\n'
+    )
+
+    epub.setNestedToC(True)
+    assert navList(epub) == (
+        '<li><a href="xhtml/chapter1.xhtml#sec_1">Prologue</a></li>\n'
+        '<li><a href="xhtml/part1.xhtml#sec_2">Part One</a>\n'
+        "<ol>\n"
+        '<li><a href="xhtml/chapter2.xhtml#sec_3">Chapter One</a></li>\n'
+        '<li><a href="xhtml/chapter3.xhtml#sec_4">Chapter Two</a></li>\n'
+        "</ol>\n"
+        "</li>\n"
+        '<li><a href="xhtml/part2.xhtml#sec_5">Part Two</a>\n'
+        "</li>\n"
+        '<li><a href="xhtml/part3.xhtml#sec_6">Part Three</a>\n'
+        "<ol>\n"
+        '<li><a href="xhtml/chapter4.xhtml#sec_7">Chapter Three</a></li>\n'
+        "</ol>\n"
+        "</li>\n"
+    )
+
+    # Notes after a part are not nested
+    epub = build((True, "# Part One\n\n## Chapter One\n\n"), (False, "#! Notes\n\n"))
+    epub.setNestedToC(True)
+    assert navList(epub) == (
+        '<li><a href="xhtml/part1.xhtml#sec_1">Part One</a>\n'
+        "<ol>\n"
+        '<li><a href="xhtml/chapter1.xhtml#sec_2">Chapter One</a></li>\n'
+        "</ol>\n"
+        "</li>\n"
+        '<li><a href="xhtml/notes1.xhtml#sec_3">Notes</a></li>\n'
+    )
+
+
+@pytest.mark.core
+def testToEPub_Save(mockGUI: MockGuiMain, fncPath: Path, tstPaths: TstPaths, ipsumText: list[str]):
     """Test the save method of the ToEPub class."""
     project = NWProject()
     project.data.setAuthor("Jane Smith")
@@ -657,3 +787,15 @@ def testToEPub_Save(mockGUI, fncPath, tstPaths, ipsumText):
     assert cmpFiles(ch1File, ch1Comp)
     assert cmpFiles(ch2File, ch2Comp)
     assert cmpFiles(fm1File, fm1Comp)
+
+    # RTL projects set the page progression and the page directions
+    epub.setLanguage(None, True)
+    saveFile = fncPath / "outFileRTL.epub"
+    epub.saveDocument(saveFile)
+    with zipfile.ZipFile(saveFile, mode="r") as zipObj:
+        opfText = zipObj.read("OEBPS/package.opf").decode("utf-8")
+        navText = zipObj.read("OEBPS/nav.xhtml").decode("utf-8")
+        ch1Text = zipObj.read("OEBPS/xhtml/chapter1.xhtml").decode("utf-8")
+    assert '<spine toc="toc" page-progression-direction="rtl">' in opfText
+    assert 'xml:lang="en_GB" dir="rtl">' in navText
+    assert 'xml:lang="en_GB" dir="rtl">' in ch1Text

@@ -2,8 +2,9 @@
 novelWriter - Project Data
 ==========================
 
-This file is a part of novelWriter
-Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-T_LastHandle = Literal["editor", "viewer", "novel", "outline"]
+T_LastHandle = Literal["editor", "viewer", "novel", "story"]
 
 
 class ProjectData:
@@ -61,6 +62,7 @@ class ProjectData:
         "_author",
         "_autoCount",
         "_autoReplace",
+        "_autoReplaceIgnoreCase",
         "_currCounts",
         "_dailyGoal",
         "_dailyGoalAuto",
@@ -77,6 +79,7 @@ class ProjectData:
         "_name",
         "_project",
         "_remainingCount",
+        "_rtl",
         "_saveCount",
         "_spellCheck",
         "_spellLang",
@@ -106,8 +109,10 @@ class ProjectData:
         # Project Settings
         self._doBackup = True
         self._language = None
+        self._rtl = False
         self._spellCheck = False
         self._spellLang = None
+        self._autoReplaceIgnoreCase = False
 
         # Writing Target
         self._targetCount = 0
@@ -129,7 +134,7 @@ class ProjectData:
             "editor": None,
             "viewer": None,
             "novel": None,
-            "outline": None,
+            "story": None,
         }
         self._autoReplace: dict[str, str] = {}
         self._titleFormat: dict[str, str] = {
@@ -243,6 +248,11 @@ class ProjectData:
         return self._language
 
     @property
+    def isRTL(self) -> bool:
+        """Return if the project should be laid out as RTL."""
+        return self._rtl
+
+    @property
     def spellCheck(self) -> bool:
         """Return the spell check enabled setting."""
         return self._spellCheck
@@ -277,6 +287,11 @@ class ProjectData:
     def autoReplace(self) -> dict[str, str]:
         """Return the auto-replace dictionary."""
         return self._autoReplace
+
+    @property
+    def autoReplaceIgnoreCase(self) -> bool:
+        """Return True if the auto replace should ignore case."""
+        return self._autoReplaceIgnoreCase
 
     @property
     def itemStatus(self) -> ItemStatus:
@@ -415,10 +430,13 @@ class ProjectData:
         self._remainingCount = self._targetCount - (target - self._dailyProgress)
         self._targetLastCount = target
 
-    def setLanguage(self, value: str | None) -> None:
+    def setLanguage(self, value: str | None, rtl: bool | str | None) -> None:
         """Set the project language."""
-        if value != self._language:
-            self._language = checkStringNone(value, None)
+        language = checkStringNone(value, None)
+        isRTL = checkBool(rtl, False)
+        if language != self._language or isRTL != self._rtl:
+            self._language = language
+            self._rtl = isRTL
             self._project.setProjectChanged(True)
 
     def setSpellCheck(self, value: Any) -> None:
@@ -452,8 +470,9 @@ class ProjectData:
         if cNotes is not None:
             self._currCounts[3] = checkInt(cNotes, 0)
 
-    def setAutoReplace(self, value: dict) -> None:
+    def setAutoReplace(self, value: dict, ignoreCase: Any) -> None:
         """Set the auto-replace dictionary."""
+        self._autoReplaceIgnoreCase = checkBool(ignoreCase, False)
         if isinstance(value, dict):
             self._autoReplace = {}
             for key, entry in value.items():

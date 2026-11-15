@@ -2,8 +2,9 @@
 novelWriter - Markdown Text Converter
 =====================================
 
-This file is a part of novelWriter
-Copyright (C) 2021 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2021 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -106,10 +107,25 @@ class ToMarkdown(Tokenizer):
             cSkip = ""
 
         lines = []
+        nItem = 0
         for tType, _, tText, tFormat, tStyle in self._blocks:
             if tType == BlockTyp.TEXT:
                 tTemp = self._formatText(tText, tFormat, mTags).replace("\n", "  \n")
                 lines.append(f"{tTemp}\n\n")
+
+            elif tType == BlockTyp.LIST_U:
+                tTemp = self._formatText(tText, tFormat, mTags).replace("\n", "  \n  ")
+                lines.append(f"* {tTemp}\n")
+                if tStyle & BlockFmt.LIST_E:
+                    lines.append("\n")
+
+            elif tType == BlockTyp.LIST_O:
+                nItem = 1 if tStyle & BlockFmt.LIST_S else nItem + 1
+                tPre = f"{nItem}. "
+                tTemp = self._formatText(tText, tFormat, mTags).replace("\n", "  \n" + " " * len(tPre))
+                lines.append(f"{tPre}{tTemp}\n")
+                if tStyle & BlockFmt.LIST_E:
+                    lines.append("\n")
 
             elif tType in (BlockTyp.TITLE, BlockTyp.PART):
                 tHead = tText.replace("\n", " - ")

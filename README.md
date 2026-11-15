@@ -41,8 +41,8 @@ _This project is developed and maintained with care by actual humans._
 
 ## Implementation
 
-novelWriter is written in Python and uses Qt6 with PyQt6 Python binding as the UI framework. It is
-released on Linux, Windows and MacOS. It can in principle run on any Operating System that also
+novelWriter is written in Python and uses Qt6 with PyQt6 Python binding as the UI framework. It
+runs on Linux, Windows and MacOS. It can in principle run on any Operating System that also
 supports Qt, PyQt and Python.
 
 <p align="center">
@@ -57,17 +57,18 @@ You can make a feature request in the [issues tracker](https://github.com/saga-s
 or if the idea isn't fully formed, start a [discussion](https://github.com/saga-soft/novelWriter/discussions).
 Please also don't make pull requests to reformat or rewrite existing code unless there is a very
 good reason for doing so. Please do not submit AI generated content.
+See our [AI Policy](https://github.com/saga-soft/novelWriter/blob/main/AI_POLICY.md) for details.
 
 Fixes and patches are welcome. Contributions related to packaging and installing novelWriter will
 also be appreciated, but please make an issue or a discussion topic first. Before contributing any
-code, please also read the full
+code, please read the full
 [Contributing Guide](https://github.com/saga-soft/novelWriter/blob/main/CONTRIBUTING.md).
 
 Project credits are available in [CREDITS.md](https://github.com/saga-soft/novelWriter/blob/main/CREDITS.md).
 
-**Note:** New features and pre-releases are made on the `main` branch. Full releases are made from
-the `release` branch. So if you're submitting a fix to a current release, **including changes to
-documentation**, they must be made to the `release` branch.
+**Note:** New features and most pre-releases are made on the `main` branch. Full releases are made
+from the `release` branch. So if you're submitting a fix to a current release, **including changes
+to documentation**, they must be made to the `release` branch.
 
 
 ### Translations

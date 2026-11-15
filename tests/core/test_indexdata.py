@@ -2,8 +2,9 @@
 novelWriter - Index Data Tests
 ==============================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,9 +31,11 @@ from novelwriter.core.item import ProjectItem
 from novelwriter.core.project import NWProject
 from novelwriter.enum import nwComment
 
+from tests.mocked import MockGuiMain
+
 
 @pytest.mark.core
-def testIndexData_IndexNode(mockGUI):
+def testIndexData_IndexNode(mockGUI: MockGuiMain):
     """Test the IndexNode class."""
     handle = "0123456789abc"
     project = NWProject()
@@ -111,7 +114,7 @@ def testIndexData_IndexNode(mockGUI):
 
 
 @pytest.mark.core
-def testIndexData_IndexNodePackUnpack(mockGUI):
+def testIndexData_IndexNodePackUnpack(mockGUI: MockGuiMain):
     """Test the pack and unpack methods of the IndexNode class."""
     handle = "0123456789abc"
     project = NWProject()
@@ -131,9 +134,25 @@ def testIndexData_IndexNodePackUnpack(mockGUI):
 
     # Check packing
     data = node.packData()
-    assert data["T0001"] == {"meta": {"level": "H1", "title": "Heading 1", "line": 1, "tag": "", "counts": (42, 13, 3)}}
+    assert data["T0001"] == {
+        "meta": {
+            "level": "H1",
+            "title": "Heading 1",
+            "mod": False,
+            "line": 1,
+            "tag": "",
+            "counts": (42, 13, 3),
+        }
+    }
     assert data["T0002"] == {
-        "meta": {"level": "H2", "title": "Heading 2", "line": 10, "tag": "", "counts": (84, 26, 6)}
+        "meta": {
+            "level": "H2",
+            "title": "Heading 2",
+            "mod": False,
+            "line": 10,
+            "tag": "",
+            "counts": (84, 26, 6),
+        }
     }
     assert set(data["document"]["footnotes"]) == {"key1", "key2"}
 
@@ -141,10 +160,30 @@ def testIndexData_IndexNodePackUnpack(mockGUI):
     new = IndexNode(cache, handle, item)
 
     # Unpack heading one
-    data = {"T0001": {"meta": {"level": "H1", "title": "Heading 1", "line": 1, "tag": "", "counts": (42, 13, 3)}}}
+    data = {
+        "T0001": {
+            "meta": {
+                "level": "H1",
+                "title": "Heading 1",
+                "mod": False,
+                "line": 1,
+                "tag": "",
+                "counts": (42, 13, 3),
+            }
+        }
+    }
     new.unpackData(data)
     data = new.packData()
-    assert data["T0001"] == {"meta": {"level": "H1", "title": "Heading 1", "line": 1, "tag": "", "counts": (42, 13, 3)}}
+    assert data["T0001"] == {
+        "meta": {
+            "level": "H1",
+            "title": "Heading 1",
+            "mod": False,
+            "line": 1,
+            "tag": "",
+            "counts": (42, 13, 3),
+        }
+    }
 
     # Unpack invalid key
     data = {"stuff": "whatever"}
@@ -245,7 +284,7 @@ def testIndexData_IndexHeading():
 
     # Pack Data
     assert head.packData() == {
-        "meta": {"level": "H1", "title": "", "line": 42, "tag": "stuff", "counts": (42, 4, 2)},
+        "meta": {"level": "H1", "title": "", "mod": False, "line": 42, "tag": "stuff", "counts": (42, 4, 2)},
         "refs": {"stuff": "@object"},
         "summary": "In the beginning ...",
         "story.crisis": "It exploded!",
@@ -340,11 +379,21 @@ def testIndexHeading_UnpackMeta():
     cache = IndexCache(TagsIndex())
 
     # Valid
-    data = {"meta": {"level": "H1", "title": "So it Begins", "line": 1, "tag": "begins", "counts": [95, 18, 1]}}
+    data = {
+        "meta": {
+            "level": "H1",
+            "title": "So it Begins",
+            "mod": True,
+            "line": 1,
+            "tag": "begins",
+            "counts": [95, 18, 1],
+        }
+    }
     head = IndexHeading(cache, "T0001")
     head.unpackData(data)
     assert head.level == "H1"
     assert head.title == "So it Begins"
+    assert head.modified is True
     assert head.line == 1
     assert head.tag == "begins"
     assert head.charCount == 95
@@ -352,11 +401,12 @@ def testIndexHeading_UnpackMeta():
     assert head.paraCount == 1
 
     # Invalid
-    data = {"meta": {"level": "H9", "title": None, "line": None, "tag": None, "counts": [42]}}
+    data = {"meta": {"level": "H9", "title": None, "mod": None, "line": None, "tag": None, "counts": [42]}}
     head = IndexHeading(cache, "T0001")
     head.unpackData(data)
     assert head.level == "H0"
     assert head.title == "None"
+    assert head.modified is False
     assert head.line == 0
     assert head.tag == "None"
     assert head.charCount == 0
@@ -366,14 +416,8 @@ def testIndexHeading_UnpackMeta():
     # Empty
     data = {"meta": {}}
     head = IndexHeading(cache, "T0001")
-    head.unpackData(data)
-    assert head.level == "H0"
-    assert head.title == ""
-    assert head.line == 0
-    assert head.tag == ""
-    assert head.charCount == 0
-    assert head.wordCount == 0
-    assert head.paraCount == 0
+    with pytest.raises(KeyError, match="Heading meta is missing keys"):
+        head.unpackData(data)
 
 
 @pytest.mark.core

@@ -2,8 +2,9 @@
 novelWriter - TOML Config Parser
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@ import tomllib
 
 from enum import Enum
 from pathlib import Path
-from typing import TypeVar
+from typing import TypeVar, cast
 
 from PyQt6.QtGui import QFont
 
@@ -39,6 +40,7 @@ _T_Enum = TypeVar("_T_Enum", bound=Enum)
 T_TomlValue = str | int | float | bool | Path | list[str] | list[int] | Enum | QFont
 T_TomlObject = dict[str, T_TomlValue]
 T_TomlConfig = dict[str, T_TomlObject]
+T_ConfigMap = dict[tuple[str | None, str], tuple[str, str]]
 
 
 class NTomlParser:
@@ -52,10 +54,13 @@ class NTomlParser:
     which should always be None when flat is set.
     """
 
-    def __init__(self, flat: bool = False) -> None:
+    __slots__ = ("_data", "_flat", "_map", "_root")
+
+    def __init__(self, flat: bool = False, confMap: T_ConfigMap | None = None) -> None:
         self._flat = flat
         self._data: T_TomlConfig = {}
         self._root: T_TomlObject = {}
+        self._map: T_ConfigMap | None = confMap
 
     def read(self, path: Path) -> None:
         """Read and parse TOML data from a file."""
@@ -83,7 +88,7 @@ class NTomlParser:
     def writeString(self, data: T_TomlConfig | T_TomlObject) -> str:
         """Format a dict of sections, or a flat dict, as TOML."""
         if self._flat:
-            lines = [f"{key} = {self._dump(value)}" for key, value in data.items()]  # type: ignore[union-attr]
+            lines = [f"{key} = {self._dump(value)}" for key, value in cast("T_TomlObject", data).items()]
             return "\n".join(lines) + "\n" if lines else ""
 
         lines = []
@@ -149,7 +154,10 @@ class NTomlParser:
 
     def _value(self, section: str | None, option: str) -> T_TomlValue | None:
         """Look up a raw value, or None if the section or option is unset."""
-        return (self._data.get(section, {}) if section else self._root).get(option)
+        value = (self._data.get(section, {}) if section else self._root).get(option)
+        if value is None and self._map and (moved := self._map.get((section, option))):
+            return self._data.get(moved[0], {}).get(moved[1])
+        return value
 
     @staticmethod
     def _filterSection(section: str, values: dict) -> T_TomlObject:

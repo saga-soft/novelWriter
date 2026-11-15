@@ -1,5 +1,75 @@
 # novelWriter Changelog
 
+## Version 2026.3 RC 1 [2026-11-15]
+
+### Release Notes
+
+This is a release candidate of the next release version, and is intended for testing purposes.
+Please be careful when using this version on live writing projects, and make sure you take frequent
+backups.
+
+See the website for complete [Release Notes](https://novelwriter.io/releases/release_26_3.html).
+
+### Detailed Changelog
+
+**Bugfixes**
+
+* Fixed a bug from the Beta 1 release where some of the new icons and design elements in the Story
+  View and the editor toolbar did not update when the theme changed. By @vkbo. Issue #3123.
+  PR #3125.
+
+**Features**
+
+* Rewrote the auto-replace feature. Only defined keys are now highlighted in the editor, and a new
+  project setting allows keys to ignore case. Keys are applied to headings, lists, comments and
+  text paragraphs instead of the full raw text. Undefined keys are highlighted in red in the
+  manuscript preview, and listed in a new Problems tab, where clicking them navigates to their
+  location. By @vkbo. Issue #2270. PRs #3128 and #3131.
+* Added a setting to show the writing goal progress in Focus Mode, keeping the status bar visible.
+  By @vkbo. Issue #3064. PR #3116.
+* Added a setting to hide most of the document header in Focus Mode. By @vkbo. Issue #2225.
+  PR #3115.
+* Added a nested table of contents to EPUB manuscripts when parts and chapters form a hierarchy,
+  controlled by a new toggle. By @vkbo. Issue #3129. PR #3130.
+
+**Improvements**
+
+* The editor and viewer footers have been unified. The viewer footer now also shows the status or
+  importance label and the word count, and both footers have a zoom label and buttons in place of
+  the editor's old line counter. Toggles have moved into a pop-up menu on the left side of the
+  footer, including "Show Tabs and Spaces" and "Show Line Endings", which have been removed from
+  Preferences. By @vkbo. Issue #1802. PRs #3115, #3117 and #3126.
+* Added a first line indent option to the viewer, which only applies to novel documents. By @vkbo.
+  Issue #3095. PRs #3115 and #3126.
+* The tab size setting is now in em units, so it scales with font size and zoom, and defaults to
+  2.0 em. Users who changed the old tab width setting will need to set it again. A tab size setting
+  has also been added to manuscript builds, and applies to the ODT and DOCX formats. Zoom and text
+  font sizes are capped to 6 to 72 pt, and indent and tab sizes can go up to 19.9 em. Zooming in
+  the viewer no longer resets on document reload. By @vkbo. Issue #3122. PR #3126.
+* Added separate margin settings for lists in manuscript builds, instead of reusing the text
+  margins. This also fixes the first line indent of the paragraph following a list. By @vkbo.
+  Issue #3114. PR #3127.
+* The Story View can now show multiple notes of the same type on a heading either as separate
+  entries or as a single joined entry. By @vkbo. Issue #3118. PR #3121.
+* The Vim mode code has been moved out of the editor class and reviewed, fixing a number of bugs
+  with stuck or pending commands, line-wise edits, wrapped paragraphs and Focus Mode. Navigation
+  keys now work in NORMAL mode, paste distinguishes line-wise and character-wise yanks, and
+  `Ctrl+R` is now redo. By @vkbo. Discussion #2027. PR #3133.
+* Added "En Space" and "Em Space" entries to the Insert menu. By @vkbo. Issue #2535. PR #3131.
+
+**User Interface**
+
+* The build setting "Add titles for note root folders" has been renamed to "Insert note root folder
+  labels as titles". By @vkbo. Issue #2735. PR #3131.
+
+**Packaging**
+
+* The macOS build is now notarised. The macOS release no longer depends on Enchant, but uses the
+  system spell checker directly, and the minimum supported macOS version is now 15.0. By @kkostov.
+  PR #3018.
+
+----
+
 ## Version 2026.2.3 [2026-11-14]
 
 ### Release Notes
@@ -28,6 +98,106 @@ See the website for complete [Release Notes](https://novelwriter.io/releases/rel
   would extend the highlight onto the typed text. By @vkbo. Issue #3105. PR #3108.
 * Fixed a bug where removing the heading from a document did not update the index, leaving its
   icon in the project tree unchanged. By @vkbo. Issue #3132. PR #3135.
+
+----
+
+## Version 2026.3 Beta 1 [2026-10-20]
+
+### Release Notes
+
+This is a beta release of the next release version, and is intended for testing purposes. Please be
+careful when using this version on live writing projects, and make sure you take frequent backups.
+
+See the website for complete [Release Notes](https://novelwriter.io/releases/release_26_3.html).
+
+### Detailed Changelog
+
+**Bugfixes**
+
+* Fixed a bug where rebuilding the project index triggered a re-highlight of the open document for
+  each tag updated. By @vkbo. Issue #3092. PR #3093.
+* Fixed a bug where a project backup that failed while writing the archive left a broken zip file
+  behind. The incomplete archive is now deleted. By @vkbo. PR #3111.
+
+**Features**
+
+* The Outline panel has been redesigned from scratch as a new Story View panel, starting with a
+  tree-like outline. Synopsis text wraps over multiple lines, and each entry shows how far into the
+  story it lands, for tracking pacing. Comments and references can be shown as icons, with new
+  dedicated icons for point-of-view and focus characters. Further options include showing document
+  status, inactive partitions, and word counts with sub-headings included. Documents can be opened
+  with a middle or double click, or with a keyboard shortcut. By @vkbo. Issues #1465, #2286, #3012,
+  #3087 and #3100. PRs #2961, #3058, #3062, #3088 and #3103.
+* Added basic right-to-left support. A new project setting lays out text right-to-left, and a new
+  Preferences option forces a right-to-left interface, which otherwise follows the selected
+  translation. The editor lays out each paragraph in its own direction, while the viewer,
+  manuscript preview and all export formats follow the project direction, with right-to-left books
+  binding on the right. By @vkbo. Issue #3097. PRs #3098, #3101 and #3103.
+* Added basic single-level list support, using `*` for bullet lists and `#.` for numbered lists.
+  The editor continues a list when Enter is pressed, and new toolbar buttons and menu entries have
+  been added for lists, as well as for left, centre and right alignment. Lists pasted as formatted
+  text are converted to Markdown lists. By @vkbo. Issues #1460 and #3099. PRs #3075 and #3101.
+* Added support for Markdown style links on the form `[text](url)`, and for `file://` links. A new
+  link button, menu entry and dialog have been added to the editor, and URLs dropped into the
+  editor are formatted as links. By @vkbo. Issue #3025. PR #3028.
+* Improved handling of copied projects and backups. When a copy of a project is detected in the
+  recent projects list, the user is asked whether to treat it as a separate project. Opening a
+  backup asks whether to restore it or keep it as a separate copy. Projects now contain a
+  manifest file marking them as a project, backup or template. By @vkbo. Issues #2737 and #3047.
+  PRs #3085 and #3086.
+* Added gutter and double-sided page settings to ODT and DOCX manuscripts. Double-sided pages
+  mirror the margins for book binding and enable a separate even page header format. The heading
+  page break setting now has "No Break", "Any Page" and "Odd Page" options, allowing chapters to
+  start on odd pages. By @vkbo. Issues #2976 and #3070. PRs #3068 and #3102.
+* Added a manuscript build option to insert the document's status label below each heading. By
+  @vkbo. Issue #2958. PR #3104.
+* Added a "Uses" column to the tag panels below the viewer, counting how many headings reference
+  each tag. By @vkbo. Issue #1686. PR #3091.
+* The project tree pane can now be hidden by clicking the sidebar button of the tree view already
+  showing, or by pressing `Shift+F8`. By @vkbo. Issue #3023. PR #3072.
+* Added a Preferences option to enforce Unix line endings for all project files. By @vkbo.
+  Issue #3055. PR #3090.
+
+**Improvements**
+
+* The Novel View can optionally include sub-headings in each heading's word count. By @vkbo.
+  Issue #962. PR #3088.
+* Footnote keys are now tracked in the project index, ensuring new keys never collide with existing
+  ones. By @vkbo. PR #3062.
+
+**User Interface**
+
+* Removed the Novel Details tool, as its information is now mostly available elsewhere. By @vkbo.
+  Issue #3043. PR #3044.
+* Removed the Remix Icons theme, as its licence is no longer GPL compatible, and replaced the
+  FontAwesome theme with Microsoft's Fluent UI icons in regular and filled styles. The Lucide icons
+  have been updated to version 1.49.0, and padded to match the size of the Material icons. By
+  @vkbo. Issues #3051 and #3069. PRs #3045, #3059, #3062 and #3071.
+
+**Accessibility**
+
+* Added missing accessible text to a large number of widgets, mostly reusing their existing labels,
+  as tooltips are not exposed to screen readers. By @vkbo. PR #3089.
+
+**Internationalisation**
+
+* Urdu translation of the project export strings added by Ahmad. PR #3110.
+
+**Other Changes**
+
+* The editor and viewer have been moved into a shared wrapper class, as a first step towards
+  unifying them. By @vkbo. PR #3082.
+* Simplified the caching of icons, with no expected functional impact. By @vkbo. PR #3063.
+
+**Packaging**
+
+* Moved the PyPI release to a workflow, and removed the Launchpad release code and the scripts for
+  local builds. By @vkbo. PR #3037.
+
+**Code Maintenance**
+
+* Added type annotations to all tests. By @vkbo. PR #3083.
+* Fixed minor test coverage and typing issues. By @vkbo. PR #3094.
 
 ----
 

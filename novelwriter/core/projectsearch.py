@@ -2,8 +2,9 @@
 novelWriter - Project Search Tool
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@ import re
 from typing import TYPE_CHECKING
 
 from novelwriter import SHARED
-from novelwriter.constants import nwConst
+from novelwriter.constants import nwConst, nwStyles
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -147,7 +148,7 @@ class DocSearch:
                 if line.strip():
                     overwrite = 0
                     temp = line.rstrip("\n")
-                    if line[0] == "#":
+                    if line.startswith(nwStyles.H_MARKERS):
                         overwrite = 0 if self._textHeadings else len(temp)
                     elif line[0] == "@":
                         overwrite = 0 if self._textMeta else len(temp)

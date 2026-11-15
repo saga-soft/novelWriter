@@ -2,8 +2,9 @@
 novelWriter - Project Tree Tests
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,14 +29,16 @@ from pathlib import Path
 
 import pytest
 
+from pytestqt.qtbot import QtBot
+
 from novelwriter.constants import nwFiles
 from novelwriter.core.item import ProjectItem
 from novelwriter.core.project import NWProject
 from novelwriter.core.tree import ProjectTree
 from novelwriter.enum import nwItemClass, nwItemLayout, nwItemType
 
-from tests.helpers import C, buildTestProject
-from tests.mocked import causeOSError
+from tests.helpers import C, MockRnd, buildTestProject
+from tests.mocked import MockGuiMain, causeOSError
 
 
 def assertTreeModelConsistency(tree: ProjectTree) -> None:
@@ -66,7 +69,7 @@ def assertTreeModelConsistency(tree: ProjectTree) -> None:
 
 
 @pytest.fixture
-def mockItems(mockGUI, mockRnd, fncPath):
+def mockItems(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path) -> list[dict]:
     """Create a list of mock items."""
     project = NWProject()
     mockRnd.reset()
@@ -75,7 +78,7 @@ def mockItems(mockGUI, mockRnd, fncPath):
 
 
 @pytest.mark.core
-def testProjectTree_Populate(monkeypatch, mockGUI, mockItems):
+def testProjectTree_Populate(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, mockItems: list[dict]):
     """Test populating the project tree."""
     project = NWProject()
     tree = ProjectTree(project)
@@ -227,7 +230,7 @@ def testProjectTree_Populate(monkeypatch, mockGUI, mockItems):
 
 
 @pytest.mark.core
-def testProjectTree_ManipulateTree(monkeypatch, mockGUI, mockItems):
+def testProjectTree_ManipulateTree(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, mockItems: list[dict]):
     """Check create, add, remove and duplicate items."""
     project = NWProject()
     tree = ProjectTree(project)
@@ -430,7 +433,7 @@ def testProjectTree_ManipulateTree(monkeypatch, mockGUI, mockItems):
 
 
 @pytest.mark.core
-def testProjectTree_PickParent(mockGUI, mockItems):
+def testProjectTree_PickParent(mockGUI: MockGuiMain, mockItems: list[dict]):
     """Check the parent item picker."""
     project = NWProject()
     tree = ProjectTree(project)
@@ -569,7 +572,7 @@ def testProjectTree_PickParent(mockGUI, mockItems):
 
 
 @pytest.mark.core
-def testProjectTree_ItemMethods(monkeypatch, mockGUI, mockItems):
+def testProjectTree_ItemMethods(monkeypatch: pytest.MonkeyPatch, mockGUI: MockGuiMain, mockItems: list[dict]):
     """Check the item methods of the tree."""
     project = NWProject()
     tree = ProjectTree(project)
@@ -659,7 +662,13 @@ def testProjectTree_ItemMethods(monkeypatch, mockGUI, mockItems):
 
 
 @pytest.mark.core
-def testProjectTree_OtherMethods(qtbot, monkeypatch, mockGUI, fncPath, mockRnd):
+def testProjectTree_OtherMethods(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+):
     """Check other methods in the tree."""
     project = NWProject()
     buildTestProject(project, fncPath)
@@ -728,7 +737,13 @@ def testProjectTree_OtherMethods(qtbot, monkeypatch, mockGUI, fncPath, mockRnd):
 
 
 @pytest.mark.core
-def testProjectTree_CheckConsistency(monkeypatch, caplog, mockGUI, fncPath, mockRnd):
+def testProjectTree_CheckConsistency(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    mockGUI: MockGuiMain,
+    fncPath: Path,
+    mockRnd: MockRnd,
+):
     """Check the project tree's consistency."""
     project = NWProject()
     buildTestProject(project, fncPath)
@@ -815,7 +830,7 @@ def testProjectTree_CheckConsistency(monkeypatch, caplog, mockGUI, fncPath, mock
 
 
 @pytest.mark.core
-def testProjectTree_MakeHandles(mockGUI):
+def testProjectTree_MakeHandles(mockGUI: MockGuiMain):
     """Test generating item handles."""
     random.seed(42)
     project = NWProject()
@@ -842,7 +857,7 @@ def testProjectTree_MakeHandles(mockGUI):
 
 
 @pytest.mark.core
-def testProjectTree_DuplicateHandleGuards(mockGUI, mockItems):
+def testProjectTree_DuplicateHandleGuards(mockGUI: MockGuiMain, mockItems: list[dict]):
     """Test duplicate handle guards in add and _addItems."""
     project = NWProject()
     tree = ProjectTree(project)
@@ -873,7 +888,7 @@ def testProjectTree_DuplicateHandleGuards(mockGUI, mockItems):
 
 
 @pytest.mark.core
-def testProjectTree_RootParentIsNormalisedToTopLevel(mockGUI, mockItems):
+def testProjectTree_RootParentIsNormalisedToTopLevel(mockGUI: MockGuiMain, mockItems: list[dict]):
     """Check malformed root parent references are normalised."""
     project = NWProject()
     tree = ProjectTree(project)
@@ -905,7 +920,11 @@ def testProjectTree_RootParentIsNormalisedToTopLevel(mockGUI, mockItems):
 
 
 @pytest.mark.core
-def testProjectTree_UnresolvedItemsKeepLoadedTreeConsistent(monkeypatch, mockGUI, mockItems):
+def testProjectTree_UnresolvedItemsKeepLoadedTreeConsistent(
+    monkeypatch: pytest.MonkeyPatch,
+    mockGUI: MockGuiMain,
+    mockItems: list[dict],
+):
     """Check unresolved unpack entries do not break loaded tree consistency."""
     project = NWProject()
     tree = ProjectTree(project)
@@ -925,13 +944,18 @@ def testProjectTree_UnresolvedItemsKeepLoadedTreeConsistent(monkeypatch, mockGUI
 
 
 @pytest.mark.core
-def testProjectTree_ToCFile(monkeypatch, fncPath, mockGUI, mockItems):
+def testProjectTree_ToCFile(
+    monkeypatch: pytest.MonkeyPatch,
+    fncPath: Path,
+    mockGUI: MockGuiMain,
+    mockItems: list[dict],
+):
     """Test writing the ToC.txt file."""
     project = NWProject()
     tree = ProjectTree(project)
     tree.unpack(mockItems)
 
-    def mockIsFile(fileName):
+    def mockIsFile(fileName: Path) -> bool:
         """Return True for items that are files in novelWriter and
         should thus also be files in the project folder structure.
         """
@@ -955,7 +979,7 @@ def testProjectTree_ToCFile(monkeypatch, fncPath, mockGUI, mockItems):
 
     # Allow writing
     assert tree.writeToCFile() is True
-    assert (fncPath / nwFiles.TOC_TXT).read_text() == (
+    assert (fncPath / nwFiles.TOC_FILE).read_text() == (
         "\n"
         "Table of Contents\n"
         "=================\n"

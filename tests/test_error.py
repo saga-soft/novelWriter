@@ -2,8 +2,9 @@
 novelWriter - Error Handler Tests
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,15 +24,21 @@ from __future__ import annotations
 
 import sys
 
+from types import ModuleType
+
 import pytest
 
+from pytestqt.qtbot import QtBot
+
+from novelwriter import CONFIG
 from novelwriter.error import ErrorMessage, exceptionHandler, logException
+from novelwriter.guimain import GuiMain
 
 from tests.mocked import causeException
 
 
 @pytest.mark.base
-def testError_LogException(caplog):
+def testError_LogException(caplog: pytest.LogCaptureFixture):
     """Test that logging an exception outside of an except block, where
     there is no active exception, does nothing.
     """
@@ -41,7 +48,7 @@ def testError_LogException(caplog):
 
 
 @pytest.mark.base
-def testError_Dialog(qtbot, monkeypatch, nwGUI):
+def testError_Dialog(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain):
     """Test the error dialog."""
     nwErr = ErrorMessage(nwGUI)
     qtbot.addWidget(nwErr)
@@ -60,6 +67,7 @@ def testError_Dialog(qtbot, monkeypatch, nwGUI):
         assert "Fine Error" in message
         assert "Exception" in message
         assert "(1.2.3)" in message
+        assert "Spell Check: Unknown" not in message
 
     # No kernel version retrieved
     with monkeypatch.context() as mp:
@@ -69,13 +77,31 @@ def testError_Dialog(qtbot, monkeypatch, nwGUI):
         assert message != ""
         assert "(Unknown)" in message
 
-    # No enchant version retrieved
+    # No spell check version retrieved
     with monkeypatch.context() as mp:
+        mp.setitem(sys.modules, "objc", None)
         mp.setitem(sys.modules, "enchant", None)
         nwErr.setMessage(Exception, "Almost Fine Error", None)  # type: ignore
         message = nwErr.msgBody.toPlainText()
         assert message != ""
-        assert "Enchant: Unknown" in message
+        assert "Spell Check: Unknown" in message
+
+    # Spell check versions per platform
+    objc = ModuleType("objc")
+    objc.__dict__["__version__"] = "1.2"
+    enchant = ModuleType("enchant")
+    enchant.__dict__["__version__"] = "3.4"
+    with monkeypatch.context() as mp:
+        mp.setitem(sys.modules, "objc", objc)
+        mp.setitem(sys.modules, "enchant", enchant)
+
+        mp.setattr(CONFIG, "osDarwin", True)
+        nwErr.setMessage(Exception, "Fine Error", None)  # type: ignore
+        assert "Spell Check: AppleSpell (PyObjC 1.2)" in nwErr.msgBody.toPlainText()
+
+        mp.setattr(CONFIG, "osDarwin", False)
+        nwErr.setMessage(Exception, "Fine Error", None)  # type: ignore
+        assert "Spell Check: Enchant 3.4" in nwErr.msgBody.toPlainText()
 
     nwErr._doClose()
     nwErr.close()
@@ -83,7 +109,7 @@ def testError_Dialog(qtbot, monkeypatch, nwGUI):
 
 
 @pytest.mark.base
-def testError_Handler(qtbot, monkeypatch, nwGUI):
+def testError_Handler(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain):
     """Test the error handler. This test doesn't have any asserts, but
     it checks that the error handler handles potential exceptions. The
     test will fail if exceptions are not handled.

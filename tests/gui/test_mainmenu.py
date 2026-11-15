@@ -2,8 +2,9 @@
 novelWriter - GUI Main Menu Tests
 =================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,26 +22,29 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
 
 from PyQt6.QtGui import QAction, QDesktopServices, QTextBlock
 from PyQt6.QtWidgets import QFileDialog
+from pytestqt.qtbot import QtBot
 
 from novelwriter import CONFIG, SHARED
 from novelwriter.constants import nwKeyWords, nwShortcode, nwStats, nwUnicode
 from novelwriter.core.project import NWProject
 from novelwriter.editor.editor import GuiDocEditor
 from novelwriter.enum import nwDocAction, nwDocInsert, nwFocus, nwView
+from novelwriter.guimain import GuiMain
 from novelwriter.shared import _GuiAlert
 from novelwriter.types import QtKeepAnchor, QtMoveRight, QtSelectWord
 
-from tests.helpers import C, buildTestProject, writeFile
+from tests.helpers import C, MockRnd, buildTestProject, writeFile
 
 
 @pytest.mark.gui
-def testGuiMainMenu_Slots(qtbot, monkeypatch, nwGUI, projPath):
+def testGuiMainMenu_Slots(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain, projPath: Path):
     """Test the main menu slots."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
@@ -78,7 +82,7 @@ def testGuiMainMenu_Slots(qtbot, monkeypatch, nwGUI, projPath):
 
 
 @pytest.mark.gui
-def testGuiMainMenu_EditFormat(qtbot, monkeypatch, nwGUI, prjLipsum):
+def testGuiMainMenu_EditFormat(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain, prjLipsum: Path):
     """Test the main menu Edit and Format entries."""
     monkeypatch.setattr(GuiDocEditor, "hasFocus", lambda *a: True)
     mainMenu = nwGUI.mainMenu
@@ -91,7 +95,7 @@ def testGuiMainMenu_EditFormat(qtbot, monkeypatch, nwGUI, prjLipsum):
     x = 72
 
     # Split By Chapter
-    assert nwGUI.openDocument("4c4f28287af27") is True
+    assert nwGUI.docPanes.openDocument("4c4f28287af27") is True
     docEditor.setCursorPosition(x + 3)
     cleanText = docEditor.getText()[x : x + 47]
 
@@ -286,6 +290,20 @@ def testGuiMainMenu_EditFormat(qtbot, monkeypatch, nwGUI, prjLipsum):
     mainMenu.aFmtNoFormat.activate(QAction.ActionEvent.Trigger)
     assert docEditor.getText()[:30] == cleanText
 
+    # Lists
+    # =====
+
+    # Unordered List
+    mainMenu.aFmtListU.activate(QAction.ActionEvent.Trigger)
+    assert docEditor.getText()[:28] == "* A single, short paragraph."
+
+    # Ordered List
+    mainMenu.aFmtListO.activate(QAction.ActionEvent.Trigger)
+    assert docEditor.getText()[:29] == "#. A single, short paragraph."
+
+    mainMenu.aFmtNoFormat.activate(QAction.ActionEvent.Trigger)
+    assert docEditor.getText()[:30] == cleanText
+
     # Other Checks
 
     # Replace Quotes
@@ -383,12 +401,19 @@ def testGuiMainMenu_EditFormat(qtbot, monkeypatch, nwGUI, prjLipsum):
 
 
 @pytest.mark.gui
-def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd):
+def testGuiMainMenu_Insert(
+    qtbot: QtBot,
+    monkeypatch: pytest.MonkeyPatch,
+    nwGUI: GuiMain,
+    fncPath: Path,
+    projPath: Path,
+    mockRnd: MockRnd,
+):
     """Test the Insert menu."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
 
-    assert nwGUI.openDocument(C.hSceneDoc) is True
+    assert nwGUI.docPanes.openDocument(C.hSceneDoc) is True
     mainMenu = nwGUI.mainMenu
     docEditor = nwGUI.docEditor
     docEditor.clear()
@@ -401,7 +426,7 @@ def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd
     docEditor.insertText(nwDocInsert.NO_INSERT)
     assert docEditor.isEmpty
 
-    docEditor.insertText(None)
+    docEditor.insertText(None)  # type: ignore
     assert docEditor.isEmpty
 
     # qtbot.stop()
@@ -500,6 +525,14 @@ def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd
     assert docEditor.getText() == nwUnicode.U_THNBSP
     docEditor.clear()
 
+    mainMenu.aInsEnSpace.activate(QAction.ActionEvent.Trigger)
+    assert docEditor.getText() == nwUnicode.U_ENSP
+    docEditor.clear()
+
+    mainMenu.aInsEmSpace.activate(QAction.ActionEvent.Trigger)
+    assert docEditor.getText() == nwUnicode.U_EMSP
+    docEditor.clear()
+
     # Insert Keywords
     # ===============
 
@@ -562,35 +595,46 @@ def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd
     # Insert Text from File
     # =====================
 
-    nwGUI.closeDocument()
-
-    # First, with no path
-    monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *a, **k: ("", ""))
-    assert not nwGUI.importDocument()
-
-    # Then with a path, but an invalid one
-    monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *a, **k: (" ", ""))
-    assert not nwGUI.importDocument()
-
-    # Then a valid path, but bot a file that exists
-    iFile = fncPath / "import.txt"
-    monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *a, **k: (str(iFile), ""))
-    assert not nwGUI.importDocument()
-
-    # Create the file and try again, but with no target document open
-    writeFile(iFile, "Foo")
-    assert not nwGUI.importDocument()
+    # With no target document open, the file dialog is never shown
+    nwGUI.docPanes.closeDocument()
+    with monkeypatch.context() as mp:
+        mp.setattr(QFileDialog, "getOpenFileName", lambda *a, **k: pytest.fail("Dialog shown"))
+        nwGUI.docPanes.importDocument()
+    assert SHARED.lastAlert[0] == "Please open a document to import the text file into."
 
     # Open the document from before, and add some text to it
-    nwGUI.openDocument(C.hSceneDoc)
+    nwGUI.docPanes.openDocument(C.hSceneDoc)
     docEditor.setPlainText("Bar")
+
+    # First, with no path, which is ignored without an alert
+    lastAlert = SHARED.lastAlert
+    monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *a, **k: ("", ""))
+    nwGUI.docPanes.importDocument()
+    assert SHARED.lastAlert is lastAlert
     assert docEditor.getText() == "Bar"
 
-    # The document isn't empty, so the message box should pop
+    # Then with a blank path, which is also ignored
+    monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *a, **k: (" ", ""))
+    nwGUI.docPanes.importDocument()
+    assert SHARED.lastAlert is lastAlert
+    assert docEditor.getText() == "Bar"
+
+    # Then a valid path, but not a file that exists
+    iFile = fncPath / "import.txt"
+    monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *a, **k: (str(iFile), ""))
+    nwGUI.docPanes.importDocument()
+    assert SHARED.lastAlert[0] == "Could not read file. The file must be an existing text file."
+    assert docEditor.getText() == "Bar"
+
+    # Create the file
+    writeFile(iFile, "Foo")
+
+    # The document isn't empty, so the user is asked, and declines
     with monkeypatch.context() as mp:
         mp.setattr(_GuiAlert, "finalState", False)
-        assert not nwGUI.importDocument()
-        assert docEditor.getText() == "Bar"
+        nwGUI.docPanes.importDocument()
+    assert SHARED.lastAlert[0].startswith("Importing the file will overwrite")
+    assert docEditor.getText() == "Bar"
 
     # Finally, accept the replaced text, this time we use the menu entry to trigger it
     mainMenu.aImportFile.activate(QAction.ActionEvent.Trigger)
@@ -604,7 +648,7 @@ def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd
     assert SHARED.lastAlert[-1] == f"File Location: {path}"
 
     # Focus and View Change
-    # ======================
+    # =====================
 
     with qtbot.waitSignal(mainMenu.requestFocusChange, timeout=1000) as signal:
         mainMenu.aFocusTree.activate(QAction.ActionEvent.Trigger)
@@ -615,8 +659,8 @@ def testGuiMainMenu_Insert(qtbot, monkeypatch, nwGUI, fncPath, projPath, mockRnd
     assert signal.args == [nwFocus.DOCUMENT]
 
     with qtbot.waitSignal(mainMenu.requestFocusChange, timeout=1000) as signal:
-        mainMenu.aFocusOutline.activate(QAction.ActionEvent.Trigger)
-    assert signal.args == [nwFocus.OUTLINE]
+        mainMenu.aFocusStory.activate(QAction.ActionEvent.Trigger)
+    assert signal.args == [nwFocus.STORY]
 
     with qtbot.waitSignal(mainMenu.requestViewChange, timeout=1000) as signal:
         mainMenu.aFindProj.activate(QAction.ActionEvent.Trigger)

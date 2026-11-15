@@ -2,8 +2,9 @@
 novelWriter - Exception Handling
 ================================
 
-This file is a part of novelWriter
-Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2020 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -116,7 +117,7 @@ class ErrorMessage(QDialog):
         self.setSizeGripEnabled(True)
         self.resize(800, 400)
 
-    def setMessage(self, exType: type, exValue: BaseException, exTrace: TracebackType) -> None:
+    def setMessage(self, exType: type[BaseException], exValue: BaseException, exTrace: TracebackType | None) -> None:
         """Generate a message and append session data, error info and
         error traceback.
         """
@@ -141,11 +142,16 @@ class ErrorMessage(QDialog):
             kernelVersion = "Unknown"
 
         try:
-            import enchant
+            if CONFIG.osDarwin:
+                import objc  # type: ignore
 
-            enchantVersion = enchant.__version__
+                spellCheck = f"AppleSpell (PyObjC {objc.__version__})"  # type: ignore
+            else:
+                import enchant
+
+                spellCheck = f"Enchant {enchant.__version__}"
         except Exception:
-            enchantVersion = "Unknown"
+            spellCheck = "Unknown"
 
         try:
             trace = "\n".join(format_tb(exTrace))
@@ -156,7 +162,7 @@ class ErrorMessage(QDialog):
                 f"Host OS: {sys.platform} ({kernelVersion})\n"
                 f"Python: {sys.version.split()[0]} ({sys.hexversion:#x})\n"
                 f"Qt: {QT_VERSION_STR}, PyQt: {PYQT_VERSION_STR}\n"
-                f"Enchant: {enchantVersion}\n\n"
+                f"Spell Check: {spellCheck}\n\n"
                 f"{exType.__name__}:\n{exValue!s}\n\n"
                 f"Traceback:\n{trace}\n"
             )
@@ -173,7 +179,7 @@ class ErrorMessage(QDialog):
         self.close()
 
 
-def exceptionHandler(exType: type, exValue: BaseException, exTrace: TracebackType) -> None:
+def exceptionHandler(exType: type[BaseException], exValue: BaseException, exTrace: TracebackType | None) -> None:
     """Catch unhandled global exceptions."""
     from traceback import print_tb
 

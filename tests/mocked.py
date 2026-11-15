@@ -2,8 +2,9 @@
 novelWriter - Test Suite Mocked Classes
 =======================================
 
-This file is a part of novelWriter
-Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2019 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,9 +22,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from typing import Any, NoReturn
 from unittest.mock import MagicMock
 
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, Qt, QTranslator
 from PyQt6.QtGui import QFont, QIcon, QPixmap
 from PyQt6.QtWidgets import QWidget
 
@@ -31,6 +33,8 @@ from novelwriter.extensions.modified import NPushButton
 
 
 class MockGuiMain(QWidget):
+    """Mock main GUI."""
+
     def __init__(self):
         super().__init__()
         self.mainStatus = MagicMock()
@@ -39,26 +43,34 @@ class MockGuiMain(QWidget):
         self.mainProgress = MagicMock()
         self.projPath = ""
 
-    def postLaunchTasks(self, cmdOpen):
+    def postLaunchTasks(self, cmdOpen: str | None) -> None:
+        """Skip the post-launch tasks."""
         return
 
-    def setStatus(self, message):
+    def setStatus(self, message: str) -> None:
+        """Ignore the status message."""
         return
 
-    def openProject(self, projPath):
+    def openProject(self, projPath: str) -> None:
+        """Record the project path."""
         self.projPath = projPath
 
     def rebuildIndex(self):
+        """Skip rebuilding the index."""
         return
 
     def closeMain(self):
+        """Return a marker string."""
         return "closeMain"
 
     def close(self):
+        """Return a marker string."""
         return "close"
 
 
 class MockTheme:
+    """Mock GUI theme."""
+
     def __init__(self):
         self.baseIconHeight = 20
         self.fontPixelSize = 20
@@ -67,30 +79,47 @@ class MockTheme:
         self.guiFontBU = QFont()
 
     def initThemes(self) -> None:
+        """Skip initialising the themes."""
         return
 
-    def getPixmap(self, *a) -> QPixmap:
+    def getPixmap(self, *a: Any) -> QPixmap:
+        """Return an empty pixmap."""
         return QPixmap()
 
-    def getHeaderDecoration(self, *a) -> QPixmap:
+    def getHeaderDecoration(self, *a: Any) -> QPixmap:
+        """Return an empty pixmap."""
         return QPixmap()
 
-    def getStandardButton(self, *a) -> NPushButton:
+    def getStandardButton(self, *a: Any) -> NPushButton:
+        """Return a minimal push button."""
         return NPushButton(None, "", QSize(1, 1))  # type: ignore
 
-    def getIcon(self, *a) -> QIcon:
+    def getIcon(self, *a: Any) -> QIcon:
+        """Return an empty icon."""
         return QIcon()
 
-    def getItemIcon(self, *a, **k) -> QIcon:
+    def getItemIcon(self, *a: Any, **k: Any) -> QIcon:
+        """Return an empty icon."""
         return QIcon()
 
 
 class MockApp:
+    """Mock application."""
+
     def __init__(self):
+        self._direction = Qt.LayoutDirection.LeftToRight
+
+    def installTranslator(self, language: QTranslator) -> None:
+        """Ignore the translator."""
         return
 
-    def installTranslator(self, language):
-        return
+    def setLayoutDirection(self, direction: Qt.LayoutDirection) -> None:
+        """Store the layout direction."""
+        self._direction = direction
+
+    def layoutDirection(self) -> Qt.LayoutDirection:
+        """Return the stored layout direction."""
+        return self._direction
 
 
 # Error Functions
@@ -98,11 +127,11 @@ class MockApp:
 # Mock functions that will raise errors instead.
 
 
-def causeOSError(*args, **kwargs):
+def causeOSError(*args: Any, **kwargs: Any) -> NoReturn:
     """Raise an OSError."""
     raise OSError("Mock OSError")
 
 
-def causeException(*args, **kwargs):
+def causeException(*args: Any, **kwargs: Any) -> NoReturn:
     """Raise an Exception."""
     raise Exception("Mock Exception")

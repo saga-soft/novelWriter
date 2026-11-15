@@ -2,8 +2,9 @@
 novelWriter - GUI Document Viewer Panel
 =======================================
 
-This file is a part of novelWriter
-Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2023 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,8 +43,9 @@ from novelwriter import SHARED
 from novelwriter.common import checkInt, qtAddAction
 from novelwriter.constants import nwLabels, nwLists, nwStyles, trConst
 from novelwriter.enum import nwChange, nwDocMode, nwItemClass
-from novelwriter.extensions.modified import NFlatIconButton, NTabWidget
-from novelwriter.types import QtDecorationRole, QtHeaderFixed, QtHeaderToContents, QtUserRole
+from novelwriter.extensions.modified import NFlatIconButton
+from novelwriter.extensions.tabwidget import NTabWidget
+from novelwriter.types import QtDecorationRole, QtDisplayRole, QtHeaderFixed, QtHeaderToContents, QtUserRole
 
 if TYPE_CHECKING:
     from novelwriter.core.indexdata import IndexHeading, IndexNode
@@ -169,6 +171,7 @@ class GuiDocViewerPanel(QWidget):
                     self.kwTabs[tClass].addUpdateEntry(key, name, iItem, hItem)
                 else:
                     self.kwTabs[tClass].removeEntry(key)
+        self._refreshUseCounts()
         self._updateTabVisibility()
 
     @pyqtSlot(str)
@@ -190,6 +193,7 @@ class GuiDocViewerPanel(QWidget):
                     break
             else:
                 logger.warning("Could not remove tag '%s' from view panel", key)
+        self._refreshUseCounts()
         self._updateTabVisibility()
 
     @pyqtSlot(list)
@@ -197,6 +201,7 @@ class GuiDocViewerPanel(QWidget):
         """Refresh back references when a tracked handle has changed."""
         if self._lastHandle in updated:
             self.tabBackRefs.refreshContent(self._lastHandle)
+        self._refreshUseCounts()
 
     @pyqtSlot(str)
     def updateStatusLabels(self, kind: str) -> None:
@@ -232,6 +237,13 @@ class GuiDocViewerPanel(QWidget):
         for key, name, tClass, iItem, hItem in data:
             if tClass in self.kwTabs and iItem and hItem:
                 self.kwTabs[tClass].addUpdateEntry(key, name, iItem, hItem)
+        self._refreshUseCounts()
+
+    def _refreshUseCounts(self) -> None:
+        """Update the tag use counts in the tabs."""
+        counts = SHARED.project.index.getTagUseCounts()
+        for cTab in self.kwTabs.values():
+            cTab.setUseCounts(counts)
 
 
 class _ViewPanelBackRefs(QTreeWidget):
@@ -365,7 +377,8 @@ class _ViewPanelKeyWords(QTreeWidget):
     C_IMPORT = 3
     C_DOC = 4
     C_TITLE = 5
-    C_SHORT = 6
+    C_USES = 6
+    C_SHORT = 7
 
     D_TAG = QtUserRole
 
@@ -386,6 +399,7 @@ class _ViewPanelKeyWords(QTreeWidget):
             self.tr("Importance"),
             self.tr("Document"),
             self.tr("Heading"),
+            self.tr("Uses"),
             self.tr("Short Description"),
         ])
         self.setIndentation(0)
@@ -472,13 +486,19 @@ class _ViewPanelKeyWords(QTreeWidget):
             return True
         return False
 
+    def setUseCounts(self, counts: dict[str, int]) -> None:
+        """Set the number of headings referencing each tag."""
+        for tag, trItem in self._treeMap.items():
+            trItem.setData(self.C_USES, QtDisplayRole, counts.get(tag, 0))
+
     def setColumnWidths(self, widths: list[int]) -> None:
         """Set the column widths."""
-        if isinstance(widths, list) and len(widths) >= 4:
+        if isinstance(widths, list) and len(widths) >= 5:
             self.setColumnWidth(self.C_NAME, checkInt(widths[0], 100))
             self.setColumnWidth(self.C_IMPORT, checkInt(widths[1], 100))
             self.setColumnWidth(self.C_DOC, checkInt(widths[2], 100))
             self.setColumnWidth(self.C_TITLE, checkInt(widths[3], 100))
+            self.setColumnWidth(self.C_USES, checkInt(widths[4], 50))
 
     def getColumnWidths(self) -> list[int]:
         """Get the widths of the user-adjustable columns."""
@@ -487,6 +507,7 @@ class _ViewPanelKeyWords(QTreeWidget):
             self.columnWidth(self.C_IMPORT),
             self.columnWidth(self.C_DOC),
             self.columnWidth(self.C_TITLE),
+            self.columnWidth(self.C_USES),
         ]
 
     ##

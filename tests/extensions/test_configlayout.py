@@ -2,8 +2,9 @@
 novelWriter - ConfigLayout Extension Tests
 ==========================================
 
-This file is a part of novelWriter
-Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2026 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,15 +24,19 @@ from __future__ import annotations
 
 import pytest
 
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QLabel
+from pytestqt.qtbot import QtBot
 
 from novelwriter.extensions.configlayout import NScrollableForm
+from novelwriter.types import QtAlignAbsolute, QtAlignLeftMiddle, QtAlignRightMiddle
 
 from tests.helpers import SimpleDialog
+from tests.mocked import MockGuiMain
 
 
 @pytest.mark.gui
-def testNScrollableForm_Main(qtbot, mockGUI):
+def testNScrollableForm_Main(qtbot: QtBot, mockGUI: MockGuiMain):
     """Test the NScrollableForm class."""
     dialog = SimpleDialog()
     form = NScrollableForm(dialog)
@@ -60,8 +65,10 @@ def testNScrollableForm_Main(qtbot, mockGUI):
     form.finalise()
 
     # Set help text for a known and an unknown key
+    form.setLabelText("rowA", "Updated Label")
     form.setHelpText("rowA", "Updated Help")
     form.setUnitText("rowA", "Things")
+    form.setLabelText("unknownKey", "Ignored")
     form.setHelpText("unknownKey", "Ignored")
     form.setUnitText("unknownKey", "Ignored")
 
@@ -72,3 +79,31 @@ def testNScrollableForm_Main(qtbot, mockGUI):
     # Scroll to a known and an unknown label
     form.scrollToLabel("Row A")
     form.scrollToLabel("Unknown Label")
+
+
+@pytest.mark.gui
+def testNScrollableForm_LabelAlignment(qtbot: QtBot, mockGUI: MockGuiMain):
+    """Test that form labels align with the layout direction, not the
+    direction of the label text.
+    """
+    dialog = SimpleDialog()
+    form = NScrollableForm(dialog)
+    dialog.addWidget(form)
+    qtbot.addWidget(dialog)
+
+    # LTR pins labels to the left edge
+    form.addGroupLabel("Group", identifier=1)
+    form.addRow("Row", QLabel("A", form), helpText="Help", editable="row")
+    ltrAlign = QtAlignAbsolute | QtAlignLeftMiddle
+    assert form._sections[1].alignment() == ltrAlign
+    assert form._editableLabel["row"].alignment() == ltrAlign
+    assert form._editableHelp["row"].alignment() == ltrAlign
+
+    # RTL pins English labels to the right edge
+    form.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+    form.addGroupLabel("Group", identifier=2)
+    form.addRow("Row", QLabel("B", form), helpText="Help", editable="rowRTL")
+    rtlAlign = QtAlignAbsolute | QtAlignRightMiddle
+    assert form._sections[2].alignment() == rtlAlign
+    assert form._editableLabel["rowRTL"].alignment() == rtlAlign
+    assert form._editableHelp["rowRTL"].alignment() == rtlAlign

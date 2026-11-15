@@ -2,8 +2,9 @@
 novelWriter - Word List Tests
 =============================
 
-This file is a part of novelWriter
-Copyright (C) 2021 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2021 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,16 +22,20 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QFileDialog
+from pytestqt.qtbot import QtBot
 
 from novelwriter import SHARED
 from novelwriter.core.project import NWProject
 from novelwriter.core.spellcheck import UserDictionary
 from novelwriter.dialogs.wordlist import GuiWordList
+from novelwriter.guimain import GuiMain
 from novelwriter.types import QtAccepted
 
 from tests.helpers import buildTestProject, checkDialogFreedOnClose
@@ -38,7 +43,7 @@ from tests.mocked import causeOSError
 
 
 @pytest.mark.gui
-def testGuiWordList_Main(qtbot, monkeypatch, nwGUI, fncPath, projPath):
+def testGuiWordList_Main(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: GuiMain, fncPath: Path, projPath: Path):
     """Test the word list editor."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)
@@ -178,7 +183,7 @@ def testGuiWordList_Main(qtbot, monkeypatch, nwGUI, fncPath, projPath):
 
 
 @pytest.mark.gui
-def testGuiWordList_MemoryLeakRegression(qtbot, nwGUI, projPath):
+def testGuiWordList_MemoryLeakRegression(qtbot: QtBot, nwGUI: GuiMain, projPath: Path):
     """Test that the dialog is freed when it is closed."""
     buildTestProject(NWProject(), projPath)
     nwGUI.openProject(projPath)

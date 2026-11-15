@@ -2,8 +2,9 @@
 novelWriter - Project Wrapper
 =============================
 
-This file is a part of novelWriter
-Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2018 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ from novelwriter.common import (
     minmax,
     safeIsFile,
 )
-from novelwriter.constants import nwLabels, trConst
+from novelwriter.constants import nwLabels, nwStyles, trConst
 from novelwriter.core.index import Index
 from novelwriter.core.options import OptionState
 from novelwriter.core.projectdata import ProjectData
@@ -51,7 +52,7 @@ from novelwriter.core.projectxml import ProjectXMLReader, ProjectXMLWriter, XMLR
 from novelwriter.core.sessions import SessionLog
 from novelwriter.core.storage import ProjectStorage, ProjectStorageOpen
 from novelwriter.core.tree import ProjectTree
-from novelwriter.enum import nwItemClass, nwItemLayout, nwItemType
+from novelwriter.enum import nwItemClass, nwItemLayout, nwItemType, nwProjectKind
 from novelwriter.error import logException
 
 if TYPE_CHECKING:
@@ -174,11 +175,6 @@ class NWProject:
         return self._storage.lockStatus
 
     @property
-    def currentEditTime(self) -> int:
-        """Return total edit time, including the current session."""
-        return self._data.editTime + round(time() - self._session.start)
-
-    @property
     def currentTotalCount(self) -> int:
         """Return the current total word count from the tree."""
         return self._tree.model.root.count
@@ -268,12 +264,7 @@ class NWProject:
 
         logger.debug("Populating '%s' with text from '%s'", tHandle, sHandle)
         text = self._storage.getDocumentText(sHandle)
-        if (
-            newTitle
-            and (lines := text.split("\n"))
-            and lines
-            and lines[0].startswith(("# ", "## ", "### ", "#### ", "#! ", "##! ", "###! "))
-        ):
+        if newTitle and (lines := text.split("\n")) and lines and lines[0].startswith(nwStyles.H_MARKERS):
             prefix, _, _ = lines[0].partition(" ")
             lines[0] = f"{prefix} {newTitle}"
             text = "\n".join(lines)
@@ -394,10 +385,6 @@ class NWProject:
         self._options.loadSettings()
         self._loadProjectLocalisation()
 
-        # Update recent projects
-        if storePath := self._storage.storagePath:
-            CONFIG.recentProjects.update(storePath, self._data, time())
-
         # Check the project tree consistency
         # This also handles any orphaned files found
         orphans, recovered = self._tree.checkConsistency(self.tr("Recovered"))
@@ -416,6 +403,35 @@ class NWProject:
         self.updateCounts()
         self._session.startSession()
         self.setProjectChanged(False)
+
+        # Check for copies and update recent projects
+        if storePath := self._storage.storagePath:
+            if self._storage.kind == nwProjectKind.BACKUP:
+                stamp = self._storage.timeStamp
+                if SHARED.question(
+                    self.tr(
+                        "This project is a backup copy. Do you want to make it a separate "
+                        "project so novelWriter can tell it apart from the original?"
+                    ),
+                    info=self.tr("Backup from: {0}").format(CONFIG.localDateTime(stamp)) if stamp else "",
+                ):
+                    self._data.setUuid("")
+                # The manifest must be saved as a regular project
+                self.setProjectChanged(True)
+
+            elif (other := CONFIG.recentProjects.findCopy(storePath, self._data.uuid)) and SHARED.question(
+                self.tr(
+                    "This project appears to be a copy of another project. "
+                    "It was either copied outside of novelWriter, or is a backup copy. "
+                    "Do you want to make it a separate project so novelWriter can tell them apart?"
+                ),
+                info=self.tr("Path: {0}").format(other),
+            ):
+                self._data.setUuid("")
+                self.setProjectChanged(True)
+
+            CONFIG.recentProjects.update(storePath, self._data, time())
+
         self._valid = True
         self._state = NWProjectState.READY
         self._storage.lockSession()  # Lock only after a successful open. See issue #1977.
@@ -464,7 +480,7 @@ class NWProject:
             self._options.saveSettings()
             self._index.saveIndex()
 
-        self._storage.runPostSaveTasks(autoSave=autoSave)
+        self._storage.runPostSaveTasks(saveTime=saveTime, autoSave=autoSave)
 
         # Update recent projects
         if storagePath := self._storage.storagePath:
@@ -516,18 +532,19 @@ class NWProject:
             SHARED.error(self.tr("Could not create backup folder."), exc=exc)
             return False
 
+        saveTime = time()
         match CONFIG.backupInterval:
             case "day":
-                timeStamp = formatTimeStamp(time(), fileSafe=True, fmt="%Y-%m-%d")
+                timeStamp = formatTimeStamp(saveTime, fileSafe=True, fmt="%Y-%m-%d")
             case "week":
-                timeStamp = formatTimeStamp(time(), fileSafe=True, fmt="%G-W%V")
+                timeStamp = formatTimeStamp(saveTime, fileSafe=True, fmt="%G-W%V")
             case "month":
-                timeStamp = formatTimeStamp(time(), fileSafe=True, fmt="%Y-%m")
+                timeStamp = formatTimeStamp(saveTime, fileSafe=True, fmt="%Y-%m")
             case _:  # Option "session" falls through here
-                timeStamp = formatTimeStamp(time(), fileSafe=True)
+                timeStamp = formatTimeStamp(saveTime, fileSafe=True)
 
         archName = baseDir / f"{cleanName} {timeStamp}.zip"
-        if self._storage.zipIt(archName, compression=2):
+        if self._storage.zipIt(archName, saveTime, compression=2):
             if doNotify:
                 size = formatInt(getFileSize(archName))
                 SHARED.info(
@@ -557,13 +574,13 @@ class NWProject:
         self._data.itemImport.add(None, self.tr("Major"), "purple", "BLOCK_3", 0)
         self._data.itemImport.add(None, self.tr("Main"), "purple", "BLOCK_4", 0)
 
-    def setProjectLang(self, language: str | None) -> None:
+    def setProjectLang(self, language: str | None, rtl: bool) -> None:
         """Set the project-specific language."""
         language = checkStringNone(language, None)
-        if self._data.language != language:
-            self._data.setLanguage(language)
+        reload = self._data.language != language
+        self._data.setLanguage(language, rtl)
+        if reload:
             self._loadProjectLocalisation()
-            self.setProjectChanged(True)
 
     def setProjectChanged(self, status: bool) -> bool:
         """Toggle the project changed flag, and propagate the

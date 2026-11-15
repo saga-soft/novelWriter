@@ -2,8 +2,9 @@
 novelWriter - Manuscript Document Builder
 =========================================
 
-This file is a part of novelWriter
-Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors
+This file is a part of novelWriter.
+
+Copyright (C) 2022 Veronica Berglyd Olsen and novelWriter contributors.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ logger = logging.getLogger(__name__)
 
 
 class DocumentBuilder:
-    """Core: Manuscript Document Build Class.
+    """Manuscript: Manuscript Document Build Class.
 
     This is the core tool that assembles a project and outputs a
     manuscript, based on a build definition object (BuildSettings).
@@ -125,6 +126,7 @@ class DocumentBuilder:
         filtered = self._setupBuild(makeObj)
         makeObj.initDocument()
         makeObj.setShowNewPage(newPage)
+        makeObj.setProblemAnchors(True)
         self._outline = True
         yield from self._iterBuild(makeObj, filtered)
         makeObj.closeDocument()
@@ -160,6 +162,7 @@ class DocumentBuilder:
         elif bFormat in (nwBuildFmt.STD_MD, nwBuildFmt.EXT_MD):
             makeObj = ToMarkdown(self._project, bFormat == nwBuildFmt.EXT_MD)
             filtered = self._setupBuild(makeObj)
+            makeObj.initDocument()
             yield from self._iterBuild(makeObj, filtered)
             makeObj.closeDocument()
             if self._build.getBool("format.replaceTabs"):
@@ -168,6 +171,7 @@ class DocumentBuilder:
         elif bFormat in (nwBuildFmt.NWD, nwBuildFmt.J_NWD):
             makeObj = ToRaw(self._project)
             filtered = self._setupBuild(makeObj)
+            makeObj.initDocument()
             yield from self._iterBuild(makeObj, filtered)
             makeObj.closeDocument()
             if self._build.getBool("format.replaceTabs"):
@@ -232,7 +236,10 @@ class DocumentBuilder:
         textFont.fromString(self._build.getStr("format.textFont"))
 
         bldObj.setTextFont(textFont)
-        bldObj.setLanguage(self._build.getStr("doc.metaLanguage") or self._project.data.language)
+        bldObj.setLanguage(
+            self._build.getStr("doc.metaLanguage") or self._project.data.language,
+            self._project.data.isRTL,
+        )
 
         bldObj.setPartitionFormat(
             self._build.getStr("headings.fmtPart"),
@@ -260,19 +267,19 @@ class DocumentBuilder:
         )
         bldObj.setTitleStyle(
             self._build.getBool("headings.centerTitle"),
-            self._build.getBool("headings.breakTitle"),
+            self._build.getInt("headings.breakTitle"),
         )
         bldObj.setPartitionStyle(
             self._build.getBool("headings.centerPart"),
-            self._build.getBool("headings.breakPart"),
+            self._build.getInt("headings.breakPart"),
         )
         bldObj.setChapterStyle(
             self._build.getBool("headings.centerChapter"),
-            self._build.getBool("headings.breakChapter"),
+            self._build.getInt("headings.breakChapter"),
         )
         bldObj.setSceneStyle(
             self._build.getBool("headings.centerScene"),
-            self._build.getBool("headings.breakScene"),
+            self._build.getInt("headings.breakScene"),
         )
 
         bldObj.setJustify(
@@ -287,10 +294,12 @@ class DocumentBuilder:
             self._build.getFloat("format.firstIndentWidth"),
             self._build.getBool("format.indentFirstPar"),
         )
+        bldObj.setTabSize(self._build.getFloat("format.tabSize"))
         bldObj.setHeadingStyles(
             self._build.getBool("format.colorHeadings"),
             self._build.getBool("format.boldHeadings"),
             self._build.getBool("format.upperHeadings"),
+            self._build.getBool("format.showStatus"),
         )
 
         bldObj.setTitleProperties(
@@ -322,6 +331,10 @@ class DocumentBuilder:
             self._build.getFloat("format.textMarginT"),
             self._build.getFloat("format.textMarginB"),
         )
+        bldObj.setListProperties(
+            self._build.getFloat("format.listMarginT"),
+            self._build.getFloat("format.listMarginB"),
+        )
         bldObj.setSeparatorProperties(
             self._build.getFloat("format.sepMarginT"),
             self._build.getFloat("format.sepMarginB"),
@@ -336,6 +349,9 @@ class DocumentBuilder:
         bldObj.setCommentType(nwComment.STORY, self._build.getBool("text.includeStory"))
         bldObj.setCommentType(nwComment.NOTE, self._build.getBool("text.includeNotes"))
 
+        if isinstance(bldObj, ToEPub):
+            bldObj.setNestedToC(self._build.getBool("epub.nestedToc"))
+
         if isinstance(bldObj, ToHtml):
             bldObj.setStyles(self._build.getBool("html.addStyles"))
             bldObj.setReplaceUnicode(self._build.getBool("format.stripUnicode"))
@@ -343,11 +359,12 @@ class DocumentBuilder:
         if isinstance(bldObj, ToOdt | ToDocX):
             bldObj.setHeaderFormat(
                 self._build.getStr("doc.pageHeader"),
+                self._build.getStr("doc.pageHeaderEven"),
                 self._build.getInt("doc.pageCountOffset"),
             )
 
         if isinstance(bldObj, ToOdt | ToDocX | ToQTextDocument):
-            scale = nwLabels.UNIT_SCALE.get(self._build.getStr("format.pageUnit"), 1.0)
+            scale = nwLabels.PAGE_UNIT_SCALE.get(self._build.getStr("format.pageUnit"), 1.0)
             pW, pH = nwLabels.PAPER_SIZE.get(self._build.getStr("format.pageSize"), (-1.0, -1.0))
             bldObj.setPageLayout(
                 pW if pW > 0.0 else scale * self._build.getFloat("format.pageWidth"),
@@ -356,6 +373,8 @@ class DocumentBuilder:
                 scale * self._build.getFloat("format.bottomMargin"),
                 scale * self._build.getFloat("format.leftMargin"),
                 scale * self._build.getFloat("format.rightMargin"),
+                scale * self._build.getFloat("format.gutterMargin"),
+                self._build.getBool("format.doublePages"),
             )
             bldObj.setLineForMargin(self._build.getBool("format.lineForMargin"))
 
@@ -379,7 +398,6 @@ class DocumentBuilder:
                             bldObj.buildOutline()
                 elif tItem.isFileType():
                     bldObj.setText(tHandle)
-                    bldObj.doPreProcessing()
                     bldObj.tokenizeText()
                     if self._count:
                         bldObj.countStats()
