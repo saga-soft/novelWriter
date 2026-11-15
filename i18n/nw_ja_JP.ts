@@ -101,7 +101,7 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Insert note root folder labels as titles</source>
-      <translation type="unfinished"/>
+      <translation>ノートのルートフォルダーラベルをタイトルとして挿入</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -121,7 +121,7 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Tab size</source>
-      <translation type="unfinished"/>
+      <translation>タブサイズ</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -176,7 +176,7 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Show status label under headings</source>
-      <translation type="unfinished"/>
+      <translation>見出しの下にステータスラベルを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -236,7 +236,7 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>List</source>
-      <translation type="unfinished">一覧</translation>
+      <translation>リスト</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -266,27 +266,27 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Top and bottom margins</source>
-      <translation type="unfinished"/>
+      <translation>上部と下部のマージン</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Left and right margins</source>
-      <translation type="unfinished"/>
+      <translation>左側と右側のマージン</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Inner and outer margins</source>
-      <translation type="unfinished"/>
+      <translation>内側と外側のマージン</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Gutter margin</source>
-      <translation type="unfinished"/>
+      <translation>ガターのマージン</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Double-sided pages</source>
-      <translation type="unfinished"/>
+      <translation>両面ページ</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -301,7 +301,7 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Page header for even pages</source>
-      <translation type="unfinished"/>
+      <translation>偶数ページのページ見出し</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -316,12 +316,12 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>EPUB Options</source>
-      <translation type="unfinished"/>
+      <translation>EPUB設定</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Nested table of contents</source>
-      <translation type="unfinished"/>
+      <translation>ネストされた目次</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -655,12 +655,12 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Note</source>
-      <translation type="unfinished">ノート</translation>
+      <translation>ノート</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Story Structure</source>
-      <translation type="unfinished"/>
+      <translation>ストーリー構造</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -715,12 +715,12 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Saved</source>
-      <translation type="unfinished"/>
+      <translation>保存済み</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Unsaved</source>
-      <translation type="unfinished"/>
+      <translation>未保存</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -745,7 +745,7 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Missing Auto-Replace Keys</source>
-      <translation type="unfinished"/>
+      <translation>見つからない自動置換キー</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -1095,17 +1095,17 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>No Break</source>
-      <translation type="unfinished"/>
+      <translation>区切りなし</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Any Page</source>
-      <translation type="unfinished"/>
+      <translation>任意のページ</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Odd Page</source>
-      <translation type="unfinished"/>
+      <translation>奇数ページ</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -1332,12 +1332,12 @@
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>Show Tabs and Spaces</source>
-      <translation type="unfinished"/>
+      <translation>タブとスペースを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>Show Line Endings</source>
-      <translation type="unfinished"/>
+      <translation>行末を表示</translation>
     </message>
   </context>
   <context>
@@ -1536,7 +1536,7 @@
     <message>
       <location filename="../novelwriter/editor/editor.py"/>
       <source>Spell checking requires the package {0}. It does not appear to be installed.</source>
-      <translation type="unfinished"/>
+      <translation>スペルチェックには{0}パッケージが必要です。現在インストールされていません。</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/editor.py"/>
@@ -1589,52 +1589,52 @@
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>Show/Hide Viewer Panel</source>
-      <translation type="unfinished">ビューアーパネルの表示/非表示</translation>
+      <translation>ビューアーパネルの表示/非表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>Options</source>
-      <translation type="unfinished">オプション</translation>
+      <translation>設定</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>Zoom Out</source>
-      <translation type="unfinished">縮小</translation>
+      <translation>縮小</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>Reset Zoom</source>
-      <translation type="unfinished">拡大をリセット</translation>
+      <translation>拡大率をリセット</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>Zoom In</source>
-      <translation type="unfinished">拡大</translation>
+      <translation>拡大</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>Selected: {0}</source>
-      <translation type="unfinished">選択済み: {0}</translation>
+      <translation>選択済み: {0}</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>NORMAL</source>
-      <translation type="unfinished">NORMAL</translation>
+      <translation>NORMAL</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>INSERT</source>
-      <translation type="unfinished">INSERT</translation>
+      <translation>INSERT</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>VISUAL</source>
-      <translation type="unfinished">VISUAL</translation>
+      <translation>VISUAL</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>V-LINE</source>
-      <translation type="unfinished">V-LINE</translation>
+      <translation>V-LINE</translation>
     </message>
   </context>
   <context>
@@ -1642,12 +1642,12 @@
     <message>
       <location filename="../novelwriter/editor/header.py"/>
       <source>Outline</source>
-      <translation type="unfinished">アウトライン</translation>
+      <translation>アウトライン</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/header.py"/>
       <source>Close</source>
-      <translation type="unfinished">閉じる</translation>
+      <translation>閉じる</translation>
     </message>
   </context>
   <context>
@@ -1691,27 +1691,27 @@
     <message>
       <location filename="../novelwriter/editor/docpanes.py"/>
       <source>Please open a document to import the text file into.</source>
-      <translation type="unfinished">テキストファイルをインポートするには、ドキュメントを開いてください。</translation>
+      <translation>テキストファイルをインポートするには、ドキュメントを開いてください。</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/docpanes.py"/>
       <source>Import File</source>
-      <translation type="unfinished">ファイルをインポート</translation>
+      <translation>ファイルをインポート</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/docpanes.py"/>
       <source>Could not read file. The file must be an existing text file.</source>
-      <translation type="unfinished">ファイルを読み込めませんでした。ファイルは既存のテキストファイルである必要があります。</translation>
+      <translation>ファイルを読み込めませんでした。ファイルは既存のテキストファイルである必要があります。</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/docpanes.py"/>
       <source>Importing the file will overwrite the current content of the document. Do you want to proceed?</source>
-      <translation type="unfinished">ファイルをインポートするとドキュメントの現在の内容が上書きされます。続行しますか？</translation>
+      <translation>ファイルをインポートするとドキュメントの現在の内容が上書きされます。続行しますか？</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/docpanes.py"/>
       <source>Could not find the reference for tag '{0}'. It either doesn't exist, or the index is out of date. The index can be updated from the Tools menu, or by pressing {1}.</source>
-      <translation type="unfinished">タグ '{0}' の参照が見つかりませんでした。タグが存在しないか、インデックスが古いかのどちらかです。インデックスはツールメニューから更新するか、{1} を押して更新することができます。</translation>
+      <translation>タグ '{0}' の参照が見つかりませんでした。タグが存在しないか、インデックスが古いかのどちらかです。インデックスはツールメニューから更新するか、{1} を押して更新することができます。</translation>
     </message>
   </context>
   <context>
@@ -1792,7 +1792,7 @@
     <message>
       <location filename="../novelwriter/editor/edittoolbar.py"/>
       <source>Markdown Link</source>
-      <translation type="unfinished"/>
+      <translation>マークダウンリンク</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/edittoolbar.py"/>
@@ -1832,27 +1832,27 @@
     <message>
       <location filename="../novelwriter/editor/edittoolbar.py"/>
       <source>Format as Bullet List</source>
-      <translation type="unfinished"/>
+      <translation>箇条書きリストとしてフォーマット</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/edittoolbar.py"/>
       <source>Format as Numbered List</source>
-      <translation type="unfinished"/>
+      <translation>番号付けリストとしてフォーマット</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/edittoolbar.py"/>
       <source>Align Left</source>
-      <translation type="unfinished">左揃え</translation>
+      <translation>左揃え</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/edittoolbar.py"/>
       <source>Align Centre</source>
-      <translation type="unfinished">中央揃え</translation>
+      <translation>中央揃え</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/edittoolbar.py"/>
       <source>Align Right</source>
-      <translation type="unfinished">右揃え</translation>
+      <translation>右揃え</translation>
     </message>
   </context>
   <context>
@@ -1875,7 +1875,7 @@
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
       <source>Enable First Line Indent for Novel Documents</source>
-      <translation type="unfinished"/>
+      <translation>小説ドキュメントの最初の行のインデントを有効</translation>
     </message>
   </context>
   <context>
@@ -1965,17 +1965,17 @@
     <message>
       <location filename="../novelwriter/dialogs/editlink.py"/>
       <source>Link</source>
-      <translation type="unfinished"/>
+      <translation>リンク</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/editlink.py"/>
       <source>Link Text</source>
-      <translation type="unfinished"/>
+      <translation>リンクテキスト</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/editlink.py"/>
       <source>URL</source>
-      <translation type="unfinished"/>
+      <translation>URL</translation>
     </message>
   </context>
   <context>
@@ -2267,12 +2267,12 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Go to Story View</source>
-      <translation type="unfinished"/>
+      <translation>ストーリービューに移動</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Show/Hide Tree View</source>
-      <translation type="unfinished"/>
+      <translation>ツリービューの表示/非表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2412,12 +2412,12 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>En Space</source>
-      <translation type="unfinished"/>
+      <translation>Enスペース</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Em Space</source>
-      <translation type="unfinished"/>
+      <translation>Emスペース</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2552,7 +2552,7 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Link</source>
-      <translation type="unfinished"/>
+      <translation>リンク</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2642,12 +2642,12 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Bullet List</source>
-      <translation type="unfinished"/>
+      <translation>箇条書きリスト</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Numbered List</source>
-      <translation type="unfinished"/>
+      <translation>番号付きリスト</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2913,7 +2913,7 @@
     <message>
       <location filename="../novelwriter/manuscript/manuscript.py"/>
       <source>Problems</source>
-      <translation type="unfinished"/>
+      <translation>問題</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/manuscript.py"/>
@@ -3039,7 +3039,7 @@
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
       <source>Include Sub-Heading Counts</source>
-      <translation type="unfinished"/>
+      <translation>サブ見出し数を含める</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
@@ -3065,17 +3065,17 @@
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Outline View Settings</source>
-      <translation type="unfinished"/>
+      <translation>アウトラインビューの設定</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Content</source>
-      <translation type="unfinished"/>
+      <translation>コンテンツ</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>General</source>
-      <translation type="unfinished">一般</translation>
+      <translation>一般</translation>
     </message>
   </context>
   <context>
@@ -3183,17 +3183,17 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>If off, only shows novel word count.</source>
-      <translation type="unfinished"/>
+      <translation>オフの場合、小説の単語数のみが表示されます。</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Force right-to-left layout</source>
-      <translation type="unfinished"/>
+      <translation>右から左へのレイアウトを強制</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>If off, layout direction is determined by the display language.</source>
-      <translation type="unfinished"/>
+      <translation>オフの場合、レイアウト方向は表示言語によって決定されます。</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3228,27 +3228,27 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Hides the entire document footer.</source>
-      <translation type="unfinished"/>
+      <translation>ドキュメントのフッター全体を隠します。</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Minimal document header in "Focus Mode"</source>
-      <translation type="unfinished"/>
+      <translation>"フォーカスモード"でドキュメントのヘッダーを最小化</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Hides the title and most buttons.</source>
-      <translation type="unfinished"/>
+      <translation>タイトルとほとんどのボタンを隠します。</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Show writing goal in "Focus Mode"</source>
-      <translation type="unfinished"/>
+      <translation>"フォーカスモード"で執筆目標を表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Keeps the goal progress in the status bar.</source>
-      <translation type="unfinished"/>
+      <translation>ステータスバーの目標の進捗を維持します。</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3453,7 +3453,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Tab size</source>
-      <translation type="unfinished"/>
+      <translation>タブサイズ</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3533,7 +3533,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Shows the line of the cursor in a different background colour.</source>
-      <translation type="unfinished"/>
+      <translation>カーソルの線を異なる背景色で表示します。</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3823,17 +3823,17 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>More</source>
-      <translation type="unfinished"/>
+      <translation>詳細</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Advanced</source>
-      <translation type="unfinished"/>
+      <translation>高度</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Use Unix line endings for all project files</source>
-      <translation type="unfinished"/>
+      <translation>すべてのプロジェクトファイルにUnix行末を使用</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -4091,7 +4091,7 @@
     <message>
       <location filename="../novelwriter/gui/sidebar.py"/>
       <source>Story View</source>
-      <translation type="unfinished"/>
+      <translation>ストーリービュー</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/sidebar.py"/>
@@ -4119,12 +4119,12 @@
     <message>
       <location filename="../novelwriter/story/storyviewbase.py"/>
       <source>Name</source>
-      <translation type="unfinished">名前</translation>
+      <translation>名前</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyviewbase.py"/>
       <source>Do you want to save your changes to '{0}'?</source>
-      <translation type="unfinished">'{0}' への変更を保存しますか？</translation>
+      <translation>'{0}' への変更を保存しますか？</translation>
     </message>
   </context>
   <context>
@@ -4132,82 +4132,82 @@
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Story View</source>
-      <translation type="unfinished"/>
+      <translation>ストーリービュー</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Export the story view data</source>
-      <translation type="unfinished"/>
+      <translation>ストーリービューのデータをエクスポート</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Manage Views</source>
-      <translation type="unfinished"/>
+      <translation>ビューの管理</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Add a new view</source>
-      <translation type="unfinished"/>
+      <translation>新規ビューを追加</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Delete current view</source>
-      <translation type="unfinished"/>
+      <translation>現在のビューを削除</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Duplicate current view</source>
-      <translation type="unfinished"/>
+      <translation>現在のビューを複製</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Edit current view</source>
-      <translation type="unfinished"/>
+      <translation>現在のビューを編集</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Refresh</source>
-      <translation type="unfinished">更新</translation>
+      <translation>更新</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Refresh current view</source>
-      <translation type="unfinished"/>
+      <translation>現在のビューを更新</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Highlight Reference</source>
-      <translation type="unfinished"/>
+      <translation>参照をハイライト</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Delete view '{0}'?</source>
-      <translation type="unfinished"/>
+      <translation>ビュー '{0}' を削除しますか？</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Save Outline As</source>
-      <translation type="unfinished">アウトラインを名前を付けて保存</translation>
+      <translation>アウトラインを名前を付けて保存</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Title</source>
-      <translation type="unfinished">タイトル</translation>
+      <translation>タイトル</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Document</source>
-      <translation type="unfinished">ドキュメント</translation>
+      <translation>ドキュメント</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Line</source>
-      <translation type="unfinished">行</translation>
+      <translation>行</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storyview.py"/>
       <source>Status</source>
-      <translation type="unfinished">ステータス</translation>
+      <translation>ステータス</translation>
     </message>
   </context>
   <context>
@@ -4469,17 +4469,17 @@
     <message>
       <location filename="../novelwriter/core/project.py"/>
       <source>This project is a backup copy. Do you want to make it a separate project so novelWriter can tell it apart from the original?</source>
-      <translation type="unfinished"/>
+      <translation>このプロジェクトはバックアップコピーです。novelWriterが元のプロジェクトと区別できるように、別のプロジェクトに分割しますか？</translation>
     </message>
     <message>
       <location filename="../novelwriter/core/project.py"/>
       <source>Backup from: {0}</source>
-      <translation type="unfinished"/>
+      <translation>バックアップ元: {0}</translation>
     </message>
     <message>
       <location filename="../novelwriter/core/project.py"/>
       <source>This project appears to be a copy of another project. It was either copied outside of novelWriter, or is a backup copy. Do you want to make it a separate project so novelWriter can tell them apart?</source>
-      <translation type="unfinished"/>
+      <translation>このプロジェクトは、別のプロジェクトのコピーのようです。novelWriterの外でコピーされた、もしくはバックアップコピーです。 novelWriterがそれらを区別できるように、別のプロジェクトに分割しますか？</translation>
     </message>
     <message>
       <location filename="../novelwriter/core/project.py"/>
@@ -4585,7 +4585,7 @@
     <message>
       <location filename="../novelwriter/models/outlinemodel.py"/>
       <source>Page {0}</source>
-      <translation type="unfinished"/>
+      <translation>ページ {0}</translation>
     </message>
   </context>
   <context>
@@ -4593,7 +4593,7 @@
     <message>
       <location filename="../novelwriter/core/coretools.py"/>
       <source>The target folder is not empty. Please choose another folder.</source>
-      <translation>ターゲットフォルダーが空ではありません。別のフォルダーを選択してください。</translation>
+      <translation>対象フォルダーが空ではありません。別のフォルダーを選択してください。</translation>
     </message>
     <message>
       <location filename="../novelwriter/core/coretools.py"/>
@@ -4673,7 +4673,7 @@
     <message>
       <location filename="../novelwriter/core/coretools.py"/>
       <source>The target folder already exists. Please choose another folder.</source>
-      <translation>ターゲットフォルダーは既に存在します。別のフォルダーを選択してください。</translation>
+      <translation>対象フォルダーは既に存在します。別のフォルダーを選択してください。</translation>
     </message>
     <message>
       <location filename="../novelwriter/core/coretools.py"/>
@@ -4696,7 +4696,7 @@
     <message>
       <location filename="../novelwriter/models/searchmodel.py"/>
       <source>{0} matches</source>
-      <translation type="unfinished"/>
+      <translation>{0} 件一致</translation>
     </message>
   </context>
   <context>
@@ -4815,127 +4815,127 @@
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Outline</source>
-      <translation type="unfinished">アウトライン</translation>
+      <translation>アウトライン</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Appearance</source>
-      <translation type="unfinished">外観</translation>
+      <translation>外観</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Use syntax colours</source>
-      <translation type="unfinished"/>
+      <translation>シンタックスカラーを使用</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Row height</source>
-      <translation type="unfinished"/>
+      <translation>行の高さ</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Include sub-heading counts</source>
-      <translation type="unfinished"/>
+      <translation>サブ見出し数を含める</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Show document status</source>
-      <translation type="unfinished"/>
+      <translation>ドキュメントのステータスを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Show icons for comment types</source>
-      <translation type="unfinished"/>
+      <translation>コメントタイプのアイコンを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Show icons for reference types</source>
-      <translation type="unfinished"/>
+      <translation>参照タイプのアイコンを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Join comments of the same type</source>
-      <translation type="unfinished"/>
+      <translation>同じタイプのコメントを結合</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Documents</source>
-      <translation type="unfinished"/>
+      <translation>ドキュメント</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Show partitions</source>
-      <translation type="unfinished"/>
+      <translation>パーティションを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Show chapters</source>
-      <translation type="unfinished"/>
+      <translation>チャプターを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Show scenes</source>
-      <translation type="unfinished"/>
+      <translation>シーンを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Show sections</source>
-      <translation type="unfinished"/>
+      <translation>セクションを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Show inactive partitions</source>
-      <translation type="unfinished"/>
+      <translation>非アクティブなパーティションを表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Progression</source>
-      <translation type="unfinished"/>
+      <translation>進捗</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Show story progression</source>
-      <translation type="unfinished"/>
+      <translation>ストーリーの進捗を表示</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Count per page</source>
-      <translation type="unfinished"/>
+      <translation>ページあたりの数</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Clear double page</source>
-      <translation type="unfinished"/>
+      <translation>二重ページを削除</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Relative to project target</source>
-      <translation type="unfinished"/>
+      <translation>プロジェクト目標との比較</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Columns</source>
-      <translation type="unfinished"/>
+      <translation>列</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Characters</source>
-      <translation type="unfinished">文字数</translation>
+      <translation>登場人物</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Plot</source>
-      <translation type="unfinished">プロット</translation>
+      <translation>プロット</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>World</source>
-      <translation type="unfinished"/>
+      <translation>世界</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/storysettings.py"/>
       <source>Comments</source>
-      <translation type="unfinished">コメント</translation>
+      <translation>コメント</translation>
     </message>
   </context>
   <context>
@@ -4943,42 +4943,42 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>characters</source>
-      <translation type="unfinished"/>
+      <translation>登場人物</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>words</source>
-      <translation type="unfinished"/>
+      <translation>単語</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>lines</source>
-      <translation type="unfinished"/>
+      <translation>行</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>px</source>
-      <translation type="unfinished">px</translation>
+      <translation>px</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>pt</source>
-      <translation type="unfinished"/>
+      <translation>pt</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>em</source>
-      <translation type="unfinished">em</translation>
+      <translation>em</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>seconds</source>
-      <translation type="unfinished">秒</translation>
+      <translation>秒</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>minutes</source>
-      <translation type="unfinished">分</translation>
+      <translation>分</translation>
     </message>
   </context>
   <context>
@@ -5024,42 +5024,42 @@
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Column</source>
-      <translation type="unfinished"/>
+      <translation>列</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Columns</source>
-      <translation type="unfinished"/>
+      <translation>列</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Content</source>
-      <translation type="unfinished"/>
+      <translation>コンテンツ</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Add to column</source>
-      <translation type="unfinished"/>
+      <translation>列に追加</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Remove from column</source>
-      <translation type="unfinished"/>
+      <translation>列から削除</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Rename column</source>
-      <translation type="unfinished"/>
+      <translation>列の名前を変更</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Add column</source>
-      <translation type="unfinished"/>
+      <translation>列を追加</translation>
     </message>
     <message>
       <location filename="../novelwriter/story/outline.py"/>
       <source>Remove column</source>
-      <translation type="unfinished"/>
+      <translation>列を削除</translation>
     </message>
   </context>
   <context>
@@ -5484,7 +5484,7 @@
     <message>
       <location filename="../novelwriter/manuscript/manuscript.py"/>
       <source>Problems</source>
-      <translation type="unfinished"/>
+      <translation>問題</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/manuscript.py"/>
@@ -5497,7 +5497,7 @@
     <message>
       <location filename="../novelwriter/manuscript/manuscript.py"/>
       <source>&lt;{0}&gt; in {1}</source>
-      <translation type="unfinished"/>
+      <translation>{1}内の&lt;{0}&gt;</translation>
     </message>
   </context>
   <context>
@@ -5538,7 +5538,7 @@
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Ignore case for keywords</source>
-      <translation type="unfinished"/>
+      <translation>これらのキーワードの大文字と小文字を区別しない</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
@@ -5609,12 +5609,12 @@
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Enable right-to-left text support</source>
-      <translation type="unfinished"/>
+      <translation>右から左へのテキストサポートを有効</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Improves RTL text handling in editor and manuscript.</source>
-      <translation type="unfinished"/>
+      <translation>エディタや原稿でRTLテキストの処理を改善します。</translation>
     </message>
   </context>
   <context>
@@ -5907,7 +5907,7 @@
     <message>
       <location filename="../novelwriter/editor/viewerpanel.py"/>
       <source>Uses</source>
-      <translation type="unfinished"/>
+      <translation>使用数</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/viewerpanel.py"/>
