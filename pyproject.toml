@@ -165,6 +165,8 @@ preview = true
 include = ["novelwriter", "tests"]
 reportIncompatibleMethodOverride = false
 pythonVersion = "3.11"
+venvPath = "."
+venv = ".venv"
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
