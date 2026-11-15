@@ -1,5 +1,75 @@
 # novelWriter Changelog
 
+## Version 2026.3 RC 1 [2026-11-15]
+
+### Release Notes
+
+This is a release candidate of the next release version, and is intended for testing purposes.
+Please be careful when using this version on live writing projects, and make sure you take frequent
+backups.
+
+See the website for complete [Release Notes](https://novelwriter.io/releases/release_26_3.html).
+
+### Detailed Changelog
+
+**Bugfixes**
+
+* Fixed a bug from the Beta 1 release where some of the new icons and design elements in the Story
+  View and the editor toolbar did not update when the theme changed. By @vkbo. Issue #3123.
+  PR #3125.
+
+**Features**
+
+* Rewrote the auto-replace feature. Only defined keys are now highlighted in the editor, and a new
+  project setting allows keys to ignore case. Keys are applied to headings, lists, comments and
+  text paragraphs instead of the full raw text. Undefined keys are highlighted in red in the
+  manuscript preview, and listed in a new Problems tab, where clicking them navigates to their
+  location. By @vkbo. Issue #2270. PRs #3128 and #3131.
+* Added a setting to show the writing goal progress in Focus Mode, keeping the status bar visible.
+  By @vkbo. Issue #3064. PR #3116.
+* Added a setting to hide most of the document header in Focus Mode. By @vkbo. Issue #2225.
+  PR #3115.
+* Added a nested table of contents to EPUB manuscripts when parts and chapters form a hierarchy,
+  controlled by a new toggle. By @vkbo. Issue #3129. PR #3130.
+
+**Improvements**
+
+* The editor and viewer footers have been unified. The viewer footer now also shows the status or
+  importance label and the word count, and both footers have a zoom label and buttons in place of
+  the editor's old line counter. Toggles have moved into a pop-up menu on the left side of the
+  footer, including "Show Tabs and Spaces" and "Show Line Endings", which have been removed from
+  Preferences. By @vkbo. Issue #1802. PRs #3115, #3117 and #3126.
+* Added a first line indent option to the viewer, which only applies to novel documents. By @vkbo.
+  Issue #3095. PRs #3115 and #3126.
+* The tab size setting is now in em units, so it scales with font size and zoom, and defaults to
+  2.0 em. Users who changed the old tab width setting will need to set it again. A tab size setting
+  has also been added to manuscript builds, and applies to the ODT and DOCX formats. Zoom and text
+  font sizes are capped to 6 to 72 pt, and indent and tab sizes can go up to 19.9 em. Zooming in
+  the viewer no longer resets on document reload. By @vkbo. Issue #3122. PR #3126.
+* Added separate margin settings for lists in manuscript builds, instead of reusing the text
+  margins. This also fixes the first line indent of the paragraph following a list. By @vkbo.
+  Issue #3114. PR #3127.
+* The Story View can now show multiple notes of the same type on a heading either as separate
+  entries or as a single joined entry. By @vkbo. Issue #3118. PR #3121.
+* The Vim mode code has been moved out of the editor class and reviewed, fixing a number of bugs
+  with stuck or pending commands, line-wise edits, wrapped paragraphs and Focus Mode. Navigation
+  keys now work in NORMAL mode, paste distinguishes line-wise and character-wise yanks, and
+  `Ctrl+R` is now redo. By @vkbo. Discussion #2027. PR #3133.
+* Added "En Space" and "Em Space" entries to the Insert menu. By @vkbo. Issue #2535. PR #3131.
+
+**User Interface**
+
+* The build setting "Add titles for note root folders" has been renamed to "Insert note root folder
+  labels as titles". By @vkbo. Issue #2735. PR #3131.
+
+**Packaging**
+
+* The macOS build is now notarised. The macOS release no longer depends on Enchant, but uses the
+  system spell checker directly, and the minimum supported macOS version is now 15.0. By @kkostov.
+  PR #3018.
+
+----
+
 ## Version 2026.2.3 [2026-11-14]
 
 ### Release Notes
