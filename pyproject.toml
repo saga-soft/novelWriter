@@ -58,6 +58,9 @@ test = [
 ]
 lint = ["pyright", "ruff"]
 
+[tool.uv.dependency-groups]
+docs = { requires-python = ">=3.13" }
+
 [project.urls]
 Homepage = "https://novelwriter.io"
 Documentation = "https://docs.novelwriter.io"
