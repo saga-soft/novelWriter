@@ -80,6 +80,7 @@ Colour themes included with novelWriter were adapted from the following sources:
 * **Dracula** theme by Zeno Rocha
 * **Espresso** theme by Sainnhe Park and Antoine Cotten
 * **Everforest** themes by Sainnhe Park
+* **Gruvbox** themes by Pavel Pertsev
 * **Horizon** themes by Jonathan Olaleye
 * **New Moon** theme by Tania Rascia
 * **Noctis** themes by Liviu Schera and contributors
