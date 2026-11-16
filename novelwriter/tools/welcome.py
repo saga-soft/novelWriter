@@ -467,7 +467,7 @@ class _ProjectListItem(QStyledItemDelegate):
 
     def sizeHint(self, opt: QStyleOptionViewItem, index: QModelIndex) -> QSize:
         """Set the size hint to fixed height."""
-        return QSize(opt.rect.width(), self._hPx)
+        return QSize(0, self._hPx)
 
 
 class _ProjectListEntry(NamedTuple):

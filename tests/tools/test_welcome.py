@@ -172,6 +172,19 @@ def testGuiWelcome_Open(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: Gu
     posOne = tabOpen.listWidget.rectForIndex(listModel.createIndex(0, 0)).center()
     posTwo = tabOpen.listWidget.rectForIndex(listModel.createIndex(1, 0)).center()
 
+    # Items should follow the viewport width when the list shrinks (#3157)
+    assert vPort is not None
+    listWidget = tabOpen.listWidget
+    wWidth = welcome.width()
+    vWidth = vPort.width()
+    welcome.resize(wWidth + 200, welcome.height())
+    qtbot.waitUntil(lambda: vPort.width() > vWidth)
+    listWidget.doItemsLayout()  # type: ignore
+    welcome.resize(wWidth, welcome.height())
+    qtbot.waitUntil(lambda: vPort.width() == vWidth)
+    assert listWidget.visualRect(listModel.createIndex(0, 0)).width() <= vWidth
+    assert listWidget.horizontalScrollBar().maximum() == 0  # type: ignore
+
     # Check items, which should be in opposite order
     entry = listModel.data(listModel.createIndex(0, 0), QtDisplayRole)
     assert isinstance(entry, _ProjectListEntry)
