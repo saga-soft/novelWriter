@@ -175,7 +175,7 @@ def testSharedData_EdgeCases(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, mock
 
     # No project open: saving the editor is a no-op
     assert shared.hasProject is False
-    shared.saveEditor()
+    shared.saveEditorChanges()
     assert mockGui.docEditor.saveText.called is False
 
     # No requested spell check language yet: nothing to report

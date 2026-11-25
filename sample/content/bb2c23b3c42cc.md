@@ -4,9 +4,9 @@ parent = "f7e2d9f330615"
 handle = "bb2c23b3c42cc"
 class = "CHARACTER"
 layout = "NOTE"
-textHash = "6f88d1bc88e50e7c55bb03578729cb1d64753e86"
+textHash = "4e6a9c4aba082f2d42f9460067285dd185d978ca"
 createdDate = "Unknown"
-updatedDate = "2025-11-01 16:10:22"
+updatedDate = "2026-11-25 23:16:49"
 +++
 # Jane Smith
 

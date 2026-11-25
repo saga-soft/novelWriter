@@ -349,6 +349,17 @@ def testGuiProjectSearch_LiveRefresh(nwGUI: GuiMain, fncPath: Path, mockRnd: Moc
     sceneIdx = model.index(0, 0, root)
     assert model.rowCount(sceneIdx) == 2
 
+    # A search saves the editor document only when it has changed
+    docPath = fncPath / "content" / f"{C.hSceneDoc}.md"
+    assert nwGUI.docEditor.docChanged is True
+    search.searchAction.activate(QAction.ActionEvent.Trigger)
+    assert nwGUI.docEditor.docChanged is False
+    assert "Nothing to see here." in docPath.read_text(encoding="utf-8")
+
+    mtime = docPath.stat().st_mtime_ns
+    search.searchAction.activate(QAction.ActionEvent.Trigger)
+    assert docPath.stat().st_mtime_ns == mtime
+
 
 @pytest.mark.gui
 def testGuiProjectSearch_EdgeCases(nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd, ipsumText: list[str]):
@@ -386,6 +397,21 @@ def testGuiProjectSearch_EdgeCases(nwGUI: GuiMain, fncPath: Path, mockRnd: MockR
     search.searchText.setText("")
     search.searchAction.activate(QAction.ActionEvent.Trigger)
     assert model.rowCount(root) == 0
+
+    # An invalid regex is flagged and returns no results
+    search.tbRegEx.setChecked(True)
+    search.beginSearch("Lorem())")
+    search.searchAction.activate(QAction.ActionEvent.Trigger)
+    assert model.rowCount(root) == 0
+    assert search._activeSearch is False
+    assert search.searchText.palette().text().color() == SHARED.theme.errorText
+
+    # A valid regex resets the flag
+    search.beginSearch("Lorem")
+    search.searchAction.activate(QAction.ActionEvent.Trigger)
+    assert model.rowCount(root) == 1
+    assert search.searchText.palette().text().color() != SHARED.theme.errorText
+    search.tbRegEx.setChecked(False)
 
     # Re-run the search, then close the project, which clears the model
     search.beginSearch("Lorem")

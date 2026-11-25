@@ -400,7 +400,7 @@ class GuiManuscript(NToolDialog):
             showNewPage = self.swtNewPage.isChecked()
 
             # Make sure editor content is saved before we start
-            SHARED.saveEditor()
+            SHARED.saveEditorChanges()
 
             docBuild = DocumentBuilder(SHARED.project, build)
             docBuild.queueAll()

@@ -329,7 +329,7 @@ class GuiManuscriptBuild(NDialog):
             return False
 
         # Make sure editor content is saved before we start
-        SHARED.saveEditor()
+        SHARED.saveEditorChanges()
 
         QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
 
