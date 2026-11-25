@@ -690,6 +690,31 @@ def testProjectModel_Edit(qtbot: QtBot, mockGUI: MockGuiMain, mockRnd: MockRnd, 
     assert chapter.parent() is novel
     assert scene.parent() is novel
 
+    titleIdx = model.indexFromNode(title)
+    chapterIdx = model.indexFromNode(chapter)
+    sceneIdx = model.indexFromNode(scene)
+
+    # Move Single, downwards among siblings (issue #3163)
+    model.multiMove([sceneIdx], novelIdx, 3)
+    assert [n.item.itemName for n in novel.children] == [
+        "New Chapter",
+        "New Folder",
+        "New Scene",
+        "Title Page",
+    ]
+
+    titleIdx = model.indexFromNode(title)
+    chapterIdx = model.indexFromNode(chapter)
+
+    # Move Multiple, from above and below the drop position
+    model.multiMove([chapterIdx, titleIdx], novelIdx, 2)
+    assert [n.item.itemName for n in novel.children] == [
+        "New Folder",
+        "New Chapter",
+        "Title Page",
+        "New Scene",
+    ]
+
 
 @pytest.mark.core
 def testProjectModel_Other(qtbot: QtBot, mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Path):

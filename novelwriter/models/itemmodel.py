@@ -502,9 +502,15 @@ class ProjectModel(QAbstractItemModel):
             # for moving or have already been moved. Child items are
             # moved with the parent.
             pruned, handles = self._collectMovableNodes(indices)
+            parent: ProjectNode = target.internalPointer()
             refresh: list[str] = []
             for node in reversed(pruned) if pos >= 0 else pruned:
-                if node.item.itemParent not in handles and self._moveNode(node, target, pos):
+                if node.item.itemParent in handles:
+                    continue
+                if node.parent() is parent and 0 <= node.row() < pos:
+                    # Removing the node shifts the rows below it up by one
+                    pos -= 1
+                if self._moveNode(node, target, pos):
                     refresh.extend(self._refreshSubtreeRelationships(node))
                     refresh.append(node.item.itemHandle)
             if refresh:
