@@ -387,6 +387,21 @@ def testGuiProjectSearch_EdgeCases(nwGUI: GuiMain, fncPath: Path, mockRnd: MockR
     search.searchAction.activate(QAction.ActionEvent.Trigger)
     assert model.rowCount(root) == 0
 
+    # An invalid regex is flagged and returns no results
+    search.tbRegEx.setChecked(True)
+    search.beginSearch("Lorem())")
+    search.searchAction.activate(QAction.ActionEvent.Trigger)
+    assert model.rowCount(root) == 0
+    assert search._activeSearch is False
+    assert search.searchText.palette().text().color() == SHARED.theme.errorText
+
+    # A valid regex resets the flag
+    search.beginSearch("Lorem")
+    search.searchAction.activate(QAction.ActionEvent.Trigger)
+    assert model.rowCount(root) == 1
+    assert search.searchText.palette().text().color() != SHARED.theme.errorText
+    search.tbRegEx.setChecked(False)
+
     # Re-run the search, then close the project, which clears the model
     search.beginSearch("Lorem")
     search.searchAction.activate(QAction.ActionEvent.Trigger)
