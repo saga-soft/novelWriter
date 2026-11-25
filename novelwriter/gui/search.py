@@ -23,6 +23,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import logging
+import re
 
 from enum import Enum
 from time import time
@@ -365,19 +366,32 @@ class GuiProjectSearch(QWidget):
 
                 self._model.clear()
                 self._activeSearch = bool(searchText)
+                valid = True
                 if searchText:
                     self._search.setUserRegEx(self.tbRegEx.isChecked())
                     self._search.setCaseSensitive(self.tbCase.isChecked())
                     self._search.setWholeWords(self.tbWord.isChecked())
                     handles = []
-                    for item, results, capped in self._search.iterSearch(SHARED.project, searchText):
-                        if results:
-                            self._model.setResult(item, results, capped)
-                            handles.append(item.itemHandle)
+                    try:
+                        for item, results, capped in self._search.iterSearch(SHARED.project, searchText):
+                            if results:
+                                self._model.setResult(item, results, capped)
+                                handles.append(item.itemHandle)
+                    except re.error as exc:
+                        logger.warning("Invalid search pattern: %s", exc)
+                        self._activeSearch = False
+                        valid = False
 
                     # Run separately to avoid re-layout
                     for handle in handles:
                         self._expandResult(handle)
+
+                palette = self.searchText.palette()
+                palette.setColor(
+                    QPalette.ColorRole.Text,
+                    QApplication.palette().text().color() if valid else SHARED.theme.errorText,
+                )
+                self.searchText.setPalette(palette)
 
                 logger.debug("Search took %.3f ms", 1000 * (time() - start))
                 QApplication.restoreOverrideCursor()
