@@ -23,7 +23,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
 
 import json
+import string
 import sys
+import xml.etree.ElementTree as ET
 
 from collections.abc import Callable
 from pathlib import Path
@@ -49,6 +51,7 @@ from tests.helpers import buildTestProject
 
 LANG_DATA = CONFIG.listLanguages(CONFIG.LANG_NW)
 PROJ_DATA = CONFIG.listLanguages(CONFIG.LANG_PROJ)
+TS_FILES = sorted((Path(__file__).parent.parent / "i18n").glob("nw_*.ts"))
 
 
 @pytest.mark.gui
@@ -104,3 +107,31 @@ def testGuiI18n_ProjectExport(language: str):
     data = json.loads((langPath / f"project_{language}.json").read_text(encoding="utf-8"))
     assert data.keys() == reference.keys()
     assert all(isinstance(v, str) and v for v in data.values())
+
+
+@pytest.mark.base
+@pytest.mark.skipif(not TS_FILES, reason="No i18n Data")
+@pytest.mark.parametrize("tsFile", TS_FILES, ids=lambda p: p.stem)
+def testGuiI18n_Placeholders(tsFile: Path):
+    """Check that translations only use format fields present in the source."""
+    formatter = string.Formatter()
+    errors = []
+    for message in ET.parse(tsFile).iter("message"):
+        source = message.findtext("source") or ""
+        translation = message.find("translation")
+        if translation is None or translation.get("type") in ("unfinished", "obsolete", "vanished"):
+            continue
+        srcFields = {f for _, f, _, _ in formatter.parse(source) if f is not None}
+        forms = translation.findall("numerusform")
+        texts = [n.text or "" for n in forms] if forms else [translation.text or ""]
+        for text in filter(None, texts):
+            try:
+                trFields = {f for _, f, _, _ in formatter.parse(text) if f is not None}
+            except ValueError as exc:
+                errors.append(f"{source!r} -> {text!r}: {exc}")
+                continue
+            if not trFields <= srcFields:
+                errors.append(f"{source!r} -> {text!r}: unknown {trFields - srcFields}")
+            if ("%n" in source) != ("%n" in text):
+                errors.append(f"{source!r} -> {text!r}: %n mismatch")
+    assert errors == []
