@@ -1,6 +1,6 @@
 +++
 name = "Another Scene"
-parent = "780f67364ea6a"
+parent = "6a2d6d5f4f401"
 handle = "bc0cbd2a407f3"
 class = "NOVEL"
 layout = "DOCUMENT"
