@@ -38,6 +38,7 @@ translators for the languages currently available:
 * **Portuguese:** Bruno Meneguello (bkmeneguello)
 * **Russian:** Konstantin Tan (k1kimosha)
 * **Simplified Chinese:** Qianzhi Long (longqzh)
+* **Ukrainian:** Orest Smertnyi (foresle)
 
 Additional larger translation contributions:
 
