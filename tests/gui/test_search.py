@@ -349,6 +349,17 @@ def testGuiProjectSearch_LiveRefresh(nwGUI: GuiMain, fncPath: Path, mockRnd: Moc
     sceneIdx = model.index(0, 0, root)
     assert model.rowCount(sceneIdx) == 2
 
+    # A search saves the editor document only when it has changed
+    docPath = fncPath / "content" / f"{C.hSceneDoc}.md"
+    assert nwGUI.docEditor.docChanged is True
+    search.searchAction.activate(QAction.ActionEvent.Trigger)
+    assert nwGUI.docEditor.docChanged is False
+    assert "Nothing to see here." in docPath.read_text(encoding="utf-8")
+
+    mtime = docPath.stat().st_mtime_ns
+    search.searchAction.activate(QAction.ActionEvent.Trigger)
+    assert docPath.stat().st_mtime_ns == mtime
+
 
 @pytest.mark.gui
 def testGuiProjectSearch_EdgeCases(nwGUI: GuiMain, fncPath: Path, mockRnd: MockRnd, ipsumText: list[str]):

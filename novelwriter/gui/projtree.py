@@ -705,7 +705,7 @@ class GuiProjectTree(QTreeView):
             return False
 
         # Save the open document first, in case it's part of merge
-        SHARED.saveEditor()
+        SHARED.saveEditorChanges()
 
         # Create merge object, and append docs
         docMerger = DocMerger(SHARED.project)
@@ -1200,7 +1200,7 @@ class _TreeContextMenu(QMenu):
 
     def _itemHeader(self) -> None:
         """Check if there is a header that can be used for rename."""
-        SHARED.saveEditor()
+        SHARED.saveEditorChanges()
         if hItem := SHARED.project.index.getItemHeading(self._handle, "T0001"):
             action = qtAddAction(self, self.tr("Rename to Heading"))
             action.triggered.connect(qtLambda(self._view.renameTreeItem, self._handle, hItem.title))

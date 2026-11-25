@@ -361,7 +361,7 @@ class GuiProjectSearch(QWidget):
             try:
                 QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
                 start = time()
-                SHARED.saveEditor()
+                SHARED.saveEditorChanges()
                 searchText = self.searchText.text()
 
                 self._model.clear()

@@ -216,10 +216,17 @@ class SharedData(QObject):
         if tHandle is None or tHandle == self.mainGui.docViewer.docHandle:
             self.mainGui.docPanes.closeViewerPanel()
 
-    def saveEditor(self, tHandle: str | None = None) -> None:
-        """Save the editor content, optionally a specific document."""
+    def saveEditorChanges(self, tHandle: str | None = None) -> None:
+        """Save unsaved editor changes, optionally for a specific
+        document.
+        """
         docEditor = self.mainGui.docEditor
-        if self.hasProject and docEditor.docHandle and (tHandle is None or tHandle == docEditor.docHandle):
+        if (
+            self.hasProject
+            and docEditor.docHandle
+            and docEditor.docChanged
+            and (tHandle is None or tHandle == docEditor.docHandle)
+        ):
             logger.debug("Saving editor document before action")
             docEditor.saveText()
 
