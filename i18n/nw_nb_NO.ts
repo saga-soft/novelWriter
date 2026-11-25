@@ -36,27 +36,27 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Section format</source>
-      <translation>Seksjonformat</translation>
+      <translation>Seksjonsformat</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Title styling</source>
-      <translation>Tittel-stil</translation>
+      <translation>Tittelstil</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Partition styling</source>
-      <translation>Partisjon-stil</translation>
+      <translation>Partisjonsstil</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Chapter styling</source>
-      <translation>Kapittel-stil</translation>
+      <translation>Kapittelstil</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Scene styling</source>
-      <translation>Scene-stil</translation>
+      <translation>Scenestil</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -81,12 +81,12 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Include story structure</source>
-      <translation>Inkluder text-elementer</translation>
+      <translation>Inkluder dramaturgi</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Include manuscript notes</source>
-      <translation>Inkluder notater</translation>
+      <translation>Inkluder merknader</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -100,8 +100,8 @@
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
-      <source>Add titles for note root folders</source>
-      <translation>Legg til titler for notatrotmapper</translation>
+      <source>Insert note root folder labels as titles</source>
+      <translation>Sett inn navn på rotmapper for notater som titler</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -120,8 +120,13 @@
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>Tab size</source>
+      <translation>Tabulatorstørrelse</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Justify text margins</source>
-      <translation>Juster tekstmarginer</translation>
+      <translation>Bruk rette marger</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -131,7 +136,7 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Replace Unicode characters</source>
-      <translation>Erstatt unicode-tegn</translation>
+      <translation>Erstatt Unicode-tegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -161,12 +166,17 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Bold headings</source>
-      <translation>Uthev overskrifter</translation>
+      <translation>Fet skrift i overskrifter</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Uppercase headings</source>
       <translation>Bruk store bokstaver i overskrifter</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>Show status label under headings</source>
+      <translation>Vis statusetikett under overskrifter</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -176,7 +186,7 @@
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Enable indent</source>
-      <translation>Bruk tekst-innrykk</translation>
+      <translation>Bruk tekstinnrykk</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -225,8 +235,13 @@
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>List</source>
+      <translation>Liste</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Scene separator</source>
-      <translation>Scene-separator</translation>
+      <translation>Sceneseparator</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -250,8 +265,28 @@
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
-      <source>Page margins</source>
-      <translation>Sidemarg</translation>
+      <source>Top and bottom margins</source>
+      <translation>Topp- og bunnmargin</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>Left and right margins</source>
+      <translation>Venstre- og høyremargin</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>Inner and outer margins</source>
+      <translation>Innvendig og utvendig margin</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>Gutter margin</source>
+      <translation>Margin for innbinding</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>Double-sided pages</source>
+      <translation>Dobbeltsidige sider</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -265,8 +300,13 @@
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>Page header for even pages</source>
+      <translation>Sidetopptekst for partallssider</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Page counter offset</source>
-      <translation>Første side for sideteller</translation>
+      <translation>Forskyvning av sidetall</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -275,13 +315,23 @@
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>EPUB Options</source>
+      <translation>EPUB-innstillinger</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
+      <source>Nested table of contents</source>
+      <translation>Undernivå i innholdsfortegnelse</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>HTML Options</source>
-      <translation>HTML-instillinger</translation>
+      <translation>HTML-innstillinger</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
       <source>Add CSS styles</source>
-      <translation>Legg til CSS-style</translation>
+      <translation>Legg til CSS-stiler</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/buildsettings.py"/>
@@ -505,7 +555,7 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Heading 1 (Partition)</source>
-      <translation>Overskrift 1 (inndeling)</translation>
+      <translation>Overskrift 1 (partisjon)</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -530,7 +580,7 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Scene Separator</source>
-      <translation>Scene-separator</translation>
+      <translation>Sceneseparator</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -570,7 +620,7 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Entities</source>
-      <translation>Enheter</translation>
+      <translation>Entiteter</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -590,7 +640,7 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Trash</source>
-      <translation>Søppel</translation>
+      <translation>Papirkurv</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -604,8 +654,28 @@
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
+      <source>Note</source>
+      <translation>Merknad</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>Story Structure</source>
+      <translation>Dramaturgi</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>Story</source>
+      <translation>Fortelling</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>Synopsis</source>
+      <translation>Sammendrag</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
       <source>Root Folder</source>
-      <translation>Hovedmappe</translation>
+      <translation>Rotmappe</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -644,13 +714,23 @@
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
+      <source>Saved</source>
+      <translation>Lagret</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>Unsaved</source>
+      <translation>Ulagret</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
       <source>Tag</source>
       <translation>Knagg</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Point of View</source>
-      <translation>Perspektiv</translation>
+      <translation>Synsvinkel</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -659,58 +739,13 @@
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
-      <source>Story</source>
-      <translation>Fortelling</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/constants.py"/>
       <source>Mentions</source>
       <translation>Nevnt</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
-      <source>Level</source>
-      <translation>Nivå</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/constants.py"/>
-      <source>Document</source>
-      <translation>Dokument</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/constants.py"/>
-      <source>Line</source>
-      <translation>Linje</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/constants.py"/>
-      <source>Status</source>
-      <translation>Status</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/constants.py"/>
-      <source>Chars</source>
-      <translation>Tegn</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/constants.py"/>
-      <source>Words</source>
-      <translation>Ord</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/constants.py"/>
-      <source>Pars</source>
-      <translation>Avsnitt</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/constants.py"/>
-      <source>POV</source>
-      <translation>Persp.</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/constants.py"/>
-      <source>Synopsis</source>
-      <translation>Sammendrag</translation>
+      <source>Missing Auto-Replace Keys</source>
+      <translation>Manglende nøkkelord for autoerstatt</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -755,7 +790,7 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Portable Document Format (.pdf)</source>
-      <translation>Portabelt dokument-format (.pdf)</translation>
+      <translation>Portabelt dokumentformat (.pdf)</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -1059,78 +1094,93 @@
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
+      <source>No Break</source>
+      <translation>Ingen sideskift</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>Any Page</source>
+      <translation>Ny side</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>Odd Page</source>
+      <translation>Oddetallsside</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
       <source>Straight single quotation mark</source>
-      <translation>Rett, enkelt sitattegn</translation>
+      <translation>Rett, enkelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Straight double quotation mark</source>
-      <translation>Rett, dobbelt sitattegn</translation>
+      <translation>Rett, dobbelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Left single quotation mark</source>
-      <translation>Venstre, enkelt sitattegn</translation>
+      <translation>Venstre, enkelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Right single quotation mark</source>
-      <translation>Høyre, enkelt sitattegn</translation>
+      <translation>Høyre, enkelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Single low-9 quotation mark</source>
-      <translation>Enkelt, lavt-9 sitattegn</translation>
+      <translation>Enkelt, lavt-9 anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Single high-reversed-9 quotation mark</source>
-      <translation>Enkelt, høyt, reversert-9 sitattegn</translation>
+      <translation>Enkelt, høyt, reversert-9 anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Left double quotation mark</source>
-      <translation>Venstre, dobbelt sitattegn</translation>
+      <translation>Venstre, dobbelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Right double quotation mark</source>
-      <translation>Høyre, dobbelt sitattegn</translation>
+      <translation>Høyre, dobbelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Double low-9 quotation mark</source>
-      <translation>Dobbelt, lavt-9 sitattegn</translation>
+      <translation>Dobbelt, lavt-9 anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Double high-reversed-9 quotation mark</source>
-      <translation>Dobbelt, høyt, reversert-9 sitattegn</translation>
+      <translation>Dobbelt, høyt, reversert-9 anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Double low-reversed-9 quotation mark</source>
-      <translation>Dobbelt, lavt, reversert-9 sitattegn</translation>
+      <translation>Dobbelt, lavt, reversert-9 anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Single left-pointing angle quotation mark</source>
-      <translation>Enkelt, venstre, angulært sitattegn</translation>
+      <translation>Enkelt, venstre, angulært anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Single right-pointing angle quotation mark</source>
-      <translation>Enkelt, høyre, angulært sitattegn</translation>
+      <translation>Enkelt, høyre, angulært anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Double left-pointing angle quotation mark</source>
-      <translation>Dobbelt, venstre, angulært sitattegn</translation>
+      <translation>Dobbelt, venstre, angulært anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Double right-pointing angle quotation mark</source>
-      <translation>Dobbelt, høyre, angulært sitattegn</translation>
+      <translation>Dobbelt, høyre, angulært anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -1155,12 +1205,12 @@
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Short dash</source>
-      <translation>Kort bindestrek</translation>
+      <translation>Kort tankestrek</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
       <source>Long dash</source>
-      <translation>Lang bindestrek</translation>
+      <translation>Lang tankestrek</translation>
     </message>
     <message>
       <location filename="../novelwriter/constants.py"/>
@@ -1216,7 +1266,7 @@
     <message>
       <location filename="../novelwriter/manuscript/manussettings.py"/>
       <source>Formatting</source>
-      <translation>Formattering</translation>
+      <translation>Formatering</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/manussettings.py"/>
@@ -1281,33 +1331,13 @@
     <name>GuiDocEditFooter</name>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
-      <source>Line: {0} ({1})</source>
-      <translation>Linje: {0} ({1})</translation>
+      <source>Show Tabs and Spaces</source>
+      <translation>Synlige tabulatorer og mellomrom</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
-      <source>Selected: {0}</source>
-      <translation>Utvalg: {0}</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/footer.py"/>
-      <source>NORMAL</source>
-      <translation>NORMAL</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/footer.py"/>
-      <source>INSERT</source>
-      <translation>SETT INN</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/footer.py"/>
-      <source>VISUAL</source>
-      <translation>VISUELL</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/footer.py"/>
-      <source>V-LINE</source>
-      <translation>V-LINJE</translation>
+      <source>Show Line Endings</source>
+      <translation>Synlige linjeender</translation>
     </message>
   </context>
   <context>
@@ -1319,23 +1349,13 @@
     </message>
     <message>
       <location filename="../novelwriter/editor/header.py"/>
-      <source>Outline</source>
-      <translation>Disposisjon</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/header.py"/>
       <source>Search</source>
       <translation>Søk</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/header.py"/>
       <source>Toggle Focus Mode</source>
-      <translation>Slå av/på "Fokus-modus"</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/header.py"/>
-      <source>Close</source>
-      <translation>Lukk</translation>
+      <translation>Slå av/på fokusmodus</translation>
     </message>
   </context>
   <context>
@@ -1378,7 +1398,7 @@
     <message>
       <location filename="../novelwriter/editor/editsearch.py"/>
       <source>Search Next File</source>
-      <translation>Søk i neste file</translation>
+      <translation>Søk i neste fil</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/editsearch.py"/>
@@ -1515,13 +1535,13 @@
     </message>
     <message>
       <location filename="../novelwriter/editor/editor.py"/>
-      <source>Spell checking requires the package PyEnchant. It does not appear to be installed.</source>
-      <translation>Stavekontroll krever at pakken PyEnchant er installert. Det ser det ikke ut til at den er.</translation>
+      <source>Spell checking requires the package {0}. It does not appear to be installed.</source>
+      <translation>Stavekontroll krever pakken {0}. Den ser ikke ut til å være installert.</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/editor.py"/>
       <source>Cannot apply requested format on this line</source>
-      <translation>Kan ikke bruke formatteringen på denne linjen</translation>
+      <translation>Kan ikke bruke formateringen på denne linjen</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/editor.py"/>
@@ -1556,12 +1576,78 @@
     <message>
       <location filename="../novelwriter/editor/editor.py"/>
       <source>Please select some text before calling replace quotes.</source>
-      <translation>Venligst velg en del av teksten før du velger å erstatte sitattegn.</translation>
+      <translation>Vennligst velg en del av teksten før du velger å erstatte anførselstegn.</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/editor.py"/>
       <source>Do you want to create a new project note for the tag '{0}'?</source>
       <translation>Vil du opprette et nytt prosjektnotat for knaggen '{0}'?</translation>
+    </message>
+  </context>
+  <context>
+    <name>GuiDocFooterBase</name>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>Show/Hide Viewer Panel</source>
+      <translation>Vis/skjul visningspanelet</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>Options</source>
+      <translation>Innstillinger</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>Zoom Out</source>
+      <translation>Zoom ut</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>Reset Zoom</source>
+      <translation>Tilbakestill zoom</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>Zoom In</source>
+      <translation>Zoom inn</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>Selected: {0}</source>
+      <translation>Markert: {0}</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>NORMAL</source>
+      <translation>NORMAL</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>INSERT</source>
+      <translation>INNSETT</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>VISUAL</source>
+      <translation>VISUELL</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/footer.py"/>
+      <source>V-LINE</source>
+      <translation>V-LINJE</translation>
+    </message>
+  </context>
+  <context>
+    <name>GuiDocHeaderBase</name>
+    <message>
+      <location filename="../novelwriter/editor/header.py"/>
+      <source>Outline</source>
+      <translation>Disposisjon</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/header.py"/>
+      <source>Close</source>
+      <translation>Lukk</translation>
     </message>
   </context>
   <context>
@@ -1601,6 +1687,34 @@
     </message>
   </context>
   <context>
+    <name>GuiDocPanes</name>
+    <message>
+      <location filename="../novelwriter/editor/docpanes.py"/>
+      <source>Please open a document to import the text file into.</source>
+      <translation>Vennligst åpne et dokument hvor teksten i filen kan importeres.</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/docpanes.py"/>
+      <source>Import File</source>
+      <translation>Importer fil</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/docpanes.py"/>
+      <source>Could not read file. The file must be an existing text file.</source>
+      <translation>Kunne ikke lese filen. Filen må være en eksisterende tekstfil.</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/docpanes.py"/>
+      <source>Importing the file will overwrite the current content of the document. Do you want to proceed?</source>
+      <translation>Import erstatter gjeldende innhold. Vil du fortsette?</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/docpanes.py"/>
+      <source>Could not find the reference for tag '{0}'. It either doesn't exist, or the index is out of date. The index can be updated from the Tools menu, or by pressing {1}.</source>
+      <translation>Kunne ikke finne referansen til knaggen '{0}'. Enten finnes den ikke, eller så er prosjektets indeks ikke oppdatert. Indeksen kan oppdateres fra Verktøy-menyen eller ved å trykke på {1}.</translation>
+    </message>
+  </context>
+  <context>
     <name>GuiDocSplit</name>
     <message>
       <location filename="../novelwriter/dialogs/docsplit.py"/>
@@ -1620,7 +1734,7 @@
     <message>
       <location filename="../novelwriter/dialogs/docsplit.py"/>
       <source>Split on Heading Level 1 (Partition)</source>
-      <translation>Splitt på overskrifter på nivå 1 (titler)</translation>
+      <translation>Splitt på overskrifter på nivå 1 (partisjoner)</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/docsplit.py"/>
@@ -1677,6 +1791,11 @@
     </message>
     <message>
       <location filename="../novelwriter/editor/edittoolbar.py"/>
+      <source>Markdown Link</source>
+      <translation>Markdown-lenke</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/edittoolbar.py"/>
       <source>Shortcode Bold</source>
       <translation>Fet skrift med kortkode</translation>
     </message>
@@ -1710,28 +1829,38 @@
       <source>Shortcode Subscript</source>
       <translation>Senket skrift med kortkode</translation>
     </message>
+    <message>
+      <location filename="../novelwriter/editor/edittoolbar.py"/>
+      <source>Format as Bullet List</source>
+      <translation>Formater som punktliste</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/edittoolbar.py"/>
+      <source>Format as Numbered List</source>
+      <translation>Formater som nummerert liste</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/edittoolbar.py"/>
+      <source>Align Left</source>
+      <translation>Venstrejuster</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/edittoolbar.py"/>
+      <source>Align Centre</source>
+      <translation>Midtstill</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/edittoolbar.py"/>
+      <source>Align Right</source>
+      <translation>Høyrejuster</translation>
+    </message>
   </context>
   <context>
     <name>GuiDocViewFooter</name>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
-      <source>Show/Hide Viewer Panel</source>
-      <translation>Vis/skjul visningspanelet</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/footer.py"/>
-      <source>Comments</source>
-      <translation>Kommentarer</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/footer.py"/>
       <source>Show Comments</source>
       <translation>Vis kommentarer</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/footer.py"/>
-      <source>Synopsis</source>
-      <translation>Sammendrag</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
@@ -1740,22 +1869,17 @@
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
-      <source>Notes</source>
-      <translation>Notat</translation>
+      <source>Show Notes</source>
+      <translation>Vis merknader</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/footer.py"/>
-      <source>Show Notes</source>
-      <translation>Vis notater</translation>
+      <source>Enable First Line Indent for Novel Documents</source>
+      <translation>Aktiver førstelinjeinnrykk for romandokumenter</translation>
     </message>
   </context>
   <context>
     <name>GuiDocViewHeader</name>
-    <message>
-      <location filename="../novelwriter/editor/header.py"/>
-      <source>Outline</source>
-      <translation>Disposisjon</translation>
-    </message>
     <message>
       <location filename="../novelwriter/editor/header.py"/>
       <source>Go Backward</source>
@@ -1775,11 +1899,6 @@
       <location filename="../novelwriter/editor/header.py"/>
       <source>Reload</source>
       <translation>Oppdater</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/editor/header.py"/>
-      <source>Close</source>
-      <translation>Lukk</translation>
     </message>
   </context>
   <context>
@@ -1833,12 +1952,30 @@
     <message>
       <location filename="../novelwriter/dialogs/editlabel.py"/>
       <source>Item Label</source>
-      <translation>Enhetens navn</translation>
+      <translation>Elementets navn</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/editlabel.py"/>
       <source>Label</source>
       <translation>Navn</translation>
+    </message>
+  </context>
+  <context>
+    <name>GuiEditLink</name>
+    <message>
+      <location filename="../novelwriter/dialogs/editlink.py"/>
+      <source>Link</source>
+      <translation>Lenke</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/editlink.py"/>
+      <source>Link Text</source>
+      <translation>Lenketekst</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/editlink.py"/>
+      <source>URL</source>
+      <translation>Lenke (URL)</translation>
     </message>
   </context>
   <context>
@@ -1937,32 +2074,12 @@
     <message>
       <location filename="../novelwriter/guimain.py"/>
       <source>The project was locked by the computer '{0}' ({1} {2}), last active on {3}.</source>
-      <translation>Prosjektet er låst av datamaskinen {0} ({1} {2}), siste registrerte aktivitet var {3}.</translation>
+      <translation>Prosjektet er låst av datamaskinen '{0}' ({1} {2}), siste registrerte aktivitet var {3}.</translation>
     </message>
     <message>
       <location filename="../novelwriter/guimain.py"/>
       <source>The project index is broken. Rebuilding index.</source>
       <translation>Prosjektets indeks er defekt. Bygger indeksen på nytt.</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/guimain.py"/>
-      <source>Import File</source>
-      <translation>Importer fil</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/guimain.py"/>
-      <source>Could not read file. The file must be an existing text file.</source>
-      <translation>Kunne ikke lese filen. Filen må eksistere fra før av.</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/guimain.py"/>
-      <source>Please open a document to import the text file into.</source>
-      <translation>Vennligst åpne et dokument hvor teksten i filen kan importeres.</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/guimain.py"/>
-      <source>Importing the file will overwrite the current content of the document. Do you want to proceed?</source>
-      <translation>Å importere filen vil overskrive all eksisterende tekst i dokumentet. Ønsker du å fortsette?</translation>
     </message>
     <message>
       <location filename="../novelwriter/guimain.py"/>
@@ -1994,18 +2111,13 @@
       <source>Some changes will not be applied until novelWriter has been restarted.</source>
       <translation>Noen endringer vil ikke tas i bruk før neste gang novelWriter startes.</translation>
     </message>
-    <message>
-      <location filename="../novelwriter/guimain.py"/>
-      <source>Could not find the reference for tag '{0}'. It either doesn't exist, or the index is out of date. The index can be updated from the Tools menu, or by pressing {1}.</source>
-      <translation>Kunne ikke finne referansen til knagg {0}. Enten finnes den ikke, eller så er prosjektets indeks ikke oppdatert. Indeksen kan oppdateres fra Verktøy-menyen eller ved å trykke på {1}.</translation>
-    </message>
   </context>
   <context>
     <name>GuiMainMenu</name>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Default</source>
-      <translation>Ingen valg</translation>
+      <translation>Standard</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2034,23 +2146,18 @@
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
-      <source>Novel Details</source>
-      <translation>Roman-detaljer</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Rename Item</source>
       <translation>Endre navn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Delete Item</source>
-      <translation>Slett enhet</translation>
+      <translation>Slett element</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Empty Trash</source>
-      <translation>Tøm søppel</translation>
+      <translation>Tøm papirkurven</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2159,28 +2266,33 @@
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
-      <source>Go to Outline</source>
-      <translation>Gå til disposisjon</translation>
+      <source>Go to Story View</source>
+      <translation>Gå til historievisning</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/gui/mainmenu.py"/>
+      <source>Show/Hide Tree View</source>
+      <translation>Vis/skjul trevisning</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Navigate Backward</source>
-      <translation>Navigere bakover</translation>
+      <translation>Naviger bakover</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Navigate Forward</source>
-      <translation>Navigere fremover</translation>
+      <translation>Naviger fremover</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Focus Mode</source>
-      <translation>Focus-modus</translation>
+      <translation>Fokusmodus</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Full Screen Mode</source>
-      <translation>Fullskjerm-modus</translation>
+      <translation>Fullskjermmodus</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2205,17 +2317,17 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Dashes</source>
-      <translation>Bindestreker</translation>
+      <translation>Streker</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Short Dash</source>
-      <translation>Kort bindestrek</translation>
+      <translation>Kort tankestrek</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Long Dash</source>
-      <translation>Lang bindestrek</translation>
+      <translation>Lang tankestrek</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2230,27 +2342,27 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Quote Marks</source>
-      <translation>Sitattegn</translation>
+      <translation>Anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Left Single Quote</source>
-      <translation>Venstre, enkelt sitattegn</translation>
+      <translation>Venstre, enkelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Right Single Quote</source>
-      <translation>Høyre, enkelt sitattegn</translation>
+      <translation>Høyre, enkelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Left Double Quote</source>
-      <translation>Venstre, dobbelt sitattegn</translation>
+      <translation>Venstre, dobbelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Right Double Quote</source>
-      <translation>Høyre, dobbelt sitattegn</translation>
+      <translation>Høyre, dobbelt anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2290,12 +2402,22 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Thin Space</source>
-      <translation>Kort mellomrom</translation>
+      <translation>Tynt mellomrom</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Thin Non-Breaking Space</source>
-      <translation>Hardt, kort mellomrom</translation>
+      <translation>Hardt, tynt mellomrom</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/gui/mainmenu.py"/>
+      <source>En Space</source>
+      <translation>En-mellomrom</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/gui/mainmenu.py"/>
+      <source>Em Space</source>
+      <translation>Em-mellomrom</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2325,7 +2447,7 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Degree Symbol</source>
-      <translation>Gradertegn</translation>
+      <translation>Gradtegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2365,7 +2487,7 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Word/Character Count</source>
-      <translation>Statistikk</translation>
+      <translation>Antall ord/tegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2405,7 +2527,7 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>&amp;Format</source>
-      <translation>&amp;Formattering</translation>
+      <translation>&amp;Formatering</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2429,13 +2551,18 @@
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
+      <source>Link</source>
+      <translation>Lenke</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Wrap Double Quotes</source>
-      <translation>Sett i doble sitattegn</translation>
+      <translation>Sett i doble anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Wrap Single Quotes</source>
-      <translation>Sett i enkle sitattegn</translation>
+      <translation>Sett i enkle anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2455,7 +2582,7 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Strikethrough (Shortcode)</source>
-      <translation>Gjennomstrek (Kortkode)</translation>
+      <translation>Gjennomstrek (kortkode)</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2480,7 +2607,7 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Unnumbered Chapter</source>
-      <translation>Unumrert kapittel</translation>
+      <translation>Unummerert kapittel</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2495,7 +2622,7 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Align Centre</source>
-      <translation>Sentrer</translation>
+      <translation>Midtstill</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2514,28 +2641,38 @@
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
+      <source>Bullet List</source>
+      <translation>Punktliste</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/gui/mainmenu.py"/>
+      <source>Numbered List</source>
+      <translation>Nummerert liste</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Toggle Comment</source>
-      <translation>Veksle kommentar</translation>
+      <translation>Slå av/på kommentar</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Toggle Ignore Text</source>
-      <translation>Aktiver/deaktiver ignorert tekst</translation>
+      <translation>Slå av/på ignorert tekst</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Remove Block Format</source>
-      <translation>Fjern formattering</translation>
+      <translation>Fjern blokkformat</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Replace Straight Single Quotes</source>
-      <translation>Erstatt enkle sitattegn</translation>
+      <translation>Erstatt rette, enkle anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Replace Straight Double Quotes</source>
-      <translation>Erstatt doble sitattegn</translation>
+      <translation>Erstatt rette, doble anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2610,7 +2747,7 @@
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
       <source>Rebuild Index</source>
-      <translation>Bygg indeks</translation>
+      <translation>Bygg indeksen på nytt</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/mainmenu.py"/>
@@ -2698,7 +2835,7 @@
     <message>
       <location filename="../novelwriter/gui/statusbar.py"/>
       <source>Session Time</source>
-      <translation>Tid brukt i gjeldende sesjon</translation>
+      <translation>Tid brukt i denne økten</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/statusbar.py"/>
@@ -2775,6 +2912,11 @@
     </message>
     <message>
       <location filename="../novelwriter/manuscript/manuscript.py"/>
+      <source>Problems</source>
+      <translation>Problemer</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/manuscript.py"/>
       <source>Show page breaks</source>
       <translation>Vis markører for nye sider</translation>
     </message>
@@ -2848,39 +2990,21 @@
     </message>
   </context>
   <context>
-    <name>GuiNovelDetails</name>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Novel Details</source>
-      <translation>Roman-detaljer</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Overview</source>
-      <translation>Oversikt</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Contents</source>
-      <translation>Innhold</translation>
-    </message>
-  </context>
-  <context>
     <name>GuiNovelToolBar</name>
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
       <source>Outline of {0}</source>
-      <translation>Innhold i {0}</translation>
+      <translation>Disposisjon for {0}</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
       <source>Novel Root</source>
-      <translation>Roman-mappe</translation>
+      <translation>Romanmappe</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
       <source>Refresh</source>
-      <translation>Oppdatér</translation>
+      <translation>Oppdater</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
@@ -2895,22 +3019,27 @@
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
       <source>Point of View Character</source>
-      <translation>Synsvinkel-karakter</translation>
+      <translation>Synsvinkelperson</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
       <source>Focus Character</source>
-      <translation>Fokus-karakter</translation>
+      <translation>Fokusperson</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
       <source>Novel Plot</source>
-      <translation>Roman-plott</translation>
+      <translation>Romanplott</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
       <source>Column Size</source>
       <translation>Kolonnebredde</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/gui/noveltree.py"/>
+      <source>Include Sub-Heading Counts</source>
+      <translation>Inkluder antall i underoverskrifter</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
@@ -2928,89 +3057,25 @@
     <message>
       <location filename="../novelwriter/gui/noveltree.py"/>
       <source>No meta data</source>
-      <translation>Ingen meta-data</translation>
+      <translation>Ingen metadata</translation>
     </message>
   </context>
   <context>
-    <name>GuiOutlineDetails</name>
+    <name>GuiOutlineViewSettings</name>
     <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Title</source>
-      <translation>Tittel</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Outline View Settings</source>
+      <translation>Innstillinger for disposisjonsvisning</translation>
     </message>
     <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Chapter</source>
-      <translation>Kapittel</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Content</source>
+      <translation>Innhold</translation>
     </message>
     <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Scene</source>
-      <translation>Scene</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Section</source>
-      <translation>Seksjon</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Document</source>
-      <translation>Dokument</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Status</source>
-      <translation>Status</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Synopsis</source>
-      <translation>Sammendrag</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Title Details</source>
-      <translation>Oversikt</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Reference Tags</source>
-      <translation>Referanser</translation>
-    </message>
-  </context>
-  <context>
-    <name>GuiOutlineHeaderMenu</name>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Select Columns</source>
-      <translation>Velg kolonner</translation>
-    </message>
-  </context>
-  <context>
-    <name>GuiOutlineToolBar</name>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Outline of</source>
-      <translation>Disposisjon for</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Refresh</source>
-      <translation>Oppdatér</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Export CSV</source>
-      <translation>Eksporter CSV</translation>
-    </message>
-  </context>
-  <context>
-    <name>GuiOutlineTree</name>
-    <message>
-      <location filename="../novelwriter/gui/outline.py"/>
-      <source>Save Outline As</source>
-      <translation>Lagre disposisjon som</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>General</source>
+      <translation>Generelt</translation>
     </message>
   </context>
   <context>
@@ -3038,7 +3103,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Display language</source>
-      <translation>Visningspråk</translation>
+      <translation>Visningsspråk</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3068,7 +3133,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>User interface icon theme.</source>
-      <translation>Ikontema til brukergrensesnitter.</translation>
+      <translation>Ikontema for brukergrensesnittet.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3098,7 +3163,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Turn off to use the Qt font dialog, which may have more options.</source>
-      <translation>Slå av for istedet bruker Qt sin dialog for skrifttype, som kan ha flere valg.</translation>
+      <translation>Slå av for å bruke Qt sin dialog for skrifttype, som kan ha flere valg.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3109,6 +3174,26 @@
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Display character count instead where available.</source>
       <translation>Viser antall tegn istedenfor ord der dette er tilgjengelig.</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>Include project notes in status bar word count</source>
+      <translation>Inkluder prosjektnotater i antallet ord i statuslinjen</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>If off, only shows novel word count.</source>
+      <translation>Hvis av, vises bare romanens ordtelling.</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>Force right-to-left layout</source>
+      <translation>Tving høyre-til-venstre-oppsett</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>If off, layout direction is determined by the display language.</source>
+      <translation>Hvis av, bestemmes retningen på oppsettet av visningsspråket.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3137,8 +3222,33 @@
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>Include project notes in status bar word count</source>
-      <translation>Inkluder prosjektnotater i antallet ord i statuslinjen</translation>
+      <source>Hide document footer in "Focus Mode"</source>
+      <translation>Gjem dokumentets bunnlinje i "Fokusmodus"</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>Hides the entire document footer.</source>
+      <translation>Skjuler hele dokumentbunnteksten.</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>Minimal document header in "Focus Mode"</source>
+      <translation>Minimalt dokumenthode i "Fokusmodus"</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>Hides the title and most buttons.</source>
+      <translation>Skjuler tittelen og de fleste knappene.</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>Show writing goal in "Focus Mode"</source>
+      <translation>Vis skrivemålet i "Fokusmodus"</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>Keeps the goal progress in the status bar.</source>
+      <translation>Holder målfremgang på statuslinjen.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3148,7 +3258,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Theme Colours</source>
-      <translation>Tema-farger</translation>
+      <translation>Temafarger</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3173,7 +3283,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Emphasise partition and chapter labels</source>
-      <translation>Fremhev filnavn for inndeling og kapitler</translation>
+      <translation>Fremhev navn på partisjoner og kapitler</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3194,11 +3304,6 @@
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>How often the document is automatically saved.</source>
       <translation>Hvor ofte dokumentet lagres automatisk.</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>seconds</source>
-      <translation>sekunder</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3228,7 +3333,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Applies to main window and welcome dialog.</source>
-      <translation>Gjelder for applikasjonsvindu og velkomst-dialog.</translation>
+      <translation>Gjelder for applikasjonsvindu og velkomstdialog.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3283,7 +3388,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Session Timer</source>
-      <translation>Sesjons-klokke</translation>
+      <translation>Øktklokke</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3307,11 +3412,6 @@
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>minutes</source>
-      <translation>minutter</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Writing</source>
       <translation>Skriving</translation>
     </message>
@@ -3323,7 +3423,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Maximum text width in "Normal Mode"</source>
-      <translation>Maks tekstbredde i "Normal-modus"</translation>
+      <translation>Maks tekstbredde i "Normalmodus"</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3332,13 +3432,8 @@
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>px</source>
-      <translation>px</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Maximum text width in "Focus Mode"</source>
-      <translation>Maks tekstbredde i "Fokus-modus"</translation>
+      <translation>Maks tekstbredde i "Fokusmodus"</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3347,18 +3442,8 @@
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>Hide document footer in "Focus Mode"</source>
-      <translation>Gjem dokumentets bunnlinje i "Fokus-modus"</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>Hide the information bar in the document editor.</source>
-      <translation>Skjul informasjonslinjen i dokumenteditoren.</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Justify the text margins</source>
-      <translation>Juster tekstmarginer</translation>
+      <translation>Bruk rette marger</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3367,8 +3452,8 @@
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>Tab width</source>
-      <translation>Tabulatorens bredde</translation>
+      <source>Tab size</source>
+      <translation>Tabulatorstørrelse</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3387,11 +3472,6 @@
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>em</source>
-      <translation>em</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Text Editing</source>
       <translation>Redigering av tekst</translation>
     </message>
@@ -3403,7 +3483,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Available languages are determined by your system.</source>
-      <translation>Tilgjengelige språk hentes fra operativystemet ditt.</translation>
+      <translation>Tilgjengelige språk hentes fra operativsystemet ditt.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3413,7 +3493,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Apply formatting to word under cursor if no selection is made.</source>
-      <translation>Hvis ingen tekst er valgt, formatter ordet hvor markøren står.</translation>
+      <translation>Hvis ingen tekst er valgt, formater ordet hvor markøren står.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3438,12 +3518,12 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Prefer single asterisk bold</source>
-      <translation>Foretrekk én stjerne for uthev</translation>
+      <translation>Foretrekk én stjerne for fet skrift</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>This does not turn off double asterisks for bold.</source>
-      <translation>Dette slår ikke av dobbel stjerne for uthevet skrift.</translation>
+      <translation>Dette slår ikke av dobbel stjerne for fet skrift.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3452,18 +3532,13 @@
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>Show tabs and spaces</source>
-      <translation>Synlige tabulatorer og mellomrom</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/dialogs/preferences.py"/>
-      <source>Show line endings</source>
-      <translation>Synlige linjeender</translation>
+      <source>Shows the line of the cursor in a different background colour.</source>
+      <translation>Viser linjen med markøren i en annen bakgrunnsfarge.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Editor Scrolling</source>
-      <translation>Tekstbehandler rulling</translation>
+      <translation>Rulling i editoren</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3478,7 +3553,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Typewriter style scrolling when you type</source>
-      <translation>Skrivemaskin-liknende rulling mens du skriver</translation>
+      <translation>Skrivemaskinliknende rulling mens du skriver</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3488,12 +3563,12 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Minimum position for Typewriter scrolling</source>
-      <translation>Minste avstand for skrivemaskin-rulling</translation>
+      <translation>Minste avstand for skrivemaskinrulling</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Percentage of the editor height from the top.</source>
-      <translation>I prosent fra toppen av editor-vinduet.</translation>
+      <translation>I prosent fra toppen av editorvinduet.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3528,7 +3603,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Applies to the selected quote styles.</source>
-      <translation>Gjelder alle de valgte anførselstegn.</translation>
+      <translation>Gjelder de valgte anførselstegnene.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3558,12 +3633,12 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Dialogue line symbols</source>
-      <translation>Symbol for dialog</translation>
+      <translation>Symboler for dialog</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Lines starting with any of these symbols are dialogue.</source>
-      <translation>Linjer som begynner med dette symbolet er ansett som dialog.</translation>
+      <translation>Linjer som begynner med et av disse symbolene, regnes som dialog.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3588,7 +3663,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Add highlight colour to emphasised text</source>
-      <translation>Fremhev formattert tekst</translation>
+      <translation>Fremhev formatert tekst</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3623,7 +3698,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Auto-replace single quotes</source>
-      <translation>Erstatt enkle sitattegn</translation>
+      <translation>Erstatt enkle anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3633,7 +3708,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Auto-replace double quotes</source>
-      <translation>Erstatt doble sitattegn</translation>
+      <translation>Erstatt doble anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3643,7 +3718,7 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Double and triple hyphens become short and long dashes.</source>
-      <translation>To og tre bindestreker erstattes med kort og lang bindestrek.</translation>
+      <translation>To og tre bindestreker erstattes med kort og lang tankestrek.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3678,57 +3753,57 @@
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Use thin space instead</source>
-      <translation>Bruk tynt mellomrom istedet</translation>
+      <translation>Bruk tynt mellomrom i stedet</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Inserts a thin space instead of a regular space.</source>
-      <translation>Sett inn et tynt mellomrom istedenfor et vanlig et.</translation>
+      <translation>Setter inn et tynt mellomrom i stedet for et vanlig.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Quotation Style</source>
-      <translation>Sitattegn</translation>
+      <translation>Anførselstegn</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Single quote open style</source>
-      <translation>Enkelt sitat, venstre side</translation>
+      <translation>Enkelt anførselstegn, åpning</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>The symbol to use for a leading single quote.</source>
-      <translation>Symbol for enkelt sitattegn før et sitat.</translation>
+      <translation>Symbol for enkelt anførselstegn før et sitat.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Single quote close style</source>
-      <translation>Enkelt sitat, høyre side</translation>
+      <translation>Enkelt anførselstegn, lukking</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>The symbol to use for a trailing single quote.</source>
-      <translation>Symbol for enkelt sitattegn etter et sitat.</translation>
+      <translation>Symbol for enkelt anførselstegn etter et sitat.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Double quote open style</source>
-      <translation>Dobbelt sitat, venstre side</translation>
+      <translation>Dobbelt anførselstegn, åpning</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>The symbol to use for a leading double quote.</source>
-      <translation>Symbol for dobbelt sitattegn før et sitat.</translation>
+      <translation>Symbol for dobbelt anførselstegn før et sitat.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Double quote close style</source>
-      <translation>Dobbelt sitat, høyre side</translation>
+      <translation>Dobbelt anførselstegn, lukking</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>The symbol to use for a trailing double quote.</source>
-      <translation>Symbol for dobbelt sitattegn etter et sitat.</translation>
+      <translation>Symbol for dobbelt anførselstegn etter et sitat.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -3744,6 +3819,21 @@
       <location filename="../novelwriter/dialogs/preferences.py"/>
       <source>Switch the editor to use Vim editor commands.</source>
       <translation>Bruk Vim-kommandoer i skrivevinduet.</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>More</source>
+      <translation>Mer</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>Advanced</source>
+      <translation>Avansert</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/preferences.py"/>
+      <source>Use Unix line endings for all project files</source>
+      <translation>Bruk Unix-linjeskift i alle filer</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/preferences.py"/>
@@ -4000,18 +4090,13 @@
     </message>
     <message>
       <location filename="../novelwriter/gui/sidebar.py"/>
-      <source>Novel Outline View</source>
-      <translation>Disposisjon</translation>
+      <source>Story View</source>
+      <translation>Historievisning</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/sidebar.py"/>
       <source>Switch Colour Theme</source>
       <translation>Bytt fargetema</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/gui/sidebar.py"/>
-      <source>Novel Details</source>
-      <translation>Roman-detaljer</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/sidebar.py"/>
@@ -4027,6 +4112,102 @@
       <location filename="../novelwriter/gui/sidebar.py"/>
       <source>Settings</source>
       <translation>Oppsett</translation>
+    </message>
+  </context>
+  <context>
+    <name>GuiStorySettingsBase</name>
+    <message>
+      <location filename="../novelwriter/story/storyviewbase.py"/>
+      <source>Name</source>
+      <translation>Navn</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyviewbase.py"/>
+      <source>Do you want to save your changes to '{0}'?</source>
+      <translation>Vil du lagre endringene for '{0}'?</translation>
+    </message>
+  </context>
+  <context>
+    <name>GuiStoryView</name>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Story View</source>
+      <translation>Historievisning</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Export the story view data</source>
+      <translation>Eksporter data for historievisning</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Manage Views</source>
+      <translation>Administrer visninger</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Add a new view</source>
+      <translation>Legg til ny visning</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Delete current view</source>
+      <translation>Slett gjeldende visning</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Duplicate current view</source>
+      <translation>Dupliser gjeldende visning</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Edit current view</source>
+      <translation>Rediger gjeldende visning</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Refresh</source>
+      <translation>Oppdater</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Refresh current view</source>
+      <translation>Oppdater gjeldende visning</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Highlight Reference</source>
+      <translation>Uthev referanse</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Delete view '{0}'?</source>
+      <translation>Slette visning '{0}'?</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Save Outline As</source>
+      <translation>Lagre disposisjon som</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Title</source>
+      <translation>Tittel</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Document</source>
+      <translation>Dokument</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Line</source>
+      <translation>Linje</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storyview.py"/>
+      <source>Status</source>
+      <translation>Status</translation>
     </message>
   </context>
   <context>
@@ -4170,7 +4351,7 @@
     <message>
       <location filename="../novelwriter/tools/writingstats.py"/>
       <source>Show idle time</source>
-      <translation>Vis inaktiv som tid</translation>
+      <translation>Vis inaktiv tid</translation>
     </message>
     <message>
       <location filename="../novelwriter/tools/writingstats.py"/>
@@ -4278,12 +4459,27 @@
     <message>
       <location filename="../novelwriter/core/project.py"/>
       <source>Recovered</source>
-      <translation>Gjennopprettet</translation>
+      <translation>Gjenopprettet</translation>
     </message>
     <message>
       <location filename="../novelwriter/core/project.py"/>
       <source>Found {0} orphaned file(s) in the project. {1} file(s) were recovered.</source>
       <translation>{0} foreldreløse fil(er) ble funnet i prosjektet. {1} fil(er) ble gjenopprettet.</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/core/project.py"/>
+      <source>This project is a backup copy. Do you want to make it a separate project so novelWriter can tell it apart from the original?</source>
+      <translation>Dette prosjektet er en sikkerhetskopi. Vil du gjøre det om til et eget prosjekt, slik at novelWriter kan skille det fra originalen?</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/core/project.py"/>
+      <source>Backup from: {0}</source>
+      <translation>Sikkerhetskopi fra {0}</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/core/project.py"/>
+      <source>This project appears to be a copy of another project. It was either copied outside of novelWriter, or is a backup copy. Do you want to make it a separate project so novelWriter can tell them apart?</source>
+      <translation>Dette prosjektet ser ut til å være en kopi av et annet prosjekt. Det er enten kopiert utenfor novelWriter, eller er en sikkerhetskopi. Vil du gjøre det om til et eget prosjekt, slik at novelWriter kan skille dem fra hverandre?</translation>
     </message>
     <message>
       <location filename="../novelwriter/core/project.py"/>
@@ -4293,7 +4489,7 @@
     <message>
       <location filename="../novelwriter/core/project.py"/>
       <source>There is no project open.</source>
-      <translation>Det er ikke noe prosjekter åpent.</translation>
+      <translation>Det er ikke noe prosjekt åpent.</translation>
     </message>
     <message>
       <location filename="../novelwriter/core/project.py"/>
@@ -4381,7 +4577,15 @@
     <message>
       <location filename="../novelwriter/extensions/novelselector.py"/>
       <source>All Novel Folders</source>
-      <translation>Alle roman-mapper</translation>
+      <translation>Alle romanmapper</translation>
+    </message>
+  </context>
+  <context>
+    <name>OutlineModel</name>
+    <message>
+      <location filename="../novelwriter/models/outlinemodel.py"/>
+      <source>Page {0}</source>
+      <translation>Side {0}</translation>
     </message>
   </context>
   <context>
@@ -4479,12 +4683,20 @@
     <message>
       <location filename="../novelwriter/core/coretools.py"/>
       <source>Failed to create a new example project.</source>
-      <translation>Kunne ikke lage nytt eksempel-prosjekt.</translation>
+      <translation>Kunne ikke lage nytt eksempelprosjekt.</translation>
     </message>
     <message>
       <location filename="../novelwriter/core/coretools.py"/>
       <source>Failed to create a new example project. Could not find the necessary files. They seem to be missing from this installation.</source>
-      <translation>Kunne ikke lage nytt eksempel-prosjekt. Kunne ikke finne de nødvendige filene. De ser ut til å mangle i denne installasjonen.</translation>
+      <translation>Kunne ikke lage nytt eksempelprosjekt. Kunne ikke finne de nødvendige filene. De ser ut til å mangle i denne installasjonen.</translation>
+    </message>
+  </context>
+  <context>
+    <name>SearchResultModel</name>
+    <message>
+      <location filename="../novelwriter/models/searchmodel.py"/>
+      <source>{0} matches</source>
+      <translation>{0} treff</translation>
     </message>
   </context>
   <context>
@@ -4599,6 +4811,177 @@
     </message>
   </context>
   <context>
+    <name>StoryViews</name>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Outline</source>
+      <translation>Disposisjon</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Appearance</source>
+      <translation>Utseende</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Use syntax colours</source>
+      <translation>Bruk syntaksfarger</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Row height</source>
+      <translation>Radhøyde</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Include sub-heading counts</source>
+      <translation>Inkluder antall i underoverskrifter</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Show document status</source>
+      <translation>Vis dokumentstatus</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Show icons for comment types</source>
+      <translation>Vis ikoner for kommentartyper</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Show icons for reference types</source>
+      <translation>Vis ikoner for referansetyper</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Join comments of the same type</source>
+      <translation>Slå sammen kommentarer av samme type</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Documents</source>
+      <translation>Dokumenter</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Show partitions</source>
+      <translation>Vis partisjoner</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Show chapters</source>
+      <translation>Vis kapitler</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Show scenes</source>
+      <translation>Vis scener</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Show sections</source>
+      <translation>Vis seksjoner</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Show inactive partitions</source>
+      <translation>Vis inaktive partisjoner</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Progression</source>
+      <translation>Fremdrift</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Show story progression</source>
+      <translation>Vis historiens progresjon</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Count per page</source>
+      <translation>Antall per side</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Clear double page</source>
+      <translation>Start kapitler på høyresider</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Relative to project target</source>
+      <translation>Relativt til prosjektmål</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Columns</source>
+      <translation>Kolonner</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Characters</source>
+      <translation>Karakterer</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Plot</source>
+      <translation>Plott</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>World</source>
+      <translation>Verden</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/story/storysettings.py"/>
+      <source>Comments</source>
+      <translation>Kommentarer</translation>
+    </message>
+  </context>
+  <context>
+    <name>Units</name>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>characters</source>
+      <translation>tegn</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>words</source>
+      <translation>ord</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>lines</source>
+      <translation>linjer</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>px</source>
+      <translation>px</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>pt</source>
+      <translation>pt</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>em</source>
+      <translation>em</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>seconds</source>
+      <translation>sekunder</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/constants.py"/>
+      <source>minutes</source>
+      <translation>minutter</translation>
+    </message>
+  </context>
+  <context>
     <name>VersionInfoWidget</name>
     <message>
       <location filename="../novelwriter/extensions/versioninfo.py"/>
@@ -4623,7 +5006,7 @@
     <message>
       <location filename="../novelwriter/extensions/versioninfo.py"/>
       <source>Release Notes</source>
-      <translation>Lanseringsnotater</translation>
+      <translation>Utgivelsesnotater</translation>
     </message>
     <message>
       <location filename="../novelwriter/extensions/versioninfo.py"/>
@@ -4637,61 +5020,46 @@
     </message>
   </context>
   <context>
-    <name>_ContentsPage</name>
+    <name>_ColumnsPage</name>
     <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Table of Contents</source>
-      <translation>Innholdsfortegnelse</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Column</source>
+      <translation>Kolonne</translation>
     </message>
     <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Title</source>
-      <translation>Tittel</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Columns</source>
+      <translation>Kolonner</translation>
     </message>
     <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Words</source>
-      <translation>Ord</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Content</source>
+      <translation>Innhold</translation>
     </message>
     <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Pages</source>
-      <translation>Sider</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Add to column</source>
+      <translation>Legg til i kolonne</translation>
     </message>
     <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Page</source>
-      <translation>Side</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Remove from column</source>
+      <translation>Fjern fra kolonne</translation>
     </message>
     <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Progress</source>
-      <translation>Fremdrift</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Rename column</source>
+      <translation>Endre navn på kolonne</translation>
     </message>
     <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Words per page</source>
-      <translation>Ord per side</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Add column</source>
+      <translation>Legg til kolonne</translation>
     </message>
     <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>First page offset</source>
-      <translation>Første side forskjøvet</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Chapters on odd pages</source>
-      <translation>Kapittel på oddetall-sider</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Untitled</source>
-      <translation>Uten tittel</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>END</source>
-      <translation>SLUTT</translation>
+      <location filename="../novelwriter/story/outline.py"/>
+      <source>Remove column</source>
+      <translation>Fjern kolonne</translation>
     </message>
   </context>
   <context>
@@ -4762,7 +5130,7 @@
     <message>
       <location filename="../novelwriter/manuscript/manussettings.py"/>
       <source>Select Root Folders</source>
-      <translation>Velg hovedmapper</translation>
+      <translation>Velg rotmapper</translation>
     </message>
   </context>
   <context>
@@ -4899,12 +5267,12 @@
     <message>
       <location filename="../novelwriter/manuscript/manussettings.py"/>
       <source>Point of View Character</source>
-      <translation>Synsvinkel-karakter</translation>
+      <translation>Synsvinkelperson</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/manussettings.py"/>
       <source>Focus Character</source>
-      <translation>Fokus-karakter</translation>
+      <translation>Fokusperson</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/manussettings.py"/>
@@ -4924,7 +5292,7 @@
     <message>
       <location filename="../novelwriter/manuscript/manussettings.py"/>
       <source>Centre</source>
-      <translation>Sentrer</translation>
+      <translation>Midtstill</translation>
     </message>
     <message>
       <location filename="../novelwriter/manuscript/manussettings.py"/>
@@ -4992,7 +5360,7 @@
     <message>
       <location filename="../novelwriter/tools/welcome.py"/>
       <source>Set to 0 to only add scenes</source>
-      <translation>Satt til 0 for bare å legge til scener</translation>
+      <translation>Sett til 0 for bare å legge til scener</translation>
     </message>
     <message>
       <location filename="../novelwriter/tools/welcome.py"/>
@@ -5007,7 +5375,7 @@
     <message>
       <location filename="../novelwriter/tools/welcome.py"/>
       <source>Add a folder for plot notes</source>
-      <translation>Legg til en mappe for plott-notater</translation>
+      <translation>Legg til en mappe for plottnotater</translation>
     </message>
     <message>
       <location filename="../novelwriter/tools/welcome.py"/>
@@ -5027,7 +5395,7 @@
     <message>
       <location filename="../novelwriter/tools/welcome.py"/>
       <source>Chapters and Scenes</source>
-      <translation>Kapittel og scener</translation>
+      <translation>Kapitler og scener</translation>
     </message>
     <message>
       <location filename="../novelwriter/tools/welcome.py"/>
@@ -5078,7 +5446,7 @@
     <message>
       <location filename="../novelwriter/tools/welcome.py"/>
       <source>Remove '{0}' from the recent projects list? The project files will not be deleted.</source>
-      <translation>Vil du fjerne {0} fra listen over tidligere åpnede prosjekter? Selve prosjektfilene blir ikke slettet.</translation>
+      <translation>Vil du fjerne '{0}' fra listen over tidligere åpnede prosjekter? Selve prosjektfilene blir ikke slettet.</translation>
     </message>
     <message>
       <location filename="../novelwriter/tools/welcome.py"/>
@@ -5093,60 +5461,7 @@
     <message>
       <location filename="../novelwriter/tools/welcome.py"/>
       <source>You must select a location for the example project.</source>
-      <translation>Du må velge et sted å lagre eksempel-prosjektet.</translation>
-    </message>
-  </context>
-  <context>
-    <name>_OverviewPage</name>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Project</source>
-      <translation>Prosjekt</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Name</source>
-      <translation>Navn</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Revisions</source>
-      <translation>Revisjoner</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Editing Time</source>
-      <translation>Redigeringstid</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Word Count</source>
-      <translation>Antall ord</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>In Novels</source>
-      <translation>I romaner</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>In Notes</source>
-      <translation>I notater</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Selected Novel</source>
-      <translation>Velg roman</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Chapters</source>
-      <translation>Kapitler</translation>
-    </message>
-    <message>
-      <location filename="../novelwriter/tools/noveldetails.py"/>
-      <source>Scenes</source>
-      <translation>Scener</translation>
+      <translation>Du må velge et sted å lagre eksempelprosjektet.</translation>
     </message>
   </context>
   <context>
@@ -5168,8 +5483,21 @@
     </message>
     <message>
       <location filename="../novelwriter/manuscript/manuscript.py"/>
+      <source>Problems</source>
+      <translation>Problemer</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/manuscript/manuscript.py"/>
       <source>No Preview</source>
       <translation>Ingen forhåndsvisning</translation>
+    </message>
+  </context>
+  <context>
+    <name>_ProblemsWidget</name>
+    <message>
+      <location filename="../novelwriter/manuscript/manuscript.py"/>
+      <source>&lt;{0}&gt; in {1}</source>
+      <translation>&lt;{0}&gt; i {1}</translation>
     </message>
   </context>
   <context>
@@ -5209,8 +5537,13 @@
     </message>
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
+      <source>Ignore case for keywords</source>
+      <translation>Ignorer store og små bokstaver for nøkkelord</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Select item to edit</source>
-      <translation>Velg enhet å redigere</translation>
+      <translation>Velg element å redigere</translation>
     </message>
   </context>
   <context>
@@ -5223,7 +5556,7 @@
     <message>
       <location filename="../novelwriter/gui/search.py"/>
       <source>Root Folders</source>
-      <translation>Hovedmappe</translation>
+      <translation>Rotmapper</translation>
     </message>
   </context>
   <context>
@@ -5236,7 +5569,7 @@
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Changing this will affect the backup path.</source>
-      <translation>Å endring denne vil påvirke banen til sikkerhetskopier.</translation>
+      <translation>Å endre dette vil påvirke banen til sikkerhetskopier.</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
@@ -5256,7 +5589,7 @@
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Default</source>
-      <translation>Ingen valg</translation>
+      <translation>Standard</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
@@ -5272,6 +5605,16 @@
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Disable backup on close</source>
       <translation>Ikke lag sikkerhetskopi når prosjektet lukkes</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/projectsettings.py"/>
+      <source>Enable right-to-left text support</source>
+      <translation>Aktiver høyre-til-venstre-tekst</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/dialogs/projectsettings.py"/>
+      <source>Improves RTL text handling in editor and manuscript.</source>
+      <translation>Bedrer håndtering av høyre-til-venstre-tekst i editor og manuskript.</translation>
     </message>
   </context>
   <context>
@@ -5297,7 +5640,7 @@
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Novel Document Status Levels</source>
-      <translation>Statusnivåer i roman-filer</translation>
+      <translation>Statusnivåer i romanfiler</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
@@ -5332,7 +5675,7 @@
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Label</source>
-      <translation>Navn</translation>
+      <translation>Etikett</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
@@ -5342,7 +5685,7 @@
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Select item to edit</source>
-      <translation>Velg enhet å redigere</translation>
+      <translation>Velg element å redigere</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
@@ -5372,7 +5715,7 @@
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
       <source>Shape</source>
-      <translation>Former</translation>
+      <translation>Form</translation>
     </message>
     <message>
       <location filename="../novelwriter/dialogs/projectsettings.py"/>
@@ -5440,12 +5783,12 @@
     <message>
       <location filename="../novelwriter/gui/projtree.py"/>
       <source>Toggle Active</source>
-      <translation>Aktiver/deaktiver</translation>
+      <translation>Slå av/på aktiv</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/projtree.py"/>
       <source>Set Children to ...</source>
-      <translation>Sett underdoukmenter til ...</translation>
+      <translation>Sett underdokumenter til ...</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/projtree.py"/>
@@ -5475,12 +5818,12 @@
     <message>
       <location filename="../novelwriter/gui/projtree.py"/>
       <source>Merge Child Items into Self</source>
-      <translation>Lim inn underelementer i dette dokumentet</translation>
+      <translation>Slå sammen underelementer med dette dokumentet</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/projtree.py"/>
       <source>Merge Child Items into New</source>
-      <translation>Lim inn underelementer i nytt dokument</translation>
+      <translation>Slå sammen underelementer i et nytt dokument</translation>
     </message>
     <message>
       <location filename="../novelwriter/gui/projtree.py"/>
@@ -5560,6 +5903,11 @@
       <location filename="../novelwriter/editor/viewerpanel.py"/>
       <source>Heading</source>
       <translation>Overskrift</translation>
+    </message>
+    <message>
+      <location filename="../novelwriter/editor/viewerpanel.py"/>
+      <source>Uses</source>
+      <translation>Brukt</translation>
     </message>
     <message>
       <location filename="../novelwriter/editor/viewerpanel.py"/>
