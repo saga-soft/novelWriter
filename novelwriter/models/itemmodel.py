@@ -505,12 +505,11 @@ class ProjectModel(QAbstractItemModel):
             parent: ProjectNode = target.internalPointer()
             refresh: list[str] = []
             for node in reversed(pruned) if pos >= 0 else pruned:
-                if node.item.itemParent in handles:
-                    continue
-                if node.parent() is parent and 0 <= node.row() < pos:
+                movable = node.item.itemParent not in handles
+                if movable and node.parent() is parent and 0 <= node.row() < pos:
                     # Removing the node shifts the rows below it up by one
                     pos -= 1
-                if self._moveNode(node, target, pos):
+                if movable and self._moveNode(node, target, pos):
                     refresh.extend(self._refreshSubtreeRelationships(node))
                     refresh.append(node.item.itemHandle)
             if refresh:
