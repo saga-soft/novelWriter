@@ -19,13 +19,13 @@
     </lastHandle>
     <autoReplace ignoreCase="no" />
     <status>
-      <entry key="s000000" count="9" color="faded" shape="STAR">New</entry>
+      <entry key="s000000" count="8" color="faded" shape="STAR">New</entry>
       <entry key="s000001" count="0" color="red" shape="TRIANGLE">Note</entry>
       <entry key="s000002" count="0" color="yellow" shape="CIRCLE_T">Draft</entry>
       <entry key="s000003" count="0" color="green" shape="STAR">Finished</entry>
     </status>
     <importance>
-      <entry key="i000004" count="7" color="purple" shape="SQUARE">New</entry>
+      <entry key="i000004" count="6" color="purple" shape="SQUARE">New</entry>
       <entry key="i000005" count="0" color="purple" shape="BLOCK_2">Minor</entry>
       <entry key="i000006" count="0" color="purple" shape="BLOCK_3">Major</entry>
       <entry key="i000007" count="0" color="purple" shape="BLOCK_4">Main</entry>
@@ -90,11 +90,11 @@
     </item>
     <item handle="0000000000016" parent="None" root="0000000000016" order="4" type="ROOT" class="ARCHIVE">
       <meta expanded="no" />
-      <name status="s000000" import="i000004">Archive</name>
+      <name>Archive</name>
     </item>
     <item handle="0000000000017" parent="None" root="0000000000017" order="5" type="ROOT" class="TRASH">
       <meta expanded="no" />
-      <name status="s000000" import="i000004">Trash</name>
+      <name>Trash</name>
     </item>
   </content>
 </novelWriterXML>

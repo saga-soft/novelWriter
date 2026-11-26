@@ -1940,6 +1940,21 @@ def testGuiProjectTree_ContextMenu(
         "Delete Permanently",
     ]
 
+    # Context Menu on Root Item without Status
+    node = tree.nodes[hTrashRoot]
+    indices = [model.indexFromHandle(hTrashRoot)]
+    ctxMenu = _TreeContextMenu(projTree, model, node, indices)
+    ctxMenu.buildSingleSelectMenu()
+    actions = [x.text() for x in ctxMenu.actions() if x.text()]
+    assert actions == [
+        "Create New ...",
+        "Rename",
+        "Expand All",
+        "Collapse All",
+        "Duplicate",
+        "Delete Permanently",
+    ]
+
     # Context Menu on Folder Item
     node = tree.nodes[C.hChapterDir]
     indices = [model.indexFromHandle(C.hChapterDir)]

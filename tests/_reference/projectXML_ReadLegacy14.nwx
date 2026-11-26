@@ -129,7 +129,7 @@
     </item>
     <item handle="6827118336ac1" parent="None" root="6827118336ac1" order="4" type="ROOT" class="ARCHIVE">
       <meta expanded="yes" />
-      <name status="sf12341" import="ia857f0">Archive</name>
+      <name>Archive</name>
     </item>
     <item handle="ae9bf3c3ea159" parent="6827118336ac1" root="6827118336ac1" order="0" type="FOLDER" class="ARCHIVE">
       <meta expanded="yes" />
@@ -141,7 +141,7 @@
     </item>
     <item handle="98acd8c76c93a" parent="None" root="98acd8c76c93a" order="5" type="ROOT" class="TRASH">
       <meta expanded="yes" />
-      <name status="sf12341" import="ia857f0">Trash</name>
+      <name>Trash</name>
     </item>
     <item handle="b8136a5a774a0" parent="98acd8c76c93a" root="98acd8c76c93a" order="0" type="FILE" class="TRASH" layout="DOCUMENT">
       <meta expanded="no" heading="H0" charCount="30" wordCount="6" paraCount="1" cursorPos="36" />

@@ -25,7 +25,7 @@
       <entry key="s000003" count="0" color="green" shape="STAR">Finished</entry>
     </status>
     <importance>
-      <entry key="i000004" count="4" color="purple" shape="SQUARE">New</entry>
+      <entry key="i000004" count="3" color="purple" shape="SQUARE">New</entry>
       <entry key="i000005" count="0" color="purple" shape="BLOCK_2">Minor</entry>
       <entry key="i000006" count="0" color="purple" shape="BLOCK_3">Major</entry>
       <entry key="i000007" count="0" color="purple" shape="BLOCK_4">Main</entry>
@@ -66,7 +66,7 @@
     </item>
     <item handle="0000000000010" parent="None" root="0000000000010" order="4" type="ROOT" class="TRASH">
       <meta expanded="no" />
-      <name status="s000000" import="i000004">Trash</name>
+      <name>Trash</name>
     </item>
   </content>
 </novelWriterXML>

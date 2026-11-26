@@ -313,6 +313,13 @@ def testProjectItem_Methods(mockGUI: MockGuiMain, mockRnd: MockRnd, fncPath: Pat
     assert stT == "Minor"
     assert isinstance(stI, QIcon)
 
+    item.setType("ROOT")
+    item.setClass("TRASH")
+    assert item.hasNoStatus() is True
+    stT, stI = item.getImportStatus()
+    assert stT == ""
+    assert stI.isNull()
+
     # Representation
     # ==============
 
@@ -859,4 +866,48 @@ def testProjectItem_PackUnpack(mockGUI: MockGuiMain, caplog: pytest.LogCaptureFi
             "status": "s000000",
             "import": "i000001",
         },
+    }
+
+    # Root without Status
+    item = ProjectItem(project, "")
+    assert (
+        item.unpack({
+            "name": "Archive",
+            "itemAttr": {
+                "handle": "0000000000004",
+                "parent": None,
+                "root": "0000000000004",
+                "order": 2,
+                "type": "ROOT",
+                "class": "ARCHIVE",
+            },
+            "metaAttr": {
+                "expanded": False,
+            },
+            "nameAttr": {
+                "status": "s000000",
+                "import": "i000001",
+            },
+        })
+        is True
+    )
+
+    assert item.hasNoStatus() is True
+    assert item.itemStatus is None
+    assert item.itemImport is None
+
+    assert item.pack() == {
+        "name": "Archive",
+        "itemAttr": {
+            "handle": "0000000000004",
+            "parent": "None",
+            "root": "0000000000004",
+            "order": "2",
+            "type": "ROOT",
+            "class": "ARCHIVE",
+        },
+        "metaAttr": {
+            "expanded": "no",
+        },
+        "nameAttr": {},
     }
