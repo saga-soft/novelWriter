@@ -51,13 +51,13 @@ ET.register_namespace("", "http://www.w3.org/2000/svg")
 
 ICON_SOURCES = {
     "material": "https://github.com/google/material-design-icons.git",
-    "lucide": "https://github.com/lucide-icons/lucide/archive/refs/tags/1.49.0.zip",
-    "fluentui": "https://github.com/microsoft/fluentui-system-icons/archive/refs/tags/1.1.343.zip",
+    "lucide": "https://github.com/lucide-icons/lucide/archive/refs/tags/1.81.0.zip",
+    "fluentui": "https://github.com/microsoft/fluentui-system-icons/archive/refs/tags/1.1.347.zip",
 }
 ICON_EXTRACT = {
     "material": "material-design-icons",
-    "lucide": "lucide-1.49.0",
-    "fluentui": "fluentui-system-icons-1.1.343",
+    "lucide": "lucide-1.81.0",
+    "fluentui": "fluentui-system-icons-1.1.347",
 }
 
 # fmt: off
