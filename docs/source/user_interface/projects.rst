@@ -153,6 +153,14 @@ project folder (files not strictly a part of the project are ignored). The zip a
 in a subfolder of the backup path. The subfolder will have the same name as the **Project Name**
 defined in :ref:`docs_ui_projects_settings`.
 
+The **Backup frequency** setting in **Preferences** controls how many backups are kept. With
+"Per Session", a new backup file is created every time. With "Per Day", "Per Week", or
+"Per Month", the file name only contains the date, week, or month, respectively, so any later
+backup in the same period overwrites the previous one. The file names use ISO 8601 formats, like
+``2026-11-26``, ``2026-W48``, or ``2026-11``.
+
+.. versionadded:: 26.2
+
 The backup feature, when configured, can also be run manually from the **Tools** menu. It is also
 possible to disable automated backups for a given project in **Project Settings**.
 

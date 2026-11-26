@@ -39,6 +39,10 @@ preview window, although you can use it for this purpose if you wish. For instan
 check that the formatting tags behave as you expect. However, the main purpose of the viewer is for
 viewing your notes next to your editor while you're writing.
 
+The left-most panel can be hidden to give the editor and viewer more space. Click the sidebar
+button of the view that is already showing, select **Show/Hide Tree View** in the **View** menu, or
+press :kbd:`Shift+F8`. This also works for the **Novel Tree View** and the project search panel.
+
 The editor also has a **Focus Mode** you can toggle either from the menu, from the icon in the
 editor's header, or by pressing :kbd:`F8`. When **Focus Mode** is enabled, all the user interface
 elements other than the document editor itself are hidden away.
