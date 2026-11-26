@@ -68,7 +68,7 @@ the synopsis comments:
 
    A set of story structure comments as shown in the Manuscript tool.
 
-When you export your project data from the Outline View, all story structure terms are added as
+When you export your project data from the **Story View**, all story structure terms are added as
 columns to the exported file, which can then be opened in the spread sheet software of your choice.
 
 
@@ -107,4 +107,4 @@ Output
 
 Story notes are included in the manuscript in exactly the same way story structure comments are,
 but has a separate inclusion setting in the build settings. They are also included in CSV exports
-from the **Outline View**.
+from the **Story View**.

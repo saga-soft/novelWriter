@@ -20,6 +20,24 @@ A full project file format specification is available under "More Documents".
    introduced. You will get a notification about any updates to your project file format and will
    have the option to decline the upgrade.
 
+Since format version 1.5, all minor changes are noted by a revision number stated in the project
+XML file. These changes are not breaking changes, so opening the project in an older version will
+not break any core features. However, these revisions generally introduce settings for new
+functionality, so downgrading will generally lose these settings.
+
+
+.. _docs_more_project_formats_1_6:
+
+Format 1.6 Changes
+==================
+
+This project format was introduced in novelWriter version 26.2.
+
+This format does not touch the project XML, but changes the format of the novelWriter text
+documents. They are now saved with an ``.md`` file extension, and the meta data header of the files
+uses a TOML-based front matter format guarded by ``+++`` lines. All documents are converted when
+the project is first loaded, and no user action is required.
+
 
 .. _docs_more_project_formats_1_5:
 

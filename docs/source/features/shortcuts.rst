@@ -9,7 +9,7 @@ shortcuts. Most of them are also listed in the application's user interface.
 
 .. note::
 
-   On MacOS, replace :kbd:`Ctrl` with :kbd:`Cmd`.
+   On macOS, replace :kbd:`Ctrl` with :kbd:`Cmd`.
 
 .. note::
 
@@ -36,7 +36,7 @@ Main Window Shortcuts
    ":kbd:`Ctrl+Shift+,`", "Open the **Project Settings** dialog"
    ":kbd:`Ctrl+Shift+O`", "Open the Welcome dialog to open or create a project"
    ":kbd:`Ctrl+Shift+S`", "Save the current project"
-   ":kbd:`Ctrl+Shift+T`", "Switch focus to the outline view"
+   ":kbd:`Ctrl+Shift+T`", "Switch focus to the story view"
    ":kbd:`Ctrl+Shift+W`", "Close the current project"
    ":kbd:`Shift+F1`",     "Open the local user manual (PDF) if it is available"
    ":kbd:`Shift+F8`",     "Toggle tree pane visibility"

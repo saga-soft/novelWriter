@@ -126,7 +126,7 @@ class ProjectXMLReader:
                and indexRevision attribute to project (26.2).
 
     1.6 The actual format released for 26.2. All documents are now
-        stored with the .md file extension and a toml header. The
+        stored with the .md file extension and a TOML header. The
         project XML was not changed.
 
         Rev 1: Added ignoreCase attribute to autoReplace (26.3).

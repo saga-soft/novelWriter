@@ -88,10 +88,10 @@ The Application
 .. dropdown:: How can I increase the line height?
    :animate: fade-in-slide-down
 
-   Unfortunately, in this case, novelWriter uses the plain text editor component of the underlying
-   framework (called Qt) which doesn't support changing the line height. However, you can choose an
-   editor font with larger leading (the spacing between the lines). A good font for this case is
-   `Noto <https://fonts.google.com/noto>`__, which comes in both Sans-Serif and Serif.
+   You can set the line height for the editor and viewer in **Preferences**. The line height for
+   the manuscript is set separately in the **Manuscript Build Settings**.
+
+   .. versionadded:: 26.2
 
 
 Layout Tricks

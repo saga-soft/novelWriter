@@ -34,7 +34,7 @@ Four levels of headings are understood for novel documents. You can pick and cho
 you want, but if your story has chapters, you should use these headings to indicate them. If you
 also add scene headings, you have better control of how your scene separators are formatted in your
 manuscript. The chapter and scenes headings are also displayed in the
-:ref:`Novel View <docs_ui_main_novel>` and :ref:`Outline View <docs_ui_main_outline>`.
+:ref:`Novel View <docs_ui_main_novel>` and :ref:`Story View <docs_ui_story_view>`.
 
 ``# Title Text``
    This is a heading level one. This heading indicates the start of a new partition. Partitions are

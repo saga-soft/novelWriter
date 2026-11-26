@@ -75,6 +75,20 @@ menu.
 You can also override the automatic backup setting for the project if you wish.
 
 
+.. _docs_ui_projects_settings_goal:
+
+Writing Goals
+-------------
+
+The **Goals** tab lets you set a project word or character count target, daily writing goals, and
+a completion date. You can also have novelWriter calculate your daily target for you based on the
+project target and completion date.
+
+When these settings are non-zero, progress bars will appear in the status bar of the main app
+window, showing your daily progress and overall progress. The progress bar updates every few
+seconds, so it may take a couple of seconds for it to change.
+
+
 .. _docs_ui_projects_settings_status:
 
 Status and Importance
@@ -108,9 +122,14 @@ A set of automatically replaced keywords can be added in this tab. The keywords 
 will be replaced by the text in the right column when documents are opened in the viewer. They will
 also be applied to manuscript builds.
 
-The auto-replace feature will replace text in angle brackets that is in this list. The syntax
-highlighter will add an alternate colour to text matching the syntax, but it doesn't check if the
-text is in this list.
+The auto-replace feature will replace text in angle brackets that is in this list. It is applied to
+headings, text paragraphs, lists and comments. Only keywords defined in this list are highlighted
+in the editor. You can also choose to have keywords ignore case by enabling **Ignore case for
+keywords**.
+
+Keywords in the text that are not defined in the list are highlighted in red in the manuscript
+preview, and listed in the **Problems** tab of the **Manuscript** tool. Clicking an entry there
+will take you to its location.
 
 .. note::
 
@@ -133,6 +152,14 @@ application itself is closed. Backups are date stamped zip files of the project 
 project folder (files not strictly a part of the project are ignored). The zip archives are stored
 in a subfolder of the backup path. The subfolder will have the same name as the **Project Name**
 defined in :ref:`docs_ui_projects_settings`.
+
+The **Backup frequency** setting in **Preferences** controls how many backups are kept. With
+"Per Session", a new backup file is created every time. With "Per Day", "Per Week", or
+"Per Month", the file name only contains the date, week, or month, respectively, so any later
+backup in the same period overwrites the previous one. The file names use ISO 8601 formats, like
+``2026-11-26``, ``2026-W48``, or ``2026-11``.
+
+.. versionadded:: 26.2
 
 The backup feature, when configured, can also be run manually from the **Tools** menu. It is also
 possible to disable automated backups for a given project in **Project Settings**.

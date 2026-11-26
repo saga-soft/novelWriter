@@ -21,16 +21,22 @@ system paths are provided by the Qt QStandardPaths_ class and its ``ConfigLocati
 
 The standard paths are:
 
-* Linux: ``~/.config/novelwriter/novelwriter.conf``
-* MacOS: ``~/Library/Preferences/novelwriter/novelwriter.conf``
-* Windows: ``C:\Users\<USER>\AppData\Local\novelwriter\novelwriter.conf``
+* Linux: ``~/.config/novelwriter/novelwriter.toml``
+* macOS: ``~/Library/Preferences/novelwriter/novelwriter.toml``
+* Windows: ``C:\Users\<USER>\AppData\Local\novelwriter\novelwriter.toml``
 
-Here, ``~`` corresponds to the user's home directory on Linux and MacOS, and ``<USER>`` is the
+Here, ``~`` corresponds to the user's home directory on Linux and macOS, and ``<USER>`` is the
 user's username on Windows.
 
 .. note::
+
    These are the standard operating system defined locations. If your system has been set up in a
    different way, these locations may also be different.
+
+.. versionadded:: 26.2
+
+   The config file format changed to TOML. Previously, it was stored in a ``novelwriter.conf``
+   file. The config file is converted automatically, and the old file is left in place.
 
 
 .. _docs_technical_locations_data:
@@ -45,10 +51,10 @@ system paths are provided by the Qt QStandardPaths_ class and its ``AppDataLocat
 The standard paths are:
 
 * Linux: ``~/.local/share/novelwriter/``
-* MacOS: ``~/Library/Application Support/novelwriter/``
+* macOS: ``~/Library/Application Support/novelwriter/``
 * Windows: ``C:\Users\<USER>\AppData\Roaming\novelwriter\``
 
-Here, ``~`` corresponds to the user's home directory on Linux and MacOS, and ``<USER>`` is the
+Here, ``~`` corresponds to the user's home directory on Linux and macOS, and ``<USER>`` is the
 user's username on Windows.
 
 .. note::

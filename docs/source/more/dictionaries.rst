@@ -8,7 +8,7 @@ Spell Check Dictionaries
 
 On Linux and Windows, spell checking is provided by the Enchant_ library. Depending on your
 operating system, it may or may not load all installed spell check dictionaries automatically. On
-MacOS, novelWriter uses the spell checker built into the operating system.
+macOS, novelWriter uses the spell checker built into the operating system.
 
 
 Linux
@@ -17,6 +17,21 @@ Linux
 On Linux, you generally only have to install hunspell, aspell or myspell dictionaries on your
 system like you do for other applications. See your distro or OS documentation for how to do this.
 These dictionaries should show up as available spell check languages in novelWriter.
+
+
+macOS
+=====
+
+On macOS, novelWriter uses the operating system's own spell checker, so there is nothing extra to
+install. The available spell check languages are the ones provided by macOS.
+
+macOS ships with dictionaries for a number of languages. If your language is missing, you can add
+Hunspell dictionaries yourself by copying the ``.aff`` and ``.dic`` files into the folder
+``~/Library/Spelling``. You may have to restart novelWriter before the new language shows up.
+
+The language is always set by the project's spell check setting. The automatic language detection
+of macOS is not used. Words you add to the project dictionary are stored in the project, just like
+on the other platforms, and are not added to the system's list of learned words.
 
 
 Windows
