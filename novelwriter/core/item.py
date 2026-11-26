@@ -26,13 +26,15 @@ import logging
 
 from typing import TYPE_CHECKING, Any
 
+from PyQt6.QtGui import QIcon
+
 from novelwriter import CONFIG, SHARED
 from novelwriter.common import checkInt, isHandle, isItemClass, isItemLayout, isItemType, simplified, yesNo
 from novelwriter.constants import nwLabels, nwStyles, trConst
 from novelwriter.enum import nwItemClass, nwItemLayout, nwItemType
 
 if TYPE_CHECKING:
-    from PyQt6.QtGui import QFont, QIcon
+    from PyQt6.QtGui import QFont
 
     from novelwriter.core.project import NWProject
 
@@ -209,8 +211,9 @@ class ProjectItem:
         item["type"] = str(self._type.name)
         item["class"] = str(self._class.name)
         meta["expanded"] = yesNo(self._expanded)
-        name["status"] = str(self._status)
-        name["import"] = str(self._import)
+        if not self.hasNoStatus():
+            name["status"] = str(self._status)
+            name["import"] = str(self._import)
 
         if self._type == nwItemType.FILE:
             item["layout"] = str(self._layout.name)
@@ -369,7 +372,9 @@ class ProjectItem:
         """Return the relevant importance or status label and icon for
         the current item based on its class.
         """
-        if self.isNovelLike():
+        if self.hasNoStatus():
+            return "", QIcon()
+        elif self.isNovelLike():
             entry = self._project.data.itemStatus[self._status]
         else:
             entry = self._project.data.itemImport[self._import]
@@ -425,6 +430,14 @@ class ProjectItem:
         """Check if the item is in a searchable class."""
         return self._class not in (
             nwItemClass.NO_CLASS,
+            nwItemClass.TEMPLATE,
+            nwItemClass.TRASH,
+        )
+
+    def hasNoStatus(self) -> bool:
+        """Check if the item should not have a status or importance."""
+        return self._type == nwItemType.ROOT and self._class in (
+            nwItemClass.ARCHIVE,
             nwItemClass.TEMPLATE,
             nwItemClass.TRASH,
         )
@@ -574,13 +587,13 @@ class ProjectItem:
         """Set the item status by looking it up in the valid status
         items of the current project.
         """
-        self._status = self._project.data.itemStatus.check(value)
+        self._status = None if self.hasNoStatus() else self._project.data.itemStatus.check(value)
 
     def setImport(self, value: Any) -> None:
         """Set the item importance by looking it up in the valid import
         items of the current project.
         """
-        self._import = self._project.data.itemImport.check(value)
+        self._import = None if self.hasNoStatus() else self._project.data.itemImport.check(value)
 
     def setActive(self, state: Any) -> None:
         """Set the active flag."""
