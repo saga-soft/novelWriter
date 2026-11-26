@@ -494,13 +494,13 @@ def testGuiTheme_IconThemes(monkeypatch: pytest.MonkeyPatch):
 
     # Init should load default theme
     theme.initThemes()
-    assert theme.iconCache._meta.name == "Material Symbols - Rounded"
+    assert theme.iconCache._meta.name == "Fluent UI - Regular"
     assert DEF_ICONS in theme.iconCache.iconThemes
 
     # Load default theme directly
     theme.iconCache._meta = ThemeMeta()
     theme.iconCache.loadTheme("DEF_ICONS")
-    assert theme.iconCache._meta.name == "Material Symbols - Rounded"
+    assert theme.iconCache._meta.name == "Fluent UI - Regular"
 
     # Failed loading should load nothing
     theme.iconCache._meta = ThemeMeta()
@@ -512,7 +512,7 @@ def testGuiTheme_IconThemes(monkeypatch: pytest.MonkeyPatch):
     # Reload with non-existent theme should reload default
     theme.iconCache._meta = ThemeMeta()
     theme.iconCache.loadTheme("not_a_theme")
-    assert theme.iconCache._meta.name == "Material Symbols - Rounded"
+    assert theme.iconCache._meta.name == "Fluent UI - Regular"
 
     # If default theme is missing, load nothing
     del theme.iconCache._allThemes[DEF_ICONS]
