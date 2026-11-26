@@ -41,7 +41,7 @@ The following Python packages are needed to run all features of novelWriter:
 
 * ``PyQt6`` – needed for connecting with the Qt6 libraries.
 * ``PyEnchant`` – needed for spell checking on Linux and Windows (optional).
-* ``pyobjc-framework-Cocoa`` – needed for spell checking and system integration on MacOS.
+* ``pyobjc-framework-Cocoa`` – needed for spell checking and system integration on macOS.
 
 If you want spell checking on Linux or Windows, you must install the ``PyEnchant`` package. The
 spell check library must be at least 3.0 to work with Windows. On Linux, 2.0 also works fine.

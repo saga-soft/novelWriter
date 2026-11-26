@@ -8,7 +8,7 @@ Spell Check Dictionaries
 
 On Linux and Windows, spell checking is provided by the Enchant_ library. Depending on your
 operating system, it may or may not load all installed spell check dictionaries automatically. On
-MacOS, novelWriter uses the spell checker built into the operating system.
+macOS, novelWriter uses the spell checker built into the operating system.
 
 
 Linux

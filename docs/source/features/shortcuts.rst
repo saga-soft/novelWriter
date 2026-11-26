@@ -9,7 +9,7 @@ shortcuts. Most of them are also listed in the application's user interface.
 
 .. note::
 
-   On MacOS, replace :kbd:`Ctrl` with :kbd:`Cmd`.
+   On macOS, replace :kbd:`Ctrl` with :kbd:`Cmd`.
 
 .. note::
 
