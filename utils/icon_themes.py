@@ -215,6 +215,8 @@ ICONS = [
 ]
 # fmt: on
 
+KEY_INDENT = max(len(x) for x in ICONS)
+
 
 def _loadMap(name: str) -> dict[str, str]:
     """Load a theme map file."""
@@ -238,6 +240,7 @@ def _writeThemeFile(path: Path, name: str, author: str, license_: str, icons: di
         out.write(f"meta:license = {license_}\n")
         out.write("\n")
         out.write("# Icons\n")
+        padding = " " * KEY_INDENT
         for key, svg in icons.items():
             for elem in svg.iter():
                 if elem.text and not elem.text.strip():
@@ -245,7 +248,8 @@ def _writeThemeFile(path: Path, name: str, author: str, license_: str, icons: di
                 if elem.tail and not elem.tail.strip():
                     elem.tail = None
             icon = ET.tostring(svg).decode()
-            out.write(f"icon:{key:<15s} = {icon}\n")
+            key = (key + padding)[:KEY_INDENT]
+            out.write(f"icon:{key} = {icon}\n")
         log(f"- [cg]Wrote:[e] {len(icons)} icons")
         log(f"- Target: {path.relative_to(UTILS.parent)}")
 
