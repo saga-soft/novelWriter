@@ -1,12 +1,12 @@
 [Meta]
-timeStamp = "2026-10-25 16:31:43"
+timeStamp = "2026-11-26 18:37:52"
 
 [Main]
 font = "Sans Serif,9,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,,0,0"
 lightTheme = "default_light"
 darkTheme = "default_dark"
 themeMode = "AUTO"
-icons = "material_rounded_normal"
+icons = "fluentui_regular"
 iconColTree = "theme"
 iconColDocs = false
 localisation = "en_GB"
