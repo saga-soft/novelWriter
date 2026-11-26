@@ -271,6 +271,8 @@ class NWProject:
 
         self._storage.getDocument(tHandle).writeDocument(text)
         sItem.setLayout(tItem.itemLayout)
+        tItem.setStatus(sItem.itemStatus)
+        tItem.setImport(sItem.itemImport)
         self._index.reIndexHandle(tHandle)
 
         return True

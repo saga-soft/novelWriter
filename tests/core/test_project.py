@@ -154,12 +154,20 @@ def testNWProject_NewFileFolder(
     assert project.copyFileContent(bHandle, cHandle) is False
 
     # Copy file content, success
+    cItem = project.tree[cHandle]
+    dItem = project.tree[dHandle]
+    assert cItem is not None
+    assert dItem is not None
+    cItem.setImport(C.iMajor)
+    assert dItem.itemImport != C.iMajor
     assert project.copyFileContent(dHandle, cHandle) is True
 
     cText = project.storage.getDocument(cHandle).readDocument()
     dText = project.storage.getDocument(dHandle).readDocument()
 
     assert dText == cText
+    assert dItem.itemStatus == cItem.itemStatus
+    assert dItem.itemImport == C.iMajor
 
     # Copy file content, and update title
     assert project.copyFileContent(eHandle, cHandle, "Lars") is True
