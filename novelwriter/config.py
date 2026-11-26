@@ -84,7 +84,7 @@ logger = logging.getLogger(__name__)
 
 DEF_GUI_DARK = "default_dark"
 DEF_GUI_LIGHT = "default_light"
-DEF_ICONS = "material_rounded_normal"
+DEF_ICONS = "fluentui_regular"
 DEF_TREECOL = "theme"
 
 # Maps the current location of an option to its old location
