@@ -79,13 +79,23 @@ various meta data entries incremented, on each save.
 A full project file format specification is available under "More Documents".
 
 
+Project Manifest
+----------------
+
+.. versionadded:: 26.3
+
+The project root folder also contains a file named ``manifest.json``. It marks the folder as a
+novelWriter project, and records whether it is a regular project, a backup, or a template. This is
+used to detect when a project has been copied or restored from a backup.
+
+
 Project Documents
 =================
 
 All the project documents are saved in a subfolder of the main project folder named ``content``.
 Each document has a file handle based on a 52 bit random number, represented as a hexadecimal
 string. The documents are saved with a filename assembled from this handle and the file extension
-``.nwd``.
+``.md``.
 
 If you wish to find the file system location of a document in the project, you can either look it
 up in the project XML file, select **Show File Details** from the **Document** menu when having the
@@ -108,12 +118,17 @@ automatically updated when doing so, which means novelWriter doesn't know you've
 If you *do* edit a file in this manner, you should rebuild the index when you next open the project
 in novelWriter.
 
-The first lines of the file may contain some meta data starting with the characters ``%%~``. These
-lines are mainly there to restore some information if the file is lost from the main project file,
-and the information may be helpful if you do open the file in an external editor as it contains the
-document label and the document class and layout. The lines can be deleted without any consequences
-to the rest of the content of the file, and will be added back the next time the document is saved
-in novelWriter.
+The file starts with a block of meta data in TOML format, enclosed by lines containing only
+``+++``. This block is mainly there to restore some information if the file is lost from the main
+project file, and the information may be helpful if you do open the file in an external editor as
+it contains the document label, parent and handle, the document class and layout, and the created
+and updated dates. The block can be deleted without any consequences to the rest of the content of
+the file, and will be added back the next time the document is saved in novelWriter.
+
+.. versionadded:: 26.2
+
+   The document file format and extension were changed from ``.nwd`` with a custom header to ``.md``
+   with a TOML front matter section.
 
 
 The File Saving Process
@@ -171,6 +186,15 @@ to the project. Global GUI settings are stored in the main config file.
 
 The file is not critical, but if it is lost, all such GUI options will revert back to their default
 settings.
+
+
+Story Views
+-----------
+
+.. versionadded:: 26.3
+
+The views defined in the **Story View**, and their settings, are kept in the ``meta/views.json``
+file. If this file is lost, a new default outline is created the next time the project is opened.
 
 
 Custom Word List

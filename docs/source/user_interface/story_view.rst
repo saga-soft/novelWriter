@@ -59,7 +59,7 @@ Column Settings
 ---------------
 
 .. figure:: images/fig_outline_view_settings.png
-   :width: 50%
+   :width: 60%
 
    A screenshot of the Columns page of the Outline View Settings.
 

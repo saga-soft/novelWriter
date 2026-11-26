@@ -122,9 +122,14 @@ A set of automatically replaced keywords can be added in this tab. The keywords 
 will be replaced by the text in the right column when documents are opened in the viewer. They will
 also be applied to manuscript builds.
 
-The auto-replace feature will replace text in angle brackets that is in this list. The syntax
-highlighter will add an alternate colour to text matching the syntax, but it doesn't check if the
-text is in this list.
+The auto-replace feature will replace text in angle brackets that is in this list. It is applied to
+headings, text paragraphs, lists and comments. Only keywords defined in this list are highlighted
+in the editor. You can also choose to have keywords ignore case by enabling **Ignore case for
+keywords**.
+
+Keywords in the text that are not defined in the list are highlighted in red in the manuscript
+preview, and listed in the **Problems** tab of the **Manuscript** tool. Clicking an entry there
+will take you to its location.
 
 .. note::
 

@@ -145,15 +145,17 @@ headings at specific heading levels.
 
 The layout options are presented in a grid showing the following heading styles:
 
-- **Title** – The novel's main title
-- **Partition** – Partition headings (for dividing the novel into major sections)
-- **Chapter** – Chapter headings
-- **Scene** – Scene headings
+- **Title:** The novel's main title
+- **Partition:** Partition headings (for dividing the novel into major sections)
+- **Chapter:** Chapter headings
+- **Scene:** Scene headings
 
-For each of these, you can toggle:
+For each of these, you can set:
 
-- **Centre** – Centre the heading text on the page
-- **Page Break** – Insert a page break before the heading
+- **Centre:** Centre the heading text on the page
+- **Page Break:** Insert a page break before the heading. Choose between "No Break",
+  "Any Page", or "Odd Page". The last option starts the heading on the next odd-numbered page,
+  which is useful for double-sided printing
 
 These settings apply to the formatted heading output and affect all document formats that support
 page breaks and text alignment.
@@ -173,18 +175,19 @@ controls.
    options do not select documents, that is done in the **Selection** page. They only control
    which content elements within each document are rendered. The available switches are:
    "Include body text", "Include synopsis", "Include comments", "Include story structure",
-   "Include manuscript notes", and "Include keywords". A text field for specifying keywords to
-   ignore is also provided, as well as an option to "Add titles for note root folders".
+   "Include manuscript notes", and "Include tags and references". A text field for specifying
+   keywords to ignore is also provided, as well as an option to "Insert note root folder labels as
+   titles".
 
 **Text Format**
-   Controls the base appearance of rendered text. Set the "Text font" and "Line height", and
-   toggle options for "Justify text margins", "Justify text on manual line breaks",
+   Controls the base appearance of rendered text. Set the "Text font", "Line height" and "Tab
+   size", and toggle options for "Justify text margins", "Justify text on manual line breaks",
    "Replace Unicode characters", "Replace tabs with spaces", "Preserve hard line breaks", and
    "Apply dialogue highlighting".
 
 **Heading Format**
    Controls visual formatting applied to all headings in the output. Toggle "Add colours to
-   headings", "Bold headings", and "Uppercase headings".
+   headings", "Bold headings", "Uppercase headings", and "Show status label under headings".
 
 **First Line Indent**
    Controls paragraph indentation. Toggle "Enable indent", set the "Indent width", and choose
@@ -193,19 +196,24 @@ controls.
 **Size & Margins**
    Controls font sizes and spacing for each element in the output. Entries cover "Title and
    Partition", "Heading 1 and Chapter", "Heading 2 and Scene", "Heading 3 and Section",
-   "Heading 4", "Text paragraph", and "Scene separator". Each entry has a size field and top and
-   bottom margin fields. The option "Add empty lines instead of margins" replaces spacing with
-   blank lines, which is useful for formats that do not support paragraph margins.
+   "Heading 4", "Text paragraph", "List", and "Scene separator". Each entry has a size field and
+   top and bottom margin fields. The option "Add empty lines instead of margins" replaces spacing
+   with blank lines, which is useful for formats that do not support paragraph margins.
 
 **Page Layout**
    Controls paper settings for formats that support page layout, such as Open Document and PDF.
-   Set the "Unit" (centimetres, millimetres or inches), "Page size", and "Page margins"
-   (top, bottom, left, and right).
+   Set the "Unit" (centimetres, millimetres or inches), "Page size", "Top and bottom margins",
+   "Left and right margins", and "Gutter margin". Enabling "Double-sided pages" mirrors the margins
+   on even pages for book binding, and the horizontal margins become "Inner and outer margins".
 
 **Document Style**
    Controls document-level settings for office type documents. Set the "Page header" format, the
-   "Page counter offset", and optionally override the document language with "Override document
-   language".
+   "Page header for even pages" format when double-sided pages are enabled, the "Page counter
+   offset", and optionally override the document language with "Override document language".
+
+**EPUB Options**
+   Controls settings specific to EPUB output. Toggle "Nested table of contents" to nest chapters
+   under their partitions in the table of contents.
 
 **HTML Options**
    Controls settings specific to HTML output. Toggle "Add CSS styles" to include inline

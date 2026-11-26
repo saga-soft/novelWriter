@@ -223,8 +223,8 @@ novelWriter HTML
    is suitable for further processing by document conversion tools like Pandoc_, for importing in
    word processors, or for printing from browser.
 
-Electronic Publication E-book (EPub)
-   The EPub format writes a single ``.epub`` file with minimal style formatting. You can include
+Electronic Publication E-book (EPUB)
+   The EPUB format writes a single ``.epub`` file with minimal style formatting. You can include
    your notes in this format, but each notes root folder will be packaged as a chapter.
 
 Standard/Extended Markdown
