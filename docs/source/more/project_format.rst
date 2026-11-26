@@ -21,9 +21,9 @@ A full project file format specification is available under "More Documents".
    have the option to decline the upgrade.
 
 Since format version 1.5, all minor changes are noted by a revision number stated in the project
-XML file. These changes are not breaking changes, so going back in version will not break any core
-features, but these revision generally introduce settings for new functionality. so downgrading
-will generally lose these settings.
+XML file. These changes are not breaking changes, so opening the project in an older version will
+not break any core features. However, these revisions generally introduce settings for new
+functionality, so downgrading will generally lose these settings.
 
 
 .. _docs_more_project_formats_1_6:

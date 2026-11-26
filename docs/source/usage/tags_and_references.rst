@@ -111,7 +111,7 @@ How to Use References
 =====================
 
 Each heading of any level in your project can contain references to tags set in your notes. The
-references are gathered by the project index and used to generate the **Outline View**, among other
+references are gathered by the project index and used to generate the **Story View**, among other
 things.
 
 References are set with a special keyword, with a list of corresponding tags. The valid keywords
@@ -187,7 +187,7 @@ opened in the document viewer, the references become clickable links, making it 
 connections in the plot. You can follow links in the document editor by clicking them with the
 mouse while holding down the :kbd:`Ctrl` key. Clicked links are always opened in the view panel.
 
-Your notes don't show up in the **Outline View**, so referencing between notes is only meaningful
+Your notes don't show up in the **Story View**, so referencing between notes is only meaningful
 if you want to be able to click-navigate between them, or of course if you just want to highlight
 that two notes are related.
 

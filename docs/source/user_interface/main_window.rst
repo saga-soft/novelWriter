@@ -125,7 +125,7 @@ meta data collected for that heading.
 Project Search
 ==============
 
-A global search tool is available from the side bar. It allows you to search through your entire
+A global search tool is available from the sidebar. It allows you to search through your entire
 project. The tool does not provide a replace feature. There is a search and replace tool available
 in the document editor that acts on the open document. See :ref:`docs_ui_edit_view_search` for more
 details.

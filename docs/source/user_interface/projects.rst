@@ -77,8 +77,8 @@ You can also override the automatic backup setting for the project if you wish.
 
 .. _docs_ui_projects_settings_goal:
 
-Writing Goal
-------------
+Writing Goals
+-------------
 
 The **Goals** tab lets you set a project word or character count target, daily writing goals, and
 a completion date. You can also have novelWriter calculate your daily target for you based on the
