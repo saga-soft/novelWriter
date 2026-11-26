@@ -62,6 +62,17 @@ def testGuiLipsum_Main(qtbot: QtBot, monkeypatch: pytest.MonkeyPatch, nwGUI: Gui
     nwLipsum._doInsert()
     assert len(nwLipsum.lipsumText) > 0
 
+    options = SHARED.project.options
+    assert options.getInt("GuiLipsum", "paraCount", 0) == 1
+    assert options.getBool("GuiLipsum", "randomise", False) is True
+
+    nwLipsum.setObjectName("")
+    nwLipsum.close()
+
+    # Settings are restored
+    nwLipsum = GuiLipsum(nwGUI)
+    assert nwLipsum.paraCount.value() == 1
+    assert nwLipsum.randSwitch.isChecked() is True
     nwLipsum.setObjectName("")
     nwLipsum.close()
 

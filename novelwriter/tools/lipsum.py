@@ -63,6 +63,11 @@ class GuiLipsum(NDialog):
         self.leftBox.addStretch(1)
         self.innerBox.addLayout(self.leftBox)
 
+        # Values
+        options = SHARED.project.options
+        paraCount = options.getInt("GuiLipsum", "paraCount", 5)
+        randomise = options.getBool("GuiLipsum", "randomise", False)
+
         # Form
         self.headLabel = QLabel(self.tr("Insert Lorem Ipsum Text"))
         self.headLabel.setFont(SHARED.theme.guiFontB)
@@ -71,9 +76,10 @@ class GuiLipsum(NDialog):
         self.paraCount = QSpinBox(self)
         self.paraCount.setMinimum(1)
         self.paraCount.setMaximum(100)
-        self.paraCount.setValue(5)
+        self.paraCount.setValue(paraCount)
 
         self.randSwitch = NSwitch(self)
+        self.randSwitch.setChecked(randomise)
         self.randLabel = QLabel(self.tr("Randomise order"), self)
         self.randLabel.setBuddy(self.randSwitch)
 
@@ -136,8 +142,15 @@ class GuiLipsum(NDialog):
         """Generate the text."""
         lipsumFile = CONFIG.assetPath("text") / "lipsum.txt"
         lipsumText = readTextFile(lipsumFile).splitlines()
-        if self.randSwitch.isChecked():
+        randomise = self.randSwitch.isChecked()
+        if randomise:
             random.shuffle(lipsumText)
         pCount = self.paraCount.value()
         self._lipsumText = "\n\n".join(lipsumText[0:pCount]) + "\n\n"
+
+        logger.debug("Saving State: GuiLipsum")
+        options = SHARED.project.options
+        options.setValue("GuiLipsum", "paraCount", pCount)
+        options.setValue("GuiLipsum", "randomise", randomise)
+
         self.close()
