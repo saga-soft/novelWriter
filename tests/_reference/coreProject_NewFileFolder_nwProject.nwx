@@ -25,9 +25,9 @@
       <entry key="s000003" count="0" color="green" shape="STAR">Finished</entry>
     </status>
     <importance>
-      <entry key="i000004" count="6" color="purple" shape="SQUARE">New</entry>
+      <entry key="i000004" count="3" color="purple" shape="SQUARE">New</entry>
       <entry key="i000005" count="0" color="purple" shape="BLOCK_2">Minor</entry>
-      <entry key="i000006" count="0" color="purple" shape="BLOCK_3">Major</entry>
+      <entry key="i000006" count="3" color="purple" shape="BLOCK_3">Major</entry>
       <entry key="i000007" count="0" color="purple" shape="BLOCK_4">Main</entry>
     </importance>
   </settings>
@@ -70,15 +70,15 @@
     </item>
     <item handle="0000000000012" parent="000000000000a" root="000000000000a" order="0" type="FILE" class="CHARACTER" layout="NOTE">
       <meta expanded="no" heading="H1" charCount="11" wordCount="3" paraCount="1" cursorPos="0" />
-      <name status="s000000" import="i000004" active="yes">Jane</name>
+      <name status="s000000" import="i000006" active="yes">Jane</name>
     </item>
     <item handle="0000000000013" parent="000000000000a" root="000000000000a" order="1" type="FILE" class="CHARACTER" layout="NOTE">
       <meta expanded="no" heading="H1" charCount="11" wordCount="3" paraCount="1" cursorPos="0" />
-      <name status="s000000" import="i000004" active="yes">John</name>
+      <name status="s000000" import="i000006" active="yes">John</name>
     </item>
     <item handle="0000000000014" parent="000000000000a" root="000000000000a" order="2" type="FILE" class="CHARACTER" layout="NOTE">
       <meta expanded="no" heading="H1" charCount="11" wordCount="3" paraCount="1" cursorPos="0" />
-      <name status="s000000" import="i000004" active="yes">Mike</name>
+      <name status="s000000" import="i000006" active="yes">Mike</name>
     </item>
     <item handle="000000000000b" parent="None" root="000000000000b" order="3" type="ROOT" class="WORLD">
       <meta expanded="no" />

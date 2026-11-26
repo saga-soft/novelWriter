@@ -277,9 +277,7 @@ def testGuiProjectSettings_StatusImport(
     project.countStatus()
 
     assert [e.count for _, e in project.data.itemStatus.iterItems()] == [2, 0, 2, 1]
-    # The Trash root, created when the project is opened, also counts
-    # towards the default "New" import flag
-    assert [e.count for _, e in project.data.itemImport.iterItems()] == [4, 0, 2, 1]
+    assert [e.count for _, e in project.data.itemImport.iterItems()] == [3, 0, 2, 1]
 
     # Create Dialog
     projSettings = GuiProjectSettings(nwGUI, GuiProjectSettings.PAGE_STATUS)

@@ -744,8 +744,8 @@
       "cursorPos": 0
     },
     "nameAttr": {
-      "status": "sf12341",
-      "import": "ia857f0",
+      "status": null,
+      "import": null,
       "active": false
     }
   },
@@ -819,8 +819,8 @@
       "cursorPos": 0
     },
     "nameAttr": {
-      "status": "sf12341",
-      "import": "ia857f0",
+      "status": null,
+      "import": null,
       "active": false
     }
   },
@@ -919,8 +919,8 @@
       "cursorPos": 0
     },
     "nameAttr": {
-      "status": "sf12341",
-      "import": "ia857f0",
+      "status": null,
+      "import": null,
       "active": false
     }
   },

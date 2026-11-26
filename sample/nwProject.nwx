@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<novelWriterXML appVersion="26.3rc1" hexVersion="0x260300c1" fileVersion="1.6" fileRevision="1" timeStamp="2026-11-26 18:31:25">
-  <project id="e2be99af-f9bf-4403-857a-c3d1ac25abea" saveCount="2449" autoCount="438" editTime="113191" indexRevision="416">
+<novelWriterXML appVersion="26.3rc1" hexVersion="0x260300c1" fileVersion="1.6" fileRevision="1" timeStamp="2026-11-26 18:56:33">
+  <project id="e2be99af-f9bf-4403-857a-c3d1ac25abea" saveCount="2453" autoCount="438" editTime="113273" indexRevision="416">
     <name>Sample Project</name>
     <author>Jane Smith</author>
   </project>
@@ -25,7 +25,7 @@
       <entry key="C">D</entry>
     </autoReplace>
     <status>
-      <entry key="sf12341" count="7" color="#969896" shape="STAR">New</entry>
+      <entry key="sf12341" count="5" color="#969896" shape="STAR">New</entry>
       <entry key="sf24ce6" count="2" color="red" shape="STAR">Notes</entry>
       <entry key="sc24b8f" count="2" color="yellow" shape="BARS_1">Started</entry>
       <entry key="s90e6c9" count="5" color="yellow" shape="BARS_2">1st Draft</entry>
@@ -35,7 +35,7 @@
       <entry key="s936325" count="7" color="blue" shape="DIAMOND">Sample</entry>
     </status>
     <importance>
-      <entry key="ia857f0" count="7" color="faded" shape="STAR">None</entry>
+      <entry key="ia857f0" count="6" color="faded" shape="STAR">None</entry>
       <entry key="i4a1d39" count="1" color="purple" shape="BLOCK_1">Background</entry>
       <entry key="icfb3a5" count="1" color="purple" shape="BLOCK_2">Minor</entry>
       <entry key="i2d7a54" count="2" color="purple" shape="BLOCK_3">Major</entry>
@@ -161,7 +161,7 @@
     </item>
     <item handle="6827118336ac1" parent="None" root="6827118336ac1" order="4" type="ROOT" class="ARCHIVE">
       <meta expanded="yes" />
-      <name status="sf12341" import="ia857f0">Archive</name>
+      <name>Archive</name>
     </item>
     <item handle="ae9bf3c3ea159" parent="6827118336ac1" root="6827118336ac1" order="0" type="FOLDER" class="ARCHIVE">
       <meta expanded="yes" />
@@ -173,7 +173,7 @@
     </item>
     <item handle="f4ed1ae756a1f" parent="None" root="f4ed1ae756a1f" order="5" type="ROOT" class="TEMPLATE">
       <meta expanded="yes" />
-      <name status="sf12341" import="ia857f0">Templates</name>
+      <name>Templates</name>
     </item>
     <item handle="5aec885635c85" parent="f4ed1ae756a1f" root="f4ed1ae756a1f" order="0" type="FILE" class="TEMPLATE" layout="DOCUMENT">
       <meta expanded="no" heading="H3" charCount="9" wordCount="2" paraCount="1" cursorPos="78" />
@@ -189,7 +189,7 @@
     </item>
     <item handle="98acd8c76c93a" parent="None" root="98acd8c76c93a" order="6" type="ROOT" class="TRASH">
       <meta expanded="yes" />
-      <name status="sf12341" import="ia857f0">Trash</name>
+      <name>Trash</name>
     </item>
     <item handle="b8136a5a774a0" parent="98acd8c76c93a" root="98acd8c76c93a" order="0" type="FILE" class="TRASH" layout="DOCUMENT">
       <meta expanded="no" heading="H3" charCount="30" wordCount="6" paraCount="1" cursorPos="36" />

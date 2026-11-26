@@ -64,6 +64,10 @@ VALID_MAP: dict[str, set[str]] = {
         "intoFolder",
         "docHierarchy",
     },
+    "GuiLipsum": {
+        "paraCount",
+        "randomise",
+    },
     "GuiProjectSettings": {
         "winWidth",
         "winHeight",

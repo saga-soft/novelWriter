@@ -480,7 +480,7 @@ def testProjectXMLReader_ReadLegacy10(tstPaths: TstPaths, fncPath: Path, mockGUI
         "b3e74dbc1f584": "Main",
         "f1471bef9f2ae": "Minor",
         "5eaea4e8cdee8": "Major",
-        "98acd8c76c93a": "None",
+        "98acd8c76c93a": "",
         "b8136a5a774a0": "New",
     }
 
@@ -646,7 +646,7 @@ def testProjectXMLReader_ReadLegacy11(tstPaths: TstPaths, fncPath: Path, mockGUI
         "b3e74dbc1f584": "Main",
         "f1471bef9f2ae": "Minor",
         "5eaea4e8cdee8": "Major",
-        "98acd8c76c93a": "None",
+        "98acd8c76c93a": "",
         "b8136a5a774a0": "New",
     }
 
@@ -812,10 +812,10 @@ def testProjectXMLReader_ReadLegacy12(tstPaths: TstPaths, fncPath: Path, mockGUI
         "b3e74dbc1f584": "Main",
         "f1471bef9f2ae": "Minor",
         "5eaea4e8cdee8": "Major",
-        "6827118336ac1": "New",  # Is now treated as novel-like
+        "6827118336ac1": "",
         "ae9bf3c3ea159": "New",  # Is now treated as novel-like
         "8a5deb88c0e97": "1st Draft",
-        "98acd8c76c93a": "None",
+        "98acd8c76c93a": "",
         "b8136a5a774a0": "New",
     }
 
@@ -981,10 +981,10 @@ def testProjectXMLReader_ReadLegacy13(tstPaths: TstPaths, fncPath: Path, mockGUI
         "b3e74dbc1f584": "Main",
         "f1471bef9f2ae": "Minor",
         "5eaea4e8cdee8": "Major",
-        "6827118336ac1": "New",  # Is now treated as novel-like
+        "6827118336ac1": "",
         "ae9bf3c3ea159": "New",  # Is now treated as novel-like
         "8a5deb88c0e97": "1st Draft",
-        "98acd8c76c93a": "None",
+        "98acd8c76c93a": "",
         "b8136a5a774a0": "New",
     }
 
@@ -1151,10 +1151,10 @@ def testProjectXMLReader_ReadLegacy14(tstPaths: TstPaths, fncPath: Path, mockGUI
         "b3e74dbc1f584": "Main",
         "f1471bef9f2ae": "Minor",
         "5eaea4e8cdee8": "Major",
-        "6827118336ac1": "New",
+        "6827118336ac1": "",
         "ae9bf3c3ea159": "New",
         "8a5deb88c0e97": "1st Draft",
-        "98acd8c76c93a": "None",
+        "98acd8c76c93a": "",
         "b8136a5a774a0": "None",
     }
 

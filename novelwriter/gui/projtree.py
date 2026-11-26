@@ -1156,7 +1156,8 @@ class _TreeContextMenu(QMenu):
         if isFile:
             self._itemHeader()
             self._itemActive()
-        self._itemStatusImport(False)
+        if not self._item.hasNoStatus():
+            self._itemStatusImport(False)
 
         # Transform Item
         if isFile or isFolder:
