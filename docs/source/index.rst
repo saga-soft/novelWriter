@@ -55,6 +55,7 @@ storage for robustness.
    :hidden:
 
    user_interface/main_window
+   user_interface/story_view
    user_interface/projects
    user_interface/editor_viewer
    user_interface/split_and_merge

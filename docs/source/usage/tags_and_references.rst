@@ -54,8 +54,8 @@ An alternative format of a tag is ``@tag: TagName | Display Name``.
    in the project.
 
 After a tag has been defined, it can be referenced in novel documents, or cross-referenced in other
-notes. Tags will also show up in the **Outline View** and in the **References** panel under the
-document viewer when a document is open in the viewer. See :ref:`docs_ui_main_outline` and
+notes. Tags will also show up in the **Story View** and in the **References** panel under the
+document viewer when a document is open in the viewer. See :ref:`docs_ui_story_view` and
 :ref:`docs_ui_edit_view_view_references` for more details.
 
 The editor will indicate to you that the keyword is correctly used and that the tag is allowed,

@@ -75,6 +75,20 @@ menu.
 You can also override the automatic backup setting for the project if you wish.
 
 
+.. _docs_ui_projects_settings_goal:
+
+Writing Goal
+------------
+
+The **Goals** tab lets you set a project word or character count target, daily writing goals, and
+a completion date. You can also have novelWriter calculate your daily target for you based on the
+project target and completion date.
+
+When these settings are non-zero, progress bars will appear in the status bar of the main app
+window, showing your daily progress and overall progress. The progress bar updates every few
+seconds, so it may take a couple of seconds for it to change.
+
+
 .. _docs_ui_projects_settings_status:
 
 Status and Importance
